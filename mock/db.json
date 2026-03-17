@@ -47,7 +47,11 @@
         "selectedCount": 0,
         "applicationRate": 0.4
       },
-      "partner_id": 1
+      "partner_id": 1,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3,
@@ -100,7 +104,11 @@
         "selectedCount": 0,
         "applicationRate": 0.15
       },
-      "partner_id": 1
+      "partner_id": 1,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 5,
@@ -153,7 +161,11 @@
         "selectedCount": 0,
         "applicationRate": 0.36
       },
-      "partner_id": 2
+      "partner_id": 2,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 6,
@@ -202,7 +214,11 @@
         "selectedCount": 0,
         "applicationRate": 0
       },
-      "partner_id": 1
+      "partner_id": 1,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 7,
@@ -255,7 +271,11 @@
         "selectedCount": 0,
         "applicationRate": 0
       },
-      "partner_id": 1
+      "partner_id": 1,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 961,
@@ -313,7 +333,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "contact_phone": "010-1234-5678",
-      "promotionLink": "https://blog.naver.com/delivery-promo-1"
+      "promotionLink": "https://blog.naver.com/delivery-promo-1",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 962,
@@ -371,7 +395,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "contact_phone": "010-1234-5678",
-      "promotionLink": "https://www.instagram.com/delivery_promo_2"
+      "promotionLink": "https://www.instagram.com/delivery_promo_2",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 963,
@@ -429,7 +457,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "contact_phone": "010-1234-5678",
-      "promotionLink": "https://blog.naver.com/delivery-promo-3"
+      "promotionLink": "https://blog.naver.com/delivery-promo-3",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 964,
@@ -488,7 +520,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "contact_phone": "010-1234-5678",
-      "promotionLink": "https://www.youtube.com/@delivery-promo-4"
+      "promotionLink": "https://www.youtube.com/@delivery-promo-4",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 965,
@@ -535,7 +571,7 @@
       "metrics": {
         "appliedCount": 45,
         "selectedCount": 10,
-        "applicationRate": 3.0
+        "applicationRate": 3
       },
       "partner_id": 1,
       "additionalPoint": 20000,
@@ -543,7 +579,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 966,
@@ -602,7 +642,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "contact_phone": "010-1234-5678",
-      "promotionLink": "https://blog.naver.com/delivery-promo-5"
+      "promotionLink": "https://blog.naver.com/delivery-promo-5",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 967,
@@ -661,7 +705,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "contact_phone": "010-1234-5678",
-      "promotionLink": "https://blog.naver.com/delivery-promo-1"
+      "promotionLink": "https://blog.naver.com/delivery-promo-1",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 968,
@@ -720,7 +768,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.instagram.com/delivery_promo_2",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 969,
@@ -778,7 +830,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-3",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 970,
@@ -836,7 +892,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.youtube.com/@delivery-promo-4",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 972,
@@ -894,7 +954,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-5",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 973,
@@ -952,7 +1016,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-1",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1001,
@@ -1013,7 +1081,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1002,
@@ -1074,7 +1146,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1003,
@@ -1135,7 +1211,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1004,
@@ -1196,7 +1276,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1005,
@@ -1257,7 +1341,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1006,
@@ -1318,7 +1406,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1007,
@@ -1379,7 +1471,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1008,
@@ -1440,7 +1536,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1009,
@@ -1501,7 +1601,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1010,
@@ -1562,7 +1666,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1011,
@@ -1623,7 +1731,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1012,
@@ -1684,7 +1796,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 1013,
@@ -1745,7 +1861,11 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2001,
@@ -1805,7 +1925,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-06-01 ~ 2026-07-02",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2002,
@@ -1865,7 +1989,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-03-01 ~ 2026-04-07",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2003,
@@ -1925,7 +2053,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-03-01 ~ 2026-04-07",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2004,
@@ -1985,7 +2117,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-03-15 ~ 2026-04-17",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2005,
@@ -2045,7 +2181,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-01-15 ~ 2025-11-17",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2006,
@@ -2105,7 +2245,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-03-15 ~ 2026-04-17",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2007,
@@ -2165,7 +2309,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-01-28 ~ 2026-01-07",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2008,
@@ -2225,7 +2373,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-03-05 ~ 2025-11-27",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2009,
@@ -2285,7 +2437,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2025-12-28 ~ 2025-12-05",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2010,
@@ -2345,7 +2501,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-03-10 ~ 2025-11-22",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2011,
@@ -2405,7 +2565,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-01-15 ~ 2026-03-07",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2012,
@@ -2465,7 +2629,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-01-13 ~ 2026-01-28",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 2013,
@@ -2525,7 +2693,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-01-12 ~ 2026-01-03",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3001,
@@ -2583,7 +2755,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://example.com/tech-product",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3002,
@@ -2641,7 +2817,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://example.com/beauty-product",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3003,
@@ -2699,7 +2879,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-1",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3004,
@@ -2757,7 +2941,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.instagram.com/reporter_promo_2",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3005,
@@ -2815,7 +3003,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-3",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3006,
@@ -2873,7 +3065,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.youtube.com/@reporter-promo-4",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3007,
@@ -2931,7 +3127,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-5",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3008,
@@ -2989,7 +3189,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-1",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3009,
@@ -3047,7 +3251,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.instagram.com/reporter_promo_2",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3010,
@@ -3105,7 +3313,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-3",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3011,
@@ -3163,7 +3375,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/example-beauty-trend",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 3012,
@@ -3221,7 +3437,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://example.com/digital-product",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4001,
@@ -3283,7 +3503,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-1",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4002,
@@ -3345,7 +3569,11 @@
       "promotionLink": "https://www.instagram.com/mission_promo_2",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4003,
@@ -3406,7 +3634,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-3",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4004,
@@ -3467,7 +3699,11 @@
       "promotionLink": "https://www.youtube.com/@mission-promo-4",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4005,
@@ -3528,7 +3764,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-5",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4006,
@@ -3589,7 +3829,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-1",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4012,
@@ -3650,7 +3894,11 @@
       "promotionLink": "https://www.instagram.com/mission_promo_2",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4007,
@@ -3711,7 +3959,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-3",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4008,
@@ -3772,7 +4024,11 @@
       "promotionLink": "https://www.youtube.com/@mission-promo-4",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4009,
@@ -3833,7 +4089,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-5",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4010,
@@ -3894,7 +4154,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-1",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4011,
@@ -3956,7 +4220,11 @@
       "promotionLink": "https://www.instagram.com/mission_promo_2",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4013,
@@ -4018,7 +4286,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-3",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4014,
@@ -4079,7 +4351,11 @@
       "promotionLink": "https://www.youtube.com/@mission-promo-4",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4015,
@@ -4141,7 +4417,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-5",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4016,
@@ -4205,7 +4485,11 @@
       "allowLateSubmission": true,
       "contact_phone": "010-4567-8901",
       "visitAddress": "서울특별시 강남구 강남대로 396",
-      "visitLink": "https://naver.me/ABC4016"
+      "visitLink": "https://naver.me/ABC4016",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4017,
@@ -4262,7 +4546,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.instagram.com/delivery_promo_2",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4018,
@@ -4324,7 +4612,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-03-01 ~ 2026-04-02",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4019,
@@ -4381,7 +4673,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-3",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4020,
@@ -4440,7 +4736,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-1",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4021,
@@ -4499,7 +4799,11 @@
       "promotionLink": "https://www.instagram.com/mission_promo_2",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4022,
@@ -4558,7 +4862,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-3",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4023,
@@ -4617,7 +4925,11 @@
       "promotionLink": "https://www.youtube.com/@mission-promo-4",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4024,
@@ -4674,7 +4986,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.youtube.com/@reporter-promo-4",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4025,
@@ -4737,7 +5053,11 @@
       "allowLateSubmission": true,
       "contact_phone": "010-3456-7890",
       "visitAddress": "전라북도 전주시 완산구 기린대로 99",
-      "visitLink": "https://naver.me/ABC4025"
+      "visitLink": "https://naver.me/ABC4025",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4026,
@@ -4798,7 +5118,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-07-01 ~ 2026-08-02",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4027,
@@ -4855,7 +5179,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-5",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4028,
@@ -4919,7 +5247,11 @@
       "allowLateSubmission": true,
       "contact_phone": "010-1234-5678",
       "visitAddress": "서울특별시 강남구 테헤란로 152",
-      "visitLink": "https://naver.me/ABC4028"
+      "visitLink": "https://naver.me/ABC4028",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4029,
@@ -4980,7 +5312,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-07-01 ~ 2026-08-02",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4030,
@@ -5041,7 +5377,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-07-01 ~ 2026-08-02",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4031,
@@ -5105,7 +5445,11 @@
       "allowLateSubmission": true,
       "contact_phone": "010-4567-8901",
       "visitAddress": "서울특별시 성동구 연무장5가길 7",
-      "visitLink": "https://naver.me/ABC4031"
+      "visitLink": "https://naver.me/ABC4031",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4032,
@@ -5162,7 +5506,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.youtube.com/@delivery-promo-4",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4033,
@@ -5223,7 +5571,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-08-01 ~ 2026-09-02",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4034,
@@ -5282,7 +5634,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-5",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4035,
@@ -5339,7 +5695,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-5",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4036,
@@ -5400,7 +5760,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-05-01 ~ 2026-06-02",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4037,
@@ -5459,7 +5823,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-1",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4038,
@@ -5518,7 +5886,11 @@
       "promotionLink": "https://www.instagram.com/mission_promo_2",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4039,
@@ -5575,7 +5947,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-1",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4040,
@@ -5632,7 +6008,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-1",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4041,
@@ -5689,7 +6069,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.instagram.com/reporter_promo_2",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4042,
@@ -5746,7 +6130,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.instagram.com/delivery_promo_2",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4043,
@@ -5809,7 +6197,11 @@
       "allowLateSubmission": true,
       "contact_phone": "010-1234-5678",
       "visitAddress": "서울특별시 성동구 성수이로 93",
-      "visitLink": "https://naver.me/ABC4043"
+      "visitLink": "https://naver.me/ABC4043",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4044,
@@ -5872,7 +6264,11 @@
       "allowLateSubmission": true,
       "contact_phone": "010-2345-6789",
       "visitAddress": "경기도 성남시 분당구 판교역로 235",
-      "visitLink": "https://naver.me/ABC4044"
+      "visitLink": "https://naver.me/ABC4044",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4045,
@@ -5929,7 +6325,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-3",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4046,
@@ -5990,7 +6390,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-04-01 ~ 2026-05-02",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4047,
@@ -6051,7 +6455,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-08-01 ~ 2026-09-02",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4048,
@@ -6108,7 +6516,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-3",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4049,
@@ -6169,7 +6581,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-05-01 ~ 2026-06-02",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4050,
@@ -6228,7 +6644,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-3",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4051,
@@ -6291,7 +6711,11 @@
       "allowLateSubmission": true,
       "contact_phone": "010-4567-8901",
       "visitAddress": "경상북도 경주시 첨성로 133",
-      "visitLink": "https://naver.me/ABC4051"
+      "visitLink": "https://naver.me/ABC4051",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4052,
@@ -6352,7 +6776,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-03-01 ~ 2026-04-02",
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4053,
@@ -6411,7 +6839,11 @@
       "promotionLink": "https://www.youtube.com/@mission-promo-4",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4054,
@@ -6468,7 +6900,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.youtube.com/@delivery-promo-4",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4055,
@@ -6525,7 +6961,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-5",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4056,
@@ -6582,7 +7022,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/delivery-promo-1",
-      "contact_phone": "010-4567-8901"
+      "contact_phone": "010-4567-8901",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4057,
@@ -6641,7 +7085,11 @@
       "promotionLink": "https://blog.naver.com/mission-promo-5",
       "requireContentLink": true,
       "requireContentImage": true,
-      "contact_phone": "010-5678-9012"
+      "contact_phone": "010-5678-9012",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4058,
@@ -6702,7 +7150,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "purchasePeriod": "2026-04-01 ~ 2026-05-02",
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4059,
@@ -6759,7 +7211,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://www.youtube.com/@reporter-promo-4",
-      "contact_phone": "010-2345-6789"
+      "contact_phone": "010-2345-6789",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "id": 4060,
@@ -6816,7 +7272,11 @@
       "allowReParticipation": true,
       "allowLateSubmission": true,
       "promotionLink": "https://blog.naver.com/reporter-promo-5",
-      "contact_phone": "010-3456-7890"
+      "contact_phone": "010-3456-7890",
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "type": "DELIVERY",
@@ -6868,7 +7328,11 @@
       "partner_id": 1,
       "additionalPoint": 10000,
       "selectedCount": 0,
-      "id": 4061
+      "id": 4061,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "type": "DELIVERY",
@@ -6920,7 +7384,11 @@
       "partner_id": 1,
       "additionalPoint": 10000,
       "selectedCount": 0,
-      "id": 4062
+      "id": 4062,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "type": "VISIT",
@@ -6972,7 +7440,11 @@
       "partner_id": 1,
       "additionalPoint": 10000,
       "selectedCount": 0,
-      "id": 4063
+      "id": 4063,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     },
     {
       "type": "DELIVERY",
@@ -7193,6 +7665,168 @@
       "additionalPoint": 0,
       "selectedCount": 0,
       "id": 4067
+    },
+    {
+      "id": 9901,
+      "campaignId": 9901,
+      "type": "DELIVERY",
+      "status": "EMERGENCY",
+      "isEmergency": true,
+      "title": "[긴급] 수분 크림 블로그 리뷰 캠페인",
+      "thumbnailUrl": "/images/main/campaign_img/eximg_1.png",
+      "thumbnail": {
+        "url": "/images/main/campaign_img/eximg_1.png"
+      },
+      "category": {
+        "categoryId": 1,
+        "categoryName": "뷰티"
+      },
+      "requiredPlatform": {
+        "channelId": 1,
+        "channelName": "NAVER_BLOG"
+      },
+      "recruitLimit": 10,
+      "appliedCount": 7,
+      "recruit": {
+        "recruitLimit": 10,
+        "recruitStartAt": "2026-03-10T00:00:00+09:00",
+        "recruitEndAt": "2026-03-20T23:59:59+09:00"
+      },
+      "content": {
+        "contentStartAt": "2026-03-21T00:00:00+09:00",
+        "contentEndAt": "2026-04-04T23:59:59+09:00"
+      },
+      "reward": {
+        "extraRewardPoint": 30000,
+        "paymentRewardPoint": 0
+      },
+      "keywordPolicy": {
+        "keyword": "스킨케어, 수분크림, 뷰티",
+        "minTextLength": 500,
+        "minPhotoCount": 3,
+        "requireBodyLink": false
+      },
+      "notification": "제품 수령 후 7일 이내 리뷰를 등록해주세요.",
+      "description": "촉촉한 수분 크림을 직접 체험하고 솔직한 후기를 남겨주세요.",
+      "metrics": {
+        "appliedCount": 7,
+        "selectedCount": 0,
+        "applicationRate": 0.7
+      },
+      "partnerName": "스킨푸드",
+      "partner_id": 1,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
+    },
+    {
+      "id": 9902,
+      "campaignId": 9902,
+      "type": "DELIVERY",
+      "status": "EMERGENCY",
+      "isEmergency": true,
+      "title": "[긴급] 봄 신상 인스타그램 리뷰",
+      "thumbnailUrl": "/images/main/campaign_img/eximg_1.png",
+      "thumbnail": {
+        "url": "/images/main/campaign_img/eximg_1.png"
+      },
+      "category": {
+        "categoryId": 2,
+        "categoryName": "패션"
+      },
+      "requiredPlatform": {
+        "channelId": 3,
+        "channelName": "INSTAGRAM"
+      },
+      "recruitLimit": 5,
+      "appliedCount": 3,
+      "recruit": {
+        "recruitLimit": 5,
+        "recruitStartAt": "2026-03-12T00:00:00+09:00",
+        "recruitEndAt": "2026-03-22T23:59:59+09:00"
+      },
+      "content": {
+        "contentStartAt": "2026-03-23T00:00:00+09:00",
+        "contentEndAt": "2026-04-06T23:59:59+09:00"
+      },
+      "reward": {
+        "extraRewardPoint": 50000,
+        "paymentRewardPoint": 0
+      },
+      "keywordPolicy": {
+        "keyword": "올리브영, 봄신상, 패션",
+        "minTextLength": 300,
+        "minPhotoCount": 5,
+        "requireBodyLink": true
+      },
+      "notification": "인스타그램 게시물에 #올리브영 #봄신상 태그를 반드시 포함해주세요.",
+      "description": "올리브영 봄 신상품을 체험하고 인스타그램에 솔직한 후기를 올려주세요.",
+      "metrics": {
+        "appliedCount": 3,
+        "selectedCount": 0,
+        "applicationRate": 0.6
+      },
+      "partnerName": "올리브영",
+      "partner_id": 2,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
+    },
+    {
+      "id": 9903,
+      "campaignId": 9903,
+      "type": "MISSION",
+      "status": "EMERGENCY",
+      "isEmergency": true,
+      "title": "[긴급] 그린티 세럼 유튜브 리뷰",
+      "thumbnailUrl": "/images/main/campaign_img/eximg_1.png",
+      "thumbnail": {
+        "url": "/images/main/campaign_img/eximg_1.png"
+      },
+      "category": {
+        "categoryId": 1,
+        "categoryName": "뷰티"
+      },
+      "requiredPlatform": {
+        "channelId": 4,
+        "channelName": "YOUTUBE"
+      },
+      "recruitLimit": 3,
+      "appliedCount": 2,
+      "recruit": {
+        "recruitLimit": 3,
+        "recruitStartAt": "2026-03-14T00:00:00+09:00",
+        "recruitEndAt": "2026-03-24T23:59:59+09:00"
+      },
+      "content": {
+        "contentStartAt": "2026-03-25T00:00:00+09:00",
+        "contentEndAt": "2026-04-08T23:59:59+09:00"
+      },
+      "reward": {
+        "extraRewardPoint": 80000,
+        "paymentRewardPoint": 0
+      },
+      "keywordPolicy": {
+        "keyword": "이니스프리, 그린티, 세럼",
+        "minTextLength": 800,
+        "minPhotoCount": 0,
+        "requireBodyLink": false
+      },
+      "notification": "영상 길이 5분 이상, 제품 사용 전후 비교 장면을 포함해주세요.",
+      "description": "이니스프리 그린티 세럼을 직접 사용하고 유튜브에 상세한 리뷰 영상을 올려주세요.",
+      "metrics": {
+        "appliedCount": 2,
+        "selectedCount": 0,
+        "applicationRate": 0.67
+      },
+      "partnerName": "이니스프리",
+      "partner_id": 1,
+      "detailImages": [
+        "/images/campaign_detail/exdetail_1.png",
+        "/images/campaign_detail/exdetail_2.png"
+      ]
     }
   ],
   "campaign_applications": [
@@ -7855,7 +8489,7 @@
       "id": 1,
       "number": "000001",
       "name": "오은영",
-      "nickname": "updated_nick",
+      "nickname": "양치하는고양이",
       "gender": "남성",
       "age": 37,
       "email": "oheunyoung@naver.com",
@@ -7866,6 +8500,28 @@
         "Clip",
         "Instagram",
         "Youtube"
+      ],
+      "channel_details": [
+        {
+          "name": "네이버 블로그",
+          "url": "https://blog.naver.com/catbrushing",
+          "status": "connected"
+        },
+        {
+          "name": "네이버 클립",
+          "url": "",
+          "status": "disconnected"
+        },
+        {
+          "name": "인스타그램",
+          "url": "https://instagram.com/cat_brushing",
+          "status": "connected"
+        },
+        {
+          "name": "유튜브",
+          "url": "",
+          "status": "disconnected"
+        }
       ],
       "type": "일반",
       "campaign_participated": 0,
@@ -7878,7 +8534,8 @@
       "bank": "KB국민은행",
       "account_holder": "오은영",
       "last_access_date": "2026-01-15 14:30",
-      "join_date": "2025-12-05 10:20"
+      "join_date": "2025-12-05 10:20",
+      "profile_image": "/images/mypage/profile.svg"
     },
     {
       "id": 2,
@@ -7896,6 +8553,28 @@
         "Instagram",
         "Youtube"
       ],
+      "channel_details": [
+        {
+          "name": "네이버 블로그",
+          "url": "https://blog.naver.com/eunji",
+          "status": "connected"
+        },
+        {
+          "name": "네이버 클립",
+          "url": "https://m.naver.com/@eunji_clip",
+          "status": "connected"
+        },
+        {
+          "name": "인스타그램",
+          "url": "https://instagram.com/eunji_blog",
+          "status": "connected"
+        },
+        {
+          "name": "유튜브",
+          "url": "https://youtube.com/@eunji",
+          "status": "connected"
+        }
+      ],
       "type": "일반",
       "campaign_participated": 17,
       "campaign_completed": 4,
@@ -7910,7 +8589,10 @@
       "join_date": "2025-12-12 14:30",
       "account_number": "00002469134000",
       "ssn_front": "820303",
-      "ssn_back": "2******"
+      "ssn_back": "2******",
+      "postal_code": "06590",
+      "detail_address": "",
+      "profile_image": "/images/mypage/profile.svg"
     },
     {
       "id": 3,
@@ -9387,7 +10069,8 @@
       "view_count": 0,
       "registered_date": "2026-03-11 16:10",
       "registered_by": "관리자 C",
-      "is_pinned": false
+      "is_pinned": false,
+      "content": "<p>스타일씨 공식 홈페이지에 나오는 체험단 필터링이 리뉴얼되었습니다.</p><p><strong>리뉴얼 내용</strong></p><p>- 카테고리별 필터링 기능 개선</p><p>- 검색 기능 강화</p><p>- 체험단 목록 UI 개선</p><p>더욱 편리하게 원하는 체험단을 찾을 수 있습니다.</p>"
     },
     {
       "id": "12",
@@ -9507,7 +10190,8 @@
       "view_count": 0,
       "registered_date": "2026-03-18 09:30",
       "registered_by": "관리자 C",
-      "is_pinned": false
+      "is_pinned": false,
+      "content": "<p>[캠페인] 이미 신청한 캠페인을 취소하고 다시 신청할 수 있나요?에 대한 내용입니다.</p>"
     },
     {
       "id": "22",
