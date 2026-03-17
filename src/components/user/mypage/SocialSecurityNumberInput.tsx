@@ -26,6 +26,8 @@ interface SocialSecurityNumberInputProps {
   onSsnFrontChange: (value: string) => void;
   /** 뒷자리 변경 핸들러 */
   onSsnBackChange: (value: string) => void;
+  /** 에러 메시지 (I_E9) */
+  error?: string;
 }
 
 /**
@@ -36,6 +38,7 @@ export default function SocialSecurityNumberInput({
   ssnBack,
   onSsnFrontChange,
   onSsnBackChange,
+  error,
 }: SocialSecurityNumberInputProps) {
   /**
    * 뒷자리 마스킹 처리
@@ -110,6 +113,7 @@ export default function SocialSecurityNumberInput({
           />
         </div>
       </div>
+      {error && <p style={{ color: "#ff4d4f", fontSize: "14px", marginTop: "8px" }}>{error}</p>}
     </article>
   );
 }

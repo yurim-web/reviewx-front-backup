@@ -26,8 +26,8 @@ import layoutStyles from "@/styles/user/mypage/mypage_layout.module.css";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, logout } = useAuth();
-  const { data: profile } = useReviewerProfile(user?.id);
+  const { user, logout, isLoading: isAuthLoading } = useAuth();
+  const { data: profile, isLoading, error } = useReviewerProfile(user?.id);
 
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
   const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">("profile");
@@ -37,6 +37,21 @@ export default function ProfilePage() {
 
   const [memberType, setMemberType] = useState<"reviewer" | "partner">("reviewer");
   const [showPartnerInfoModal, setShowPartnerInfoModal] = useState(false);
+  const [showServerErrorModal, setShowServerErrorModal] = useState(false);
+
+  // 비로그인 시 리디렉트 (로딩 완료 후에만)
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.push("/user/login");
+    }
+  }, [isAuthLoading, user, router]);
+
+  // 서버 오류 처리
+  useEffect(() => {
+    if (error) {
+      setShowServerErrorModal(true);
+    }
+  }, [error]);
 
   // 서버 프로필에서 유저 정보 로드
   useEffect(() => {
@@ -96,6 +111,26 @@ export default function ProfilePage() {
     setMemberType(type);
   };
 
+  // 로딩 중
+  if (isLoading) {
+    return (
+      <div className={layoutStyles.mypage_container}>
+        <main className={layoutStyles.main_content}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "400px",
+            }}
+          >
+            로딩 중...
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className={layoutStyles.mypage_container}>
       <main className={layoutStyles.main_content}>
@@ -119,6 +154,7 @@ export default function ProfilePage() {
           onMemberTypeChange={handleMemberTypeChange}
         />
 
+        {/* 파트너 정보 없음 모달 */}
         <BaseModal
           is_open={showPartnerInfoModal}
           on_close={() => setShowPartnerInfoModal(false)}
@@ -128,6 +164,20 @@ export default function ProfilePage() {
           on_confirm={() => {
             setShowPartnerInfoModal(false);
             router.push("/user/mypage/edit");
+          }}
+          type="center"
+        />
+
+        {/* E_M5: 서버 오류 모달 */}
+        <BaseModal
+          is_open={showServerErrorModal}
+          on_close={() => setShowServerErrorModal(false)}
+          message="일시적인 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+          buttons={["닫기", "재시도"]}
+          on_cancel={() => setShowServerErrorModal(false)}
+          on_confirm={() => {
+            setShowServerErrorModal(false);
+            window.location.reload();
           }}
           type="center"
         />

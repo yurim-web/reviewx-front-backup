@@ -13,7 +13,10 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
 import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import inputStyles from "../../../../styles/user/mypage/edit_profile/inputs.module.css";
 import buttonStyles from "../../../../styles/user/mypage/edit_profile/profile_buttons.module.css";
@@ -26,12 +29,32 @@ import AccountInfoInput from "@/components/user/mypage/AccountInfoInput";
 import SocialSecurityNumberInput from "@/components/user/mypage/SocialSecurityNumberInput";
 import WithdrawModals from "@/components/common/mypage/WithdrawModals";
 import Toast from "@/components/common/toast/Toast";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { useWithdrawFlow } from "@/hooks/useWithdrawFlow";
 import { useEditProfile } from "@/hooks/user/mypage/useEditProfile";
 import { BANK_OPTIONS } from "@/utils/constants/bank";
 
 export default function EditProfilePage() {
   const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const { isLoading, error } = useReviewerProfile(user?.id);
+
+  const [showServerErrorModal, setShowServerErrorModal] = useState(false);
+  const [ssnError, setSsnError] = useState("");
+
+  // 비로그인 시 리디렉트 (로딩 완료 후에만)
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.push("/user/login");
+    }
+  }, [isAuthLoading, user, router]);
+
+  // 서버 오류 처리
+  useEffect(() => {
+    if (error) {
+      setShowServerErrorModal(true);
+    }
+  }, [error]);
 
   const {
     formData,
@@ -75,6 +98,27 @@ export default function EditProfilePage() {
       return false;
     },
   });
+
+  // 로딩 중
+  if (isLoading) {
+    return (
+      <div className={layoutStyles.edit_profile_container}>
+        <SubHeader />
+        <main className={layoutStyles.main_content}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "400px",
+            }}
+          >
+            로딩 중...
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className={layoutStyles.edit_profile_container}>
@@ -183,8 +227,15 @@ export default function EditProfilePage() {
           <SocialSecurityNumberInput
             ssnFront={formData.ssnFront}
             ssnBack={formData.ssnBack}
-            onSsnFrontChange={(value) => setFormData((prev) => ({ ...prev, ssnFront: value }))}
-            onSsnBackChange={(value) => setFormData((prev) => ({ ...prev, ssnBack: value }))}
+            onSsnFrontChange={(value) => {
+              setFormData((prev) => ({ ...prev, ssnFront: value }));
+              setSsnError("");
+            }}
+            onSsnBackChange={(value) => {
+              setFormData((prev) => ({ ...prev, ssnBack: value }));
+              setSsnError("");
+            }}
+            error={ssnError}
           />
 
           <div className={buttonStyles.withdraw_button_container}>
@@ -216,6 +267,7 @@ export default function EditProfilePage() {
         buttonVariant="red"
       />
 
+      {/* T_M3: 저장 완료 토스트 */}
       <Toast
         message="저장되었습니다."
         isOpen={showToast}
@@ -224,6 +276,20 @@ export default function EditProfilePage() {
           router.back();
         }}
         duration={2000}
+      />
+
+      {/* E_M5: 서버 오류 모달 */}
+      <BaseModal
+        is_open={showServerErrorModal}
+        on_close={() => setShowServerErrorModal(false)}
+        message="일시적인 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+        buttons={["닫기", "재시도"]}
+        on_cancel={() => setShowServerErrorModal(false)}
+        on_confirm={() => {
+          setShowServerErrorModal(false);
+          window.location.reload();
+        }}
+        type="center"
       />
     </div>
   );

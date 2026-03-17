@@ -14,11 +14,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
+import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ChannelSection from "@/components/user/mypage/ChannelSection";
 import SubHeader from "@/components/fragments/SubHeader";
+import BaseModal from "@/components/common/modal/BaseModal";
 import type { MainTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/mypage/mypage_layout.module.css";
 import { useAuth } from "@/hooks/useAuth";
@@ -37,13 +38,31 @@ const DEFAULT_CHANNELS = [
 ];
 
 export default function ChannelPage() {
-  const { user } = useAuth();
-  const { data: profile } = useReviewerProfile(user?.id);
+  const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const { data: profile, isLoading, error } = useReviewerProfile(user?.id);
   const invalidateProfile = useInvalidateReviewerProfile();
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
   const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">("channel");
 
   const [showSubHeader, setShowSubHeader] = useState(false);
+  const [showChannelCompleteModal, setShowChannelCompleteModal] = useState(false);
+  const [showServerErrorModal, setShowServerErrorModal] = useState(false);
+  const [channelError, setChannelError] = useState<string>("");
+
+  // 비로그인 시 리디렉트 (로딩 완료 후에만)
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.push("/user/login");
+    }
+  }, [isAuthLoading, user, router]);
+
+  // 서버 오류 처리
+  useEffect(() => {
+    if (error) {
+      setShowServerErrorModal(true);
+    }
+  }, [error]);
 
   useEffect(() => {
     const shouldShow = sessionStorage.getItem("showSubHeader");
@@ -87,12 +106,19 @@ export default function ChannelPage() {
   };
 
   const handleChannelUpdate = (channelName: string, channelInfo: { url: string }) => {
+    // 간단한 URL 유효성 검사
+    if (channelInfo.url && !channelInfo.url.startsWith("http")) {
+      setChannelError("올바른 URL 형식이 아닙니다. http:// 또는 https://로 시작해야 합니다.");
+      return;
+    }
+
     const updatedChannels = channels.map((channel) =>
       channel.name === channelName
         ? { ...channel, url: channelInfo.url, status: "connected" as const }
         : channel
     );
     setChannels(updatedChannels);
+    setChannelError("");
 
     // 서버에 채널 정보 저장
     const reviewerIdNum = getReviewerIdNum(user?.id);
@@ -104,12 +130,51 @@ export default function ChannelPage() {
           status: ch.status,
         })),
       })
-        .then(() => invalidateProfile(user?.id))
-        .catch((_apiError) => {
-          console.error("채널 수정 API 호출 실패:", _apiError);
+        .then(() => {
+          invalidateProfile(user?.id);
+          // C_M6: 채널 연결 완료 모달
+          setShowChannelCompleteModal(true);
+        })
+        .catch((apiError) => {
+          // 에러 처리
+          if (apiError?.response?.status === 400) {
+            const errorCode = apiError?.response?.data?.error;
+            if (errorCode === "INVALID_CHANNEL") {
+              setChannelError("유효하지 않은 채널입니다.");
+            } else if (errorCode === "MISSING_REQUIRED_FIELD") {
+              setChannelError("필수 항목이 입력되지 않았습니다.");
+            } else {
+              setChannelError("채널 정보를 저장할 수 없습니다.");
+            }
+          } else if (apiError?.response?.status === 500) {
+            setShowServerErrorModal(true);
+          } else {
+            setChannelError("채널 정보를 저장하는 중 오류가 발생했습니다.");
+          }
         });
     }
   };
+
+  // 로딩 중
+  if (isLoading) {
+    return (
+      <div className={layoutStyles.mypage_container}>
+        {showSubHeader && <SubHeader />}
+        <main className={layoutStyles.main_content}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "400px",
+            }}
+          >
+            로딩 중...
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className={layoutStyles.mypage_container}>
@@ -125,7 +190,35 @@ export default function ChannelPage() {
           availableTabs={["profile", "channel"]}
         />
 
-        <ChannelSection channels={channels} onChannelUpdate={handleChannelUpdate} />
+        <ChannelSection
+          channels={channels}
+          onChannelUpdate={handleChannelUpdate}
+          error={channelError}
+        />
+
+        {/* C_M6: 채널 연결 완료 모달 */}
+        <BaseModal
+          is_open={showChannelCompleteModal}
+          on_close={() => setShowChannelCompleteModal(false)}
+          message="채널이 연결되었습니다."
+          buttons={["확인"]}
+          on_confirm={() => setShowChannelCompleteModal(false)}
+          type="center"
+        />
+
+        {/* E_M5: 서버 오류 모달 */}
+        <BaseModal
+          is_open={showServerErrorModal}
+          on_close={() => setShowServerErrorModal(false)}
+          message="일시적인 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+          buttons={["닫기", "재시도"]}
+          on_cancel={() => setShowServerErrorModal(false)}
+          on_confirm={() => {
+            setShowServerErrorModal(false);
+            window.location.reload();
+          }}
+          type="center"
+        />
       </main>
     </div>
   );

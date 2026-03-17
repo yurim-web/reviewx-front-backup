@@ -33,6 +33,8 @@ interface ChannelSectionProps {
   onChannelUpdate: (channelName: string, channelInfo: { url: string }) => void;
   /** 채널 아이콘 함수 (미전달 시 내부 CHANNEL_ICON_MAP 사용) */
   getChannelIcon?: (channelName: string) => string;
+  /** 에러 메시지 (C_E1~5) */
+  error?: string;
 }
 
 const CHANNEL_ICON_MAP: Record<string, string> = {
@@ -49,6 +51,7 @@ export default function ChannelSection({
   channels,
   onChannelUpdate,
   getChannelIcon: getChannelIconProp,
+  error,
 }: ChannelSectionProps) {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const channelModal = useModalState();
@@ -78,6 +81,18 @@ export default function ChannelSection({
   return (
     <>
       <div className={styles.channel_section}>
+        {error && (
+          <div
+            style={{
+              color: "#ff4d4f",
+              fontSize: "14px",
+              marginBottom: "16px",
+              textAlign: "center",
+            }}
+          >
+            {error}
+          </div>
+        )}
         <div className={styles.channel_grid}>
           {channels.map((channel) => (
             <div key={channel.name} className={styles.channel_item}>

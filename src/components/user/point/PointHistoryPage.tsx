@@ -28,6 +28,7 @@ import { MainTab, PointTab, PointHistory } from "@/types/domain/user";
 import { pointHistoryData } from "@/data/user/point/pointData";
 import { useAuth } from "@/hooks/useAuth";
 import { usePointData } from "@/hooks/user/point/usePointData";
+import Loading from "@/app/loading";
 import styles from "@/styles/user/point/point.module.css";
 
 type FilterFunction = (history: PointHistory) => boolean;
@@ -45,7 +46,20 @@ export default function PointHistoryPage({
 }: PointHistoryPageProps) {
   const router = useRouter();
   const { user } = useAuth();
-  const { pointInfo, userPointHistory, pendingPointList, isAccountInfoValid } = usePointData();
+  const { pointInfo, userPointHistory, pendingPointList, isAccountInfoValid, isLoading, isError } =
+    usePointData();
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  useEffect(() => {
+    if (isError) setShowErrorModal(true);
+  }, [isError]);
+
+  // 로그인 체크
+  useEffect(() => {
+    if (typeof window !== "undefined" && !user) {
+      router.push("/user/login");
+    }
+  }, [user, router]);
 
   const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
   const rejectionModal = useModalState();
@@ -101,6 +115,8 @@ export default function PointHistoryPage({
     rejectionModal.close();
     setSelectedRejectionReason("");
   };
+
+  if (isLoading) return <Loading />;
 
   // ========================================
   // 데이터 필터링 및 정렬
@@ -332,6 +348,14 @@ export default function PointHistoryPage({
         buttons={["취소", "등록"]}
         on_confirm={handleGoToAccountRegistration}
         type="center"
+      />
+
+      {/* 서버 오류 모달 (E_M5) */}
+      <BaseModal
+        is_open={showErrorModal}
+        on_close={() => setShowErrorModal(false)}
+        message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
+        buttons={["확인"]}
       />
     </div>
   );
