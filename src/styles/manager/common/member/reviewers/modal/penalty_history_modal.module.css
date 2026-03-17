@@ -168,6 +168,9 @@
   text-align: left;
   display: flex;
   align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* 빈 상태 컨테이너 */
