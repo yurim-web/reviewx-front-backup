@@ -35,14 +35,12 @@ export default function BlacklistInfoPage() {
   // 첫 번째 모달 상태: 회원 탈퇴 확인 모달
   // is_withdraw_confirm_modal_open: 확인 모달이 열려있는지 여부 (true/false)
   // set_is_withdraw_confirm_modal_open: 확인 모달 상태를 변경하는 함수
-  const [is_withdraw_confirm_modal_open, set_is_withdraw_confirm_modal_open] =
-    useState(false);
+  const [is_withdraw_confirm_modal_open, set_is_withdraw_confirm_modal_open] = useState(false);
 
   // 두 번째 모달 상태: 탈퇴 완료 모달
   // is_withdraw_complete_modal_open: 완료 모달이 열려있는지 여부 (true/false)
   // set_is_withdraw_complete_modal_open: 완료 모달 상태를 변경하는 함수
-  const [is_withdraw_complete_modal_open, set_is_withdraw_complete_modal_open] =
-    useState(false);
+  const [is_withdraw_complete_modal_open, set_is_withdraw_complete_modal_open] = useState(false);
 
   /**
    * 회원 탈퇴 버튼 클릭 핸들러
@@ -58,9 +56,7 @@ export default function BlacklistInfoPage() {
    * - 기본 동작을 막는 함수입니다.
    * - 여기서는 <a> 태그의 기본 동작(페이지 이동)을 막기 위해 사용합니다.
    */
-  const handle_withdraw_button_click = (
-    e: React.MouseEvent<HTMLAnchorElement>
-  ) => {
+  const handle_withdraw_button_click = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // 기본 동작 막기: <a> 태그의 href로 인한 페이지 이동을 막습니다.
     e.preventDefault();
     // 첫 번째 확인 모달 열기

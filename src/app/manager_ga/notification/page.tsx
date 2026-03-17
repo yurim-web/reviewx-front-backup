@@ -21,7 +21,7 @@ import SidebarMenuGA from "@/components/manager/ga/common/SidebarMenu";
 import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
 import "@/styles/manager_ga/layout.css";
-import { fetchAdminNotifications } from "@/lib/api/notification";
+import { fetchAdminNotifications, deleteAllAdminNotifications } from "@/lib/api/notification";
 import { mockManagerGANotifications } from "@/data/notification/notificationData";
 
 export default function ManagerGANotificationPage() {
@@ -46,7 +46,12 @@ export default function ManagerGANotificationPage() {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };
 
-  const handle_delete_all_click = () => {
+  const handle_delete_all_click = async () => {
+    try {
+      await deleteAllAdminNotifications();
+    } catch {
+      // 백엔드 미개발 시 무시하고 UI 반영
+    }
     setNotifications([]);
     set_is_delete_toast_open(true);
   };

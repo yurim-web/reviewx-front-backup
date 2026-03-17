@@ -11,12 +11,14 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import MainMenu from "@/components/main/MainMenu";
 import CampaignBox from "@/components/main/CampaignBox";
 import MainBannerSlider from "@/components/main/MainBannerSlider";
 import Footer from "@/components/main/Footer";
 import Titletext from "@/components/main/Titletext";
+import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/home/home.module.css";
 import { useHomeAutoLogin } from "@/hooks/home/useHomeAutoLogin";
 import { useHomeCampaigns } from "@/hooks/home/useHomeCampaigns";
@@ -38,7 +40,14 @@ export default function HomePageClient() {
     popular_campaigns,
     similar_campaigns,
     ongoing_campaigns,
+    isError,
   } = useHomeCampaigns();
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  useEffect(() => {
+    if (isError) setShowErrorModal(true);
+  }, [isError]);
 
   return (
     <>
@@ -47,10 +56,7 @@ export default function HomePageClient() {
 
       <article className={styles.container}>
         <section className={styles.main_banner_container}>
-          <MainBannerSlider
-            banners={MAIN_BANNERS}
-            autoSlideInterval={5000}
-          />
+          <MainBannerSlider banners={MAIN_BANNERS} autoSlideInterval={5000} />
         </section>
 
         <section className={styles.campaign_container}>
@@ -71,14 +77,16 @@ export default function HomePageClient() {
           </div>
         </section>
 
-        <section className={styles.campaign_container}>
-          <Titletext main_title="참여한 캠페인과 비슷한 캠페인" />
-          <div className={styles.campaign_grid}>
-            {similar_campaigns.map((campaign) => (
-              <CampaignBox key={campaign.id} campaign={campaign} />
-            ))}
-          </div>
-        </section>
+        {similar_campaigns.length > 0 && (
+          <section className={styles.campaign_container}>
+            <Titletext main_title="참여한 캠페인과 비슷한 캠페인" />
+            <div className={styles.campaign_grid}>
+              {similar_campaigns.map((campaign) => (
+                <CampaignBox key={campaign.id} campaign={campaign} />
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className={styles.campaign_container}>
           <Titletext main_title="진행 중인 캠페인" />
@@ -91,6 +99,13 @@ export default function HomePageClient() {
       </article>
 
       <Footer />
+
+      <BaseModal
+        is_open={showErrorModal}
+        on_close={() => setShowErrorModal(false)}
+        message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
+        buttons={["확인"]}
+      />
     </>
   );
 }
