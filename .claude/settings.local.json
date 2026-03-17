@@ -112,7 +112,34 @@
       "Bash(head -20 grep -rn useAuth c:/develop/reviewx-web/src/lib/ --include=*.ts -l)",
       "Bash(head -20 grep -rn 'interface AuthUser\\\\|type AuthUser' c:/develop/reviewx-web/src/ --include='*.ts' --include='*.tsx')",
       "Bash(head -15 grep -n 'login\\\\|setUser\\\\|id.*=\\\\|partner' c:/develop/reviewx-web/src/contexts/AuthContext.tsx)",
-      "Bash(head -5 grep -rn 'export.*getPartnerId\\\\|function getPartnerId' c:/develop/reviewx-web/src/ --include='*.ts' --include='*.tsx')"
+      "Bash(head -5 grep -rn 'export.*getPartnerId\\\\|function getPartnerId' c:/develop/reviewx-web/src/ --include='*.ts' --include='*.tsx')",
+      "Bash(taskkill /F /IM chrome.exe)",
+      "Bash(rm -rf \"C:/Users/청명/AppData/Local/ms-playwright/mcp-chrome-063df57\")",
+      "Bash(rm c:/develop/reviewx-web/scripts/upload_sa_screenshots_v2.js)",
+      "Bash(rm c:/develop/reviewx-web/docs/screenshots/sa_*.png)",
+      "Bash(ATLASSIAN_EMAIL=$ATLASSIAN_EMAIL ATLASSIAN_TOKEN=$ATLASSIAN_TOKEN node scripts/create_sa_posts_edit_page.js)",
+      "Bash(ATLASSIAN_EMAIL=$ATLASSIAN_EMAIL ATLASSIAN_TOKEN=$ATLASSIAN_TOKEN node -e \":*)",
+      "Bash(ATLASSIAN_EMAIL=$ATLASSIAN_EMAIL ATLASSIAN_TOKEN=$ATLASSIAN_TOKEN node scripts/update_sa_posts_edit_adf.js)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(k,v\\) for k,v in d.get\\(''''mcpServers'''',{}\\).get\\(''''atlassian-confluence'''',{}\\).get\\(''''env'''',{}\\).items\\(\\)]\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); mcp=d.get\\(''''mcpServers'''',{}\\); print\\(json.dumps\\({k: v.get\\(''''env'''',{}\\) for k,v in mcp.items\\(\\)}, indent=2\\)\\)\")",
+      "Bash(cmd.exe /c \"dir \"\"%APPDATA%\\\\Claude\"\" 2>&1\")",
+      "Bash(cmd.exe /c \"echo %APPDATA% && dir \"\"%APPDATA%\"\" 2>&1\")",
+      "Bash(ATLASSIAN_EMAIL=lyl5152@markx.dev ATLASSIAN_TOKEN=ATATT3xFfGF0yuuZ6PzJqQD-JO1ws_rsbFs_VblxIKNCuvyzypsA2E7o8KIvk3-8ZOTeJfw91__yzAdPU5Xl5-Y0hRhVWL29ksfP7TUJ0k6fgabbR_l89f31hpbOXzrDErmQL4XSzSxLYjbgGzT3TUF0wkVNO8HpdSsoiU1MJTCa2ncsmtmYex8=82F3B493 node scripts/upload_sa_campaign_progress_screenshot.js)",
+      "Bash(ATLASSIAN_EMAIL=$ATLASSIAN_EMAIL ATLASSIAN_TOKEN=$ATLASSIAN_TOKEN node scripts/fix_withdrawal_request.js)",
+      "Bash(ATLASSIAN_EMAIL=$ATLASSIAN_EMAIL ATLASSIAN_TOKEN=$ATLASSIAN_TOKEN node scripts/fix_broken_chars.js)",
+      "Bash(rm scripts/fix_broken_chars.js)",
+      "Bash(ATLASSIAN_EMAIL=$ATLASSIAN_EMAIL ATLASSIAN_TOKEN=$ATLASSIAN_TOKEN node scripts/fix_remaining.js)",
+      "Bash(rm scripts/fix_remaining.js)",
+      "Bash(ATLASSIAN_EMAIL=\"$ATLASSIAN_EMAIL\" ATLASSIAN_TOKEN=\"$ATLASSIAN_TOKEN\" node -e \":*)",
+      "Bash(echo $ATLASSIAN_EMAIL)",
+      "Bash(echo $ATLASSIAN_TOKEN)",
+      "Bash(cat -n c:/develop/reviewx-web/src/app/manager_sa/community/posts/[id]/page.tsx)",
+      "Bash(ATLASSIAN_EMAIL=lyl5152@markx.dev ATLASSIAN_TOKEN=ATATT3xFfGF0mkW5PlQLV1QJ9TG1ggSLQ1E8mqUHKheE77Ojk8Qbo9o7gnXweUS3LYFMYZwhVj2IOPdGA8qmVvGD8UjNCyNbcD_34Z272-YupF1hyV-GLU6WBLk7kyAB2-atGLPAFxhvrg0g7gT49ZuUmhlBIEOWn-70y9htpn7bkHL4Cl3nN1Y=1FD991FA node scripts/tmp_fix.js)",
+      "Bash(wmic process:*)",
+      "Bash(source /c/develop/reviewx-web/.env.atlassian)",
+      "Bash(export ATLASSIAN_EMAIL=lyl5152@markx.dev)",
+      "Bash(export ATLASSIAN_TOKEN=ATATT3xFfGF0yuuZ6PzJqQD-JO1ws_rsbFs_VblxIKNCuvyzypsA2E7o8KIvk3-8ZOTeJfw91__yzAdPU5Xl5-Y0hRhVWL29ksfP7TUJ0k6fgabbR_l89f31hpbOXzrDErmQL4XSzSxLYjbgGzT3TUF0wkVNO8HpdSsoiU1MJTCa2ncsmtmYex8=82F3B493)",
+      "Bash(git status:*)"
     ]
   },
   "hooks": {
@@ -127,29 +154,6 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo \"[$(date '+%Y-%m-%d %H:%M:%S')] File modified: $CLAUDE_TOOL_FILE_PATH\" >> ~/.claude/changes.log"
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo \"[$(date '+%Y-%m-%d %H:%M:%S')] File created: $CLAUDE_TOOL_FILE_PATH\" >> ~/.claude/changes.log"
-          }
-        ]
-      }
-    ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "bash -c 'input=$(cat); MODEL=$(echo \"$input\" | jq -r \".model.display_name\"); DIR=$(echo \"$input\" | jq -r \".workspace.current_dir\"); BRANCH=\"\"; if git rev-parse --git-dir >/dev/null 2>&1; then BRANCH=\" | 🌿 $(git branch --show-current 2>/dev/null)\"; fi; echo \"[$MODEL] 📁 ${DIR##*/}$BRANCH\"'"
+    "PostToolUse": []
   }
 }
