@@ -26,13 +26,19 @@ import type {
 } from "@/data/manager_ga/member/reviewers";
 import type { ReviewerStatusType } from "@/data/manager_ga/common/filterOptions";
 
+const REVIEWER_TYPE_MAP: Record<string, ReviewerType> = {
+  NORMAL: "일반",
+  SUPPORTERS: "서포터즈",
+  INFLUENCER: "인플루언서",
+};
+
 function adaptReviewer(item: AdminReviewerApiItem): ReviewerItem {
   return {
     id: String(item.id),
     number: item.number,
     name: item.name,
     channels: item.channels as Channel[],
-    type: item.type as ReviewerType,
+    type: (REVIEWER_TYPE_MAP[item.type] ?? item.type) as ReviewerType,
     campaign_participated: item.campaign_participated,
     campaign_completed: item.campaign_completed,
     current_points: item.current_points,

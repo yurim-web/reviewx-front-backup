@@ -44,6 +44,13 @@ export const fetchAdminNotifications = (): Promise<NotificationApiItem[]> =>
     .then((res) => (Array.isArray(res.data) ? res.data : []));
 
 /**
+ * 관리자(GA/SA) 전체 알림 삭제
+ * DELETE /api/admin/notifications/all
+ */
+export const deleteAllAdminNotifications = (): Promise<void> =>
+  apiClient.delete("/api/admin/notifications/all").then(() => undefined);
+
+/**
  * 파트너 알림 목록 조회
  * GET /partner/notification → /partner_notifications
  */

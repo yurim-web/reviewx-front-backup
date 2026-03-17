@@ -34,6 +34,7 @@ export interface UseWithdrawalInfoReturn {
   canWithdraw: () => boolean;
   isAccountInfoValid: () => boolean;
   submitWithdrawal: (amount: number, netAmount: number) => Promise<boolean>;
+  isLoading: boolean;
 }
 
 function getReviewerId(userId: string): number {
@@ -48,7 +49,7 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
   const { data: profile } = useReviewerProfile(user?.id);
 
   // 포인트 잔액 (API)
-  const { data: reviewerData } = useQuery({
+  const { data: reviewerData, isLoading } = useQuery({
     queryKey: ["reviewerPoint", reviewerId],
     queryFn: () => fetchReviewerPoint(reviewerId),
     enabled: reviewerId > 0,
@@ -174,5 +175,6 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
     canWithdraw,
     isAccountInfoValid,
     submitWithdrawal,
+    isLoading: reviewerId > 0 && isLoading,
   };
 }

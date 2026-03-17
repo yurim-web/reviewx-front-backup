@@ -36,9 +36,9 @@ export const fetchReviewerPoint = (reviewerId: number): Promise<ReviewerPointApi
  * 포인트 거래 내역 조회
  * GET /reviewer/mypage/point/history?reviewer_id=:id → /point_history?reviewer_id=:id
  */
-export const fetchPointHistory = (reviewerId: number): Promise<PointHistoryApiItem[]> =>
+export const fetchPointHistory = (): Promise<PointHistoryApiItem[]> =>
   apiClient
-    .get<PointHistoryApiItem[]>(`/reviewer/mypage/point/history?reviewer_id=${reviewerId}`)
+    .get<PointHistoryApiItem[]>(`/reviewer/mypage/point/history`)
     .then((res) => (Array.isArray(res.data) ? res.data : []));
 
 /** 출금 신청 (POST /reviewer/mypage/withdrawal → /withdrawal_requests) */
@@ -55,11 +55,9 @@ export const patchWithdrawalStatus = (
  * 적립 예정 포인트 목록 조회
  * GET /reviewer/mypage/point/history/pending → /point_history?status=PENDING&reviewer_id=:id
  */
-export const fetchPendingPoints = (reviewerId: number): Promise<PointHistoryApiItem[]> =>
+export const fetchPendingPoints = (): Promise<PointHistoryApiItem[]> =>
   apiClient
-    .get<
-      PointHistoryApiItem[]
-    >(`/reviewer/mypage/point/history?status=PENDING&reviewer_id=${reviewerId}`)
+    .get<PointHistoryApiItem[]>(`/reviewer/mypage/point/history/pending`)
     .then((res) => (Array.isArray(res.data) ? res.data : []));
 
 /**
