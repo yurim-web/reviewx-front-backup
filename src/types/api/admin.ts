@@ -41,6 +41,9 @@ export interface AdminReviewerApiItem {
   penalty_count: number;
   bank: string;
   account_holder: string;
+  account_number?: string;
+  ssn_front?: string;
+  ssn_back?: string;
   last_access_date: string;
   join_date: string;
 }

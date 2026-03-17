@@ -77,9 +77,11 @@
   grid-template-columns: subgrid;
 }
 
-/* 테이블 행 래퍼 (그리드 방해하지 않도록 contents 사용) */
+/* 테이블 행 래퍼 (subgrid로 컬럼 정렬 유지 + 실제 박스 생성) */
 .table_row_wrapper {
-  display: contents;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
   position: relative;
   transition: background-color 0.2s ease;
 }

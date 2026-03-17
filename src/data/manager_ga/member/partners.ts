@@ -102,7 +102,7 @@ export interface PartnerItem {
 export interface RecentCampaign {
   campaign_number: string; // 캠페인 번호
   campaign_name: string; // 캠페인명
-  status: "진행" | "종료"; // 상태
+  status: "진행" | "종료" | "취소"; // 상태
   type: "배송형" | "구매평"; // 유형
   channel: Channel; // 채널
   points: number; // 지급 포인트

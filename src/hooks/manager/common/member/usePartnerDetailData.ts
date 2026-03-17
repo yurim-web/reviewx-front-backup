@@ -20,7 +20,78 @@ import {
 } from "@/data/manager_ga/member/partners";
 import { map_brand_name_to_channel, type CampaignType } from "@/data/manager_ga/progress";
 import { fetchAdminPartnerDetail } from "@/lib/api/admin";
-import type { AdminPartnerApiItem } from "@/types/api/admin";
+import type { AdminPartnerApiItem, AdminCampaignApiItem } from "@/types/api/admin";
+import { apiClient } from "@/lib/api/client";
+import type { Channel } from "@/data/manager/common/filterOptions";
+import { fetchPartnerPenalties } from "@/lib/api/penalty";
+import type { PenaltyItem } from "@/data/campaign_management/penaltyTypes";
+import type { PenaltyHistoryItem } from "@/data/manager_ga/member/partners";
+
+const PARTNER_PENALTY_STATUS_MAP: Record<string, "경고" | "정상" | "일시정지"> = {
+  경고: "경고",
+  주의: "정상",
+  정지: "일시정지",
+  제재: "일시정지",
+};
+
+function mapPartnerPenaltyApiToHistory(items: PenaltyItem[]): PenaltyHistoryItem[] {
+  return items.map((p) => ({
+    type: "기타" as PenaltyHistoryItem["type"],
+    reason: p.campaignTitle ? `${p.title} - ${p.campaignTitle}` : p.title,
+    processed_date: p.date,
+    status: PARTNER_PENALTY_STATUS_MAP[p.type] || "정상",
+  }));
+}
+
+async function fetchPenaltiesForPartner(partnerId: number): Promise<PenaltyHistoryItem[]> {
+  try {
+    const items = await fetchPartnerPenalties(partnerId);
+    return mapPartnerPenaltyApiToHistory(items);
+  } catch {
+    return [];
+  }
+}
+
+// 캠페인 타입/채널 매핑
+const PARTNER_CAMPAIGN_TYPE_MAP: Record<string, "배송형" | "구매평"> = {
+  DELIVERY: "배송형",
+  PURCHASE_REVIEW: "구매평",
+  MISSION: "배송형",
+  VISIT: "배송형",
+  REPORTER: "배송형",
+};
+
+const PARTNER_CHANNEL_NAME_MAP: Record<string, Channel> = {
+  NAVER_BLOG: "Blog",
+  INSTAGRAM: "Instagram",
+  YOUTUBE: "Youtube",
+  NAVER_CLIP: "Clip",
+  REELS: "Instagram",
+  TIKTOK: "Instagram",
+};
+
+function mapCampaignStatus(status: string): "진행" | "종료" {
+  if (status === "COMPLETED" || status === "CANCELLED" || status === "ENDED") return "종료";
+  return "진행";
+}
+
+async function fetchRecentCampaignsForPartner(partnerId: number): Promise<RecentCampaign[]> {
+  try {
+    const res = await apiClient.get<AdminCampaignApiItem[]>(`/campaigns?partner_id=${partnerId}`);
+    const campaigns = Array.isArray(res.data) ? res.data : [];
+    return campaigns.slice(0, 10).map((c) => ({
+      campaign_number: String(c.id),
+      campaign_name: c.title,
+      status: mapCampaignStatus(c.status),
+      type: PARTNER_CAMPAIGN_TYPE_MAP[c.type] || "배송형",
+      channel: (PARTNER_CHANNEL_NAME_MAP[c.requiredPlatform?.channelName] ||
+        "Blog") as RecentCampaign["channel"],
+      points: c.reward?.extraRewardPoint || 0,
+    }));
+  } catch {
+    return [];
+  }
+}
 
 // localStorage 파싱용 로컬 인터페이스
 interface StoredPartnerAccount {
@@ -262,7 +333,16 @@ export function usePartnerDetailData(partner_id: string): UsePartnerDetailDataRe
         try {
           const apiData = await fetchAdminPartnerDetail(numericId);
           if (apiData) {
-            const detail = map_api_to_partner_detail(apiData);
+            const [penaltyHistory, recentCampaigns] = await Promise.all([
+              fetchPenaltiesForPartner(numericId),
+              fetchRecentCampaignsForPartner(numericId),
+            ]);
+            const detail: PartnerDetail = {
+              ...map_api_to_partner_detail(apiData),
+              penalty_history: penaltyHistory,
+              penalty_count: penaltyHistory.length,
+              recent_campaigns: recentCampaigns,
+            };
             set_partner_detail(detail);
             if (detail.status === "탈퇴") set_is_withdrawn_modal_open(true);
             set_is_loading(false);

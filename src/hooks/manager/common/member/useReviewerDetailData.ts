@@ -21,8 +21,14 @@ import {
   type ChannelDetail,
   type RecentCampaign,
 } from "@/data/manager_ga/member/reviewers";
-import { fetchAdminReviewerDetail } from "@/lib/api/admin";
+import {
+  fetchAdminReviewerDetail,
+  fetchReviewerApplications,
+  fetchCampaignDetail,
+} from "@/lib/api/admin";
 import type { AdminReviewerApiItem } from "@/types/api/admin";
+import { fetchUserPenalties } from "@/lib/api/penalty";
+import type { PenaltyItem } from "@/data/campaign_management/penaltyTypes";
 import {
   format_campaign_number,
   map_brand_name_to_channel,
@@ -179,6 +185,88 @@ function getCampaignInfo(
   }
 
   return defaultResult;
+}
+
+/** mock 패널티 API 응답 → PenaltyHistoryItem 변환 */
+import type { PenaltyHistoryItem } from "@/data/manager_ga/member/reviewers";
+
+const PENALTY_STATUS_MAP: Record<string, "경고" | "정상" | "일시정지"> = {
+  경고: "경고",
+  주의: "정상",
+  정지: "일시정지",
+  제재: "일시정지",
+};
+
+function mapPenaltyApiToHistory(items: PenaltyItem[]): PenaltyHistoryItem[] {
+  return items.map((p) => ({
+    type: "기타" as PenaltyHistoryItem["type"],
+    reason: p.campaignTitle ? `${p.title} - ${p.campaignTitle}` : p.title,
+    processed_date: p.date,
+    status: PENALTY_STATUS_MAP[p.type] || "정상",
+  }));
+}
+
+/** 리뷰어 ID로 패널티 데이터 fetch (실패 시 빈 배열) */
+async function fetchPenaltiesForReviewer(reviewerId: number): Promise<PenaltyHistoryItem[]> {
+  try {
+    const items = await fetchUserPenalties(reviewerId);
+    return mapPenaltyApiToHistory(items);
+  } catch {
+    return [];
+  }
+}
+
+// 캠페인 타입 매핑
+const CAMPAIGN_TYPE_MAP: Record<string, "배송형" | "구매평"> = {
+  DELIVERY: "배송형",
+  PURCHASE_REVIEW: "구매평",
+  MISSION: "배송형",
+  VISIT: "배송형",
+  REPORTER: "배송형",
+};
+
+// API 채널 이름 매핑 (channelName → Channel)
+const API_CHANNEL_MAP: Record<string, Channel> = {
+  NAVER_BLOG: "Blog",
+  INSTAGRAM: "Instagram",
+  YOUTUBE: "Youtube",
+  NAVER_CLIP: "Clip",
+  REELS: "Instagram",
+  TIKTOK: "Instagram",
+};
+
+// 캠페인 신청 상태 → 진행/종료/취소 매핑
+function mapApplicationStatus(status: string): "진행" | "종료" | "취소" {
+  if (status === "COMPLETED" || status === "APPROVED") return "종료";
+  if (status === "REJECTED" || status === "CANCELLED") return "취소";
+  return "진행";
+}
+
+async function fetchRecentCampaignsForReviewer(reviewerId: number): Promise<RecentCampaign[]> {
+  try {
+    const applications = await fetchReviewerApplications(reviewerId);
+    if (applications.length === 0) return [];
+
+    // 각 application의 캠페인 상세 정보를 가져와 RecentCampaign으로 변환
+    const campaigns = await Promise.all(
+      applications.map(async (app) => {
+        const campaign = await fetchCampaignDetail(app.campaign_id);
+        if (!campaign) return null;
+        return {
+          campaign_number: String(campaign.id),
+          partner_name: "",
+          campaign_name: campaign.title,
+          status: mapApplicationStatus(app.status),
+          type: CAMPAIGN_TYPE_MAP[campaign.type] || "배송형",
+          channel: (API_CHANNEL_MAP[campaign.requiredPlatform?.channelName] || "Blog") as Channel,
+          points: campaign.reward?.extraRewardPoint || 0,
+        } as RecentCampaign;
+      })
+    );
+    return campaigns.filter((c): c is RecentCampaign => c !== null);
+  } catch {
+    return [];
+  }
 }
 
 interface UseReviewerDetailDataResult {
@@ -435,8 +523,8 @@ function map_api_to_reviewer_detail(api: AdminReviewerApiItem): ReviewerDetail {
     account_info: {
       account_holder: api.account_holder ?? "",
       bank: api.bank ?? "",
-      account_number: "",
-      resident_number: "",
+      account_number: api.account_number ?? "",
+      resident_number: api.ssn_front && api.ssn_back ? `${api.ssn_front}-${api.ssn_back}` : "",
     },
     recent_campaigns: [] as RecentCampaign[],
     penalty_history: [],
@@ -458,19 +546,30 @@ export function useReviewerDetailData(reviewer_id: string): UseReviewerDetailDat
         try {
           const apiData = await fetchAdminReviewerDetail(numericId);
           if (apiData) {
-            // 특수 ID(1, 2)는 localStorage로 채널/캠페인 정보 보강
+            // 패널티 + 캠페인 데이터 병렬 fetch (모든 숫자 ID 공통)
+            const [penaltyHistory, recentCampaigns] = await Promise.all([
+              fetchPenaltiesForReviewer(numericId),
+              fetchRecentCampaignsForReviewer(numericId),
+            ]);
+
+            // 특수 ID(1, 2)는 localStorage로 채널/계좌 정보 보강
             const SPECIAL_IDS = ["1", "2"];
             if (SPECIAL_IDS.includes(reviewer_id) && typeof window !== "undefined") {
               const mappedId = reviewer_id === "1" ? "user_kakao_001" : "user_naver_001";
               const localDetail = await fetch_from_local_storage(reviewer_id, mappedId);
               if (localDetail) {
-                // API 기본 정보 + localStorage 채널/캠페인 정보 병합
+                // API 기본 정보 + localStorage 채널/계좌 정보 병합
                 const merged: ReviewerDetail = {
                   ...map_api_to_reviewer_detail(apiData),
                   channel_details: localDetail.channel_details,
                   account_info: localDetail.account_info,
-                  recent_campaigns: localDetail.recent_campaigns,
-                  penalty_history: localDetail.penalty_history,
+                  recent_campaigns:
+                    recentCampaigns.length > 0 ? recentCampaigns : localDetail.recent_campaigns,
+                  campaign_participated:
+                    apiData.campaign_participated ?? localDetail.campaign_participated,
+                  campaign_completed: apiData.campaign_completed ?? localDetail.campaign_completed,
+                  penalty_history: penaltyHistory,
+                  penalty_count: penaltyHistory.length,
                 };
                 set_reviewer_detail(merged);
                 if (merged.status === "탈퇴") set_is_withdrawn_modal_open(true);
@@ -478,7 +577,12 @@ export function useReviewerDetailData(reviewer_id: string): UseReviewerDetailDat
                 return;
               }
             }
-            const detail = map_api_to_reviewer_detail(apiData);
+            const detail: ReviewerDetail = {
+              ...map_api_to_reviewer_detail(apiData),
+              recent_campaigns: recentCampaigns,
+              penalty_history: penaltyHistory,
+              penalty_count: penaltyHistory.length,
+            };
             set_reviewer_detail(detail);
             if (detail.status === "탈퇴") set_is_withdrawn_modal_open(true);
             set_is_loading(false);
