@@ -379,6 +379,25 @@ function setupReviewerAccount(authUser: AuthUser): void {
       updates.channel_details = mergedDetails;
     }
 
+    // 계좌 정보 업데이트 (미등록 시 기본 데이터로 채움)
+    if (defaultData) {
+      if (defaultData.account_holder && !existingAccount.account_holder) {
+        updates.account_holder = defaultData.account_holder;
+      }
+      if (defaultData.bank && !existingAccount.bank) {
+        updates.bank = defaultData.bank;
+      }
+      if (defaultData.account_number && !existingAccount.account_number) {
+        updates.account_number = defaultData.account_number;
+      }
+      if (defaultData.ssn_front && !existingAccount.ssn_front) {
+        updates.ssn_front = defaultData.ssn_front;
+      }
+      if (defaultData.ssn_back && !existingAccount.ssn_back) {
+        updates.ssn_back = defaultData.ssn_back;
+      }
+    }
+
     // 통계 정보 업데이트
     if (defaultData) {
       if (

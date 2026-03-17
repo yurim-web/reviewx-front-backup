@@ -99,6 +99,22 @@ export const fetchCampaignApplications = (
     .then((res) => asArray<CampaignApplicationApiItem>(res.data))
     .catch(() => []);
 
+/** 리뷰어별 캠페인 신청 목록 조회  GET /campaign_applications?reviewer_id=:id */
+export const fetchReviewerApplications = (
+  reviewerId: number
+): Promise<CampaignApplicationApiItem[]> =>
+  apiClient
+    .get<CampaignApplicationApiItem[]>(`/campaign_applications?reviewer_id=${reviewerId}`)
+    .then((res) => asArray<CampaignApplicationApiItem>(res.data))
+    .catch(() => []);
+
+/** 캠페인 상세 조회 (단건)  GET /campaigns/:id */
+export const fetchCampaignDetail = (campaignId: number): Promise<AdminCampaignApiItem | null> =>
+  apiClient
+    .get<AdminCampaignApiItem>(`/campaigns/${campaignId}`)
+    .then((res) => res.data)
+    .catch(() => null);
+
 /** 출금 요청 목록 조회  GET /admin/withdrawal */
 export const fetchAdminWithdrawal = (): Promise<AdminWithdrawalApiItem[]> =>
   apiClient
