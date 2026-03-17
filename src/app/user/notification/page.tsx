@@ -21,9 +21,11 @@ import SubHeader from "@/components/fragments/SubHeader";
 import NotificationList from "@/components/notification/NotificationList";
 import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchNotifications } from "@/lib/api/notification";
 import type { NotificationApiItem } from "@/types/api/notification";
+import Loading from "@/app/loading";
 // 알림 정적 fallback 데이터
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
 
@@ -106,7 +108,11 @@ export default function UserNotificationPage() {
   const reviewerId = user ? getReviewerId(user.id) : 0;
 
   // 알림 목록 (API)
-  const { data: apiNotifications } = useQuery({
+  const {
+    data: apiNotifications,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["notifications", reviewerId],
     queryFn: () => fetchNotifications(reviewerId),
     enabled: reviewerId > 0,
@@ -136,6 +142,8 @@ export default function UserNotificationPage() {
     mockReviewerNotifications as NotificationItem[]
   );
   const [isDeleteToastOpen, setIsDeleteToastOpen] = useState(false);
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
+  const [isServerErrorModalOpen, setIsServerErrorModalOpen] = useState(false);
 
   // 무한 스크롤
   const PAGE_SIZE = 15;
@@ -221,8 +229,19 @@ export default function UserNotificationPage() {
     setNotifications(baseNotifications);
   }, [user, apiNotifications]);
 
-  /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트만 표시 */
+  // isError → E_M5 서버 오류 모달
+  useEffect(() => {
+    if (isError) setIsServerErrorModalOpen(true);
+  }, [isError]);
+
+  /** 전체 삭제 버튼 클릭 → A_M14 확인 모달 표시 */
   const handleDeleteAllClick = () => {
+    setIsDeleteConfirmModalOpen(true);
+  };
+
+  /** A_M14 확인 → 실제 삭제 처리 */
+  const handleConfirmDeleteAll = () => {
+    setIsDeleteConfirmModalOpen(false);
     setNotifications([]);
     setDisplayCount(PAGE_SIZE);
     // 헤더 알림 아이콘 즉시 비활성화 — 캐시를 빈 배열로 덮어씀
@@ -241,6 +260,8 @@ export default function UserNotificationPage() {
     }
     setIsDeleteToastOpen(true);
   };
+
+  if (reviewerId > 0 && isLoading) return <Loading />;
 
   return (
     <div className={`${styles.notification_container} ${isMobile ? styles.mobile : ""}`}>
@@ -284,6 +305,25 @@ export default function UserNotificationPage() {
         isOpen={isDeleteToastOpen}
         duration={1500}
         onClose={() => setIsDeleteToastOpen(false)}
+      />
+
+      {/* A_M14: 전체 삭제 확인 모달 */}
+      <BaseModal
+        is_open={isDeleteConfirmModalOpen}
+        on_close={() => setIsDeleteConfirmModalOpen(false)}
+        message="선택한 내역을 삭제하시겠습니까?"
+        buttons={["취소", "확인"]}
+        on_confirm={handleConfirmDeleteAll}
+        type="center"
+      />
+
+      {/* E_M5: 서버 오류 모달 */}
+      <BaseModal
+        is_open={isServerErrorModalOpen}
+        on_close={() => setIsServerErrorModalOpen(false)}
+        message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
+        buttons={["확인"]}
+        type="center"
       />
     </div>
   );

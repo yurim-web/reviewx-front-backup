@@ -23,7 +23,9 @@ import AvailablePointsDisplay from "@/components/point/AvailablePointsDisplay";
 import ReadOnlyFormField from "@/components/point/ReadOnlyFormField";
 import { parseFormattedAmount } from "@/utils/formatting/amount";
 import { validateAmount } from "@/utils/validation/amount";
+import { useAuth } from "@/hooks/useAuth";
 import { useWithdrawalInfo } from "@/hooks/user/point/useWithdrawalInfo";
+import Loading from "@/app/loading";
 import styles from "../../../../styles/user/point/withdrawal_request.module.css";
 
 const MIN_AMOUNT = 10000;
@@ -31,6 +33,7 @@ const MAX_AMOUNT = 500000;
 
 export default function WithdrawalRequestPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const {
     userInfo,
     calculateNetAmount,
@@ -38,6 +41,7 @@ export default function WithdrawalRequestPage() {
     canWithdraw,
     isAccountInfoValid,
     submitWithdrawal,
+    isLoading,
   } = useWithdrawalInfo();
 
   const [withdrawalAmount, setWithdrawalAmount] = useState<string>("");
@@ -45,6 +49,7 @@ export default function WithdrawalRequestPage() {
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState<boolean>(false);
   const [isAccountWarningModalOpen, setIsAccountWarningModalOpen] = useState<boolean>(false);
   const [isWithdrawalBlockedModalOpen, setIsWithdrawalBlockedModalOpen] = useState<boolean>(false);
+  const [isServerErrorModalOpen, setIsServerErrorModalOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -53,6 +58,15 @@ export default function WithdrawalRequestPage() {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  // 로그인 체크
+  useEffect(() => {
+    if (typeof window !== "undefined" && !user) {
+      router.push("/user/login");
+    }
+  }, [user, router]);
+
+  if (isLoading) return <Loading />;
 
   const amount = withdrawalAmount ? Number(withdrawalAmount.replace(/,/g, "")) : 0;
   const netAmount = amount > 0 ? calculateNetAmount(amount) : 0;
@@ -83,10 +97,10 @@ export default function WithdrawalRequestPage() {
       if (success) {
         setIsCompleteModalOpen(true);
       } else {
-        alert("출금 신청 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+        setIsServerErrorModalOpen(true);
       }
     } catch {
-      alert("출금 신청 처리 중 오류가 발생했습니다.");
+      setIsServerErrorModalOpen(true);
     }
   };
 
@@ -246,6 +260,14 @@ export default function WithdrawalRequestPage() {
         message="출금 신청이 완료되었습니다."
         buttons={["닫기"]}
         type="center"
+      />
+
+      {/* 서버 오류 모달 (E_M5) */}
+      <BaseModal
+        is_open={isServerErrorModalOpen}
+        on_close={() => setIsServerErrorModalOpen(false)}
+        message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
+        buttons={["확인"]}
       />
     </div>
   );
