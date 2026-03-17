@@ -19,6 +19,7 @@ import styles from "@/styles/manager/common/manager_common_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import CategoryFilterSection from "@/components/manager/common/community/categories/section/CategoryFilterSection";
 import CategoryTable from "@/components/manager/common/community/categories/section/CategoryTable";
+import type { CategoryDivision } from "@/data/manager_ga/community/categoriesData";
 
 // 관리자 타입 정의
 export type ManagerType = "ga" | "sa";
@@ -39,18 +40,15 @@ interface CategoriesPageCommonProps {
  * @param props.manager_type - 관리자 타입 ('ga' 또는 'sa')
  * @returns 카테고리 관리 페이지 JSX 요소
  */
-export default function CategoriesPageCommon({
-  manager_type,
-}: CategoriesPageCommonProps) {
+export default function CategoriesPageCommon({ manager_type }: CategoriesPageCommonProps) {
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
 
   // 선택된 카테고리 ID 목록 상태 관리
-  // useState: React Hook으로 컴포넌트의 선택된 카테고리 ID 목록 상태를 관리합니다
-  // CategoryTable과 CategoryFilterSection에서 공유하기 위해 상위 컴포넌트에서 관리합니다
-  const [selected_category_ids, set_selected_category_ids] = useState<string[]>(
-    []
-  );
+  const [selected_category_ids, set_selected_category_ids] = useState<string[]>([]);
+
+  // 구분 필터 상태 관리 (CategoryFilterSection → CategoryTable로 공유하기 위해 상위에서 관리)
+  const [selected_divisions, set_selected_divisions] = useState<CategoryDivision[]>([]);
 
   // 검색어 변경 핸들러
   const handle_search_change = (query: string) => {
@@ -69,6 +67,8 @@ export default function CategoriesPageCommon({
           on_search_change={handle_search_change}
           manager_type={manager_type}
           selected_category_ids={selected_category_ids}
+          selected_divisions={selected_divisions}
+          on_divisions_change={set_selected_divisions}
         />
 
         {/* 카테고리 테이블 컴포넌트 */}
@@ -77,6 +77,7 @@ export default function CategoriesPageCommon({
           manager_type={manager_type}
           selected_category_ids={selected_category_ids}
           on_selected_category_ids_change={set_selected_category_ids}
+          selected_divisions={selected_divisions}
         />
       </div>
     </div>

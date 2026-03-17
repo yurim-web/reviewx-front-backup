@@ -291,6 +291,7 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
                 set_error_message("");
               }}
               placeholder="카테고리명 입력"
+              maxLength={10}
               aria-label="카테고리명"
             />
             {/* 에러 메시지 표시 */}
