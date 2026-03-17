@@ -16,6 +16,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import styles from "@/styles/manager/common/community/categories/category_create_page.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
 import ErrorText from "@/components/common/error_text/ErrorText";
@@ -27,6 +28,7 @@ import {
   type CategoryDivision,
   type CategoryItem,
 } from "@/data/manager_ga/community/categoriesData";
+import { createCategory, updateCategoryApi } from "@/lib/api/categories";
 
 interface CategoryFormProps {
   // mode: "create" | "edit" - 등록 모드 또는 수정 모드
@@ -37,11 +39,8 @@ interface CategoryFormProps {
   category_id?: string;
 }
 
-// 구분 옵션 목록
-// CategoryDivision 타입의 모든 값을 배열로 정의하고 오름차순으로 정렬합니다
-const division_options: CategoryDivision[] = (
-  ["공지사항", "자주 묻는 질문", "이벤트"] as CategoryDivision[]
-).sort((a, b) => a.localeCompare(b, "ko-KR"));
+// 구분 옵션 목록 (공지사항, 자주 묻는 질문)
+const division_options: CategoryDivision[] = ["공지사항", "자주 묻는 질문"];
 
 export default function CategoryForm({ mode, manager_type, category_id }: CategoryFormProps) {
   // Next.js 라우터 사용
@@ -69,9 +68,37 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
   const [show_toast, set_show_toast] = useState<boolean>(false);
 
   // 로딩 상태 관리 (수정 모드일 때만 사용)
-  // useState: React Hook으로 컴포넌트의 로딩 상태를 관리합니다
-  // 수정 모드일 때만 true로 시작하여 데이터를 불러옵니다
   const [is_loading, set_is_loading] = useState<boolean>(mode === "edit");
+
+  // 카테고리 등록 mutation
+  const create_mutation = useMutation({
+    mutationFn: () => createCategory({ division, categoryName: category_name.trim() }),
+    onSuccess: () => {
+      set_show_toast(true);
+    },
+    onError: () => {
+      // 백엔드 미구현 시 mock fallback
+      add_category(division, category_name.trim());
+      set_show_toast(true);
+    },
+  });
+
+  // 카테고리 수정 mutation
+  const update_mutation = useMutation({
+    mutationFn: () =>
+      updateCategoryApi(Number(category_id), {
+        division,
+        categoryName: category_name.trim(),
+      }),
+    onSuccess: () => {
+      set_show_toast(true);
+    },
+    onError: () => {
+      // 백엔드 미구현 시 mock fallback
+      if (category_id) update_category(category_id, division, category_name.trim());
+      set_show_toast(true);
+    },
+  });
 
   // useEffect: 수정 모드일 때 컴포넌트가 마운트될 때 기존 카테고리 데이터를 불러옵니다
   // useEffect는 두 번째 인자로 의존성 배열을 받습니다
@@ -140,35 +167,12 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
   // 화살표 함수로 이벤트 핸들러를 정의합니다
   // mode에 따라 등록 또는 수정 로직을 실행합니다
   const handle_submit = () => {
-    // 유효성 검사 실행
-    // validate_category_name(): 카테고리명의 길이와 중복을 검사합니다
-    // 유효성 검사 실패 시 함수를 종료합니다 (early return)
-    if (!validate_category_name()) {
-      return;
-    }
+    if (!validate_category_name()) return;
 
     if (mode === "create") {
-      // 등록 모드일 때는 목업 데이터에 새로운 카테고리를 추가합니다
-      // TODO: 카테고리 등록 API 호출
-      // 현재는 목업 데이터를 직접 추가합니다
-      // 실제 구현 시에는 API를 호출하여 카테고리를 등록한 후 목록 페이지로 이동합니다
-      // add_category: 목업 데이터에 새로운 카테고리를 추가하는 함수입니다
-      // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 추가된 내용이 테이블에 반영됩니다
-      add_category(division, category_name.trim());
-      // Toast 메시지 표시
-      set_show_toast(true);
+      create_mutation.mutate();
     } else {
-      // 수정 모드일 때는 목업 데이터를 수정한 후 토스트 메시지를 표시합니다
-      // TODO: 카테고리 수정 API 호출
-      // 현재는 목업 데이터를 직접 수정합니다
-      // 실제 구현 시에는 API를 호출하여 카테고리를 수정한 후 목록 페이지로 이동합니다
-      if (category_id) {
-        // update_category: 목업 데이터에서 카테고리를 수정하는 함수입니다
-        // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 수정된 내용이 테이블에 반영됩니다
-        update_category(category_id, division, category_name.trim());
-      }
-      // 토스트 메시지 표시
-      set_show_toast(true);
+      update_mutation.mutate();
     }
   };
 
@@ -197,19 +201,11 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
    * - 수정 모드일 때는 초기 데이터가 있으므로 항상 활성화
    */
   const is_button_disabled = useMemo(() => {
-    // 수정 모드일 때는 초기 데이터가 있으므로 항상 활성화
-    if (mode === "edit") {
-      return false;
-    }
-
-    // 등록 모드일 때만 필드 검증
-    // 카테고리명이 2자 이상이어야 함
-    if (!category_name.trim() || category_name.trim().length < 2) {
-      return true;
-    }
-
+    if (create_mutation.isPending || update_mutation.isPending) return true;
+    if (mode === "edit") return false;
+    if (!category_name.trim() || category_name.trim().length < 2) return true;
     return false;
-  }, [mode, category_name]);
+  }, [mode, category_name, create_mutation.isPending, update_mutation.isPending]);
 
   // 페이지 제목과 버튼 텍스트를 mode에 따라 결정
   // 삼항 연산자: 조건 ? 참일 때 값 : 거짓일 때 값
