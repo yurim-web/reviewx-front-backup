@@ -15,6 +15,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Loading from "@/app/loading";
 import PostFormPageClient from "./PostFormPageClient";
 import { get_post_detail, initialize_posts_data } from "@/data/manager_ga/community/postsData";
 
@@ -44,7 +45,7 @@ export default function EditPostPageClient({ post_id, manager_type }: EditPostPa
 
   // 로딩 중일 때
   if (is_loading) {
-    return <div>로딩 중...</div>;
+    return <Loading />;
   }
 
   // 게시글이 없을 경우
