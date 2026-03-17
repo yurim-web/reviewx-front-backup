@@ -134,7 +134,11 @@ export default function PenaltyHistoryModal({
                     penalty.status === "일시정지" ? "일시 정지" : penalty.status;
 
                   // 사유: reason이 있으면 reason을, 없으면 type을 사유로 사용
-                  const display_reason = penalty.reason || penalty.type;
+                  // " - " 앞까지만 표시 (캠페인 제목 제거)
+                  const raw_reason = penalty.reason || penalty.type;
+                  const display_reason = raw_reason.includes(" - ")
+                    ? raw_reason.split(" - ")[0]
+                    : raw_reason;
 
                   return (
                     <div key={index} className={cssStyles.table_row}>
