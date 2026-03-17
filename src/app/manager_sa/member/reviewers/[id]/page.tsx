@@ -14,7 +14,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import { type Channel } from "@/data/manager_ga/member/reviewers";
 import { useReviewerDetailData } from "@/hooks/manager/common/member/useReviewerDetailData";
@@ -27,7 +27,6 @@ import ActivityInfoSection, {
 } from "@/components/manager/common/member/member_detail/ActivityInfoSection";
 import ChannelInfoSection from "@/components/manager/common/member/reviewers/section/ChannelInfoSection";
 import AccountInfoSection from "@/components/manager/common/member/reviewers/section/AccountInfoSection";
-import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/manager/common/member/member_detail/member_detail_page.module.css";
 import infoCardStyles from "@/styles/manager/common/member/member_detail/info_card.module.css";
 
@@ -45,7 +44,6 @@ const CHANNEL_ICON_MAP: Record<Channel, string> = {
 
 export default function ReviewerDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const reviewer_id = params.id as string;
 
   const { reviewer_detail, is_loading, is_withdrawn_modal_open, set_is_withdrawn_modal_open } =
@@ -54,25 +52,9 @@ export default function ReviewerDetailPage() {
   const [is_campaign_history_modal_open, set_is_campaign_history_modal_open] = useState(false);
   const [is_penalty_history_modal_open, set_is_penalty_history_modal_open] = useState(false);
 
-  const handle_withdrawn_modal_close = () => {
-    set_is_withdrawn_modal_open(false);
-    router.push("/manager_sa/member/reviewers");
-  };
-
-  const is_withdrawn = reviewer_detail?.status === "탈퇴";
-
-  if (is_withdrawn) {
-    return (
-      <BaseModal
-        is_open={is_withdrawn_modal_open}
-        on_close={handle_withdrawn_modal_close}
-        message="탈퇴한 회원은 조회할 수 없습니다."
-        buttons={["닫기"]}
-        close_on_overlay_click={false}
-        close_on_escape={true}
-      />
-    );
-  }
+  // SA(최고관리자)는 탈퇴 회원도 조회 가능 (C_M11: GA만 조회 불가)
+  void is_withdrawn_modal_open;
+  void set_is_withdrawn_modal_open;
 
   const activity_info_items: ActivityInfoItem[] = [
     {

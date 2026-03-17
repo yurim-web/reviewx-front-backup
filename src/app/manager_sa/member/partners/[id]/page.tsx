@@ -14,7 +14,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { usePartnerDetailData } from "@/hooks/manager/common/member/usePartnerDetailData";
 import CampaignHistoryModal from "@/components/manager/common/member/partners/CampaignHistoryModal";
 import PenaltyHistoryModal from "@/components/manager/common/member/partners/PenaltyHistoryModal";
@@ -25,12 +25,10 @@ import ActivityInfoSection, {
 } from "@/components/manager/common/member/member_detail/ActivityInfoSection";
 import BusinessInfoSection from "@/components/manager/common/member/partners/section/BusinessInfoSection";
 import ContactPersonSection from "@/components/manager/common/member/partners/section/ContactPersonSection";
-import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/manager/common/member/member_detail/member_detail_page.module.css";
 
 export default function PartnerDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const partner_id = params.id as string;
 
   const { partner_detail, is_loading, is_withdrawn_modal_open, set_is_withdrawn_modal_open } =
@@ -39,29 +37,13 @@ export default function PartnerDetailPage() {
   const [is_campaign_history_modal_open, set_is_campaign_history_modal_open] = useState(false);
   const [is_penalty_history_modal_open, set_is_penalty_history_modal_open] = useState(false);
 
-  const handle_withdrawn_modal_close = () => {
-    set_is_withdrawn_modal_open(false);
-    router.push("/manager_sa/member/partners");
-  };
-
   const handle_download_business_certificate = () => {
     // TODO: 실제 다운로드 기능 구현
   };
 
-  const is_withdrawn = partner_detail?.status === "탈퇴";
-
-  if (is_withdrawn) {
-    return (
-      <BaseModal
-        is_open={is_withdrawn_modal_open}
-        on_close={handle_withdrawn_modal_close}
-        message="탈퇴한 회원은 조회할 수 없습니다."
-        buttons={["닫기"]}
-        close_on_overlay_click={false}
-        close_on_escape={true}
-      />
-    );
-  }
+  // SA(최고관리자)는 탈퇴 회원도 조회 가능 (C_M11: GA만 조회 불가)
+  void is_withdrawn_modal_open;
+  void set_is_withdrawn_modal_open;
 
   const format_number = (num: number | undefined): string => {
     if (num === undefined || num === null) return "0";
