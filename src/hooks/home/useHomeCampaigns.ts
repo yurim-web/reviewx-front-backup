@@ -57,7 +57,7 @@ function adaptStatic(item: {
 }
 
 export function useHomeCampaigns() {
-  const { data: apiData } = useDashboard();
+  const { data: apiData, isError, isLoading } = useDashboard();
 
   // API 데이터가 있으면 즉시 반환
   const hasApiData =
@@ -148,15 +148,17 @@ export function useHomeCampaigns() {
       popular_campaigns: apiData.popularNow,
       ongoing_campaigns: apiData.ongoing,
       similar_campaigns: apiData.similar ?? [],
+      isError: false,
     };
   }
 
-  return (
-    staticResult ?? {
+  return {
+    ...(staticResult ?? {
       high_probability_campaigns: [] as HomeCampaign[],
       popular_campaigns: [] as HomeCampaign[],
       ongoing_campaigns: [] as HomeCampaign[],
       similar_campaigns: [] as HomeCampaign[],
-    }
-  );
+    }),
+    isError,
+  };
 }

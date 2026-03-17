@@ -39,33 +39,35 @@ function getReviewerId(userId: string): number {
 
 function adaptHistoryItem(item: PointHistoryApiItem): PointHistory {
   const date = item.date.slice(0, 10); // ISO → "YYYY-MM-DD"
+  const typeUpper = item.type?.toUpperCase();
+  const statusUpper = item.status?.toUpperCase();
 
-  if (item.type === "EARNED") {
+  if (typeUpper === "EARNED") {
     return {
       id: String(item.id),
       type: "earned",
-      amount: item.amount,
-      description: item.description,
+      amount: item.amount ?? 0,
+      description: item.description ?? "",
       date,
-      status: item.status === "FAILED" ? "failed" : "earned",
-      balance: item.balance,
+      status: statusUpper === "FAILED" ? "failed" : "earned",
+      balance: item.balance ?? 0,
       rejection_reason: item.rejection_reason,
     };
   }
 
   // WITHDRAWAL
-  const type = item.status === "PENDING" ? "withdrawal_pending" : "withdrawn";
+  const type = statusUpper === "PENDING" ? "withdrawal_pending" : "withdrawn";
   const status =
-    item.status === "COMPLETED" ? "completed" : item.status === "FAILED" ? "failed" : "pending";
+    statusUpper === "COMPLETED" ? "completed" : statusUpper === "FAILED" ? "failed" : "pending";
 
   return {
     id: String(item.id),
     type,
-    amount: item.amount,
-    description: item.description,
+    amount: item.amount ?? 0,
+    description: item.description ?? "",
     date,
     status,
-    balance: item.balance,
+    balance: item.balance ?? 0,
     rejection_reason: item.rejection_reason,
   };
 }
@@ -93,6 +95,8 @@ export interface UsePointDataReturn {
   userPointHistory: PointHistory[];
   pendingPointList: { id: string; description: string; date: string; amount: number }[];
   isAccountInfoValid: () => boolean;
+  isLoading: boolean;
+  isError: boolean;
 }
 
 // ========================================
@@ -114,9 +118,13 @@ export function usePointData(): UsePointDataReturn {
   });
 
   // 포인트 거래 내역 (API)
-  const { data: apiHistory } = useQuery({
+  const {
+    data: apiHistory,
+    isLoading: historyLoading,
+    isError,
+  } = useQuery({
     queryKey: ["pointHistory", reviewerId],
-    queryFn: () => fetchPointHistory(reviewerId),
+    queryFn: () => fetchPointHistory(),
     enabled: reviewerId > 0,
     staleTime: 30_000,
     refetchOnWindowFocus: true,
@@ -126,7 +134,7 @@ export function usePointData(): UsePointDataReturn {
   // 적립 예정 포인트 (API)
   const { data: apiPendingList } = useQuery({
     queryKey: ["pendingPoints", reviewerId],
-    queryFn: () => fetchPendingPoints(reviewerId),
+    queryFn: () => fetchPendingPoints(),
     enabled: reviewerId > 0,
     staleTime: 30_000,
     refetchOnWindowFocus: true,
@@ -173,9 +181,10 @@ export function usePointData(): UsePointDataReturn {
   return {
     pointInfo,
     accountInfo,
-    // API 로딩 중(undefined)이면 정적 데이터 표시, API 성공 시 API 데이터 사용
     userPointHistory: apiHistory ?? pointHistoryData,
     pendingPointList: apiPendingList ?? pendingPointListData,
     isAccountInfoValid,
+    isLoading: reviewerId > 0 && historyLoading,
+    isError,
   };
 }

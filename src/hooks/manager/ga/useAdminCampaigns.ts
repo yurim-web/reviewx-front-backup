@@ -25,12 +25,30 @@ import type {
 } from "@/data/manager_ga/progress";
 import type { Channel } from "@/data/manager/common/filterOptions";
 
+const PARTNER_NAME_MAP: Record<number, string> = {
+  1: "주식회사 청명종합광고기획",
+  2: "청불 천막집 방이점",
+  3: "명륜진사갈비 수원광교점",
+  4: "(주) 레인보우8",
+  5: "(주)플레티어",
+  6: "꽃초롱",
+  7: "주식회사 와이디컴퍼니그룹",
+  8: "(주)아이엠에스커뮤니케이션",
+  9: "주식회사 청명미디어",
+  10: "(주)아이엠에스커뮤니케이션",
+  11: "(주)아이엠에스커뮤니케이션",
+  12: "(주)아이엠에스커뮤니케이션",
+};
+
 const STATUS_MAP: Record<string, CampaignStatus> = {
   SCHEDULED: "예정",
+  REGISTERING: "예정",
   RECRUITING: "신청",
   IN_PROGRESS: "진행",
+  SELECTING: "진행",
+  PURCHASING: "진행",
+  EMERGENCY: "긴급",
   REVIEW: "진행",
-  REGISTERING: "진행",
   COMPLETED: "종료",
   CLOSED: "종료",
   CANCELLED: "취소",
@@ -65,7 +83,7 @@ function adaptCampaign(
   return {
     id: String(item.id),
     campaign_number: String(item.id).padStart(6, "0"),
-    partner_name: item.partnerName ?? "",
+    partner_name: item.partnerName ?? PARTNER_NAME_MAP[item.partner_id as number] ?? "",
     campaign_name: item.title,
     type: (TYPE_MAP[item.type] ?? "배송형") as CampaignType,
     channel: (CHANNEL_MAP[item.requiredPlatform?.channelName] ?? "Instagram") as Channel,
