@@ -1005,6 +1005,46 @@ export const campaign_list: CampaignProgressItem[] = (() => {
     ...visitCampaigns
       .map(convert_visit_to_progress_item)
       .filter((item): item is CampaignProgressItem => item !== null),
+    // 긴급 캠페인 (mock)
+    {
+      id: "9901",
+      campaign_number: "009901",
+      partner_name: "스킨푸드",
+      campaign_name: "[긴급] 수분 크림 블로그 리뷰 캠페인",
+      type: "배송형",
+      channel: "Blog",
+      status: "긴급",
+      recruit_count: 10,
+      apply_count: 7,
+      point: 30000,
+      created_at: new Date("2026-03-10"),
+    },
+    {
+      id: "9902",
+      campaign_number: "009902",
+      partner_name: "올리브영",
+      campaign_name: "[긴급] 봄 신상 인스타그램 리뷰",
+      type: "배송형",
+      channel: "Instagram",
+      status: "긴급",
+      recruit_count: 5,
+      apply_count: 3,
+      point: 50000,
+      created_at: new Date("2026-03-12"),
+    },
+    {
+      id: "9903",
+      campaign_number: "009903",
+      partner_name: "이니스프리",
+      campaign_name: "[긴급] 그린티 세럼 유튜브 리뷰",
+      type: "미션형",
+      channel: "Youtube",
+      status: "긴급",
+      recruit_count: 3,
+      apply_count: 2,
+      point: 80000,
+      created_at: new Date("2026-03-14"),
+    },
   ];
   return static_campaigns;
 })();
