@@ -91,19 +91,19 @@ export default function PartnerPointPageLayout({
    * 각 탭 클릭 시 해당 페이지로 이동
    *
    * 📌 라우팅 패턴:
-   * - window.location.href를 사용하여 전체 페이지 새로고침
+   * - router.push를 사용하여 SPA 방식 페이지 전환
    * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
    */
   const handlePointTabChange = (tab: PartnerPointTab) => {
     switch (tab) {
       case "all":
-        window.location.href = "/partner/point/all";
+        router.push("/partner/point/all");
         break;
       case "earned":
-        window.location.href = "/partner/point/earned";
+        router.push("/partner/point/earned");
         break;
       case "withdrawn":
-        window.location.href = "/partner/point/withdrawn";
+        router.push("/partner/point/withdrawn");
         break;
     }
   };

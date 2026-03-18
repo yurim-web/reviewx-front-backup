@@ -113,9 +113,13 @@ export default function CampaignList({
     }
   });
 
-  // 필터링 결과가 없는 경우 빈 상태로 처리 (메시지 없이 빈칸 유지)
+  // 필터링 결과가 없는 경우 빈 상태 메시지 표시
   if (filteredCampaigns.length === 0) {
-    return null;
+    return (
+      <div className={cardStyles.empty_state}>
+        <p>해당 상태의 캠페인이 없습니다.</p>
+      </div>
+    );
   }
 
   // 캠페인 카드 목록 렌더링

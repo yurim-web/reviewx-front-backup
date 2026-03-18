@@ -100,7 +100,7 @@ export default function PointHistoryPage({
 
   const handleGoToAccountRegistration = () => {
     accountModal.close();
-    router.push("/user/mypage/edit_profile");
+    router.push("/user/mypage/edit");
   };
 
   const handleReasonClick = (history: PointHistory) => {
@@ -355,7 +355,13 @@ export default function PointHistoryPage({
         is_open={showErrorModal}
         on_close={() => setShowErrorModal(false)}
         message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
-        buttons={["확인"]}
+        buttons={["닫기", "재시도"]}
+        on_cancel={() => setShowErrorModal(false)}
+        on_confirm={() => {
+          setShowErrorModal(false);
+          window.location.reload();
+        }}
+        type="center"
       />
     </div>
   );
