@@ -28,6 +28,7 @@ import RejectCodeInfoSection from "@/components/manager/ga/campaign/rejected/sec
 import RejectStatsSection from "@/components/manager/ga/campaign/rejected/section/RejectStatsSection";
 import CampaignRejectedFilterSection from "@/components/manager/ga/campaign/rejected/section/CampaignRejectedFilterSection";
 import RejectedCampaignTable from "@/components/manager/ga/campaign/rejected/section/RejectedCampaignTable";
+import Loading from "@/app/loading";
 import { useAdminRejections } from "@/hooks/manager/ga/useAdminRejections";
 import type { RejectCode } from "@/data/manager_ga/rejected";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -56,7 +57,7 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
  * @returns 전체 반려 내역 페이지 JSX
  */
 export default function RejectedPage() {
-  const { rejections } = useAdminRejections();
+  const { rejections, isLoading } = useAdminRejections();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -75,6 +76,8 @@ export default function RejectedPage() {
       to: endOfMonth(today),
     };
   });
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles.page_container}>

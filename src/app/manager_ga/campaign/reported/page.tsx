@@ -28,6 +28,7 @@ import ReportCodeInfoSection from "@/components/manager/ga/campaign/reported/sec
 import ReportStatsSection from "@/components/manager/ga/campaign/reported/section/ReportStatsSection";
 import CampaignReportedFilterSection from "@/components/manager/ga/campaign/reported/section/CampaignReportedFilterSection";
 import ReportedCampaignTable from "@/components/manager/ga/campaign/reported/section/ReportedCampaignTable";
+import Loading from "@/app/loading";
 import { useAdminReports } from "@/hooks/manager/ga/useAdminReports";
 import type { ReportCode } from "@/data/manager_ga/reported";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -56,7 +57,7 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
  * @returns 신고 이력 페이지 JSX
  */
 export default function ReportedPage() {
-  const { reports } = useAdminReports();
+  const { reports, isLoading } = useAdminReports();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -75,6 +76,8 @@ export default function ReportedPage() {
       to: endOfMonth(today),
     };
   });
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles.page_container}>

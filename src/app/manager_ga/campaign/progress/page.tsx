@@ -25,12 +25,14 @@
 "use client";
 
 import ProgressPageCommon from "@/components/manager/common/campaign/progress/ProgressPageCommon";
+import Loading from "@/app/loading";
 import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
 
 /**
  * GA 관리자 진행 상황 페이지 컴포넌트
  */
 export default function ProgressPage() {
-  const { campaigns } = useAdminCampaigns();
+  const { campaigns, isLoading } = useAdminCampaigns();
+  if (isLoading) return <Loading />;
   return <ProgressPageCommon manager_type="ga" campaigns={campaigns} />;
 }

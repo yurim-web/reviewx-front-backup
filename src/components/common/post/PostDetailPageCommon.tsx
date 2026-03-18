@@ -20,6 +20,7 @@ import { type ReactNode } from "react";
 import styles from "@/styles/common/post/post_detail_page.module.css";
 import { sanitizeRichHtml } from "@/utils/security/sanitize";
 import richtext_styles from "@/styles/common/html_richtext_content.module.css";
+import Loading from "@/app/loading";
 
 /**
  * 게시글 상세 정보 타입
@@ -65,7 +66,7 @@ interface PostDetailPageCommonProps {
 export default function PostDetailPageCommon({
   post_detail,
   back_path,
-  loading_message = "게시글을 불러오는 중...",
+  loading_message: _loading_message = "게시글을 불러오는 중...",
   sidebar,
   header_component,
   aria_label = "게시글 상세 정보",
@@ -77,13 +78,9 @@ export default function PostDetailPageCommon({
     router.push(back_path);
   };
 
-  // 게시글이 없을 경우 로딩 또는 에러 메시지 표시
+  // 게시글이 없을 경우 로딩 표시
   if (!post_detail) {
-    return (
-      <main className={styles.container}>
-        <div className={styles.loading_message}>{loading_message}</div>
-      </main>
-    );
+    return <Loading />;
   }
 
   return (
