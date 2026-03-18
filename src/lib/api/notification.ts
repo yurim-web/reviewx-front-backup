@@ -24,7 +24,7 @@ import type { NotificationApiItem } from "@/types/api/notification";
  */
 export const fetchNotifications = (reviewerId: number): Promise<NotificationApiItem[]> =>
   apiClient
-    .get<NotificationApiItem[]>(`/reviewer/notification?reviewer_id=${reviewerId}`)
+    .get<NotificationApiItem[]>(`/reviewer/notification`)
     .then((res) => (Array.isArray(res.data) ? res.data : []));
 
 /**
