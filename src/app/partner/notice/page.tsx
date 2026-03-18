@@ -11,6 +11,9 @@
  * - /partner/notice
  */
 
+"use client";
+
+import { withPartnerAuth } from "@/components/auth/withAuth";
 import NoticePageClient from "@/components/common/notice/NoticePageClient";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
@@ -19,7 +22,7 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
  *
  * @returns 파트너 공지사항 페이지 JSX 요소
  */
-export default function PartnerNoticePage() {
+function PartnerNoticePage() {
   return (
     <NoticePageClient
       header_component={<PartnerSubHeader />}
@@ -28,3 +31,5 @@ export default function PartnerNoticePage() {
     />
   );
 }
+
+export default withPartnerAuth(PartnerNoticePage);

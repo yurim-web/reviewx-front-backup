@@ -17,6 +17,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { withPartnerAuth } from "@/components/auth/withAuth";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import ErrorText from "@/components/common/error_text/ErrorText";
@@ -24,7 +25,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import { findAccountByEmail } from "@/data/login/unifiedAccountData";
 import styles from "@/styles/partner/reset_password/reset_password.module.css";
 
-export default function PartnerResetPasswordPage() {
+function PartnerResetPasswordPage() {
   const router = useRouter();
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -354,8 +355,12 @@ export default function PartnerResetPasswordPage() {
         is_open={isErrorModalOpen}
         on_close={() => setIsErrorModalOpen(false)}
         message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
-        buttons={["확인"]}
-        on_confirm={() => setIsErrorModalOpen(false)}
+        buttons={["닫기", "재시도"]}
+        on_cancel={() => setIsErrorModalOpen(false)}
+        on_confirm={() => {
+          setIsErrorModalOpen(false);
+          window.location.reload();
+        }}
         type="center"
       />
 
@@ -371,3 +376,5 @@ export default function PartnerResetPasswordPage() {
     </div>
   );
 }
+
+export default withPartnerAuth(PartnerResetPasswordPage);

@@ -11,6 +11,9 @@
  * - /partner/faq
  */
 
+"use client";
+
+import { withPartnerAuth } from "@/components/auth/withAuth";
 import FAQPageClient from "@/components/common/faq/FAQPageClient";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
@@ -19,7 +22,7 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
  *
  * @returns 파트너 FAQ 페이지 JSX 요소
  */
-export default function PartnerFAQPage() {
+function PartnerFAQPage() {
   return (
     <FAQPageClient
       header_component={<PartnerSubHeader />}
@@ -28,3 +31,5 @@ export default function PartnerFAQPage() {
     />
   );
 }
+
+export default withPartnerAuth(PartnerFAQPage);
