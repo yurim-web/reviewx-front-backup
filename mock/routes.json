@@ -71,5 +71,7 @@
   "/partner/penalty/status": "/partner_penalty_status",
 
   "/community/categories": "/community_categories",
-  "/community/faq": "/faq_posts"
+  "/community/faq": "/faq_posts",
+
+  "/api/admin/board-categories/form": "/category_form_options"
 }
