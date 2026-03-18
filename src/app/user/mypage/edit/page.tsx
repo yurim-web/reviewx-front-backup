@@ -33,6 +33,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import { useWithdrawFlow } from "@/hooks/useWithdrawFlow";
 import { useEditProfile } from "@/hooks/user/mypage/useEditProfile";
 import { BANK_OPTIONS } from "@/utils/constants/bank";
+import Loading from "@/app/loading";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -99,26 +100,7 @@ export default function EditProfilePage() {
     },
   });
 
-  // 로딩 중
-  if (isLoading) {
-    return (
-      <div className={layoutStyles.edit_profile_container}>
-        <SubHeader />
-        <main className={layoutStyles.main_content}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "400px",
-            }}
-          >
-            로딩 중...
-          </div>
-        </main>
-      </div>
-    );
-  }
+  if (isLoading) return <Loading />;
 
   return (
     <div className={layoutStyles.edit_profile_container}>
