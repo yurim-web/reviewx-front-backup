@@ -23,6 +23,7 @@ import ProfileContent from "@/components/common/mypage/ProfileContent";
 import BaseModal from "@/components/common/modal/BaseModal";
 import type { MainTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/mypage/mypage_layout.module.css";
+import Loading from "@/app/loading";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -111,25 +112,7 @@ export default function ProfilePage() {
     setMemberType(type);
   };
 
-  // 로딩 중
-  if (isLoading) {
-    return (
-      <div className={layoutStyles.mypage_container}>
-        <main className={layoutStyles.main_content}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "400px",
-            }}
-          >
-            로딩 중...
-          </div>
-        </main>
-      </div>
-    );
-  }
+  if (isLoading) return <Loading />;
 
   return (
     <div className={layoutStyles.mypage_container}>
