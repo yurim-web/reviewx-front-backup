@@ -158,7 +158,7 @@ export default function ApplicationTabCard({ campaign, onCancelSuccess }: Applic
         is_open={alreadyCancelledModal.isOpen}
         on_close={alreadyCancelledModal.close}
         message="이미 취소된 캠페인입니다."
-        buttons={["확인"]}
+        buttons={["닫기"]}
         type="center"
       />
     </>

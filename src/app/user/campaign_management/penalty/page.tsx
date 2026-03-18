@@ -20,16 +20,20 @@ import PenaltyContent from "@/components/common/campaign_management/penalty/Pena
 import type { MainTab, StatTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
+import { withUserAuth } from "@/components/auth/withAuth";
 import { useUserPenalty } from "@/hooks/user/campaign_management/useUserPenalty";
 import { useAllCampaigns } from "@/hooks/user/campaign_management/useAllCampaigns";
+import Loading from "@/app/loading";
 
-export default function PenaltyPage() {
-  const { penaltyData, penaltyStatus } = useUserPenalty();
-  const { stats } = useAllCampaigns();
+function PenaltyPage() {
+  const { penaltyData, penaltyStatus, isLoading: penaltyLoading } = useUserPenalty();
+  const { stats, isLoading: campaignsLoading } = useAllCampaigns();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
   const [activeStatTab, setActiveStatTab] = useState<StatTab>("패널티");
+
+  if (penaltyLoading || campaignsLoading) return <Loading />;
 
   const handleStatTabChange = (tab: StatTab) => {
     if (tab === "패널티") {
@@ -73,3 +77,5 @@ export default function PenaltyPage() {
     </div>
   );
 }
+
+export default withUserAuth(PenaltyPage);

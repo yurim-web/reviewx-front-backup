@@ -21,15 +21,18 @@ import type { MainTab, CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import { withUserAuth } from "@/components/auth/withAuth";
 import { useAppliedCampaigns } from "@/hooks/user/campaign_management/useAppliedCampaigns";
+import Loading from "@/app/loading";
 
 function AppliedPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
   const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
-  const { campaigns, displayStats } = useAppliedCampaigns();
+  const { campaigns, displayStats, isLoading } = useAppliedCampaigns();
 
   const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
     setFilteredCampaigns(filtered);
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={layoutStyles.container}>

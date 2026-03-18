@@ -22,15 +22,18 @@ import type { CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import { withUserAuth } from "@/components/auth/withAuth";
 import { useCancelledCampaigns } from "@/hooks/user/campaign_management/useCancelledCampaigns";
+import Loading from "@/app/loading";
 
 function CancelledPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
   const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
-  const { campaigns, stats } = useCancelledCampaigns();
+  const { campaigns, stats, isLoading } = useCancelledCampaigns();
 
   const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
     setFilteredCampaigns(filtered);
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={layoutStyles.container}>
