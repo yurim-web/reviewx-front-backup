@@ -102,7 +102,7 @@ function adaptApiNotification(item: NotificationApiItem): NotificationItem {
 }
 
 export default function UserNotificationPage() {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
   const reviewerId = user ? getReviewerId(user.id) : 0;
@@ -134,15 +134,14 @@ export default function UserNotificationPage() {
 
   // 로그인 체크
   useEffect(() => {
-    if (typeof window !== "undefined" && !user) {
+    if (typeof window !== "undefined" && !authLoading && !user) {
       router.push("/user/login");
     }
-  }, [user, router]);
+  }, [user, router, authLoading]);
   const [notifications, setNotifications] = useState<NotificationItem[]>(
     mockReviewerNotifications as NotificationItem[]
   );
   const [isDeleteToastOpen, setIsDeleteToastOpen] = useState(false);
-  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
   const [isServerErrorModalOpen, setIsServerErrorModalOpen] = useState(false);
 
   // 무한 스크롤
@@ -234,14 +233,8 @@ export default function UserNotificationPage() {
     if (isError) setIsServerErrorModalOpen(true);
   }, [isError]);
 
-  /** 전체 삭제 버튼 클릭 → A_M14 확인 모달 표시 */
+  /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트 표시 */
   const handleDeleteAllClick = () => {
-    setIsDeleteConfirmModalOpen(true);
-  };
-
-  /** A_M14 확인 → 실제 삭제 처리 */
-  const handleConfirmDeleteAll = () => {
-    setIsDeleteConfirmModalOpen(false);
     setNotifications([]);
     setDisplayCount(PAGE_SIZE);
     // 헤더 알림 아이콘 즉시 비활성화 — 캐시를 빈 배열로 덮어씀
@@ -307,22 +300,17 @@ export default function UserNotificationPage() {
         onClose={() => setIsDeleteToastOpen(false)}
       />
 
-      {/* A_M14: 전체 삭제 확인 모달 */}
-      <BaseModal
-        is_open={isDeleteConfirmModalOpen}
-        on_close={() => setIsDeleteConfirmModalOpen(false)}
-        message="선택한 내역을 삭제하시겠습니까?"
-        buttons={["취소", "확인"]}
-        on_confirm={handleConfirmDeleteAll}
-        type="center"
-      />
-
       {/* E_M5: 서버 오류 모달 */}
       <BaseModal
         is_open={isServerErrorModalOpen}
         on_close={() => setIsServerErrorModalOpen(false)}
         message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
-        buttons={["확인"]}
+        buttons={["닫기", "재시도"]}
+        on_cancel={() => setIsServerErrorModalOpen(false)}
+        on_confirm={() => {
+          setIsServerErrorModalOpen(false);
+          window.location.reload();
+        }}
         type="center"
       />
     </div>
