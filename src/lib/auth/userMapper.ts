@@ -168,6 +168,7 @@ export function mapToAuthUser(account: UnifiedAccount): AuthUser {
     email: account.email,
     name: account.name || account.email.split("@")[0],
     role,
+    status: account.isBanned ? "BANNED" : account.isBlocked ? "BLOCKED" : "ACTIVE",
   };
 
   if (role === "user") {
