@@ -149,6 +149,7 @@ export function useHomeCampaigns() {
       ongoing_campaigns: apiData.ongoing,
       similar_campaigns: apiData.similar ?? [],
       isError: false,
+      isLoading: false,
     };
   }
 
@@ -160,5 +161,6 @@ export function useHomeCampaigns() {
       similar_campaigns: [] as HomeCampaign[],
     }),
     isError,
+    isLoading,
   };
 }

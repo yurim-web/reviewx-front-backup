@@ -22,6 +22,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/home/home.module.css";
 import { useHomeAutoLogin } from "@/hooks/home/useHomeAutoLogin";
 import { useHomeCampaigns } from "@/hooks/home/useHomeCampaigns";
+import Loading from "@/app/loading";
 
 const MAIN_BANNERS = [
   "/images/main/main_banner.png",
@@ -41,6 +42,7 @@ export default function HomePageClient() {
     similar_campaigns,
     ongoing_campaigns,
     isError,
+    isLoading,
   } = useHomeCampaigns();
 
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -49,15 +51,19 @@ export default function HomePageClient() {
     if (isError) setShowErrorModal(true);
   }, [isError]);
 
+  if (isLoading) return <Loading />;
+
   return (
     <>
       <MainMenu />
       <div className={styles.header_spacer} aria-hidden />
 
       <article className={styles.container}>
-        <section className={styles.main_banner_container}>
-          <MainBannerSlider banners={MAIN_BANNERS} autoSlideInterval={5000} />
-        </section>
+        {MAIN_BANNERS.length > 0 && (
+          <section className={styles.main_banner_container}>
+            <MainBannerSlider banners={MAIN_BANNERS} autoSlideInterval={5000} />
+          </section>
+        )}
 
         <section className={styles.campaign_container}>
           <Titletext main_title="선정 확률 높은 캠페인" />
