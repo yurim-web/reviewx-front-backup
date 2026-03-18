@@ -22,6 +22,7 @@ import Toast from "@/components/common/toast/Toast";
 import type { DeliveryCampaignData } from "@/data/campaign/delivery/deliveryCampaigns";
 import { useCampaignDetail } from "@/hooks/user/campaign/useCampaignDetail";
 import type { CampaignDetailAdapted } from "@/hooks/user/campaign/useCampaignDetail";
+import Loading from "@/app/loading";
 
 interface DeliveryDetailPageProps {
   params: Promise<{ id: string }>;
@@ -79,10 +80,7 @@ export default function DeliveryDetailPage({ params }: DeliveryDetailPageProps) 
     setIsLoading(false);
   }, [id, apiCampaign, isApiLoading]);
 
-  // 로딩 중일 때는 아무것도 표시하지 않음 (또는 로딩 스피너 표시)
-  if (isLoading) {
-    return <div>로딩 중...</div>;
-  }
+  if (isLoading) return <Loading />;
 
   // 로딩이 완료되었는데 캠페인이 없으면 404
   if (!campaign) return notFound();
