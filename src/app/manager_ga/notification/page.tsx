@@ -16,11 +16,9 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
-import ManagerGAHeader from "@/components/manager/ga/common/ManagerGAHeader";
-import SidebarMenuGA from "@/components/manager/ga/common/SidebarMenu";
 import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
-import "@/styles/manager_ga/layout.css";
+import Loading from "@/app/loading";
 import { fetchAdminNotifications, deleteAllAdminNotifications } from "@/lib/api/notification";
 import { mockManagerGANotifications } from "@/data/notification/notificationData";
 
@@ -28,7 +26,7 @@ export default function ManagerGANotificationPage() {
   const [notifications, setNotifications] = useState(mockManagerGANotifications);
   const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
-  const { data: apiData } = useQuery({
+  const { data: apiData, isLoading } = useQuery({
     queryKey: ["adminNotifications"],
     queryFn: fetchAdminNotifications,
     retry: false,
@@ -56,14 +54,10 @@ export default function ManagerGANotificationPage() {
     set_is_delete_toast_open(true);
   };
 
+  if (isLoading) return <Loading />;
+
   return (
     <div className={`${styles.notification_container} ${styles.has_sidebar}`.trim()}>
-      {/* GA 관리자 헤더 */}
-      <ManagerGAHeader managerType="ga" />
-
-      {/* GA 사이드바 메뉴 */}
-      <SidebarMenuGA />
-
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
         <div className={styles.manager_notification_header}>
