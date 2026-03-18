@@ -32,13 +32,14 @@ import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageT
 import PartnerStatsSection from "@/components/manager/common/member/partners/PartnerStatsSection";
 import PartnerFilterSection from "@/components/manager/common/member/partners/PartnerFilterSection";
 import PartnerTable from "@/components/manager/common/member/partners/PartnerTable";
+import Loading from "@/app/loading";
 import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type { PartnerDivision, PartnerStatus } from "@/data/manager_ga/common/filterOptions";
 import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 
 export default function PartnersPage() {
-  const { partners } = useAdminPartners();
+  const { partners, isLoading } = useAdminPartners();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -58,6 +59,8 @@ export default function PartnersPage() {
   const handle_restriction_click = () => {
     table_ref.current?.open_restriction_modal();
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles.container}>

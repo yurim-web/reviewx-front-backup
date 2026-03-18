@@ -19,13 +19,14 @@ import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageT
 import ReviewerStatsSection from "@/components/manager/common/member/reviewers/ReviewerStatsSection";
 import ReviewerFilterSection from "@/components/manager/common/member/reviewers/ReviewerFilterSection";
 import ReviewerTable from "@/components/manager/common/member/reviewers/ReviewerTable";
+import Loading from "@/app/loading";
 import { useAdminReviewers } from "@/hooks/manager/ga/useAdminReviewers";
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type { ReviewerStatus, ReviewerStatusType } from "@/data/manager_ga/common/filterOptions";
 import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 
 export default function ReviewersPage() {
-  const { reviewers } = useAdminReviewers();
+  const { reviewers, isLoading } = useAdminReviewers();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -45,6 +46,8 @@ export default function ReviewersPage() {
   const handle_restriction_click = () => {
     table_ref.current?.open_restriction_modal();
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles.container}>

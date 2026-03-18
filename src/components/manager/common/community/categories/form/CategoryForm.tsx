@@ -16,7 +16,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import Loading from "@/app/loading";
 import styles from "@/styles/manager/common/community/categories/category_create_page.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
 import ErrorText from "@/components/common/error_text/ErrorText";
@@ -28,7 +29,7 @@ import {
   type CategoryDivision,
   type CategoryItem,
 } from "@/data/manager_ga/community/categoriesData";
-import { createCategory, updateCategoryApi } from "@/lib/api/categories";
+import { createCategory, updateCategoryApi, getCategoryFormOptions } from "@/lib/api/categories";
 
 interface CategoryFormProps {
   // mode: "create" | "edit" - 등록 모드 또는 수정 모드
@@ -39,8 +40,8 @@ interface CategoryFormProps {
   category_id?: string;
 }
 
-// 구분 옵션 목록 (공지사항, 자주 묻는 질문)
-const division_options: CategoryDivision[] = ["공지사항", "자주 묻는 질문"];
+// 구분 옵션 기본값 (API 미응답 시 fallback)
+const DEFAULT_DIVISION_OPTIONS: CategoryDivision[] = ["공지사항", "자주 묻는 질문"];
 
 export default function CategoryForm({ mode, manager_type, category_id }: CategoryFormProps) {
   // Next.js 라우터 사용
@@ -69,6 +70,17 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
 
   // 로딩 상태 관리 (수정 모드일 때만 사용)
   const [is_loading, set_is_loading] = useState<boolean>(mode === "edit");
+
+  // 구분 옵션 조회 (GET /api/admin/board-categories/form)
+  // 백엔드 미구현 시 DEFAULT_DIVISION_OPTIONS로 fallback
+  const { data: formOptions } = useQuery({
+    queryKey: ["categoryFormOptions"],
+    queryFn: getCategoryFormOptions,
+    retry: false,
+    staleTime: Infinity,
+  });
+  const division_options: CategoryDivision[] =
+    (formOptions?.divisions as CategoryDivision[] | undefined) ?? DEFAULT_DIVISION_OPTIONS;
 
   // 카테고리 등록 mutation
   const create_mutation = useMutation({
@@ -218,13 +230,7 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
   // 조건부 렌더링: is_loading이 true일 때 로딩 메시지를 표시합니다
   // 주의: Hooks 규칙을 지키기 위해 모든 Hooks는 early return 이전에 호출되어야 합니다
   if (is_loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.main_content}>
-          <p>카테고리 데이터를 불러오는 중...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
