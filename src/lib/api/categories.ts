@@ -40,3 +40,10 @@ export const updateCategoryApi = (categoryId: number, body: UpdateCategoryReques
 
 export const deleteCategory = (categoryId: number): Promise<void> =>
   apiClient.delete(`/api/admin/board-categories/${categoryId}`).then(() => undefined);
+
+export interface CategoryFormOptions {
+  divisions: string[];
+}
+
+export const getCategoryFormOptions = (): Promise<CategoryFormOptions> =>
+  apiClient.get("/api/admin/board-categories/form").then((res) => res.data);
