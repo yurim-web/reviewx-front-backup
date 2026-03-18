@@ -18,7 +18,7 @@
 "use client";
 
 import { ReactNode, useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
@@ -106,6 +106,7 @@ export default function CampaignDetailPage({
   isMinor = false,
 }: CampaignDetailPageProps) {
   // 실제 로그인 상태 (prop이 없으면 AuthContext에서 가져옴)
+  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const resolvedIsLoggedIn = isLoggedIn ?? isAuthenticated;
 
@@ -127,6 +128,9 @@ export default function CampaignDetailPage({
 
   // 미성년자 차단 모달 상태
   const [isMinorBlockModalOpen, setIsMinorBlockModalOpen] = useState(false);
+
+  // 비로그인 신청 시 E_M2 로그인 필요 모달 상태
+  const [isLoginRequiredModalOpen, setIsLoginRequiredModalOpen] = useState(false);
 
   // 캠페인 데이터가 없으면 에러 모달 표시
   useEffect(() => {
@@ -237,6 +241,11 @@ export default function CampaignDetailPage({
    * - 유저인 경우: 기존 ApplicationModal 표시
    */
   const handleApplyClick = () => {
+    if (!resolvedIsLoggedIn) {
+      // 비로그인 상태에서 신청 버튼 클릭 → E_M2
+      setIsLoginRequiredModalOpen(true);
+      return;
+    }
     if (isPartner) {
       // 파트너인 경우 신청 불가 모달 표시
       setIsPartnerModalOpen(true);
@@ -349,6 +358,19 @@ export default function CampaignDetailPage({
         on_close={() => setIsErrorModalOpen(false)}
         message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
         buttons={["확인"]}
+      />
+
+      {/* E_M2: 비로그인 신청 시 로그인 필요 모달 */}
+      <BaseModal
+        is_open={isLoginRequiredModalOpen}
+        on_close={() => setIsLoginRequiredModalOpen(false)}
+        message="로그인이 필요합니다."
+        buttons={["확인"]}
+        on_confirm={() => {
+          setIsLoginRequiredModalOpen(false);
+          router.push("/user/login");
+        }}
+        type="center"
       />
 
       {/* 미성년자 차단 모달 */}

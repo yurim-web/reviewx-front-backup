@@ -74,6 +74,7 @@ export default function ApplicationModal({
   const suspendedModal = useModalState();
   const invalidRequestModal = useModalState();
   const duplicateModal = useModalState();
+  const serverErrorModal = useModalState();
 
   // 폼 상태 훅
   const {
@@ -125,6 +126,7 @@ export default function ApplicationModal({
     onParticipated: participatedModal.open,
     onSuspended: suspendedModal.open,
     onClosed: closedModal.open,
+    onError: serverErrorModal.open,
   });
 
   if (!isOpen) return null;
@@ -448,6 +450,20 @@ export default function ApplicationModal({
         }}
         message="이미 참여한 캠페인입니다."
         buttons={["닫기"]}
+      />
+
+      {/* E_M5: 서버 오류 모달 */}
+      <BaseModal
+        is_open={serverErrorModal.isOpen}
+        on_close={serverErrorModal.close}
+        message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
+        buttons={["닫기", "재시도"]}
+        on_cancel={serverErrorModal.close}
+        on_confirm={() => {
+          serverErrorModal.close();
+          window.location.reload();
+        }}
+        type="center"
       />
     </div>
   );
