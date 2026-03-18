@@ -267,7 +267,13 @@ export default function WithdrawalRequestPage() {
         is_open={isServerErrorModalOpen}
         on_close={() => setIsServerErrorModalOpen(false)}
         message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
-        buttons={["확인"]}
+        buttons={["닫기", "재시도"]}
+        on_cancel={() => setIsServerErrorModalOpen(false)}
+        on_confirm={() => {
+          setIsServerErrorModalOpen(false);
+          window.location.reload();
+        }}
+        type="center"
       />
     </div>
   );
