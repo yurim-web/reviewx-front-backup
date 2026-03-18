@@ -15,6 +15,9 @@
  * - PartnerSubHeader (파트너 전용 서브헤더)
  */
 
+"use client";
+
+import { withPartnerAuth } from "@/components/auth/withAuth";
 import FAQDetailPageClient from "@/components/common/faq/FAQDetailPageClient";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
@@ -23,11 +26,8 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
  *
  * @returns 파트너 FAQ 상세 페이지 JSX 요소
  */
-export default function PartnerFAQDetailPage() {
-  return (
-    <FAQDetailPageClient
-      target="partner"
-      header_component={<PartnerSubHeader />}
-    />
-  );
+function PartnerFAQDetailPage() {
+  return <FAQDetailPageClient target="partner" header_component={<PartnerSubHeader />} />;
 }
+
+export default withPartnerAuth(PartnerFAQDetailPage);

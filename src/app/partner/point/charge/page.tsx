@@ -779,7 +779,7 @@ export default function PartnerPointChargePage() {
       <BaseModal
         is_open={cardPaymentSuccessModal.is_open}
         on_close={handleCardPaymentSuccessClose}
-        message={`결제가 완료되었습니다.<br><span style="color: #2DC469;">(보유 포인트: ${successPostPoints.toLocaleString()} P)</span><br>닫기를 누르면 이전 페이지로 돌아갑니다.`}
+        message={`결제가 완료되었습니다.<br><span style="color: #2DC469;">(보유 포인트: ${successPostPoints.toLocaleString()} P)</span>`}
         buttons={["닫기"]}
       />
 

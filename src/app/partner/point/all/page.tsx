@@ -13,11 +13,14 @@
 
 "use client";
 
+import { withPartnerAuth } from "@/components/auth/withAuth";
 import PartnerPointPageLayout from "@/components/partner/point/PartnerPointPageLayout";
 import { usePartnerPointData } from "@/hooks/partner/usePartnerPointData";
 
-export default function PartnerAllPointPage() {
+function PartnerAllPointPage() {
   const { history, summary } = usePartnerPointData();
 
   return <PartnerPointPageLayout activePointTab="all" historyData={history} summary={summary} />;
 }
+
+export default withPartnerAuth(PartnerAllPointPage);
