@@ -17,14 +17,26 @@ import { mapToAuthUser } from "./auth/userMapper";
 import { applyPostLoginSideEffects } from "./auth/postLoginSetup";
 import {
   getStoredUser,
+  getStoredUserByRole,
   setStoredUser,
   getStoredToken,
   setStoredToken,
   clearAuthStorage,
+  clearAuthStorageForRole,
+  getRoleFromPathname,
 } from "./auth/storage";
 
 // LocalStorage 스토리지 함수 re-export (기존 import 경로 유지)
-export { getStoredUser, setStoredUser, getStoredToken, setStoredToken, clearAuthStorage };
+export {
+  getStoredUser,
+  getStoredUserByRole,
+  setStoredUser,
+  getStoredToken,
+  setStoredToken,
+  clearAuthStorage,
+  clearAuthStorageForRole,
+  getRoleFromPathname,
+};
 
 // ========================================
 // 로그인 처리
@@ -39,12 +51,11 @@ export async function authenticateUser(
   if (!account) {
     throw new Error("이메일 또는 비밀번호가 일치하지 않습니다.");
   }
-  if (account.isBlocked) {
-    throw new Error("이용이 제한된 계정입니다.");
-  }
   if (account.isBanned) {
     throw new Error("정지되었거나 탈퇴된 계정입니다.");
   }
+  // isBlocked 계정은 로그인 성공 후 프론트에서 /blocked 페이지로 분기 처리
+  // (명세서 P-L4: POST 200 + user.status = 이용 제한 → 전용 화면 표시)
 
   const authUser = mapToAuthUser(account);
 
@@ -54,7 +65,7 @@ export async function authenticateUser(
 
   const mockToken = `mock_token_${authUser.id}_${Date.now()}`;
   setStoredUser(authUser);
-  setStoredToken(mockToken);
+  setStoredToken(mockToken, authUser.role);
   applyPostLoginSideEffects(account, authUser);
 
   return authUser;
@@ -69,7 +80,7 @@ export async function authenticateUnifiedAccount(account: UnifiedAccount): Promi
 
   const mockToken = `mock_token_${authUser.id}_${Date.now()}`;
   setStoredUser(authUser);
-  setStoredToken(mockToken);
+  setStoredToken(mockToken, authUser.role);
   applyPostLoginSideEffects(account, authUser);
 
   return authUser;
@@ -79,10 +90,17 @@ export async function authenticateUnifiedAccount(account: UnifiedAccount): Promi
 // 자동 로그인 확인
 // ========================================
 
-export function checkAutoLogin(): AuthUser | null {
+export function checkAutoLogin(pathname?: string): AuthUser | null {
+  // pathname이 있으면 해당 역할의 유저를 로드
+  if (pathname) {
+    const role = getRoleFromPathname(pathname);
+    const user = getStoredUserByRole(role);
+    const token = getStoredToken(role);
+    if (user && token) return user;
+  }
+  // fallback: 레거시 키에서 읽기
   const user = getStoredUser();
   const token = getStoredToken();
-
   if (!user || !token) return null;
   return user;
 }

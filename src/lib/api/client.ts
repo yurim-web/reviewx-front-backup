@@ -33,12 +33,19 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// 응답 인터셉터: 401 → 로그인 페이지 이동
+// 응답 인터셉터: 401 → 경로별 로그인 페이지 이동
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
-      window.location.href = "/";
+      const pathname = window.location.pathname;
+      if (pathname.startsWith("/partner")) {
+        window.location.href = "/partner/login";
+      } else if (pathname.startsWith("/manager_sa") || pathname.startsWith("/manager_ga")) {
+        window.location.href = "/manager/login";
+      } else {
+        window.location.href = "/user/login";
+      }
     }
     return Promise.reject(error);
   }

@@ -2,7 +2,7 @@
  * 인증 관련 타입 정의
  */
 
-export type UserRole = 'user' | 'partner' | 'manager_ga' | 'manager_sa';
+export type UserRole = "user" | "partner" | "manager_ga" | "manager_sa";
 
 export interface AuthUser {
   id: string;
@@ -10,8 +10,9 @@ export interface AuthUser {
   name: string;
   nickname?: string; // 닉네임 (리뷰어 전용, name과 별도로 관리)
   role: UserRole;
+  status?: "ACTIVE" | "BLOCKED" | "BANNED";
   // 리뷰어 전용 필드
-  grade?: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
+  grade?: "bronze" | "silver" | "gold" | "platinum" | "diamond";
   channels?: Array<{
     platform: string;
     url: string;
@@ -25,12 +26,12 @@ export interface AuthUser {
   // 파트너 전용 필드
   business_name?: string;
   business_number?: string;
-  approval_status?: 'pending' | 'approved' | 'rejected';
+  approval_status?: "pending" | "approved" | "rejected";
   representative_name?: string;
   contact_phone?: string;
   business_type?: string;
   // 관리자 전용 필드
-  admin_level?: 'GA' | 'SA';
+  admin_level?: "GA" | "SA";
   permissions?: string[];
 }
 
