@@ -29516,5 +29516,11 @@
       "registered_by": "관리자 C",
       "is_pinned": false
     }
-  ]
+  ],
+  "category_form_options": {
+    "divisions": [
+      "공지사항",
+      "자주 묻는 질문"
+    ]
+  }
 }

@@ -32,7 +32,7 @@ export interface CampaignListApiItem {
     categoryId: number;
     categoryName: string; // "뷰티", "식품", "가전" 등
   };
-  requiredPlatform: {
+  requiredPlatform?: {
     channelId: number;
     channelName: string; // "INSTAGRAM" | "NAVER_BLOG" | "YOUTUBE" 등
   };
@@ -73,7 +73,7 @@ export interface CampaignDetailApiItem {
   thumbnail: { url: string };
   thumbnailUrl?: string; // json-server mock fallback
   category: { categoryId: number; categoryName: string };
-  requiredPlatform: { channelId: number; channelName: string };
+  requiredPlatform?: { channelId: number; channelName: string };
   region?: string | { regionId: number; name: string; parentId: number | null } | null;
   recruit: {
     recruitLimit: number;

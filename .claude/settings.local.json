@@ -160,7 +160,8 @@
       "Bash(python fix_spec.py)",
       "mcp__atlassian-confluence__searchAtlassian",
       "mcp__playwright__browser_navigate_back",
-      "Bash(ATLASSIAN_EMAIL=$ATLASSIAN_EMAIL ATLASSIAN_TOKEN=$ATLASSIAN_TOKEN node scripts/update_channel_spec.js)"
+      "Bash(ATLASSIAN_EMAIL=$ATLASSIAN_EMAIL ATLASSIAN_TOKEN=$ATLASSIAN_TOKEN node scripts/update_channel_spec.js)",
+      "Bash(ATLASSIAN_EMAIL=\"$ATLASSIAN_EMAIL\" ATLASSIAN_TOKEN=\"$ATLASSIAN_TOKEN\" python3 scripts/update_notif_spec.py)"
     ]
   },
   "hooks": {
