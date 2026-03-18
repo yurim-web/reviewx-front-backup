@@ -176,6 +176,7 @@ export interface AdminBlacklistApiItem {
   block_reason: string;
   registered_date: string;
   registered_by: string;
+  status?: string; // ACTIVE | BLOCKED | PAUSED | WITHDRAW
 }
 
 // ----------------------------------------

@@ -31,6 +31,7 @@ import UserTypeTag from "@/components/manager/common/tags/UserTypeTag";
 import type { UserType } from "@/components/manager/common/tags/UserTypeTag";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import UnblockConfirmModal from "./UnblockConfirmModal";
+import Loading from "@/app/loading";
 import type { BlacklistDivision, BlockCode } from "@/data/manager_ga/common/filterOptions";
 
 interface BlacklistTableProps {
@@ -119,11 +120,13 @@ export default function BlacklistTable({
   });
   // 해제 완료 모달 상태
   const [unblock_complete_modal_state, set_unblock_complete_modal_state] = useState<boolean>(false);
+  // 탈퇴 회원 조회 불가 모달 상태 (B_M5)
+  const [withdraw_modal_open, set_withdraw_modal_open] = useState<boolean>(false);
   // 블랙리스트 데이터 업데이트를 위한 상태 (리렌더링 트리거)
   const [blacklist_update_key, set_blacklist_update_key] = useState<number>(0);
 
   // API 훅으로 차단 목록 조회
-  const { blacklist } = useAdminBlacklist();
+  const { blacklist, isLoading } = useAdminBlacklist();
 
   // 검색어 및 필터로 필터링된 차단 내역 목록
   const filtered_blacklist = useMemo(() => {
@@ -272,19 +275,19 @@ export default function BlacklistTable({
     }
 
     // 현재 경로에서 manager_ga인지 manager_sa인지 판단
-    // pathname 예시: "/manager_ga/member/blacklist" 또는 "/manager_sa/member/blacklist"
     const is_manager_ga = pathname?.includes("/manager_ga");
     const manager_prefix = is_manager_ga ? "manager_ga" : "manager_sa";
 
+    // 탈퇴 회원 체크: GA 관리자는 탈퇴 회원 조회 불가 (B_M5)
+    if (row.status === "WITHDRAW" && is_manager_ga) {
+      set_withdraw_modal_open(true);
+      return;
+    }
+
     // division에 따라 상세 페이지 경로 결정
-    // user_id를 사용하여 상세 페이지로 이동합니다
     if (row.division === "파트너") {
-      // 파트너 상세 페이지로 이동
-      // 경로 예시: /manager_ga/member/partners/[user_id]
       router.push(`/${manager_prefix}/member/partners/${row.user_id}`);
     } else if (row.division === "리뷰어") {
-      // 리뷰어 상세 페이지로 이동
-      // 경로 예시: /manager_ga/member/reviewers/[user_id]
       router.push(`/${manager_prefix}/member/reviewers/${row.user_id}`);
     }
   };
@@ -338,6 +341,8 @@ export default function BlacklistTable({
     );
   };
 
+  if (isLoading) return <Loading />;
+
   return (
     <Fragment>
       <CommonTableWithTooltip<BlacklistTableRowData>
@@ -387,6 +392,15 @@ export default function BlacklistTable({
         is_open={unblock_complete_modal_state}
         on_close={handle_unblock_complete_modal_close}
         message="해제가 완료되었습니다."
+        buttons={["닫기"]}
+        type="center"
+      />
+
+      {/* 탈퇴 회원 조회 불가 모달 (B_M5) */}
+      <BaseModal
+        is_open={withdraw_modal_open}
+        on_close={() => set_withdraw_modal_open(false)}
+        message="탈퇴한 회원은 조회할 수 없습니다."
         buttons={["닫기"]}
         type="center"
       />
