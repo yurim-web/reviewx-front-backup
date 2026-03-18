@@ -46,6 +46,7 @@ interface UseApplicationSubmitParams {
   onParticipated: () => void;
   onSuspended: () => void;
   onClosed: () => void;
+  onError: () => void;
 }
 
 export function useApplicationSubmit(params: UseApplicationSubmitParams) {
@@ -66,6 +67,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
     onParticipated,
     onSuspended,
     onClosed,
+    onError,
   } = params;
 
   const { user } = useAuth();
@@ -193,7 +195,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
 
   const handleSubmit = useCallback(async () => {
     if (!campaignId) {
-      alert("캠페인 정보를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
+      onError();
       return;
     }
 
@@ -229,7 +231,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
         } else {
           const mockCampaign = findMockCampaign(campaignId);
           if (!mockCampaign) {
-            alert("캠페인을 찾을 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
+            onError();
             return;
           }
           const ok = await addApplicantToCampaign(mockCampaign, campaigns, storageKey, true);
@@ -241,7 +243,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
       } else {
         const mockCampaign = findMockCampaign(campaignId);
         if (!mockCampaign) {
-          alert("캠페인 데이터를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
+          onError();
           return;
         }
         const ok = await addApplicantToCampaign(mockCampaign, [], storageKey, true);
@@ -251,7 +253,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
         }
       }
     } catch (_error) {
-      alert("캠페인 신청 중 오류가 발생했습니다. 다시 시도해주세요.");
+      onError();
     }
   }, [
     campaignId,
@@ -267,6 +269,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
     onParticipated,
     onSuspended,
     onClosed,
+    onError,
   ]);
 
   return { handleSubmit };
