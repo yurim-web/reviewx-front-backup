@@ -11,6 +11,7 @@
  * - /partner/campaign_management (파트너 캠페인 관리)
  */
 import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { PartnerCampaign, PartnerStatTab } from "@/types/domain/partner";
 import {
   calculateContentCounts,
@@ -58,6 +59,7 @@ export function useCampaignCard({
   campaign,
   activeTab,
 }: UseCampaignCardParams): UseCampaignCardReturn {
+  const router = useRouter();
   /* ----------------------------------------
      📌 모달 상태 관리 (영수증/관리/삭제)
      ---------------------------------------- */
@@ -142,25 +144,25 @@ export function useCampaignCard({
 
       if (buttonText === "캠페인 수정") {
         const campaignTypePath = getCampaignTypePath(campaign.campaignType);
-        window.location.href = `/partner/campaign/edit/${campaignTypePath}/${campaign.id}`;
+        router.push(`/partner/campaign/edit/${campaignTypePath}/${campaign.id}`);
         return;
       }
 
       if (buttonText === "패널티 내역 확인") {
-        window.location.href = "/partner/campaign_management/penalty";
+        router.push("/partner/campaign_management/penalty");
         return;
       }
 
       if (buttonText === "신청 내역 확인" || buttonText === "당첨자 선정") {
         const campaignTypePath = getCampaignTypePath(campaign.campaignType);
-        window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
+        router.push(`/partner/campaign_application/${campaignTypePath}/${campaign.id}`);
         return;
       }
 
       // 등록 기한 연장 요청 버튼 클릭 시 콘텐츠 내역 페이지로 이동
       if (buttonText.startsWith("등록 기한 연장 요청")) {
         const campaignTypePath = getCampaignTypePath(campaign.campaignType);
-        window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}`;
+        router.push(`/partner/campaign_contents/${campaignTypePath}/${campaign.id}`);
         return;
       }
     },

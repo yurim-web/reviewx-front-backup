@@ -12,6 +12,7 @@
  *
  */
 
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { PartnerStatTab } from "@/types/domain/partner";
@@ -53,6 +54,7 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
     },
     actions: { closeReceiptModal, closeManagementModal, closeDeleteModal, handleButtonClick },
   } = useCampaignCard({ campaign, activeTab });
+  const router = useRouter();
 
   /**
    * 버튼 클릭 핸들러
@@ -362,7 +364,9 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
               className={`${buttonStyles.action_button} ${buttonStyles.secondary_button} ${cardStyles.content_check_button}`}
               onClick={() => {
                 const campaignTypePath = getCampaignTypePath(campaign.campaignType);
-                window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=확인`;
+                router.push(
+                  `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=확인`
+                );
               }}
             >
               콘텐츠 확인 ({reviewingCount})
@@ -371,7 +375,9 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
               onClick={() => {
                 const campaignTypePath = getCampaignTypePath(campaign.campaignType);
-                window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=완료`;
+                router.push(
+                  `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=완료`
+                );
               }}
             >
               콘텐츠 확인 완료 ({completedCount})
