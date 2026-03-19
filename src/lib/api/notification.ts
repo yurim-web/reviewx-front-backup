@@ -24,15 +24,10 @@ import type { NotificationApiItem } from "@/types/api/notification";
  */
 export const fetchNotifications = (reviewerId: number): Promise<NotificationApiItem[]> =>
   apiClient
-    .get<NotificationApiItem[]>(`/reviewer/notification`)
+    .get<NotificationApiItem[]>(`/reviewer/notification`, {
+      params: { reviewer_id: reviewerId },
+    })
     .then((res) => (Array.isArray(res.data) ? res.data : []));
-
-/**
- * 알림 읽음 처리
- * PATCH /notifications/:id { is_read: true }
- */
-export const patchNotificationRead = (id: number | string): Promise<void> =>
-  apiClient.patch(`/notifications/${id}`, { is_read: true }).then(() => undefined);
 
 /**
  * 관리자(GA/SA) 알림 목록 조회
@@ -45,10 +40,19 @@ export const fetchAdminNotifications = (): Promise<NotificationApiItem[]> =>
 
 /**
  * 관리자(GA/SA) 전체 알림 삭제
- * DELETE /api/admin/notifications/all
+ * 실제 백엔드: DELETE /api/admin/notifications/all
+ * mock: 개별 삭제로 처리 (json-server는 bulk delete 미지원)
  */
-export const deleteAllAdminNotifications = (): Promise<void> =>
-  apiClient.delete("/api/admin/notifications/all").then(() => undefined);
+export const deleteAllAdminNotifications = async (): Promise<void> => {
+  try {
+    await apiClient.delete("/admin/notifications/all");
+  } catch {
+    // mock fallback: 전체 조회 후 개별 삭제
+    const res = await apiClient.get<{ id: number | string }[]>("/admin/notification");
+    const items = Array.isArray(res.data) ? res.data : [];
+    await Promise.all(items.map((item) => apiClient.delete(`/admin_notifications/${item.id}`)));
+  }
+};
 
 /**
  * 파트너 알림 목록 조회

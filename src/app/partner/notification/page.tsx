@@ -13,16 +13,33 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
+import Loading from "@/app/loading";
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import { fetchPartnerNotifications } from "@/lib/api/notification";
-import { mockPartnerNotifications } from "@/data/notification/notificationData";
+import type { NotificationApiItem } from "@/types/api/notification";
+import {
+  mockPartnerNotifications,
+  type NotificationItem,
+  type NotificationCategory,
+} from "@/data/notification/notificationData";
+
+/** API 응답 → NotificationItem 변환 */
+function mapApiToNotificationItem(api: NotificationApiItem): NotificationItem {
+  return {
+    id: api.id,
+    category: (api.type || "A_P1") as NotificationCategory,
+    time: api.created_at,
+    campaign_id: api.campaign_id,
+    campaign_name: api.campaign_name,
+  };
+}
 
 function PartnerNotificationPage() {
   const [isMobile, setIsMobile] = useState(false);
@@ -36,31 +53,43 @@ function PartnerNotificationPage() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const [notifications, setNotifications] = useState(mockPartnerNotifications);
+  const [deletedIds, setDeletedIds] = useState<Set<number | string>>(new Set());
   const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
-  const { data: apiData } = useQuery({
+  const {
+    data: apiData,
+    isError,
+    isLoading,
+  } = useQuery({
     queryKey: ["partnerNotifications"],
     queryFn: fetchPartnerNotifications,
     retry: false,
     staleTime: 30_000,
   });
 
-  useEffect(() => {
-    if (apiData && apiData.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setNotifications(apiData as any);
+  const notifications = useMemo<NotificationItem[]>(() => {
+    if (apiData != null) {
+      return apiData.map(mapApiToNotificationItem).filter((n) => !deletedIds.has(n.id));
     }
-  }, [apiData]);
+    if (isError) {
+      return mockPartnerNotifications.filter((n) => !deletedIds.has(n.id));
+    }
+    return [];
+  }, [apiData, isError, deletedIds]);
 
   const handle_delete_all_click = () => {
-    setNotifications([]);
+    const allIds = new Set(notifications.map((n) => n.id));
+    setDeletedIds(allIds);
     set_is_delete_toast_open(true);
   };
 
-  const handle_notification_click = (_notification: (typeof mockPartnerNotifications)[0]) => {
+  const handle_notification_click = (_notification: NotificationItem) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className={`${styles.notification_container} ${isMobile ? styles.mobile : ""}`}>
