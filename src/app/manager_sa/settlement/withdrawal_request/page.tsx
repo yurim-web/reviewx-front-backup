@@ -15,6 +15,7 @@
 
 import { useState, useEffect } from "react";
 import styles from "@/styles/manager_sa/settlement/withdrawal_request/withdrawal_request_page.module.css";
+import Loading from "@/app/loading";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import WithdrawalRequestFilterSection, {
   type RequestFilterStatus,
@@ -43,7 +44,7 @@ export default function WithdrawalRequestPage() {
   const [selected_filter, set_selected_filter] = useState<RequestFilterStatus>("all");
 
   // API 훅으로 출금 요청 목록 조회
-  const { requests } = useAdminWithdrawalRequests();
+  const { requests, isLoading } = useAdminWithdrawalRequests();
 
   // localStorage에서 pending 상태 출금 요청을 가져와 API 데이터와 합산
   const [local_withdrawal_requests, set_local_withdrawal_requests] = useState<
@@ -107,6 +108,8 @@ export default function WithdrawalRequestPage() {
       }
     }
   }, []);
+
+  if (isLoading) return <Loading />;
 
   // 긴급(round === "-") / 회차 정산(round !== "-") 분류
   const urgent_requests = requests.filter((r) => r.round === "-");

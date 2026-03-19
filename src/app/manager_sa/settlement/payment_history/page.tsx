@@ -15,6 +15,7 @@
 
 import { useState, useEffect } from "react";
 import styles from "@/styles/manager_sa/settlement/payment_history/payment_history_page.module.css";
+import Loading from "@/app/loading";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import StatCardsSection from "@/components/manager/sa/settlement/payment_history/section/StatCardsSection";
 import PaymentHistoryFilterSection from "@/components/manager/sa/settlement/payment_history/section/PaymentHistoryFilterSection";
@@ -26,6 +27,7 @@ import type { PaymentStatus } from "@/components/manager/sa/settlement/payment_h
 import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterDropdown";
 import type { TaxInvoiceType } from "@/components/manager/sa/settlement/payment_history/filter/TaxInvoiceTypeFilterDropdown";
 import type { MemberType } from "@/components/manager/sa/settlement/payment_history/filter/MemberTypeFilterDropdown";
+import { useAdminPayments } from "@/hooks/manager/ga/useAdminPayments";
 
 /**
  * 이번 달의 시작일과 종료일을 계산하는 함수
@@ -63,6 +65,8 @@ function get_current_month_range(): DateRange {
 }
 
 export default function PaymentHistoryPage() {
+  const { isLoading } = useAdminPayments();
+
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
 
@@ -90,6 +94,8 @@ export default function PaymentHistoryPage() {
   const [selected_payment_statuses, set_selected_payment_statuses] = useState<PaymentStatus[]>([]);
   const [selected_member_types, set_selected_member_types] = useState<MemberType[]>([]);
   const [selected_account_statuses, set_selected_account_statuses] = useState<AccountStatus[]>([]);
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles.container}>
