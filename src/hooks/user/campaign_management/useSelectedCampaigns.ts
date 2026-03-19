@@ -16,7 +16,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchReviewerCampaigns } from "@/lib/api/reviewer";
 import { getReviewerIdNum } from "@/hooks/user/mypage/useReviewerProfile";
-import { campaignManagementStats } from "@/data/user/campaign_management/campaignManagementData";
 import type { CampaignApplication } from "@/types/domain/user";
 
 // db.json status → subStatus 매핑 (선정 탭 전용)
@@ -75,8 +74,6 @@ export function useSelectedCampaigns() {
 
   // 전체 탭별 통계 계산
   const stats = useMemo(() => {
-    if (rawCampaigns.length === 0) return campaignManagementStats;
-
     const 신청 = rawCampaigns.filter((c) => c.status === "신청완료").length;
     const 선정 = rawCampaigns.filter(
       (c) => c.status === "선정완료" || c.status === "콘텐츠등록"

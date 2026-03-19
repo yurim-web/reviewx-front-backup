@@ -123,8 +123,9 @@ function adaptApiCampaign(item: CampaignListApiItem): CampaignListAdapted {
     title: item.title,
     category: TYPE_LABEL[item.type] ?? item.type,
     subcategory: item.category?.categoryName ?? "기타",
-    channel:
-      CHANNEL_LABEL[item.requiredPlatform?.channelName] ?? item.requiredPlatform?.channelName ?? "",
+    channel: item.requiredPlatform?.channelName
+      ? (CHANNEL_LABEL[item.requiredPlatform.channelName] ?? item.requiredPlatform.channelName)
+      : "",
     image: item.thumbnailUrl,
     recruitment: {
       current: item.appliedCount,

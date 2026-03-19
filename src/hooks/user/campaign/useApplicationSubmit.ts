@@ -25,7 +25,7 @@ import {
   buildApplicantData,
   addToUserAppliedCampaigns,
 } from "@/components/user/campaign_detail/modal/applicationModalUtils";
-import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
+import { useReviewerProfile, getReviewerIdNum } from "@/hooks/user/mypage/useReviewerProfile";
 
 interface UseApplicationSubmitParams {
   campaignId?: string;
@@ -134,7 +134,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
 
       // mock API에 신청 데이터 저장 (서버 응답 확인)
       const campaignIdNum = parseInt(campaignId.replace(/\D+/g, ""), 10) || 0;
-      const reviewerIdNum = user.id.includes("kakao") ? 1 : user.id.includes("naver") ? 2 : 1;
+      const reviewerIdNum = getReviewerIdNum(user.id) ?? 1;
       try {
         await postCampaignApplication({
           campaign_id: campaignIdNum,

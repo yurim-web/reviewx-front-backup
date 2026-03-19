@@ -23,16 +23,17 @@ import type { PartnerPointHistory, PartnerPointSummary } from "@/types/domain/pa
 function getPartnerIdNum(userId?: string): number | undefined {
   if (!userId) return undefined;
   const num = parseInt(userId.replace(/\D/g, ""), 10);
-  return isNaN(num) ? 1 : num;
+  return isNaN(num) ? undefined : num;
 }
 
 export function usePartnerPointData() {
   const { user } = useAuth();
-  const partnerIdNum = getPartnerIdNum(user?.id) ?? 1;
+  const partnerIdNum = getPartnerIdNum(user?.id);
 
   const { data: history = [], isLoading } = useQuery<PartnerPointHistory[]>({
     queryKey: ["partnerPointHistory", partnerIdNum],
-    queryFn: () => fetchPartnerPointHistory(partnerIdNum),
+    queryFn: () => fetchPartnerPointHistory(partnerIdNum!),
+    enabled: partnerIdNum !== undefined,
     staleTime: 1000 * 30,
     retry: false,
   });
