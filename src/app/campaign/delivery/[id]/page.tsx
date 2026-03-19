@@ -52,7 +52,7 @@ function adaptApiToDelivery(api: CampaignDetailAdapted): DeliveryCampaignData {
     campaign_detail_images: api.detailImages,
     channel: api.channel,
     keyword: api.keyword,
-    promotionLink: "",
+    promotionLink: api.promotionLink ?? "",
     requirements: api.requirements,
     guidelineTexts: api.guidelineTexts,
     isUrgent: api.isUrgent,

@@ -53,6 +53,7 @@ function adaptApiToMission(api: CampaignDetailAdapted): MissionCampaignData {
     requirements: api.requirements,
     guidelineTexts: api.guidelineTexts,
     isUrgent: api.isUrgent,
+    productLink: api.promotionLink,
   };
 }
 

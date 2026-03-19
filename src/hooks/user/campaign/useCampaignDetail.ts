@@ -76,13 +76,18 @@ export interface CampaignDetailAdapted {
   };
   // 방문형 전용
   visitAddress?: string;
+  visitLink?: string;
   visitReservationRequired?: boolean;
+  addressGuide?: string;
+  region?: string;
   // 구매평 전용
   purchaseLink?: string;
   purchasePoint?: number;
   // 미션형 전용
   requireContentLink?: boolean;
   requireContentImage?: boolean;
+  // 공통 링크
+  promotionLink?: string;
 }
 
 /* ========================================
@@ -120,6 +125,11 @@ function buildRequirements(keywordPolicy?: CampaignDetailApiItem["keywordPolicy"
   const reqs: string[] = [];
   if (keywordPolicy.minTextLength) reqs.push(`text_${keywordPolicy.minTextLength}`);
   if (keywordPolicy.minPhotoCount) reqs.push(`photo_${keywordPolicy.minPhotoCount}`);
+  if (keywordPolicy.minVideoCount || keywordPolicy.minVideoDuration) {
+    const count = keywordPolicy.minVideoCount ?? 1;
+    const duration = keywordPolicy.minVideoDuration ?? 0;
+    reqs.push(duration ? `video_${count}_${duration}` : `video_${count}`);
+  }
   if (keywordPolicy.requireBodyLink) reqs.push("product_link");
   return reqs;
 }
@@ -157,12 +167,12 @@ export function adaptCampaignDetail(item: CampaignDetailApiItem): CampaignDetail
       })()
     : "";
 
-  const thumbnailUrl = item.thumbnail?.url ?? item.thumbnailUrl ?? "";
+  const thumbnailUrl = item.thumbnailUrl ?? item.thumbnail?.url ?? "";
   const detailImages =
     item.detailImages && item.detailImages.length > 0 ? item.detailImages : [thumbnailUrl]; // fallback: 상세이미지 없으면 썸네일 사용
 
-  const appliedCount = item.metrics?.appliedCount ?? item.appliedCount ?? 0;
-  const recruitLimit = item.recruit?.recruitLimit ?? item.recruitLimit ?? 0;
+  const appliedCount = Number(item.metrics?.appliedCount ?? item.appliedCount ?? 0);
+  const recruitLimit = Number(item.recruit?.recruitLimit ?? item.recruitLimit ?? 0);
 
   return {
     id: String(item.campaignId ?? item.id),
@@ -170,8 +180,9 @@ export function adaptCampaignDetail(item: CampaignDetailApiItem): CampaignDetail
     title: item.title,
     category: TYPE_LABEL[item.type] ?? item.type,
     subcategory: item.category?.categoryName ?? "기타",
-    channel:
-      CHANNEL_LABEL[item.requiredPlatform?.channelName] ?? item.requiredPlatform?.channelName ?? "",
+    channel: item.requiredPlatform?.channelName
+      ? (CHANNEL_LABEL[item.requiredPlatform.channelName] ?? item.requiredPlatform.channelName)
+      : "",
     image: thumbnailUrl,
     detailImages,
     points: item.reward?.extraRewardPoint ?? 0,
@@ -182,25 +193,32 @@ export function adaptCampaignDetail(item: CampaignDetailApiItem): CampaignDetail
     isUrgent: item.status === "EMERGENCY" || item.isEmergency === true,
     keyword: item.keywordPolicy?.keyword ?? "",
     requirements: buildRequirements(item.keywordPolicy),
-    guidelineTexts: item.notification ? [item.notification] : [],
+    guidelineTexts: item.notification ? [item.notification.replace(/\n/g, "<br>")] : [],
     detailedSchedule: {
       applicationStart: fmtRecruitStart,
       applicationEnd: fmtRecruitEnd,
       announcement,
-      purchasePeriod: item.purchaseInfo ? `구매 후 ${contentEndAt.substring(0, 10)}까지` : "",
+      purchasePeriod: item.purchasePeriod ?? (item.purchaseInfo ? registrationPeriod : ""),
       registrationPeriod,
     },
-    // 방문형
-    visitAddress: item.visitInfo?.address,
+    // 방문형 (nested visitInfo 우선, flat 필드 fallback)
+    visitAddress:
+      item.visitInfo?.address ?? item.visitBaseAddress ?? item.visitAddress ?? undefined,
+    visitLink: item.visitLink ?? undefined,
     visitReservationRequired: item.visitInfo?.reservationRequired,
-    // 구매평
-    purchaseLink: item.purchaseInfo?.purchaseLink,
+    addressGuide: item.addressGuide ?? undefined,
+    // 구매평 (nested purchaseInfo 우선, flat 필드 fallback)
+    purchaseLink: item.purchaseInfo?.purchaseLink ?? item.purchaseLink ?? undefined,
     purchasePoint: item.purchaseInfo?.purchasePoint,
-    // 미션형
-    requireContentLink: item.missionInfo?.requireContentLink,
-    requireContentImage: item.missionInfo?.requireContentImage,
+    // 미션형 (nested missionInfo 우선, flat 필드 fallback)
+    requireContentLink:
+      item.missionInfo?.requireContentLink ?? item.requireContentLink ?? undefined,
+    requireContentImage:
+      item.missionInfo?.requireContentImage ?? item.requireContentImage ?? undefined,
+    // 공통 링크
+    promotionLink: item.promotionLink,
     // 지역
-    ...(getRegionString(item.region) ? { region: getRegionString(item.region) } : {}),
+    region: getRegionString(item.region) || undefined,
   };
 }
 

@@ -53,6 +53,7 @@ function adaptApiToReporter(api: CampaignDetailAdapted): ReporterCampaignData {
     requirements: api.requirements,
     guidelineTexts: api.guidelineTexts,
     isUrgent: api.isUrgent,
+    productLink: api.promotionLink,
   };
 }
 
