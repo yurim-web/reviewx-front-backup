@@ -18,6 +18,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { CampaignFormData } from "@/types/domain/user";
@@ -49,6 +50,7 @@ export function useCampaignCreate({
   useConfirmModal = true,
 }: UseCampaignCreateOptions) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
 
   // 공통 State
@@ -107,8 +109,9 @@ export function useCampaignCreate({
       const success = await onRegister(formData, urgentValue);
 
       if (success) {
-        // 등록 성공 시 캠페인 관리 페이지로 이동 (새로고침 포함)
-        window.location.href = "/partner/campaign_management";
+        // 등록 성공 시 캠페인 목록 캐시 무효화 후 캠페인 관리 페이지로 이동
+        queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
+        router.push("/partner/campaign_management");
         return;
       } else {
         // 저장 실패 (QuotaExceeded 등)

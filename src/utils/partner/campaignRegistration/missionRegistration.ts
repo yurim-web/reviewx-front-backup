@@ -27,6 +27,8 @@ export async function registerMissionCampaign(
     storageKey: "missionCampaigns",
     getExtraFields: (fd) => ({
       promotionLink: fd.promotionLink || "",
+      requireContentLink: fd.requireContentLink ?? false,
+      requireContentImage: fd.requireContentImage ?? false,
     }),
   });
 }

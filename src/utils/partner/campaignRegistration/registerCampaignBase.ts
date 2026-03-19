@@ -44,7 +44,7 @@ export interface CampaignRegistrationConfig {
 const CAMPAIGN_TYPE_TO_API: Record<string, string> = {
   배송형: "DELIVERY",
   방문형: "VISIT",
-  구매평: "PURCHASE",
+  구매평: "PURCHASE_REVIEW",
   기자단: "REPORTER",
   미션형: "MISSION",
 };
@@ -60,12 +60,11 @@ const PLATFORM_TO_API: Record<string, string> = {
 };
 
 // ----------------------------------------
-// partner_id 매핑 (mock 전용)
+// partner_id 매핑 (mock 전용): userId 숫자 추출 → 없으면 1
 // ----------------------------------------
 function getPartnerId(userId: string): number {
-  if (userId === "partner_test_001") return 1;
-  if (userId === "partner_test_002") return 2;
-  return 1;
+  const n = parseInt(userId.replace(/\D/g, ""), 10);
+  return n > 0 ? n : 1;
 }
 
 // ----------------------------------------
@@ -204,18 +203,18 @@ export async function registerCampaignBase(
       },
       isUrgent: isUrgent === true,
       registeredAt,
-      channel: finalFormData.platform || "",
-      description: finalFormData.providedItems || "",
-      keywords: finalFormData.keywords || "",
-      guidelines: finalFormData.guidelines || "",
-      minTextLength: finalFormData.minTextLength,
-      minImageCount: finalFormData.minImageCount,
-      videoCount: finalFormData.videoCount,
-      videoDuration: finalFormData.videoDuration,
-      requireLinkAttachment: finalFormData.requireLinkAttachment,
-      requireKeywordAttachment: finalFormData.requireKeywordAttachment,
-      additionalPoints: finalFormData.additionalPoints,
-      ...config.getExtraFields?.(finalFormData),
+      channel: processedFormData.platform || "",
+      description: processedFormData.providedItems || "",
+      keywords: processedFormData.keywords || "",
+      guidelines: processedFormData.guidelines || "",
+      minTextLength: Number(processedFormData.minTextLength) || 0,
+      minImageCount: Number(processedFormData.minImageCount) || 0,
+      videoCount: Number(processedFormData.videoCount) || 0,
+      videoDuration: Number(processedFormData.videoDuration) || 0,
+      requireLinkAttachment: processedFormData.requireLinkAttachment,
+      requireKeywordAttachment: processedFormData.requireKeywordAttachment,
+      additionalPoints: Number(processedFormData.additionalPoints) || 0,
+      ...config.getExtraFields?.(processedFormData),
     };
 
     const saved = saveCampaignToStorage(
@@ -227,7 +226,11 @@ export async function registerCampaignBase(
 
     // mock DB에 캠페인 저장 (DB 스키마 호환 payload)
     // 타임아웃 3초: json-server 미실행/지연 시 빠르게 실패 처리
-    const dbPayload = buildDbPayload(processedFormData, config.imageUrl, userId);
+    const extraFields = config.getExtraFields?.(processedFormData) ?? {};
+    const dbPayload = {
+      ...buildDbPayload(processedFormData, config.imageUrl, userId),
+      ...extraFields,
+    };
     try {
       const timeoutPromise = new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error("timeout")), 3000)
