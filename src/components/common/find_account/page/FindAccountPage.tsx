@@ -32,8 +32,8 @@ export default function FindAccountPage() {
 
   const phoneVerification = usePhoneVerification();
   const findAccount = useFindAccount({
-    // /partner/find-account: partner만, 그 외(/find-account): user만
-    allowedAccountTypes: pathname.startsWith("/partner") ? ["partner"] : ["user"],
+    // /partner/find-account: partner만, /find-account: 관리자(GA/SA)만
+    allowedAccountTypes: pathname.startsWith("/partner") ? ["partner"] : ["admin_ga", "admin_sa"],
   });
 
   /** 탭 변경 핸들러 */
