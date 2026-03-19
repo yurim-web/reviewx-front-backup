@@ -16,11 +16,9 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
-import ManagerGAHeader from "@/components/manager/ga/common/ManagerGAHeader";
-import SidebarMenuSA from "@/components/manager/sa/common/SidebarMenu";
 import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
-import "@/styles/manager_ga/layout.css";
+import Loading from "@/app/loading";
 import { fetchAdminNotifications } from "@/lib/api/notification";
 import { mockManagerSANotifications } from "@/data/notification/notificationData";
 
@@ -28,7 +26,7 @@ export default function ManagerSANotificationPage() {
   const [notifications, setNotifications] = useState(mockManagerSANotifications);
   const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
-  const { data: apiData } = useQuery({
+  const { data: apiData, isLoading } = useQuery({
     queryKey: ["adminNotifications"],
     queryFn: fetchAdminNotifications,
     retry: false,
@@ -46,6 +44,8 @@ export default function ManagerSANotificationPage() {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };
 
+  if (isLoading) return <Loading />;
+
   /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트만 표시 */
   const handle_delete_all_click = () => {
     setNotifications([]);
@@ -54,15 +54,8 @@ export default function ManagerSANotificationPage() {
 
   return (
     <div className={`${styles.notification_container} ${styles.has_sidebar}`.trim()}>
-      {/* SA 관리자 헤더 */}
-      <ManagerGAHeader managerType="sa" />
-
-      {/* SA 사이드바 메뉴 */}
-      <SidebarMenuSA />
-
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
-        {/* 관리자 알림 제목 + 전체 삭제 (관리자 스타일 유지) */}
         <div className={styles.manager_notification_header}>
           <h1 className={styles.notification_title}>알림</h1>
           <button
@@ -74,7 +67,6 @@ export default function ManagerSANotificationPage() {
           </button>
         </div>
 
-        {/* 알림 목록 컴포넌트 */}
         <NotificationList
           notifications={notifications}
           on_notification_click={handle_notification_click}
