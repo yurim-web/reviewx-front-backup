@@ -121,10 +121,6 @@
   border-bottom: 1px solid #e5e5e5;
 }
 
-.notification_item:last-child {
-  border-bottom: 0;
-}
-
 /* 관리자 페이지에서 접근한 경우 border-bottom 제거 */
 .notification_container.has_sidebar .notification_item {
   border-bottom: none;

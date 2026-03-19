@@ -20,7 +20,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotifications } from "@/lib/api/notification";
 import { useAuth } from "@/hooks/useAuth";
-import { mockReviewerNotifications } from "@/data/notification/notificationData";
 
 function getReviewerId(userId: string): number {
   if (userId.includes("kakao")) return 1;
@@ -61,8 +60,6 @@ export function useHasNotifications(): boolean {
     return checkLocalStorage(user.id);
   }
 
-  // 2. API 로딩 중 / 실패 (undefined) → localStorage → mock fallback
-  //    로딩 중 깜빡임 방지: 알림이 있을 가능성이 있으면 active 유지
-  if (checkLocalStorage(user.id)) return true;
-  return mockReviewerNotifications.length > 0;
+  // 2. API 로딩 중 / 실패 (undefined) → localStorage 확인
+  return checkLocalStorage(user.id);
 }

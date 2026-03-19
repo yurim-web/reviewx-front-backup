@@ -51,6 +51,18 @@ interface NotificationItem {
   _source?: string;
 }
 
+function formatNotificationDate(dateStr?: string | null): string {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "";
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  const h = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  return `${y}-${m}-${d} ${h}:${min}`;
+}
+
 function getReviewerId(userId: string): number {
   if (userId.includes("kakao")) return 1;
   if (userId.includes("naver")) return 2;
@@ -82,18 +94,7 @@ function adaptApiNotification(item: NotificationApiItem): NotificationItem {
     id: item.id,
     category: TYPE_TO_CATEGORY[item.type] ?? "A_R1",
     message: item.message,
-    time: new Date(item.created_at)
-      .toLocaleString("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      })
-      .replace(/\. /g, "-")
-      .replace(".", "")
-      .replace(",", ""),
+    time: formatNotificationDate(item.created_at),
     campaign_id: item.campaign_id,
     campaign_name: item.campaign_name,
     is_read: item.is_read,
@@ -202,18 +203,7 @@ export default function UserNotificationPage() {
               id: notif.id,
               category: LOCAL_TYPE_MAP[notif.type] ?? "A_R10",
               message: notif.message,
-              time: new Date(notif.created_at)
-                .toLocaleString("ko-KR", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                })
-                .replace(/\. /g, "-")
-                .replace(".", "")
-                .replace(",", ""),
+              time: formatNotificationDate(notif.created_at),
               campaign_id: notif.campaign_id ? parseInt(notif.campaign_id) : undefined,
               campaign_name: notif.campaign_title,
               is_read: notif.is_read,
