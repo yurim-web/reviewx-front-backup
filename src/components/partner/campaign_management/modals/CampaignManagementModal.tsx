@@ -18,10 +18,13 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useModalState } from "@/hooks/useModalState";
 import Image from "next/image";
 import styles from "../../../../styles/partner/campaign_management/campaign_management_modal.module.css";
 import { deleteCampaign, cancelCampaign } from "@/data/partner/sharedCampaigns";
+import { deleteCampaignApi } from "@/lib/api/partner";
 import BaseModal from "@/components/common/modal/BaseModal";
 import type { PartnerStatTab } from "@/types/domain/partner";
 
@@ -61,6 +64,8 @@ export default function CampaignManagementModal({
   campaignId,
   activeTab,
 }: CampaignManagementModalProps) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   // 오류 모달 상태 관리
   const errorModal = useModalState();
   const alreadyCancelledModal = useModalState();
@@ -99,7 +104,7 @@ export default function CampaignManagementModal({
   const handleEditClick = () => {
     if (campaignType && campaignId) {
       const campaignTypePath = getCampaignTypePath(campaignType);
-      window.location.href = `/partner/campaign/edit/${campaignTypePath}/${campaignId}`;
+      router.push(`/partner/campaign/edit/${campaignTypePath}/${campaignId}`);
     } else {
       alert("캠페인 수정 기능은 준비 중입니다.");
     }
@@ -136,9 +141,9 @@ export default function CampaignManagementModal({
       // );
 
       if (result.success) {
-        // 취소 성공: 모달 닫기 및 페이지 새로고침
+        // 취소 성공: 모달 닫기 및 캐시 무효화
         onClose();
-        window.location.reload();
+        queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
       } else if (result.error === "ALREADY_CANCELLED") {
         // 이미 취소된 캠페인: 이미 취소된 상태 모달 표시
         alreadyCancelledModal.open();
@@ -161,7 +166,7 @@ export default function CampaignManagementModal({
    * - 사용자에게 삭제 확인을 받은 후 삭제를 진행합니다.
    * - confirm() 함수는 브라우저의 기본 확인 다이얼로그를 표시합니다.
    */
-  const handleDeleteClick = () => {
+  const handleDeleteClick = async () => {
     // 예정 탭인지 확인
     const isScheduledTab = activeTab === "예정";
 
@@ -194,8 +199,7 @@ export default function CampaignManagementModal({
 
           if (result.success) {
             onClose(); // 모달 닫기
-            // 페이지 새로고침하여 업데이트된 캠페인 목록 표시
-            window.location.reload();
+            queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
           } else if (result.error === "ALREADY_CANCELLED") {
             // 이미 취소된 캠페인: 이미 취소된 상태 모달 표시
             alreadyCancelledModal.open();
@@ -208,27 +212,16 @@ export default function CampaignManagementModal({
           errorModal.open();
         }
       } else {
-        // 그 외 탭: 완전 삭제
-        // console.log(
-        //   `[CampaignManagementModal] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
-        // );
-
-        const deleteSuccess = deleteCampaign(campaignIdString, campaignTypeStr);
-
-        // console.log(
-        //   `[CampaignManagementModal] 삭제 결과: ${
-        //     deleteSuccess ? "성공" : "실패"
-        //   }`
-        // );
-
-        if (deleteSuccess) {
-          alert("캠페인이 삭제되었습니다.");
-          onClose(); // 모달 닫기
-          // 페이지 새로고침하여 업데이트된 캠페인 목록 표시
-          window.location.reload();
-        } else {
-          alert("캠페인 삭제에 실패했습니다. 다시 시도해주세요.");
+        // 그 외 탭: 완전 삭제 (API + localStorage)
+        try {
+          await deleteCampaignApi(campaignIdString);
+        } catch {
+          // mock 서버 미실행 시 무시
         }
+        deleteCampaign(campaignIdString, campaignTypeStr);
+        alert("캠페인이 삭제되었습니다.");
+        onClose();
+        queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
       }
     }
     // 취소를 선택한 경우에는 아무 동작도 하지 않음 (모달 유지)

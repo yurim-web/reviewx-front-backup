@@ -21,7 +21,7 @@
 
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
 import type { PartnerMainTab } from "@/types/domain/partner";
@@ -58,10 +58,11 @@ export default function PartnerCampaignManagementHeader({
   activeTab,
   setActiveTab,
   activeStatTab,
-  setActiveStatTab: _setActiveStatTab,
+  setActiveStatTab: externalSetActiveStatTab,
   apiStats,
 }: PartnerCampaignManagementHeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const defaultStats: PartnerCampaignStats = {
     전체: 0,
@@ -91,6 +92,12 @@ export default function PartnerCampaignManagementHeader({
    * - URL 기반 라우팅으로 새로고침 시에도 현재 탭이 유지됩니다.
    */
   const handleStatTabChange = (tab: PartnerStatTab) => {
+    // 외부 핸들러가 있으면 우선 사용
+    if (externalSetActiveStatTab) {
+      externalSetActiveStatTab(tab);
+      return;
+    }
+
     // 각 탭에 해당하는 경로 매핑
     const tabPaths: Record<PartnerStatTab, string> = {
       전체: "/partner/campaign_management",
@@ -107,7 +114,7 @@ export default function PartnerCampaignManagementHeader({
 
     // 현재 경로와 목표 경로가 다르면 페이지 이동
     if (pathname !== targetPath) {
-      window.location.href = targetPath;
+      router.push(targetPath);
     }
   };
 

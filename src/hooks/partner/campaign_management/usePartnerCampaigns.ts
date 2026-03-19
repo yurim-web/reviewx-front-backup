@@ -23,12 +23,11 @@ import type { PartnerCampaignApiItem } from "@/types/api/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
 
 // ----------------------------------------
-// 파트너 ID 매핑 (mock 전용)
+// 파트너 ID 파싱 (userId에서 숫자 추출)
 // ----------------------------------------
 function getPartnerId(userId: string): number {
-  if (userId === "partner_test_001") return 1;
-  if (userId === "partner_test_002") return 2;
-  return 1;
+  const num = parseInt(userId.replace(/\D/g, ""), 10);
+  return isNaN(num) ? 0 : num;
 }
 
 // ----------------------------------------
@@ -187,7 +186,7 @@ function adaptToCampaign(item: PartnerCampaignApiItem): PartnerCampaign | null {
     applicants: item.appliedCount ?? 0,
     recruits: item.recruitLimit ?? 0,
     selected: selectedCount,
-    daysLeft: calcDaysLeft(announcementDate),
+    daysLeft: calcDaysLeft(formatDate(recruitEnd)),
     subStatus: computeSubStatus(tab, selectedCount),
     extensionRequested: item.extensionRequested === true,
   };
