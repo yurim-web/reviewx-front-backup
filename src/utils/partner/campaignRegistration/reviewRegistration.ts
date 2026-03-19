@@ -28,6 +28,10 @@ export async function registerReviewCampaign(
     getExtraFields: (fd) => ({
       purchasePeriod: fd.purchasePeriod || "",
       purchaseLink: fd.promotionLink || "",
+      purchaseInfo: {
+        purchaseLink: fd.promotionLink || "",
+        purchasePoint: Number(fd.purchasePoints ?? 0),
+      },
     }),
   });
 }

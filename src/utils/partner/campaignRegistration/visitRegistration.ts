@@ -63,12 +63,19 @@ export async function registerVisitCampaign(
       ...fd,
       region: normalizeRegionName(fd.region || ""),
     }),
-    getExtraFields: (fd) => ({
-      visitAddress: fd.visitAddress || "",
-      addressGuide: fd.addressDetail || "",
-      visitLink: fd.visitLink || "",
-      region: normalizeRegionName(fd.region || ""),
-      subRegion: fd.subRegion || "",
-    }),
+    getExtraFields: (fd) => {
+      const region = normalizeRegionName(fd.region || "");
+      const subRegion = fd.subRegion || "";
+      return {
+        visitLink: fd.visitLink || "",
+        visitZipCode: fd.visitZipCode || "",
+        visitBaseAddress: fd.visitBaseAddress || fd.visitAddress || "",
+        visitDetailAddress: fd.visitDetailAddress || "",
+        visitAddress: fd.visitBaseAddress || fd.visitAddress || "",
+        addressGuide: fd.addressDetail || "",
+        region: subRegion ? `${region} > ${subRegion}` : region,
+        subRegion,
+      };
+    },
   });
 }
