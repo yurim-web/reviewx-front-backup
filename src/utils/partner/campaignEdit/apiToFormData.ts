@@ -26,11 +26,29 @@ const TYPE_MAP: Record<string, CampaignType> = {
 
 const PLATFORM_MAP: Record<string, PlatformType> = {
   NAVER_BLOG: "네이버 블로그",
+  NAVER_CLIP: "네이버 클립",
   INSTAGRAM: "인스타그램",
+  INSTAGRAM_REELS: "릴스",
+  REELS: "릴스",
   YOUTUBE: "유튜브",
+  YOUTUBE_SHORTS: "쇼츠",
   TIKTOK: "릴스",
   COUPANG: "네이버 블로그",
 };
+
+// 한글 플랫폼명 → 영문 channelName 역매핑 (PATCH용)
+const REVERSE_PLATFORM_MAP: Record<string, string> = {
+  "네이버 블로그": "NAVER_BLOG",
+  "네이버 클립": "NAVER_CLIP",
+  인스타그램: "INSTAGRAM",
+  릴스: "INSTAGRAM_REELS",
+  유튜브: "YOUTUBE",
+  쇼츠: "YOUTUBE_SHORTS",
+};
+
+export function platformToChannelName(platform: string): string {
+  return REVERSE_PLATFORM_MAP[platform] ?? platform;
+}
 
 function formatDate(iso: string): string {
   return iso.slice(0, 10);
@@ -46,6 +64,8 @@ interface DbCampaignExtra extends PartnerCampaignApiItem {
     keyword?: string;
     minTextLength?: number;
     minPhotoCount?: number;
+    minVideoCount?: number;
+    minVideoDuration?: number;
     requireBodyLink?: boolean;
   };
   notification?: string;
@@ -62,6 +82,7 @@ interface DbCampaignExtra extends PartnerCampaignApiItem {
   visitBaseAddress?: string;
   visitDetailAddress?: string;
   addressDetail?: string;
+  addressGuide?: string; // DB에서 오시는길 안내 필드명
   // 구매평
   purchaseLink?: string;
   purchasePeriod?: string;
@@ -72,6 +93,8 @@ interface DbCampaignExtra extends PartnerCampaignApiItem {
   // 미션형
   requireContentLink?: boolean;
   requireContentImage?: boolean;
+  // 상세 이미지
+  detailImages?: string[];
 }
 
 export function apiCampaignToFormData(item: PartnerCampaignApiItem): CampaignFormData {
@@ -110,16 +133,24 @@ export function apiCampaignToFormData(item: PartnerCampaignApiItem): CampaignFor
     additionalPoints: item.reward?.extraRewardPoint ?? 0,
     currentPoints: 0,
     purchasePoints,
-    recruitmentCount: item.recruitLimit,
-    recruitmentPeriod: formatPeriod(item.recruitStartAt, item.recruitEndAt),
-    announcementDate: formatDate(item.content.contentStartAt),
-    registrationPeriod: formatPeriod(item.content.contentStartAt, item.content.contentEndAt),
+    recruitmentCount: item.recruitLimit ?? item.recruit?.recruitLimit ?? 0,
+    recruitmentPeriod: formatPeriod(
+      item.recruitStartAt ?? item.recruit?.recruitStartAt ?? "",
+      item.recruitEndAt ?? item.recruit?.recruitEndAt ?? ""
+    ),
+    announcementDate: formatDate(item.content?.contentStartAt ?? ""),
+    registrationPeriod: formatPeriod(
+      item.content?.contentStartAt ?? "",
+      item.content?.contentEndAt ?? ""
+    ),
     keywords: ext.keywordPolicy?.keyword ?? "",
     adultOnly: item.adultOnly ?? false,
     allowReParticipation: item.allowReParticipation ?? false,
     allowLateSubmission: item.allowLateSubmission ?? false,
     minTextLength: ext.keywordPolicy?.minTextLength ?? 500,
     minImageCount: ext.keywordPolicy?.minPhotoCount ?? 3,
+    videoCount: ext.keywordPolicy?.minVideoCount ?? 0,
+    videoDuration: ext.keywordPolicy?.minVideoDuration ?? 0,
     requireLinkAttachment: ext.keywordPolicy?.requireBodyLink ?? false,
     requireKeywordAttachment: true,
     guidelines: ext.notification ?? "",
@@ -136,14 +167,17 @@ export function apiCampaignToFormData(item: PartnerCampaignApiItem): CampaignFor
     visitZipCode: ext.visitZipCode ?? "",
     visitBaseAddress: ext.visitBaseAddress ?? ext.visitAddress ?? "",
     visitDetailAddress: ext.visitDetailAddress ?? "",
-    addressDetail: ext.addressDetail ?? "",
+    addressDetail: ext.addressDetail ?? ext.addressGuide ?? "",
     // 구매평
     purchasePeriod: ext.purchasePeriod ?? "",
     // 미션형
     requireContentLink: ext.requireContentLink ?? false,
     requireContentImage: ext.requireContentImage ?? false,
-    // ⚠️ TODO(실서버 연동 시 제거): mock DB에 상세 이미지 필드가 없어 썸네일을 임시 fallback으로 사용
-    // 실제 API 연동 시 → response의 detailImageUrls 배열을 그대로 매핑할 것
-    detailImagePreviews: item.thumbnailUrl ? [item.thumbnailUrl] : [],
+    detailImagePreviews:
+      ext.detailImages && ext.detailImages.length > 0
+        ? ext.detailImages
+        : item.thumbnailUrl
+          ? [item.thumbnailUrl]
+          : [],
   };
 }

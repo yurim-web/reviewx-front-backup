@@ -93,13 +93,24 @@ export interface CampaignDetailApiItem {
     minTextLength: number;
     minPhotoCount: number;
     requireBodyLink: boolean;
+    minVideoCount?: number;
+    minVideoDuration?: number;
   };
   notification?: string;
   detailImages?: string[]; // 상세 이미지 URL 배열 (mock DB)
   visitInfo?: { address: string; reservationRequired: boolean };
   purchaseInfo?: { purchaseLink: string; purchasePoint: number };
+  purchasePeriod?: string; // 구매 기간 (구매평 캠페인, mock DB flat 필드)
   missionInfo?: { requireContentLink: boolean; requireContentImage: boolean };
+  promotionLink?: string; // 홍보링크 / 제품링크 (mock DB flat 필드)
   // mock flat 구조 fallback
+  visitBaseAddress?: string;
+  visitAddress?: string;
+  visitLink?: string;
+  addressGuide?: string; // 방문형 오시는길 안내 (mock DB flat 필드)
+  purchaseLink?: string; // flat purchaseLink (mock fallback)
+  requireContentLink?: boolean; // flat missionInfo fallback
+  requireContentImage?: boolean; // flat missionInfo fallback
   recruitLimit?: number;
   appliedCount?: number;
   isEmergency?: boolean;

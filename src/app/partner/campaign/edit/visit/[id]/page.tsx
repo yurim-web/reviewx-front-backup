@@ -14,6 +14,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useParams } from "next/navigation";
 import Loading from "@/app/loading";
 import VisitCampaignForm from "@/components/partner/campaign_create_form/VisitCampaignForm";
@@ -25,10 +26,14 @@ import headerStyles from "@/styles/partner/campaign_create/campaign_header.modul
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
 import Image from "next/image";
 import { patchCampaign, fetchCampaignById } from "@/lib/api/partner";
-import { apiCampaignToFormData } from "@/utils/partner/campaignEdit/apiToFormData";
+import {
+  apiCampaignToFormData,
+  platformToChannelName,
+} from "@/utils/partner/campaignEdit/apiToFormData";
 
 export default function VisitCampaignEditPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const params = useParams();
   const campaignId = params.id as string;
 
@@ -37,6 +42,7 @@ export default function VisitCampaignEditPage() {
   const [initialData, setInitialData] = useState<CampaignFormData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [formKey, setFormKey] = useState(0);
 
   // 토스트 메시지 상태
   const [toast, setToast] = useState({
@@ -102,15 +108,83 @@ export default function VisitCampaignEditPage() {
         initialData?.thumbnailImageUrl ||
         "/images/main/campaign_img/eximg_2.png";
 
+      const [recruitStart, recruitEnd] = (formData.recruitmentPeriod ?? "")
+        .split("~")
+        .map((s) => s.trim());
+      const [contentStart, contentEnd] = (formData.registrationPeriod ?? "")
+        .split("~")
+        .map((s) => s.trim());
+
       await patchCampaign(campaignId, {
         title: formData.title,
         description: formData.providedItems,
         thumbnailUrl: imageUrl,
+        thumbnail: { url: imageUrl },
+        requiredPlatform: formData.platform
+          ? { channelName: platformToChannelName(formData.platform) }
+          : undefined,
         isEmergency: isUrgent,
+        recruitLimit: Number(formData.recruitmentCount),
+        reward: {
+          extraRewardPoint: Number(formData.additionalPoints ?? 0),
+          paymentRewardPoint: 0,
+        },
+        additionalPoint: Number(formData.additionalPoints ?? 0),
+        recruitStartAt: recruitStart ? `${recruitStart}T00:00:00` : undefined,
+        recruitEndAt: recruitEnd ? `${recruitEnd}T00:00:00` : undefined,
+        recruit: {
+          recruitLimit: Number(formData.recruitmentCount),
+          recruitStartAt: recruitStart ? `${recruitStart}T00:00:00` : undefined,
+          recruitEndAt: recruitEnd ? `${recruitEnd}T00:00:00` : undefined,
+        },
+        adultOnly: formData.adultOnly,
+        allowReParticipation: formData.allowReParticipation,
+        allowLateSubmission: formData.allowLateSubmission,
+        keywordPolicy: {
+          keyword: formData.keywords,
+          minTextLength: Number(formData.minTextLength ?? 0),
+          minPhotoCount: Number(formData.minImageCount ?? 0),
+          minVideoCount: Number(formData.videoCount ?? 0),
+          minVideoDuration: Number(formData.videoDuration ?? 0),
+          requireBodyLink: Boolean(formData.requireLinkAttachment),
+        },
+        notification: formData.guidelines,
+        contact_phone: formData.contactPhone,
+        visitLink: formData.visitLink,
+        visitZipCode: formData.visitZipCode,
+        visitBaseAddress: formData.visitBaseAddress,
+        visitDetailAddress: formData.visitDetailAddress,
+        visitAddress: formData.visitBaseAddress,
+        addressGuide: formData.addressDetail,
+        visitInfo: {
+          address: [formData.visitBaseAddress, formData.visitDetailAddress]
+            .filter(Boolean)
+            .join(" "),
+          reservationRequired: false,
+        },
+        region: formData.subRegion ? `${formData.region} > ${formData.subRegion}` : formData.region,
+        category: { categoryName: formData.category },
+        detailImages: formData.detailImagePreviews ?? [],
+        content: {
+          contentStartAt: contentStart ? `${contentStart}T00:00:00` : undefined,
+          contentEndAt: contentEnd ? `${contentEnd}T00:00:00` : undefined,
+        },
       });
 
+      // 저장 후 폼 데이터 갱신
+      const updated = await fetchCampaignById(campaignId);
+      if (updated) {
+        const newFormData = apiCampaignToFormData(updated);
+        setInitialData(newFormData);
+        setIsUrgent(newFormData.isUrgent ?? false);
+      }
+
+      // 캠페인 목록 및 상세 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign", "detail"] });
+      setFormKey((k) => k + 1);
+
       setToast({ is_open: true, message: "저장되었습니다." });
-      router.refresh();
     } catch (_error) {
       alert("캠페인 수정에 실패했습니다. 다시 시도해주세요.");
     } finally {
@@ -174,6 +248,7 @@ export default function VisitCampaignEditPage() {
 
       <div className={layoutStyles.main_content}>
         <VisitCampaignForm
+          key={formKey}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           initialData={initialData}

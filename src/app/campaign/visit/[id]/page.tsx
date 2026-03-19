@@ -40,7 +40,7 @@ function adaptApiToVisit(api: CampaignDetailAdapted): VisitCampaignData {
     recruitment: api.recruitment,
     schedule: api.schedule,
     dayCount: api.dayCount,
-    region: (api as CampaignDetailAdapted & { region?: string }).region ?? "",
+    region: api.region ?? "",
     detailedSchedule: {
       applicationStart: api.detailedSchedule.applicationStart,
       applicationEnd: api.detailedSchedule.applicationEnd,
@@ -56,8 +56,8 @@ function adaptApiToVisit(api: CampaignDetailAdapted): VisitCampaignData {
     guidelineTexts: api.guidelineTexts,
     isUrgent: api.isUrgent,
     visitAddress: api.visitAddress,
-    addressGuide: "",
-    visitLink: "",
+    addressGuide: api.addressGuide ?? "",
+    visitLink: api.visitLink ?? "",
   };
 }
 
@@ -95,7 +95,7 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
         additionalSchedules={[
           {
             label: "등록 기간",
-            value: campaign.detailedSchedule.purchasePeriod,
+            value: campaign.detailedSchedule.registrationPeriod ?? "",
           },
         ]}
         guidelinesComponent={

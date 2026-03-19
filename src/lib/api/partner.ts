@@ -60,7 +60,7 @@ export const fetchCampaignById = (id: string): Promise<PartnerCampaignApiItem | 
  */
 export const patchCampaign = (campaignId: string, body: Record<string, unknown>): Promise<void> => {
   const numericId = parseInt(campaignId.replace(/\D/g, ""), 10);
-  if (!numericId) return Promise.resolve();
+  if (!numericId) return Promise.reject(new Error(`Invalid campaign ID: ${campaignId}`));
   return apiClient.patch(`/campaigns/${numericId}`, body).then(() => undefined);
 };
 
@@ -71,7 +71,7 @@ export const patchCampaign = (campaignId: string, body: Record<string, unknown>)
  */
 export const deleteCampaignApi = (campaignId: string): Promise<void> => {
   const numericId = parseInt(campaignId.replace(/\D/g, ""), 10);
-  if (!numericId) return Promise.resolve();
+  if (!numericId) return Promise.reject(new Error(`Invalid campaign ID: ${campaignId}`));
   return apiClient.delete(`/campaigns/${numericId}`).then(() => undefined);
 };
 

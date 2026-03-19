@@ -278,13 +278,14 @@ export interface PartnerCampaignApiItem {
   thumbnailUrl: string;
   category: { categoryId: number; categoryName: string };
   requiredPlatform: { channelId: number; channelName: string };
-  recruitLimit: number;
-  appliedCount: number;
+  recruitLimit?: number;
+  appliedCount?: number;
   selectedCount?: number;
-  recruitStartAt: string; // ISO 8601
-  recruitEndAt: string;
-  content: { contentStartAt: string; contentEndAt: string };
-  reward: { extraRewardPoint: number; paymentRewardPoint: number };
+  recruitStartAt?: string; // ISO 8601
+  recruitEndAt?: string;
+  recruit?: { recruitLimit: number; recruitStartAt: string; recruitEndAt: string };
+  content?: { contentStartAt: string; contentEndAt: string };
+  reward?: { extraRewardPoint: number; paymentRewardPoint: number };
   description?: string;
   extensionRequested?: boolean;
 
