@@ -11296,6 +11296,15 @@
       "status": "COMPLETED",
       "paid_at": "2025-02-12T16:33:00Z",
       "points_charged": 2400000
+    },
+    {
+      "partner_id": 1,
+      "amount": 150000,
+      "payment_method": "CARD",
+      "status": "PENDING",
+      "paid_at": "2026-03-18T06:00:58.196Z",
+      "points_charged": 150000,
+      "id": "zz_riuQ"
     }
   ],
   "admin_dashboard": [
