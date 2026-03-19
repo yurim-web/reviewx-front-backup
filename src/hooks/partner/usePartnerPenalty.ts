@@ -13,16 +13,16 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 import { fetchPartnerPenalties, fetchPartnerPenaltyStatus } from "@/lib/api/penalty";
 import { partnerPenaltyData, partnerPenaltyStatus } from "@/data/partner/penaltyData";
 import type { PenaltyItem, PenaltyStatusData } from "@/data/campaign_management/penaltyTypes";
 
-// ========================================
-// 상수: mock 고정 파트너 ID
-// 실제 백엔드 전환 시 JWT/세션 기반으로 교체
-// ========================================
-
-const MOCK_PARTNER_ID = 1;
+function getPartnerIdFromUser(userId?: string): number | null {
+  if (!userId) return null;
+  const num = parseInt(userId.replace(/\D/g, ""), 10);
+  return isNaN(num) ? null : num;
+}
 
 // ========================================
 // 반환 타입
@@ -39,18 +39,21 @@ export interface UsePartnerPenaltyReturn {
 // ========================================
 
 export function usePartnerPenalty(): UsePartnerPenaltyReturn {
-  const partnerId = MOCK_PARTNER_ID;
+  const { user } = useAuth();
+  const partnerId = getPartnerIdFromUser(user?.id);
 
   const { data: penalties, isLoading: penaltiesLoading } = useQuery({
     queryKey: ["partnerPenalties", partnerId],
-    queryFn: () => fetchPartnerPenalties(partnerId),
+    queryFn: () => fetchPartnerPenalties(partnerId!),
+    enabled: partnerId !== null,
     staleTime: 30_000,
     refetchOnWindowFocus: true,
   });
 
   const { data: status, isLoading: statusLoading } = useQuery({
     queryKey: ["partnerPenaltyStatus", partnerId],
-    queryFn: () => fetchPartnerPenaltyStatus(partnerId),
+    queryFn: () => fetchPartnerPenaltyStatus(partnerId!),
+    enabled: partnerId !== null,
     staleTime: 30_000,
     refetchOnWindowFocus: true,
   });

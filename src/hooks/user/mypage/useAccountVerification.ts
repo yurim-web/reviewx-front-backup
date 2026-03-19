@@ -90,15 +90,13 @@ export function useAccountVerification({
   const [accountHolderAtQueryTime, setAccountHolderAtQueryTime] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [accountQueryError, setAccountQueryError] = useState<string | null>(null);
-  const isInitialMount = useRef(true);
   const isFromQueryRef = useRef(false);
+  const prevBankRef = useRef<string | null>(null);
+  const prevAccountNumberRef = useRef<string | null>(null);
+  const prevAccountHolderRef = useRef<string | null>(null);
 
   // 초기 마운트 시 인증 상태 복원
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    }
-
     if (queriedAccountHolder && accountHolderAtQueryTime) {
       return;
     }
@@ -123,9 +121,24 @@ export function useAccountVerification({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountHolder, bank, accountNumber, initialVerified]);
 
-  // 은행 또는 계좌번호 변경 시 조회 정보 초기화
+  // 은행 또는 계좌번호 변경 시 조회 정보 초기화 (초기 마운트·비동기 프로필 로드 제외)
   useEffect(() => {
-    if (!isInitialMount.current) {
+    if (prevBankRef.current === null && prevAccountNumberRef.current === null) {
+      prevBankRef.current = bank;
+      prevAccountNumberRef.current = accountNumber;
+      return;
+    }
+    if (prevBankRef.current !== bank || prevAccountNumberRef.current !== accountNumber) {
+      const prevBank = prevBankRef.current;
+      const prevAccountNumber = prevAccountNumberRef.current;
+      prevBankRef.current = bank;
+      prevAccountNumberRef.current = accountNumber;
+
+      // 이전 값이 비어있었다면 초기 프로필 로드 — 초기화하지 않음
+      const hadPrevValues =
+        (prevBank && prevBank.trim()) || (prevAccountNumber && String(prevAccountNumber).trim());
+      if (!hadPrevValues) return;
+
       setQueriedAccountHolder(null);
       setAccountHolderAtQueryTime(null);
       onAccountHolderChange("");
@@ -141,13 +154,18 @@ export function useAccountVerification({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bank, accountNumber]);
 
-  // 예금주 입력값 변경 시 인증 상태 초기화
+  // 예금주 입력값 변경 시 인증 상태 초기화 (초기 마운트·조회 결과 변경 제외)
   useEffect(() => {
     if (isFromQueryRef.current) {
       isFromQueryRef.current = false;
       return;
     }
-    if (!isInitialMount.current) {
+    if (prevAccountHolderRef.current === null) {
+      prevAccountHolderRef.current = accountHolder;
+      return;
+    }
+    if (prevAccountHolderRef.current !== accountHolder) {
+      prevAccountHolderRef.current = accountHolder;
       setQueriedAccountHolder(null);
       setAccountHolderAtQueryTime(null);
       if (typeof window !== "undefined") {

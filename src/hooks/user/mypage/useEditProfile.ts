@@ -116,8 +116,9 @@ export function useEditProfile() {
       setIsVerificationRequested(true);
     }
 
+    const DEFAULT_PROFILE = "/images/mypage/profile.svg";
     const profileImg = profile?.profile_image ?? user.profile_image;
-    if (profileImg) {
+    if (profileImg && profileImg !== DEFAULT_PROFILE) {
       setProfileImage(profileImg);
     }
 

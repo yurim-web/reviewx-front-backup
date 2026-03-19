@@ -128,6 +128,7 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
       console.warn("출금 신청 API 호출 실패 (localStorage fallback):", _apiError);
     }
 
+    // TODO: 실제 백엔드 연동 시 아래 localStorage 코드 전체 제거
     // localStorage 동기화 (오프라인 fallback 겸 캐시)
     const storedRequests = localStorage.getItem("withdrawal_requests");
     const requests = storedRequests ? (JSON.parse(storedRequests) as unknown[]) : [];

@@ -19,8 +19,8 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "@/styles/fragments/header.module.css";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
-import { mockReviewerNotifications } from "@/data/notification/notificationData";
 import { useAuth } from "@/hooks/useAuth";
+import { useHasNotifications } from "@/hooks/useHasNotifications";
 
 interface SubHeaderProps {
   title?: string;
@@ -31,6 +31,7 @@ export default function SubHeader({ title, showBackButton: _showBackButton }: Su
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuth();
+  const hasNotifications = useHasNotifications();
 
   // Hydration 에러 방지
   const [isMounted, setIsMounted] = useState(false);
@@ -87,7 +88,7 @@ export default function SubHeader({ title, showBackButton: _showBackButton }: Su
         ? "/images/header/mobile/mo_notification_icon.svg"
         : "/images/header/notification_icon.svg";
     }
-    const effective_has_notifications = mockReviewerNotifications.length > 0;
+    const effective_has_notifications = hasNotifications;
     if (isMobile) {
       return effective_has_notifications
         ? "/images/header/mobile/mo_notification_ok.svg"
