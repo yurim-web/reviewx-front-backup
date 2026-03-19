@@ -15,6 +15,7 @@
 
 import { useState, useEffect } from "react";
 import styles from "@/styles/manager_sa/settlement/withdrawal/withdrawal_page.module.css";
+import Loading from "@/app/loading";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import WithdrawalStatCardsSection from "@/components/manager/sa/settlement/withdrawal/section/WithdrawalStatCardsSection";
 import WithdrawalFilterSection from "@/components/manager/sa/settlement/withdrawal/section/WithdrawalFilterSection";
@@ -23,6 +24,7 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
 import type { WithdrawalPaymentStatus } from "@/data/manager_sa/common/filterOptions";
 import type { NormalStatus } from "@/components/manager/sa/settlement/withdrawal/filter/NormalStatusFilterDropdown";
 import type { WithdrawalMemberType } from "@/components/manager/sa/settlement/withdrawal/filter/MemberTypeFilterDropdown";
+import { useAdminWithdrawal } from "@/hooks/manager/ga/useAdminWithdrawal";
 
 /**
  * 이번 달의 시작일과 종료일을 계산하는 함수
@@ -56,6 +58,8 @@ const get_current_month_range = (): DateRange => {
 };
 
 export default function WithdrawalPage() {
+  const { isLoading } = useAdminWithdrawal();
+
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
 
@@ -79,6 +83,8 @@ export default function WithdrawalPage() {
   >([]);
   const [selected_member_types, set_selected_member_types] = useState<WithdrawalMemberType[]>([]);
   const [selected_normal_statuses, set_selected_normal_statuses] = useState<NormalStatus[]>([]);
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles.container}>

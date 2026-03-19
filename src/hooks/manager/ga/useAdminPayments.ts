@@ -76,7 +76,7 @@ function adaptPaymentItem(
 }
 
 export function useAdminPayments() {
-  const { data: paymentsData } = useQuery({
+  const { data: paymentsData, isLoading } = useQuery({
     queryKey: ["adminPayments"],
     queryFn: fetchAdminPayments,
     staleTime: 30_000,
@@ -101,5 +101,5 @@ export function useAdminPayments() {
     return [];
   }, [paymentsData, partnersData]);
 
-  return { payments };
+  return { payments, isLoading };
 }
