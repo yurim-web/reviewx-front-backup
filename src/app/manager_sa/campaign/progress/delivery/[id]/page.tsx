@@ -98,7 +98,9 @@ export default function ManagerDeliveryProgressDetailPage() {
         <div className={styles.page_header}>
           <h1 className={styles.page_title}>캠페인 상세 보기</h1>
         </div>
-        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>{error_message}</div>
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
+          {error_message || "캠페인 데이터를 불러올 수 없습니다."}
+        </div>
       </section>
     );
   }

@@ -46,15 +46,11 @@ export default function ReviewerDetailPage() {
   const params = useParams();
   const reviewer_id = params.id as string;
 
-  const { reviewer_detail, is_loading, is_withdrawn_modal_open, set_is_withdrawn_modal_open } =
-    useReviewerDetailData(reviewer_id);
+  // SA(최고관리자)는 탈퇴 회원도 조회 가능 (C_M11: GA만 조회 불가)
+  const { reviewer_detail, is_loading } = useReviewerDetailData(reviewer_id);
 
   const [is_campaign_history_modal_open, set_is_campaign_history_modal_open] = useState(false);
   const [is_penalty_history_modal_open, set_is_penalty_history_modal_open] = useState(false);
-
-  // SA(최고관리자)는 탈퇴 회원도 조회 가능 (C_M11: GA만 조회 불가)
-  void is_withdrawn_modal_open;
-  void set_is_withdrawn_modal_open;
 
   const activity_info_items: ActivityInfoItem[] = [
     {

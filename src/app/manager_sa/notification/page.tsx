@@ -13,34 +13,57 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
 import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
 import Loading from "@/app/loading";
 import { fetchAdminNotifications } from "@/lib/api/notification";
-import { mockManagerSANotifications } from "@/data/notification/notificationData";
+import {
+  mockManagerSANotifications,
+  type NotificationItem,
+} from "@/data/notification/notificationData";
+import type { NotificationApiItem } from "@/types/api/notification";
+import type { NotificationCategory } from "@/data/notification/notificationData";
+
+function mapApiToNotificationItem(api: NotificationApiItem): NotificationItem {
+  return {
+    id: api.id,
+    category: (api.type || "A_A1") as NotificationCategory,
+    time: api.created_at,
+    campaign_id: api.campaign_id,
+    campaign_name: api.campaign_name,
+  };
+}
 
 export default function ManagerSANotificationPage() {
-  const [notifications, setNotifications] = useState(mockManagerSANotifications);
+  const [is_cleared, set_is_cleared] = useState(false);
   const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
-  const { data: apiData, isLoading } = useQuery({
+  const {
+    data: apiData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["adminNotifications"],
     queryFn: fetchAdminNotifications,
     retry: false,
     staleTime: 30_000,
   });
 
-  useEffect(() => {
-    if (apiData && apiData.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setNotifications(apiData as any);
+  const notifications = useMemo<NotificationItem[]>(() => {
+    if (is_cleared) return [];
+    if (apiData != null && apiData.length > 0) {
+      return apiData.map(mapApiToNotificationItem);
     }
-  }, [apiData]);
+    if (isError || !apiData) {
+      return mockManagerSANotifications;
+    }
+    return [];
+  }, [apiData, isError, is_cleared]);
 
-  const handle_notification_click = (_notification: (typeof mockManagerSANotifications)[0]) => {
+  const handle_notification_click = (_notification: NotificationItem) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };
 
@@ -48,7 +71,7 @@ export default function ManagerSANotificationPage() {
 
   /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트만 표시 */
   const handle_delete_all_click = () => {
-    setNotifications([]);
+    set_is_cleared(true);
     set_is_delete_toast_open(true);
   };
 
