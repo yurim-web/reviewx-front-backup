@@ -15,6 +15,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { format } from "date-fns";
 import BaseFilterSection, {
@@ -36,7 +37,8 @@ import {
 } from "@/data/manager_ga/member/blacklist";
 import type { BlockCode } from "@/data/manager_ga/common/filterOptions";
 import type { AdminTableRef } from "./AdminTable";
-import { update_admin_status, delete_multiple_admins } from "@/data/manager_sa/member/admins";
+import { update_admin_status } from "@/data/manager_sa/member/admins";
+import { deleteAdminMember, updateAdminMember } from "@/lib/api/admin";
 
 interface AdminFilterSectionProps {
   search_query: string;
@@ -57,6 +59,7 @@ export default function AdminFilterSection({
 }: AdminFilterSectionProps) {
   // Next.js의 useRouter 훅을 사용하여 페이지 이동 기능 가져오기
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   // 상태 필터 드롭다운 열림/닫힘 상태 관리
   const [is_status_dropdown_open, set_is_status_dropdown_open] = useState(false);
@@ -119,27 +122,21 @@ export default function AdminFilterSection({
   };
 
   // 삭제 확인 핸들러
-  // 삭제 확인 모달에서 "확인" 버튼을 클릭했을 때 실행되는 함수입니다
-  const handle_delete_confirm = () => {
-    // admin_table_ref가 없으면 함수 종료
+  const handle_delete_confirm = async () => {
     if (!admin_table_ref?.current) return;
 
-    // 선택된 관리자 ID 목록 가져오기
     const selected_ids = admin_table_ref.current.get_selected_admin_ids();
-
-    // 선택된 관리자가 없으면 함수 종료
     if (selected_ids.length === 0) return;
 
-    // 여러 관리자를 한 번에 삭제
-    // delete_multiple_admins 함수를 사용하여 localStorage에서 관리자를 삭제합니다
-    const _deleted_count = delete_multiple_admins(selected_ids);
+    const results = await Promise.allSettled(selected_ids.map((id) => deleteAdminMember(id)));
 
-    // 삭제 확인 모달 닫기
+    const failedCount = results.filter((r) => r.status === "rejected").length;
+    if (failedCount > 0) {
+      alert(`${failedCount}건의 삭제에 실패했습니다.`);
+    }
+
     set_delete_confirm_modal_open(false);
-
-    // 페이지 새로고침하여 테이블에 변경사항 반영
-    // window.location.reload(): 현재 페이지를 새로고침합니다
-    window.location.reload();
+    queryClient.invalidateQueries({ queryKey: ["adminMembers"] });
   };
 
   // 이용제한 버튼 핸들러
@@ -235,15 +232,16 @@ export default function AdminFilterSection({
         ? "영구 정지"
         : "일시 정지";
 
-    // update_admin_status 함수를 사용하여 localStorage에 저장된 관리자 상태를 업데이트합니다
+    // localStorage 동기 업데이트 (레거시 호환)
     update_admin_status(selected_admin.id, new_status);
 
-    // 이용 제한 모달 닫기
-    set_restriction_modal_open(false);
+    // API로 관리자 상태 업데이트
+    updateAdminMember(selected_admin.id, { status: new_status }).catch(() => {
+      console.warn("관리자 상태 API 업데이트 실패 (localStorage 처리 완료)");
+    });
 
-    // 페이지 새로고침하여 테이블에 변경사항 반영
-    // window.location.reload(): 현재 페이지를 새로고침합니다
-    window.location.reload();
+    set_restriction_modal_open(false);
+    queryClient.invalidateQueries({ queryKey: ["adminMembers"] });
   };
 
   // 다운로드 버튼 핸들러

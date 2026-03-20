@@ -84,11 +84,8 @@ export const fetchAdminCampaigns = (): Promise<AdminCampaignApiItem[]> =>
     .then((res) => asArray<AdminCampaignApiItem>(res.data));
 
 /** 캠페인 상세 조회  GET /admin/campaign/:id → /campaigns/:id */
-export const fetchAdminCampaignDetail = (id: string): Promise<AdminCampaignApiItem | null> =>
-  apiClient
-    .get<AdminCampaignApiItem>(`/admin/campaign/${id}`)
-    .then((res) => res.data)
-    .catch(() => null);
+export const fetchAdminCampaignDetail = (id: string): Promise<AdminCampaignApiItem> =>
+  apiClient.get<AdminCampaignApiItem>(`/admin/campaign/${id}`).then((res) => res.data);
 
 /** 캠페인 신청자 목록 조회  GET /partner/campaign/:id/applications → /campaign_applications?campaign_id=:id */
 export const fetchCampaignApplications = (
@@ -97,7 +94,10 @@ export const fetchCampaignApplications = (
   apiClient
     .get<CampaignApplicationApiItem[]>(`/partner/campaign/${campaignId}/applications`)
     .then((res) => asArray<CampaignApplicationApiItem>(res.data))
-    .catch(() => []);
+    .catch((error) => {
+      console.error("fetchCampaignApplications failed:", error);
+      return [];
+    });
 
 /** 리뷰어별 캠페인 신청 목록 조회  GET /campaign_applications?reviewer_id=:id */
 export const fetchReviewerApplications = (
@@ -106,14 +106,14 @@ export const fetchReviewerApplications = (
   apiClient
     .get<CampaignApplicationApiItem[]>(`/campaign_applications?reviewer_id=${reviewerId}`)
     .then((res) => asArray<CampaignApplicationApiItem>(res.data))
-    .catch(() => []);
+    .catch((error) => {
+      console.error("fetchReviewerApplications failed:", error);
+      return [];
+    });
 
 /** 캠페인 상세 조회 (단건)  GET /campaigns/:id */
-export const fetchCampaignDetail = (campaignId: number): Promise<AdminCampaignApiItem | null> =>
-  apiClient
-    .get<AdminCampaignApiItem>(`/campaigns/${campaignId}`)
-    .then((res) => res.data)
-    .catch(() => null);
+export const fetchCampaignDetail = (campaignId: number): Promise<AdminCampaignApiItem> =>
+  apiClient.get<AdminCampaignApiItem>(`/campaigns/${campaignId}`).then((res) => res.data);
 
 /** 출금 요청 목록 조회  GET /admin/withdrawal */
 export const fetchAdminWithdrawal = (): Promise<AdminWithdrawalApiItem[]> =>
@@ -151,6 +151,31 @@ export const fetchAdminMembers = (): Promise<AdminMemberApiItem[]> =>
   apiClient
     .get<AdminMemberApiItem[]>("/admin/member/admins")
     .then((res) => asArray<AdminMemberApiItem>(res.data));
+
+/** 관리자 등록  POST /admin/member/admins */
+export const createAdminMember = (
+  data: Omit<AdminMemberApiItem, "report_count" | "block_count" | "last_access_date" | "join_date">
+): Promise<AdminMemberApiItem> =>
+  apiClient
+    .post<AdminMemberApiItem>("/admin/member/admins", {
+      ...data,
+      report_count: 0,
+      block_count: 0,
+      last_access_date: new Date().toISOString().slice(0, 16).replace("T", " "),
+      join_date: new Date().toISOString().slice(0, 16).replace("T", " "),
+    })
+    .then((res) => res.data);
+
+/** 관리자 수정  PUT /admin/member/admins/:id */
+export const updateAdminMember = (
+  id: string,
+  data: Partial<AdminMemberApiItem>
+): Promise<AdminMemberApiItem> =>
+  apiClient.patch<AdminMemberApiItem>(`/admin/member/admins/${id}`, data).then((res) => res.data);
+
+/** 관리자 삭제  DELETE /admin/member/admins/:id */
+export const deleteAdminMember = (id: string): Promise<void> =>
+  apiClient.delete(`/admin/member/admins/${id}`).then(() => undefined);
 
 /** 출금 요청 목록 조회  GET /admin/withdrawal/requests */
 export const fetchAdminWithdrawalRequests = (): Promise<AdminWithdrawalRequestItem[]> =>

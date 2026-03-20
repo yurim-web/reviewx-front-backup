@@ -13,12 +13,11 @@
  */
 
 import { useState, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import type { AdminItem } from "@/data/manager_sa/member/admins";
-import {
-  add_admin,
-  update_admin,
-  get_admin_list_from_storage,
-} from "@/data/manager_sa/member/admins";
+import { createAdminMember, updateAdminMember } from "@/lib/api/admin";
+import { useAdminMembers } from "@/hooks/manager/ga/useAdminMembers";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
 
 // 폼 입력값 타입
@@ -96,6 +95,11 @@ function check_form_validity(
 
 export default function useAdminForm({ mode, initial_data, admin_id }: UseAdminFormConfig) {
   const is_edit_mode = mode === "edit";
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  // API 훅으로 관리자 목록 조회 (중복 검증용)
+  const { adminMembers } = useAdminMembers();
 
   // 폼 상태
   const [form_data, set_form_data] = useState<AdminFormData>({
@@ -111,46 +115,39 @@ export default function useAdminForm({ mode, initial_data, admin_id }: UseAdminF
   const [is_loading, set_is_loading] = useState(mode === "edit");
   const [edit_admin_data, set_edit_admin_data] = useState<AdminItem | null>(null);
 
-  // 수정 모드: 기존 데이터 로드
+  // 수정 모드: initial_data로 폼 초기화
   useEffect(() => {
-    if (mode === "edit") {
-      const stored_admin_list = get_admin_list_from_storage();
-      const admin_data = admin_id
-        ? stored_admin_list.find((admin) => admin.id === admin_id)
-        : initial_data;
-
-      if (admin_data) {
-        set_edit_admin_data(admin_data);
-        set_form_data({
-          id: admin_data.id,
-          password: "",
-          password_confirm: "",
-          name: admin_data.name,
-          phone: admin_data.phone || "",
-        });
-      }
+    if (mode === "edit" && initial_data) {
+      set_edit_admin_data(initial_data);
+      set_form_data({
+        id: initial_data.id,
+        password: "",
+        password_confirm: "",
+        name: initial_data.name,
+        phone: initial_data.phone || "",
+      });
+      set_is_loading(false);
+    } else if (mode === "edit" && !initial_data) {
       set_is_loading(false);
     }
-  }, [mode, admin_id, initial_data]);
+  }, [mode, initial_data]);
 
-  // --- 필드별 검증 (에러 메시지 설정 포함) ---
+  // --- 필드별 검증 (API 데이터 기반) ---
 
   const is_id_duplicate = (id: string): boolean => {
-    const stored = get_admin_list_from_storage();
     if (mode === "edit" && admin_id) {
-      const current = stored.find((a) => a.id === admin_id);
+      const current = adminMembers.find((a) => a.id === admin_id);
       if (current && current.id === id) return false;
     }
-    return stored.some((a) => a.id === id);
+    return adminMembers.some((a) => a.id === id);
   };
 
   const is_phone_duplicate = (phone: string): boolean => {
-    const stored = get_admin_list_from_storage();
     if (mode === "edit" && admin_id) {
-      const current = stored.find((a) => a.id === admin_id);
+      const current = adminMembers.find((a) => a.id === admin_id);
       if (current && current.phone === phone) return false;
     }
-    return stored.some((a) => a.phone === phone);
+    return adminMembers.some((a) => a.phone === phone);
   };
 
   const validate_id_field = (id: string) => {
@@ -236,29 +233,78 @@ export default function useAdminForm({ mode, initial_data, admin_id }: UseAdminF
     }
   };
 
-  const handle_submit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handle_submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     set_show_required_errors(true);
 
-    // 에러 메시지 설정 side-effects 실행
-    if (mode === "create") validate_id_field(form_data.id.trim());
-    validate_password_fields(form_data);
-    validate_phone_field(form_data.phone.trim());
+    // 동기적으로 에러를 계산하여 race condition 방지
+    const new_errors: Record<string, string | undefined> = {};
 
-    if (!check_form_validity(form_data, error_messages, is_edit_mode)) return;
-
+    // ID 검증
     if (mode === "create") {
-      add_admin({ id: form_data.id.trim(), name: form_data.name, phone: form_data.phone });
-    } else {
-      if (!admin_id) return;
-      const updated = update_admin(admin_id, { name: form_data.name, phone: form_data.phone });
-      if (!updated) return;
+      const trimmed_id = form_data.id.trim();
+      if (trimmed_id.length > 0 && is_valid_id(trimmed_id) && is_id_duplicate(trimmed_id)) {
+        new_errors.id = "이미 사용 중인 아이디입니다.";
+      }
     }
 
-    set_show_toast(true);
-    setTimeout(() => {
-      window.location.href = "/manager_sa/member/admins";
-    }, 2000);
+    // 비밀번호 검증
+    const pw = form_data.password.trim();
+    const pwc = form_data.password_confirm.trim();
+    if (pw.length > 0 && !is_valid_password(pw)) {
+      new_errors.password = "8~16자 영문, 숫자, 특수문자(!@#$%^&*()-_=+) 조합으로 입력해 주세요.";
+    }
+    if (pwc.length > 0 && (!pw.length || pw !== pwc)) {
+      new_errors.password_confirm = "비밀번호가 일치하지 않습니다.";
+    }
+
+    // 전화번호 검증
+    const trimmed_phone = form_data.phone.trim();
+    if (trimmed_phone.length > 0) {
+      if (!is_valid_phone(trimmed_phone)) {
+        new_errors.phone = "올바른 휴대폰 번호를 입력해 주세요.";
+      } else if (is_phone_duplicate(trimmed_phone)) {
+        new_errors.phone = "이미 가입된 휴대폰 번호입니다.";
+      }
+    }
+
+    // 에러 state 업데이트
+    set_error_messages(new_errors);
+
+    // 동기적으로 계산한 에러로 유효성 검사
+    if (!check_form_validity(form_data, new_errors, is_edit_mode)) return;
+
+    try {
+      if (mode === "create") {
+        // 새 번호 생성
+        const max_number = Math.max(...adminMembers.map((a) => parseInt(a.number) || 0), 0);
+        const new_number = String(max_number + 1).padStart(6, "0");
+
+        await createAdminMember({
+          id: form_data.id.trim(),
+          number: new_number,
+          name: form_data.name,
+          phone: form_data.phone,
+          status: "정상",
+        });
+      } else {
+        if (!admin_id) return;
+        await updateAdminMember(admin_id, {
+          name: form_data.name,
+          phone: form_data.phone,
+        });
+      }
+
+      // React Query 캐시 무효화 → 목록 페이지에서 최신 데이터 반영
+      await queryClient.invalidateQueries({ queryKey: ["adminMembers"] });
+
+      set_show_toast(true);
+      setTimeout(() => {
+        router.push("/manager_sa/member/admins");
+      }, 2000);
+    } catch (_error) {
+      alert("처리 중 오류가 발생했습니다. 다시 시도해 주세요.");
+    }
   };
 
   // 버튼 비활성화 여부 (중복 로직 → check_form_validity 재사용)
