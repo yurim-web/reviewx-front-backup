@@ -49,6 +49,8 @@ interface CategoryFilterSectionProps {
   selected_divisions: CategoryDivision[];
   // on_divisions_change: 구분 필터 변경 시 상위 컴포넌트에 알리는 핸들러
   on_divisions_change: (divisions: CategoryDivision[]) => void;
+  // on_delete_complete: 삭제 완료 후 상위 컴포넌트에 알리는 핸들러
+  on_delete_complete?: () => void;
 }
 
 export default function CategoryFilterSection({
@@ -58,6 +60,7 @@ export default function CategoryFilterSection({
   selected_category_ids,
   selected_divisions,
   on_divisions_change,
+  on_delete_complete,
 }: CategoryFilterSectionProps) {
   // Next.js 라우터 사용
   // useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
@@ -130,9 +133,9 @@ export default function CategoryFilterSection({
   const handle_delete_confirm = () => {
     // delete_categories: 선택된 카테고리들을 삭제하는 함수입니다
     delete_categories(selected_category_ids);
-    // 삭제 후 페이지 새로고침하여 업데이트된 목록 표시
-    // window.location.reload(): 페이지를 새로고침합니다
-    window.location.reload();
+    set_is_delete_confirm_modal_open(false);
+    // 상위 컴포넌트에 삭제 완료를 알려 목록 갱신
+    on_delete_complete?.();
   };
 
   // 활성 필터 태그 목록 생성
