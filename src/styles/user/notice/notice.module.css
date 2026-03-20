@@ -67,6 +67,20 @@
   display: flex;
   gap: 12px;
   padding-bottom: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  user-select: none;
+}
+
+.category_container:active {
+  cursor: grabbing;
+}
+
+.category_container::-webkit-scrollbar {
+  display: none;
 }
 
 .category_item {

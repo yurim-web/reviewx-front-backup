@@ -1,26 +1,16 @@
 "use client";
 
 /* ========================================
-
-   📄 공지사항 상세 페이지 컴포넌트 (공통)
-
-   사용 컴포넌트:
-   - 공지사항 상세 페이지 클라이언트 컴포넌트
+   공지사항 상세 페이지 컴포넌트 (공통)
 
    사용 페이지:
    - /user/notice/[id] (유저 공지사항 상세)
    - /partner/notice/[id] (파트너 공지사항 상세)
-
    ======================================== */
 
 import { useParams } from "next/navigation";
-
 import { useEffect, useState, useMemo, type ReactNode } from "react";
-
-import {
-  type NoticeDetail,
-  type NoticeTarget,
-} from "@/data/user/notice/noticesData";
+import { type NoticeDetail, type NoticeTarget } from "@/data/user/notice/noticesData";
 import { posts_data } from "@/data/manager_ga/community/postsData";
 import { convertPostsToNotices } from "@/utils/notice/convertPostToNotice";
 import { get_post_detail } from "@/data/manager_ga/community/postsData";
@@ -28,80 +18,104 @@ import PostDetailPageCommon, {
   type PostDetailData,
 } from "@/components/common/post/PostDetailPageCommon";
 import PageTitle from "@/components/fragments/PageTitle";
+import Loading from "@/app/loading";
 import styles from "@/styles/user/notice/notice.module.css";
 
+/** API 모드에서 전달하는 상세 데이터 */
+interface ApiNoticeDetailData {
+  item: {
+    boardId: number;
+    boardCategory: string;
+    title: string;
+    content: string;
+    createdAt: string;
+  } | null;
+  isLoading: boolean;
+  categoryLabel: string;
+}
+
 interface NoticeDetailPageClientProps {
-  target?: NoticeTarget; // "user" | "partner" (기본값: "user")
-  header_component?: ReactNode; // 헤더 컴포넌트 (선택적, 없으면 기본 뒤로가기 버튼 사용)
+  target?: NoticeTarget;
+  header_component?: ReactNode;
+  /** API 데이터 (파트너 등 API 연동 시 전달) */
+  api_detail?: ApiNoticeDetailData;
 }
 
 export default function NoticeDetailPageClient({
   target = "user",
   header_component,
+  api_detail,
 }: NoticeDetailPageClientProps) {
   const params = useParams();
-
   const notice_id = params?.id as string;
+  const is_api_mode = !!api_detail;
 
-  const [notice_detail, set_notice_detail] = useState<NoticeDetail | null>(
-    null
-  );
+  // ── localStorage 모드 전용 ──
+  const [notice_detail, set_notice_detail] = useState<NoticeDetail | null>(null);
 
-  /**
-   * 관리자 게시글 데이터를 공지사항으로 변환하여 조회
-   * - division이 "공지사항"인 게시글만 변환
-   * - PostDetail의 content도 포함하여 변환
-   */
   const allNotices = useMemo(() => {
+    if (is_api_mode) return [];
     const notices = convertPostsToNotices(posts_data);
-
-    // content 추가 (PostDetail에서 가져오기)
     return notices.map((notice) => {
       const postDetail = get_post_detail(notice.id.toString());
-      return {
-        ...notice,
-        content: postDetail?.content || notice.content || "",
-      };
+      return { ...notice, content: postDetail?.content || notice.content || "" };
     });
-  }, []);
+  }, [is_api_mode]);
 
   useEffect(() => {
-    if (!notice_id) return;
-
-    // 관리자 게시글 데이터에서 공지사항 찾기
+    if (is_api_mode || !notice_id) return;
     const numericId = Number(notice_id);
     if (Number.isNaN(numericId)) {
       set_notice_detail(null);
       return;
     }
-
     const detail = allNotices.find((notice) => notice.id === numericId) || null;
     set_notice_detail(detail);
-  }, [notice_id, allNotices]);
+  }, [notice_id, allNotices, is_api_mode]);
 
-  // 뒤로가기 경로 결정
   const back_path = target === "partner" ? "/partner/notice" : "/user/notice";
 
-  // NoticeDetail을 PostDetailData로 변환
-  const post_detail_data: PostDetailData | null = notice_detail
-    ? {
-        title: notice_detail.title,
-        content: notice_detail.content,
-        meta_label: notice_detail.category,
-        date: notice_detail.date,
+  // ── 로딩 ──
+  if (is_api_mode && api_detail.isLoading) {
+    return (
+      <div className={styles.notice_container}>
+        {header_component}
+        <Loading />
+      </div>
+    );
+  }
+
+  // ── 데이터 결정 ──
+  let post_detail_data: PostDetailData | null = null;
+
+  if (is_api_mode) {
+    if (api_detail.item) {
+      const format_date = (d: string) =>
+        d.includes("T") ? d.split("T")[0].replace(/-/g, ".") : d.split(" ")[0].replace(/-/g, ".");
+
+      post_detail_data = {
+        title: api_detail.item.title,
+        content: api_detail.item.content,
+        meta_label: api_detail.categoryLabel,
+        date: format_date(api_detail.item.createdAt),
         division_title: undefined,
-      }
-    : null;
+      };
+    }
+  } else if (notice_detail) {
+    post_detail_data = {
+      title: notice_detail.title,
+      content: notice_detail.content,
+      meta_label: notice_detail.category,
+      date: notice_detail.date,
+      division_title: undefined,
+    };
+  }
 
   return (
     <div className={styles.notice_container}>
-      {/* 헤더 컴포넌트 (SubHeader 또는 PartnerSubHeader) */}
       {header_component}
-
       <main className={styles.main_content}>
-        {/* 페이지 제목 */}
         <PageTitle title="공지사항" />
-
         <PostDetailPageCommon
           post_detail={post_detail_data}
           back_path={back_path}
