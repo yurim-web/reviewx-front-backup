@@ -26,7 +26,31 @@ import type { TableColumn, TableRowData } from "@/components/manager/common/tabl
 import styles from "@/styles/manager_sa/member/admins/admin_table.module.css";
 import { type AdminItem, type AdminStatus } from "@/data/manager_sa/member/admins";
 import { useAdminMembers } from "@/hooks/manager/ga/useAdminMembers";
+import type { AdminMemberApiItem } from "@/types/api/admin";
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
+
+// API 상태값을 AdminStatus로 안전하게 변환
+const VALID_ADMIN_STATUSES: AdminStatus[] = ["정상", "일시 정지", "영구 정지"];
+function toAdminStatus(status: string): AdminStatus {
+  if (VALID_ADMIN_STATUSES.includes(status as AdminStatus)) {
+    return status as AdminStatus;
+  }
+  return "정상"; // 알 수 없는 상태는 기본값
+}
+
+function adaptAdminMember(item: AdminMemberApiItem): AdminItem {
+  return {
+    id: item.id,
+    number: item.number,
+    name: item.name,
+    phone: item.phone,
+    report_count: item.report_count,
+    block_count: item.block_count,
+    last_access_date: item.last_access_date,
+    join_date: item.join_date,
+    status: toAdminStatus(item.status),
+  };
+}
 
 interface AdminTableProps {
   // 검색어 상태를 props로 받습니다
@@ -104,8 +128,8 @@ const AdminTable = forwardRef<AdminTableRef, AdminTableProps>(function AdminTabl
   // API 훅으로 관리자 목록 조회
   const { adminMembers } = useAdminMembers();
 
-  // AdminMemberApiItem → AdminItem 호환 (status 타입 캐스팅)
-  const admin_list_data: AdminItem[] = adminMembers as AdminItem[];
+  // AdminMemberApiItem → AdminItem 안전 변환 (status 매핑 포함)
+  const admin_list_data: AdminItem[] = adminMembers.map(adaptAdminMember);
 
   // 검색어 및 필터로 필터링된 관리자 목록
   const filtered_admins = admin_list_data.filter((admin) => {
