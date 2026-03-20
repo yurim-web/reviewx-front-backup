@@ -41,7 +41,8 @@ interface StoredWithdrawalRequest {
 }
 
 export default function WithdrawalRequestPage() {
-  const [selected_filter, set_selected_filter] = useState<RequestFilterStatus>("all");
+  const [urgent_filter, set_urgent_filter] = useState<RequestFilterStatus>("all");
+  const [round_filter, set_round_filter] = useState<RequestFilterStatus>("all");
 
   // API 훅으로 출금 요청 목록 조회
   const { requests, isLoading } = useAdminWithdrawalRequests();
@@ -127,8 +128,8 @@ export default function WithdrawalRequestPage() {
           show_total={true}
           filter_section={
             <WithdrawalRequestFilterSection
-              selected_filter={selected_filter}
-              on_filter_change={set_selected_filter}
+              selected_filter={urgent_filter}
+              on_filter_change={set_urgent_filter}
             />
           }
         />
@@ -136,12 +137,12 @@ export default function WithdrawalRequestPage() {
         {/* 이번 순차 정산 출금 요청 테이블 */}
         <RequestTable
           title="회차 정산"
-          data={[...round_requests, ...local_withdrawal_requests]}
+          data={round_requests}
           show_total={true}
           filter_section={
             <WithdrawalRequestFilterSection
-              selected_filter={selected_filter}
-              on_filter_change={set_selected_filter}
+              selected_filter={round_filter}
+              on_filter_change={set_round_filter}
             />
           }
         />
