@@ -29033,6 +29033,17 @@
       "last_access_date": "2025-12-20 16:00",
       "join_date": "2023-09-01 09:00",
       "status": "영구 정지"
+    },
+    {
+      "id": "tester",
+      "number": "000026",
+      "name": "테스터2211",
+      "phone": "010-5645-6456",
+      "status": "정상",
+      "report_count": 0,
+      "block_count": 0,
+      "last_access_date": "2026-03-20 03:17",
+      "join_date": "2026-03-20 03:17"
     }
   ],
   "withdrawal_request_items": [
