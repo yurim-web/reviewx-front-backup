@@ -153,6 +153,24 @@ module.exports = (req, res, next) => {
     });
   }
 
+  // ============ GET /partner/boards/faqs ============
+  if (req.method === "GET" && req.path === "/partner/boards/faqs") {
+    const db = require("./db.json");
+    const allFaqs = db.partner_faqs || [];
+    const boardCategory = req.query.board_category;
+
+    const filtered = boardCategory && boardCategory !== "ALL"
+      ? allFaqs.filter((f) => f.boardCategory === boardCategory)
+      : allFaqs;
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: filtered.length,
+      items: filtered,
+    });
+  }
+
   // 그 외 → json-server 기본 처리
   next();
 };
