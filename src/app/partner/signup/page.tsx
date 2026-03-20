@@ -359,9 +359,11 @@ export default function PartnerSignupPage() {
 
       const response = await partnerSignup(signupRequest);
 
-      // 백엔드 응답의 next.redirectPath 사용
-      const redirectPath = response.data.next.redirectPath;
-      router.push(redirectPath || `/partner/signup/complete?name=${encodeURIComponent(name)}`);
+      // 완료 페이지로 이동 (상호명 전달 — 피그마 디자인 기준)
+      const businessNameParam = encodeURIComponent(
+        response.data.partner.businessName || companyName
+      );
+      router.push(`/partner/signup/complete?businessName=${businessNameParam}`);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { status, data } = error.response;

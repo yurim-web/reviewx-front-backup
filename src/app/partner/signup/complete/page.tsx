@@ -35,8 +35,8 @@ export default function PartnerSignupCompletePage() {
     };
   }, []);
 
-  // URL 파라미터에서 이름 가져오기 (없으면 기본값 사용)
-  const name = searchParams.get("name") || "파트너";
+  // URL 파라미터에서 상호명 가져오기 (피그마 디자인 기준)
+  const businessName = searchParams.get("businessName") || "파트너";
 
   /**
    * 캠페인 보러 가기 버튼 클릭 핸들러
@@ -71,9 +71,9 @@ export default function PartnerSignupCompletePage() {
           {/* 완료 메시지 섹션 */}
           <div className={styles.message_section}>
             <h1 className={styles.welcome_title}>
-              {name !== "파트너" ? (
+              {businessName !== "파트너" ? (
                 <>
-                  <span className={styles.nickname_text}>{name}</span>
+                  <span className={styles.nickname_text}>{businessName}</span>
                   <span className={styles.nickname_honorific}>님,</span>
                   <br className={styles.desktop_br} />
                   리뷰엑스의 파트너가
