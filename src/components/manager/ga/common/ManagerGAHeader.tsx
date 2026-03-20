@@ -29,7 +29,7 @@ interface ManagerGAHeaderProps {
 
 export default function ManagerGAHeader({ managerType }: ManagerGAHeaderProps = {}) {
   const pathname = usePathname();
-  const _router = useRouter();
+  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const [is_logout_menu_open, setIsLogoutMenuOpen] = useState(false);
   const user_menu_ref = useRef<HTMLDivElement>(null);
@@ -75,8 +75,7 @@ export default function ManagerGAHeader({ managerType }: ManagerGAHeaderProps = 
     // LocalStorage에 저장된 인증 정보 제거
     performLogout();
     setIsLogoutMenuOpen(false);
-    // 관리자 공용 로그인 페이지로 이동 (새로고침 포함)
-    window.location.href = "/manager/login";
+    router.push("/manager/login");
   };
 
   return (
