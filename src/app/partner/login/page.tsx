@@ -55,16 +55,22 @@ export default function PartnerLoginPage() {
     setErrorMessage("");
 
     try {
-      // 인증 시스템을 통한 로그인 (LocalStorage 기반)
       await login({ email, password }, "partner");
-
-      // login 함수에서 자동으로 리다이렉트하므로 여기서는 추가 처리 불필요
     } catch (error) {
-      // 에러 메시지 표시
-      if (error instanceof Error) {
+      // axios 에러 → 백엔드 HTTP 상태 코드 기반 에러 처리
+      const axiosError = error as { response?: { status?: number } };
+      const status = axiosError?.response?.status;
+
+      if (status === 401) {
+        setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다."); // I_E7
+      } else if (status === 404) {
+        setErrorMessage("입력하신 정보와 일치하는 계정을 찾을 수 없습니다."); // I_E12
+      } else if (status === 403) {
+        setErrorMessage("정지되었거나 탈퇴된 계정입니다."); // I_E11
+      } else if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage("로그인 중 오류가 발생했습니다.");
+        setErrorMessage("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // E_M5
       }
     }
   };
