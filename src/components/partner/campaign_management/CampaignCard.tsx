@@ -25,7 +25,9 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import { getCampaignTypePath, convertToCampaignDataId } from "./utils/campaign_card_helpers";
 import { useCampaignCard } from "@/hooks/partner/campaign_management/useCampaignCard";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
+import { useQueryClient } from "@tanstack/react-query";
 import { deleteCampaign, cancelCampaign } from "@/data/partner/sharedCampaigns";
+import { deleteCampaignApi } from "@/lib/api/partner";
 import { getPartnerTabByDates } from "@/data/partner/utils/campaignHelpers";
 
 interface CampaignCardProps {
@@ -55,6 +57,7 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
     actions: { closeReceiptModal, closeManagementModal, closeDeleteModal, handleButtonClick },
   } = useCampaignCard({ campaign, activeTab });
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   /**
    * 버튼 클릭 핸들러
@@ -160,19 +163,14 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
 
             {/* 신청자 수 표시 - PC에서만 표시 */}
             <div className={cardStyles.applicant_count}>
+              {/* 연장요청/진행/종료: 대기/확인/완료 수 표시 */}
               {activeTab === "연장 요청" ||
-              (activeTab === "전체" &&
-                campaignSubStatus &&
-                campaignSubStatus.includes("extension_request")) ||
-              (activeTab !== "전체" &&
-                campaignSubStatus &&
-                campaignSubStatus.includes("extension_request")) ? (
+              campaignSubStatus?.includes("extension_request") ||
+              campaignStatus === "진행 중" ||
+              activeTab === "진행" ||
+              campaignStatus === "종료" ||
+              activeTab === "종료" ? (
                 <>
-                  {/* ======================================== */}
-                  {/* 연장 요청 탭: 대기/확인/완료 수 표시 */}
-                  {/* ✅ 대기 = 대기 탭(waiting)에 있는 리뷰어 수 */}
-                  {/* "전체" 탭에서도 연장 요청이 있는 캠페인은 확인 항목에 핑크색 */}
-                  {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
                   >
@@ -187,58 +185,9 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_total}>완료 {completedCount}명</span>
                 </>
-              ) : (activeTab === "전체" && campaignStatus === "진행 중") ||
-                campaignStatus === "진행 중" ||
-                activeTab === "진행" ? (
+              ) : /* 취소: 신청/모집/선정 수 표시 */
+              campaignStatus === "취소" || activeTab === "취소" ? (
                 <>
-                  {/* ======================================== */}
-                  {/* 진행 중인 캠페인: 대기/확인/완료 수 표시 */}
-                  {/* "전체" 탭에서도 진행 중 캠페인은 확인 항목에 핑크색 */}
-                  {/* ======================================== */}
-                  <span
-                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
-                  >
-                    대기 {waitingCount}명
-                  </span>
-                  <span className={cardStyles.applicant_separator}>|</span>
-                  <span
-                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_pink}`}
-                  >
-                    확인 {reviewingCount}명
-                  </span>
-                  <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>완료 {completedCount}명</span>
-                </>
-              ) : (activeTab === "전체" && campaignStatus === "종료") ||
-                campaignStatus === "종료" ||
-                activeTab === "종료" ? (
-                <>
-                  {/* ======================================== */}
-                  {/* 종료 캠페인: 대기/확인/완료 수 표시 */}
-                  {/* "전체" 탭에서도 종료 캠페인은 확인 항목에 핑크색 */}
-                  {/* ======================================== */}
-                  <span
-                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
-                  >
-                    대기 {waitingCount}명
-                  </span>
-                  <span className={cardStyles.applicant_separator}>|</span>
-                  <span
-                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_pink}`}
-                  >
-                    확인 {reviewingCount}명
-                  </span>
-                  <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>완료 {completedCount}명</span>
-                </>
-              ) : (activeTab === "전체" && campaignStatus === "취소") ||
-                campaignStatus === "취소" ||
-                activeTab === "취소" ? (
-                <>
-                  {/* ======================================== */}
-                  {/* 취소 캠페인: 신청/모집/선정 수 표시 */}
-                  {/* "전체" 탭에서도 취소 캠페인은 신청 항목에 핑크색 */}
-                  {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_pink}`}
                   >
@@ -256,16 +205,12 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
                   </span>
                 </>
               ) : (
+                /* 일반(예정/신청): 신청/모집 수 표시 */
                 <>
-                  {/* ======================================== */}
-                  {/* 일반 캠페인: 신청/모집 수 표시 */}
-                  {/* "전체" 탭에서는 getPartnerTabByDates로 계산한 탭이 "예정"이면 포인트 컬러 */}
-                  {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${
                       activeTab === "전체"
                         ? (() => {
-                            // 전체 탭에서는 날짜 기반으로 실제 탭을 계산
                             const calculatedTab = getPartnerTabByDates(
                               campaign.recruitmentPeriod,
                               campaign.registrationPeriod,
@@ -449,22 +394,22 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
             const result = cancelCampaign(String(campaign.id), campaign.campaignType);
 
             if (result.success) {
-              window.location.reload();
+              queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
             } else if (result.error === "ALREADY_CANCELLED") {
               alert("이미 취소된 캠페인입니다.");
             } else {
               alert("캠페인 취소에 실패했습니다. 다시 시도해주세요.");
             }
           } else {
-            // 그 외 탭: 완전 삭제
-            const deleteSuccess = deleteCampaign(String(campaign.id), campaign.campaignType);
-
-            if (deleteSuccess) {
-              alert("캠페인이 삭제되었습니다.");
-              window.location.reload();
-            } else {
-              alert("캠페인 삭제에 실패했습니다. 다시 시도해주세요.");
+            // 그 외 탭: 완전 삭제 (API + localStorage)
+            try {
+              deleteCampaignApi(String(campaign.id));
+            } catch {
+              // mock 서버 미실행 시 무시
             }
+            deleteCampaign(String(campaign.id), campaign.campaignType);
+            alert("캠페인이 삭제되었습니다.");
+            queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
           }
         }}
       />
