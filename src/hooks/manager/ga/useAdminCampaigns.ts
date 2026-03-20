@@ -83,7 +83,7 @@ function adaptCampaign(
   return {
     id: String(item.id),
     campaign_number: String(item.id).padStart(6, "0"),
-    partner_name: item.partnerName ?? PARTNER_NAME_MAP[item.partner_id as number] ?? "",
+    partner_name: item.partnerName ?? PARTNER_NAME_MAP[item.partner_id ?? 0] ?? "",
     campaign_name: item.title,
     type: (TYPE_MAP[item.type] ?? "배송형") as CampaignType,
     channel: (CHANNEL_MAP[item.requiredPlatform?.channelName] ?? "Instagram") as Channel,

@@ -126,6 +126,7 @@ export interface AdminCampaignApiItem {
   description?: string;
   selectedCount?: number;
   metrics?: { appliedCount: number; selectedCount: number; applicationRate: number };
+  partner_id?: number;
 }
 
 // ----------------------------------------
