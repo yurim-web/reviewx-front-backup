@@ -6,23 +6,22 @@
  * PartnerSearchPage
  *
  * 목적: 파트너 헤더 검색에서 이동하는 캠페인 검색 결과 페이지
- *       json-server API(/partner/search) 호출, 실패 시 정적 데이터 fallback
+ *       실제 백엔드 API(/partner/search) 호출 (React Query)
  *
  * 사용 페이지:
  * - /partner/search (파트너 캠페인 검색 결과)
  */
 
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import MainMenu from "@/components/main/MainMenu";
 import SearchResultsSection from "@/components/search/SearchResultsSection";
+import Loading from "@/app/loading";
 import styles from "@/styles/home/home.module.css";
-
-import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
-import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
-import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
-import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
-import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
-
-import type { PartnerCampaignCard, PartnerSearchResponse } from "@/types/api/dashboard";
+import { usePartnerCampaignSearch } from "@/hooks/partner/usePartnerSearch";
+import type { PartnerCampaignCard } from "@/types/api/dashboard";
 
 const TYPE_LABEL: Record<string, string> = {
   DELIVERY: "배송형",
@@ -32,7 +31,19 @@ const TYPE_LABEL: Record<string, string> = {
   MISSION: "미션형",
 };
 
+/** 마감일까지 남은 D-day 계산 */
+function calcDayCount(recruitEndAt?: string): string {
+  if (!recruitEndAt) return "";
+  const end = new Date(recruitEndAt);
+  const now = new Date();
+  const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  if (diff < 0) return "마감";
+  if (diff === 0) return "D-Day";
+  return `D-${diff}`;
+}
+
 function adaptApiItem(item: PartnerCampaignCard) {
+  const dayCount = calcDayCount(item.recruit?.recruitEndAt);
   return {
     id: String(item.campaignId),
     title: item.title,
@@ -43,60 +54,25 @@ function adaptApiItem(item: PartnerCampaignCard) {
       current: item.metrics?.appliedCount ?? 0,
       total: item.recruit?.recruitLimit ?? 0,
     },
-    dayCount: "",
-    isUrgent: item.status === "EMERGENCY",
+    dayCount,
+    isUrgent: item.status === "EMERGENCY" || dayCount === "D-Day",
+    points: (item.reward?.extraRewardPoint ?? 0) + (item.reward?.paymentRewardPoint ?? 0),
   };
 }
 
-async function fetchSearchResults(keyword: string) {
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-    const url = `${apiUrl}/partner/search?keyword=${encodeURIComponent(keyword)}`;
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
-    const data: PartnerSearchResponse = await res.json();
+export default function PartnerSearchPage() {
+  const searchParams = useSearchParams();
+  const keyword = searchParams.get("keyword")?.trim() ?? "";
+
+  const { data, isLoading } = usePartnerCampaignSearch(keyword);
+
+  const campaigns = useMemo(() => {
+    if (!data?.campaigns) return [];
     return data.campaigns.map(adaptApiItem);
-  } catch {
-    return null;
-  }
-}
+  }, [data]);
 
-type PartnerSearchPageProps = {
-  searchParams?: Promise<{
-    keyword?: string | string[];
-  }>;
-};
-
-export default async function PartnerSearchPage({ searchParams }: PartnerSearchPageProps) {
-  const resolved = await searchParams;
-  const raw_keyword = resolved?.keyword ?? "";
-  const keyword =
-    typeof raw_keyword === "string" ? raw_keyword.trim() : (raw_keyword[0]?.trim() ?? "");
-
-  // API 호출 시도
-  const apiResults = await fetchSearchResults(keyword);
-
-  // API 성공 시 API 결과 사용, 실패 시 정적 데이터 fallback
-  let filtered_campaigns;
-  if (apiResults !== null) {
-    filtered_campaigns = apiResults;
-  } else {
-    const normalized_keyword = keyword.toLowerCase();
-    const all_campaigns = [
-      ...deliveryCampaigns,
-      ...reviewCampaigns,
-      ...visitCampaigns,
-      ...missionCampaigns,
-      ...reporterCampaigns,
-    ];
-    filtered_campaigns = keyword
-      ? all_campaigns.filter((campaign) => {
-          const title = campaign.title?.toLowerCase() ?? "";
-          const description =
-            (campaign as { description?: string }).description?.toLowerCase() ?? "";
-          return title.includes(normalized_keyword) || description.includes(normalized_keyword);
-        })
-      : all_campaigns;
+  if (isLoading) {
+    return <Loading />;
   }
 
   return (
@@ -108,7 +84,7 @@ export default async function PartnerSearchPage({ searchParams }: PartnerSearchP
       <div className={styles.header_spacer}></div>
 
       <article className={styles.container}>
-        <SearchResultsSection campaigns={filtered_campaigns} />
+        <SearchResultsSection campaigns={campaigns} />
       </article>
     </>
   );

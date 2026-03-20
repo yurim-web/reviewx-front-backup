@@ -17,7 +17,7 @@
  * - GET /partner/{type}
  */
 
-import { apiClient } from "@/lib/api/client";
+import { partnerApiClient } from "@/lib/api/partnerClient";
 import type {
   PartnerDashboardResponse,
   PartnerSearchResponse,
@@ -27,13 +27,13 @@ import type {
 
 /** 1. 홈 대시보드 메인 조회 */
 export const getPartnerDashboard = async (): Promise<PartnerDashboardResponse> => {
-  const { data } = await apiClient.get<PartnerDashboardResponse>("/partner/dashboard");
+  const { data } = await partnerApiClient.get<PartnerDashboardResponse>("/partner/dashboard");
   return data;
 };
 
 /** 2. 키워드 검색 */
 export const searchPartnerCampaigns = async (keyword: string): Promise<PartnerSearchResponse> => {
-  const { data } = await apiClient.get<PartnerSearchResponse>("/partner/search", {
+  const { data } = await partnerApiClient.get<PartnerSearchResponse>("/partner/search", {
     params: { keyword },
   });
   return data;
@@ -44,7 +44,7 @@ export const getPartnerCampaignsByType = async ({
   type,
   ...params
 }: PartnerTypeFilterParams): Promise<PartnerTypeFilterResponse> => {
-  const { data } = await apiClient.get<PartnerTypeFilterResponse>(`/partner/${type}`, {
+  const { data } = await partnerApiClient.get<PartnerTypeFilterResponse>(`/partner/${type}`, {
     params,
   });
   return data;
