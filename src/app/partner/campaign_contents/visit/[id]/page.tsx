@@ -46,12 +46,6 @@ export default function VisitContentsDetailPage() {
     });
 
     setActiveTab("대기");
-
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      url.searchParams.set("tab", "대기");
-      window.history.pushState({}, "", url.toString());
-    }
   };
 
   const filteredContents = useMemo(() => {

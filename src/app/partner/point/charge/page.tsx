@@ -219,7 +219,9 @@ export default function PartnerPointChargePage() {
         status: "PENDING",
         paid_at: new Date().toISOString(),
         points_charged: chargePoints,
-      }).catch(() => {});
+      }).catch((error) => {
+        console.error("결제 기록 저장 실패:", error);
+      });
 
       // 결제 성공: 성공 모달 표시
       setCardPaymentSuccessModal({ is_open: true });
@@ -270,7 +272,9 @@ export default function PartnerPointChargePage() {
       status: "PENDING",
       paid_at: new Date().toISOString(),
       points_charged: chargePoints,
-    }).catch(() => {});
+    }).catch((error) => {
+      console.error("결제 기록 저장 실패:", error);
+    });
 
     // 무통장 입금 신청 모달 표시
     setBankDepositModal({ is_open: true });

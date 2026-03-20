@@ -359,7 +359,7 @@ function PartnerResetPasswordPage() {
         on_cancel={() => setIsErrorModalOpen(false)}
         on_confirm={() => {
           setIsErrorModalOpen(false);
-          window.location.reload();
+          router.refresh();
         }}
         type="center"
       />
