@@ -15,7 +15,7 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Header from "@/components/fragments/Header";
+import PartnerHeader from "@/components/fragments/PartnerHeader";
 import styles from "@/styles/user/signup/complete.module.css";
 
 /**
@@ -57,7 +57,7 @@ export default function PartnerSignupCompletePage() {
   return (
     <div className={styles.complete_page_container}>
       {/* 메인 헤더 */}
-      <Header />
+      <PartnerHeader />
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.complete_main}>

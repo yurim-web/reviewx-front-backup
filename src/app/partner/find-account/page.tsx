@@ -11,7 +11,7 @@
  * - /partner/find-account
  */
 
-import Header from "@/components/fragments/Header";
+import PartnerHeader from "@/components/fragments/PartnerHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import FindAccountPage from "@/components/common/find_account/page/FindAccountPage";
 import styles from "@/styles/common/find_account/find_account.module.css";
@@ -25,7 +25,7 @@ export default function PartnerFindAccountPage() {
   return (
     <div>
       {/* 메인 헤더 */}
-      <Header />
+      <PartnerHeader />
 
       {/* 페이지 타이틀 (모바일 전용) */}
       <div className={styles.mobile_page_title_wrapper}>
