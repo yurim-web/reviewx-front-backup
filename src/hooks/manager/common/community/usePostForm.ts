@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   categories_data,
   initialize_categories_data,
@@ -68,6 +69,7 @@ export default function usePostForm({
   editor_content,
   force_check,
 }: UsePostFormConfig) {
+  const router = useRouter();
   const base_path =
     manager_type === "ga" ? "/manager_ga/community/posts" : "/manager_sa/community/posts";
   const page_title = mode === "create" ? "게시글 등록" : "게시글 수정";
@@ -244,7 +246,7 @@ export default function usePostForm({
 
     set_show_toast(true);
     setTimeout(() => {
-      window.location.href = base_path;
+      router.push(base_path);
     }, 2000);
   };
 
