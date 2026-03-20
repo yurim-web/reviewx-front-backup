@@ -14,6 +14,7 @@
 import { useMemo } from "react";
 import styles from "@/styles/manager_ga/dashboard/sections/campaign_summary_section.module.css";
 import StatCard, { StatCardData } from "../StatCard";
+import Loading from "@/app/loading";
 import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
 import { useAdminRejections } from "@/hooks/manager/ga/useAdminRejections";
 import { useAdminReports } from "@/hooks/manager/ga/useAdminReports";
@@ -29,9 +30,9 @@ interface CampaignSummarySectionProps {
 
 export default function CampaignSummarySection({ dateRange }: CampaignSummarySectionProps) {
   // React Query 훅으로 데이터 로드 (API 우선, 정적 데이터 fallback)
-  const { campaigns: campaign_list } = useAdminCampaigns();
-  const { rejections: rejected_list } = useAdminRejections();
-  const { reports: reported_list } = useAdminReports();
+  const { campaigns: campaign_list, isLoading: campaignsLoading } = useAdminCampaigns();
+  const { rejections: rejected_list, isLoading: rejectionsLoading } = useAdminRejections();
+  const { reports: reported_list, isLoading: reportsLoading } = useAdminReports();
 
   // 증감률 계산 함수
   const calculate_change_percentage = (
@@ -305,6 +306,10 @@ export default function CampaignSummarySection({ dateRange }: CampaignSummarySec
       },
     ];
   }, [campaign_list, rejected_list, reported_list, dateRange]);
+
+  if (campaignsLoading || rejectionsLoading || reportsLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className={styles.campaign_summary_section_container}>
