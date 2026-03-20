@@ -14,9 +14,11 @@
 "use client";
 
 import ProgressPageCommon from "@/components/manager/common/campaign/progress/ProgressPageCommon";
+import Loading from "@/app/loading";
 import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
 
 export default function ProgressPage() {
-  const { campaigns } = useAdminCampaigns();
+  const { campaigns, isLoading } = useAdminCampaigns();
+  if (isLoading) return <Loading />;
   return <ProgressPageCommon manager_type="sa" campaigns={campaigns} />;
 }

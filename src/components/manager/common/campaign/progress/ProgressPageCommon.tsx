@@ -14,7 +14,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import StatCardsSectionCommon from "./cards/StatCardsSection";
 import CampaignProgressFilterSection from "./section/CampaignProgressFilterSection";
@@ -139,20 +139,15 @@ export default function ProgressPageCommon({
   // 캠페인 리스트 가져오기 함수 선택
   const getCampaignList = manager_type === "ga" ? getGACampaignList : getSACampaignList;
 
-  // 캠페인 리스트 상태 (클라이언트에서만 로드하여 Hydration 오류 방지)
-  const [allCampaignList, setAllCampaignList] = useState<CampaignProgressItem[]>([]);
-
-  // useEffect: 클라이언트에서만 실행되어 localStorage 데이터를 포함한 캠페인 리스트 로드
-  // API 데이터가 있으면 우선 사용, 없으면 localStorage → 정적 데이터 순으로 사용
-  useEffect(() => {
+  // 캠페인 리스트: API 데이터가 있으면 우선 사용, 없으면 정적 데이터 사용
+  // useMemo로 즉시 반영하여 "캠페인이 없습니다" 깜빡임 방지
+  const allCampaignList = useMemo<CampaignProgressItem[]>(() => {
     if (campaignsProp && campaignsProp.length > 0) {
-      setAllCampaignList(campaignsProp);
-    } else {
-      const campaignList = getCampaignList();
-      setAllCampaignList(campaignList);
+      return campaignsProp;
     }
+    return getCampaignList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [manager_type, campaignsProp]); // manager_type 또는 API 데이터 변경 시 재로드
+  }, [manager_type, campaignsProp]);
 
   /* ========================================
      🔍 필터링 로직
