@@ -15,6 +15,7 @@ import { useMemo, useState, useEffect } from "react";
 import { parse, differenceInDays, subDays } from "date-fns";
 import styles from "@/styles/manager_ga/dashboard/sections/member_type_section.module.css";
 import MemberTypeBarChart from "../chart/MemberTypeBarChart";
+import Loading from "@/app/loading";
 import { useAdminReviewers } from "@/hooks/manager/ga/useAdminReviewers";
 import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
 import type { DateRange } from "./DateRangePickerModal";
@@ -32,8 +33,8 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
   }, []);
 
   // React Query 훅으로 데이터 로드 (API 우선, 정적 데이터 fallback)
-  const { reviewers } = useAdminReviewers();
-  const { partners } = useAdminPartners();
+  const { reviewers, isLoading: reviewersLoading } = useAdminReviewers();
+  const { partners, isLoading: partnersLoading } = useAdminPartners();
 
   // 날짜 범위에 따라 회원 유형 통계 계산
   const stats = useMemo(() => {
@@ -236,6 +237,11 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
   const format_number = (num: number): string => {
     return num.toLocaleString("ko-KR");
   };
+
+  if (reviewersLoading || partnersLoading) {
+    return <Loading />;
+  }
+
   return (
     <div className={styles.member_type_section_card}>
       {/* 섹션 제목 */}
