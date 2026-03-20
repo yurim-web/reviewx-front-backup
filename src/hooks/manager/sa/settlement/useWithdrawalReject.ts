@@ -12,6 +12,7 @@
  */
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import type { AdminWithdrawalRequestItem } from "@/types/api/admin";
 import type { StoredRequest, StoredAccount, PointHistoryEntry } from "./withdrawalTypes";
 import { patchWithdrawalStatus } from "@/lib/api/point";
@@ -22,6 +23,7 @@ interface UseWithdrawalRejectParams {
 }
 
 export function useWithdrawalReject({ selected_ids, setSelectedIds }: UseWithdrawalRejectParams) {
+  const queryClient = useQueryClient();
   const [is_reject_modal_open, setIsRejectModalOpen] = useState(false);
   const [pending_reject_ids, setPendingRejectIds] = useState<string[]>([]);
 
@@ -37,7 +39,7 @@ export function useWithdrawalReject({ selected_ids, setSelectedIds }: UseWithdra
     setPendingRejectIds([]);
   };
 
-  const handle_confirm_reject = (reason: string) => {
+  const handle_confirm_reject = async (reason: string) => {
     if (pending_reject_ids.length === 0 || !reason.trim()) return;
 
     try {
@@ -113,18 +115,26 @@ export function useWithdrawalReject({ selected_ids, setSelectedIds }: UseWithdra
 
         // 4. mock 서버 출금 상태 업데이트 (PATCH /admin/withdrawal/:id)
         const now_iso = now.toISOString();
-        pending_reject_ids.forEach((id: string) => {
-          const numericId = parseInt(id.replace(/\D/g, ""), 10);
-          if (numericId) {
-            patchWithdrawalStatus(numericId, {
-              status: "REJECTED",
-              processed_date: now_iso,
-              rejection_reason: reason,
-            }).catch((_apiError) => {
-              console.warn("출금 반려 API 호출 실패 (localStorage 처리 완료):", _apiError);
-            });
-          }
-        });
+        const apiResults = await Promise.allSettled(
+          pending_reject_ids.map((id: string) => {
+            const numericId = parseInt(id.replace(/\D/g, ""), 10);
+            if (numericId) {
+              return patchWithdrawalStatus(numericId, {
+                status: "REJECTED",
+                processed_date: now_iso,
+                rejection_reason: reason,
+              });
+            }
+            return Promise.resolve();
+          })
+        );
+
+        const failedCount = apiResults.filter((r) => r.status === "rejected").length;
+        if (failedCount > 0) {
+          alert(
+            `${failedCount}건의 출금 반려 API 동기화에 실패했습니다. 관리자에게 문의해 주세요.`
+          );
+        }
       }
     } catch (_error) {
       alert("출금 반려 처리 중 오류가 발생했습니다.");
@@ -134,9 +144,7 @@ export function useWithdrawalReject({ selected_ids, setSelectedIds }: UseWithdra
     setSelectedIds([]);
     setPendingRejectIds([]);
     setIsRejectModalOpen(false);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    queryClient.invalidateQueries({ queryKey: ["adminWithdrawalRequests"] });
   };
 
   return {

@@ -12,6 +12,7 @@
  */
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import type { AdminWithdrawalRequestItem } from "@/types/api/admin";
 import type { StoredRequest, StoredAccount, PointHistoryEntry } from "./withdrawalTypes";
 import { patchWithdrawalStatus } from "@/lib/api/point";
@@ -27,6 +28,7 @@ export function useWithdrawalApprove({
   selected_ids,
   setSelectedIds,
 }: UseWithdrawalApproveParams) {
+  const queryClient = useQueryClient();
   const [is_approve_confirm_modal_open, setIsApproveConfirmModalOpen] = useState(false);
   const [is_approve_success_modal_open, setIsApproveSuccessModalOpen] = useState(false);
   const [pending_approve_items, setPendingApproveItems] = useState<AdminWithdrawalRequestItem[]>(
@@ -55,7 +57,7 @@ export function useWithdrawalApprove({
     setPendingApproveItems([]);
   };
 
-  const handle_confirm_approve = () => {
+  const handle_confirm_approve = async () => {
     if (pending_approve_items.length === 0) return;
 
     try {
@@ -92,8 +94,11 @@ export function useWithdrawalApprove({
             );
             if (accountIndex !== -1) {
               const account = accounts[accountIndex] as StoredAccount;
-              account.available_points = (account.available_points || 0) - requestAmount;
-              account.pending_points = (account.pending_points || 0) - requestAmount;
+              account.available_points = Math.max(
+                0,
+                (account.available_points || 0) - requestAmount
+              );
+              account.pending_points = Math.max(0, (account.pending_points || 0) - requestAmount);
               if (account.point_history) {
                 const historyIndex = account.point_history.findIndex(
                   (h: PointHistoryEntry) => h.id === item.id
@@ -174,18 +179,26 @@ export function useWithdrawalApprove({
         });
         localStorage.setItem("withdrawal_history", JSON.stringify(withdrawalHistory));
 
-        // 5. mock DB에도 출금 상태 업데이트
-        pending_approve_items.forEach((item: AdminWithdrawalRequestItem) => {
-          const numericId = parseInt(String(item.id).replace(/\D/g, ""), 10);
-          if (numericId) {
-            patchWithdrawalStatus(numericId, {
-              status: "APPROVED",
-              processed_date: now.toISOString(),
-            }).catch((_apiError) => {
-              console.error("출금 승인 API 호출 실패:", _apiError);
-            });
-          }
-        });
+        // 5. 서버 API에도 출금 상태 업데이트
+        const apiResults = await Promise.allSettled(
+          pending_approve_items.map((item: AdminWithdrawalRequestItem) => {
+            const numericId = parseInt(String(item.id).replace(/\D/g, ""), 10);
+            if (numericId) {
+              return patchWithdrawalStatus(numericId, {
+                status: "APPROVED",
+                processed_date: now.toISOString(),
+              });
+            }
+            return Promise.resolve();
+          })
+        );
+
+        const failedCount = apiResults.filter((r) => r.status === "rejected").length;
+        if (failedCount > 0) {
+          alert(
+            `${failedCount}건의 출금 승인 API 동기화에 실패했습니다. 관리자에게 문의해 주세요.`
+          );
+        }
       }
     } catch (_error) {
       alert("출금 승인 처리 중 오류가 발생했습니다.");
@@ -195,9 +208,7 @@ export function useWithdrawalApprove({
     setSelectedIds([]);
     setIsApproveConfirmModalOpen(false);
     setIsApproveSuccessModalOpen(true);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    queryClient.invalidateQueries({ queryKey: ["adminWithdrawalRequests"] });
   };
 
   const handle_close_approve_success_modal = () => {
