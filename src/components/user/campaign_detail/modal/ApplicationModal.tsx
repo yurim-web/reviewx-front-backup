@@ -461,7 +461,7 @@ export default function ApplicationModal({
         on_cancel={serverErrorModal.close}
         on_confirm={() => {
           serverErrorModal.close();
-          window.location.reload();
+          router.refresh();
         }}
         type="center"
       />

@@ -82,7 +82,7 @@ export default function ProfilePage() {
       case "profile":
         break;
       case "channel":
-        window.location.href = "/user/mypage/channel";
+        router.push("/user/mypage/channel");
         break;
     }
   };
@@ -160,7 +160,7 @@ export default function ProfilePage() {
           on_cancel={() => setShowServerErrorModal(false)}
           on_confirm={() => {
             setShowServerErrorModal(false);
-            window.location.reload();
+            router.refresh();
           }}
           type="center"
         />

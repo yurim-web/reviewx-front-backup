@@ -27,7 +27,10 @@ import { fetchNotifications } from "@/lib/api/notification";
 import type { NotificationApiItem } from "@/types/api/notification";
 import Loading from "@/app/loading";
 // 알림 정적 fallback 데이터
-import { mockReviewerNotifications } from "@/data/notification/notificationData";
+import {
+  mockReviewerNotifications,
+  type NotificationItem as ExternalNotificationItem,
+} from "@/data/notification/notificationData";
 
 interface StoredNotification {
   id: string;
@@ -197,7 +200,7 @@ export default function UserNotificationPage() {
             withdrawal_requested: "A_R10",
             withdrawal_rejected: "A_R12",
           };
-          const localNotifications = (allNotifications as StoredNotification[])
+          const localNotifications: NotificationItem[] = (allNotifications as StoredNotification[])
             .filter((notif) => notif.user_id === user.id)
             .map((notif) => ({
               id: notif.id,
@@ -207,13 +210,14 @@ export default function UserNotificationPage() {
               campaign_id: notif.campaign_id ? parseInt(notif.campaign_id) : undefined,
               campaign_name: notif.campaign_title,
               is_read: notif.is_read,
-              _source: "localStorage",
             }));
 
           setNotifications([...localNotifications, ...baseNotifications]);
           return;
         }
-      } catch (_error) {}
+      } catch (error) {
+        console.error("Failed to load localStorage notifications:", error);
+      }
     }
     setNotifications(baseNotifications);
   }, [user, apiNotifications]);
@@ -239,7 +243,9 @@ export default function UserNotificationPage() {
           );
           localStorage.setItem("notifications", JSON.stringify(otherUserNotifications));
         }
-      } catch (_error) {}
+      } catch (error) {
+        console.error("Failed to clear localStorage notifications:", error);
+      }
     }
     setIsDeleteToastOpen(true);
   };
@@ -275,8 +281,13 @@ export default function UserNotificationPage() {
       <main className={styles.main_content}>
         {/* 알림 목록 컴포넌트 (무한 스크롤: 15개씩 표시) */}
         <NotificationList
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          notifications={notifications.slice(0, displayCount) as any}
+          notifications={notifications.slice(0, displayCount).map((n) => ({
+            id: typeof n.id === "number" ? n.id : Date.now(),
+            category: n.category as ExternalNotificationItem["category"],
+            time: n.time || "",
+            campaign_id: n.campaign_id,
+            campaign_name: n.campaign_name,
+          }))}
         />
 
         {/* 무한 스크롤 sentinel: 뷰포트에 들어오면 다음 15개 로드 */}
@@ -299,7 +310,7 @@ export default function UserNotificationPage() {
         on_cancel={() => setIsServerErrorModalOpen(false)}
         on_confirm={() => {
           setIsServerErrorModalOpen(false);
-          window.location.reload();
+          router.refresh();
         }}
         type="center"
       />

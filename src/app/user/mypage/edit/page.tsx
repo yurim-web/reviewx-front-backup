@@ -269,7 +269,7 @@ export default function EditProfilePage() {
         on_cancel={() => setShowServerErrorModal(false)}
         on_confirm={() => {
           setShowServerErrorModal(false);
-          window.location.reload();
+          router.refresh();
         }}
         type="center"
       />
