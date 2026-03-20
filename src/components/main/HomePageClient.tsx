@@ -24,19 +24,12 @@ import { useHomeAutoLogin } from "@/hooks/home/useHomeAutoLogin";
 import { useHomeCampaigns } from "@/hooks/home/useHomeCampaigns";
 import Loading from "@/app/loading";
 
-const MAIN_BANNERS = [
-  "/images/main/main_banner.png",
-  "/images/main/main_banner2.png",
-  "/images/main/main_banner.png",
-  "/images/main/main_banner.png",
-  "/images/main/main_banner.png",
-];
-
 export default function HomePageClient() {
   const pathname = usePathname();
   useHomeAutoLogin(pathname);
 
   const {
+    banners,
     high_probability_campaigns,
     popular_campaigns,
     similar_campaigns,
@@ -59,9 +52,9 @@ export default function HomePageClient() {
       <div className={styles.header_spacer} aria-hidden />
 
       <article className={styles.container}>
-        {MAIN_BANNERS.length > 0 && (
+        {banners.length > 0 && (
           <section className={styles.main_banner_container}>
-            <MainBannerSlider banners={MAIN_BANNERS} autoSlideInterval={5000} />
+            <MainBannerSlider banners={banners} autoSlideInterval={5000} />
           </section>
         )}
 

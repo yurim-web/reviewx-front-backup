@@ -13,8 +13,9 @@
  */
 
 import { useMemo } from "react";
-import { useDashboard } from "@/hooks/user/useDashboard";
+import { usePartnerDashboard } from "@/hooks/user/useDashboard";
 import type { DashboardCampaign } from "@/hooks/user/useDashboard";
+import type { PartnerBanner } from "@/types/api/dashboard";
 import { shuffle_array } from "@/utils/home/campaignUtils";
 import { getStaticCampaigns } from "@/lib/home/mergedCampaigns";
 
@@ -57,7 +58,7 @@ function adaptStatic(item: {
 }
 
 export function useHomeCampaigns() {
-  const { data: apiData, isError, isLoading } = useDashboard();
+  const { data: apiData, isError, isLoading } = usePartnerDashboard();
 
   // API 데이터가 있으면 즉시 반환
   const hasApiData =
@@ -144,16 +145,18 @@ export function useHomeCampaigns() {
 
   if (hasApiData && apiData) {
     return {
+      banners: apiData.banners ?? ([] as PartnerBanner[]),
       high_probability_campaigns: apiData.highProbability,
       popular_campaigns: apiData.popularNow,
       ongoing_campaigns: apiData.ongoing,
-      similar_campaigns: apiData.similar ?? [],
+      similar_campaigns: apiData.similarCampaigns ?? [],
       isError: false,
       isLoading: false,
     };
   }
 
   return {
+    banners: [] as PartnerBanner[],
     ...(staticResult ?? {
       high_probability_campaigns: [] as HomeCampaign[],
       popular_campaigns: [] as HomeCampaign[],

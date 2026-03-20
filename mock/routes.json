@@ -1,6 +1,7 @@
 {
   "/reviewer/dashboard": "/dashboard",
   "/reviewer/search": "/search",
+  "/partner/dashboard": "/dashboard",
   "/reviewer/campaign/delivery": "/campaigns?type=DELIVERY",
   "/reviewer/campaign/visit": "/campaigns?type=VISIT",
   "/reviewer/campaign/purchase-review": "/campaigns?type=PURCHASE",

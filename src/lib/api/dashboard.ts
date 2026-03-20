@@ -1,36 +1,55 @@
 /* ========================================
-   대시보드 API 함수
+   파트너 대시보드 API 함수
    ======================================== */
 
 /**
- * dashboard API
+ * 파트너 대시보드 API
  *
- * 목적: 대시보드 + 검색 API 함수 (apiClient → json-server or 실제 백엔드)
+ * 목적: 파트너 대시보드 + 검색 + 유형별 조회 API 함수
  *
  * 사용 페이지:
- * - /user (대시보드 메인)
- * - /search (캠페인 검색)
+ * - /partner (대시보드 메인)
+ * - /partner/search (캠페인 검색)
  *
  * API:
- * - 20번: GET /reviewer/dashboard
- * - 21번: GET /reviewer/search?keyword=xxx
+ * - 06번: GET /partner/dashboard
+ * - GET /partner/search?keyword=xxx
+ * - GET /partner/{type}
  */
 
 import { apiClient } from "@/lib/api/client";
-import type { DashboardApiResponse, SearchApiResponse, SearchApiItem } from "@/types/api/dashboard";
+import type {
+  PartnerDashboardResponse,
+  PartnerSearchResponse,
+  PartnerTypeFilterParams,
+  PartnerTypeFilterResponse,
+} from "@/types/api/dashboard";
 
-/** 대시보드 조회 */
-export const fetchDashboard = () =>
-  apiClient.get<DashboardApiResponse>("/reviewer/dashboard").then((res) => res.data);
+/** 1. 홈 대시보드 메인 조회 */
+export const getPartnerDashboard = async (): Promise<PartnerDashboardResponse> => {
+  const { data } = await apiClient.get<PartnerDashboardResponse>("/partner/dashboard");
+  return data;
+};
 
-/** 캠페인 검색 (keyword 기준) */
-export const fetchSearch = (keyword: string): Promise<SearchApiItem[]> =>
-  apiClient
-    .get<SearchApiResponse | SearchApiItem[]>("/reviewer/search", {
-      params: { keyword },
-    })
-    .then((res) => {
-      const data = res.data;
-      if (Array.isArray(data)) return data;
-      return data.items ?? [];
-    });
+/** 2. 키워드 검색 */
+export const searchPartnerCampaigns = async (keyword: string): Promise<PartnerSearchResponse> => {
+  const { data } = await apiClient.get<PartnerSearchResponse>("/partner/search", {
+    params: { keyword },
+  });
+  return data;
+};
+
+/** 3. 유형별 필터 조회 */
+export const getPartnerCampaignsByType = async ({
+  type,
+  ...params
+}: PartnerTypeFilterParams): Promise<PartnerTypeFilterResponse> => {
+  const { data } = await apiClient.get<PartnerTypeFilterResponse>(`/partner/${type}`, {
+    params,
+  });
+  return data;
+};
+
+// ── 하위 호환 별칭 ──
+/** @deprecated getPartnerDashboard 사용 */
+export const fetchDashboard = getPartnerDashboard;

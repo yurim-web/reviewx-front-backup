@@ -17,19 +17,13 @@
 import { useState, useEffect, useCallback } from "react";
 import styles from "@/styles/main/main_banner_slider.module.css";
 
-/**
- * 배너 슬라이드 컴포넌트 Props 타입 정의
- */
+import type { PartnerBanner } from "@/types/api/dashboard";
+
+/** 배너 슬라이드 컴포넌트 Props 타입 정의 */
 interface MainBannerSliderProps {
-  /**
-   * 배너 이미지 배열
-   * 각 이미지는 public/images/main/ 폴더에 있어야 합니다.
-   */
-  banners: string[];
-  /**
-   * 자동 슬라이드 전환 간격 (밀리초)
-   * 기본값: 5000ms (5초)
-   */
+  /** 배너 객체 배열 (API 응답) */
+  banners: PartnerBanner[];
+  /** 자동 슬라이드 전환 간격 (밀리초, 기본값: 5000ms) */
   autoSlideInterval?: number;
 }
 
@@ -238,10 +232,16 @@ export default function MainBannerSlider({
         {/* 배너 이미지들 */}
         {banners.map((banner, index) => (
           <div
-            key={index}
+            key={banner.bannerId}
             className={`${styles.slide} ${index === currentSlide ? styles.slide_active : ""}`}
           >
-            <img src={banner} alt={`배너 ${index + 1}`} />
+            {banner.linkUrl && /^(\/|https?:\/\/)/i.test(banner.linkUrl) ? (
+              <a href={banner.linkUrl} rel="noopener noreferrer">
+                <img src={banner.imageUrl} alt={`배너 ${index + 1}`} />
+              </a>
+            ) : (
+              <img src={banner.imageUrl} alt={`배너 ${index + 1}`} />
+            )}
           </div>
         ))}
       </div>

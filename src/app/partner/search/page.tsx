@@ -6,7 +6,7 @@
  * PartnerSearchPage
  *
  * 목적: 파트너 헤더 검색에서 이동하는 캠페인 검색 결과 페이지
- *       json-server API(/reviewer/search) 호출, 실패 시 정적 데이터 fallback
+ *       json-server API(/partner/search) 호출, 실패 시 정적 데이터 fallback
  *
  * 사용 페이지:
  * - /partner/search (파트너 캠페인 검색 결과)
@@ -22,42 +22,40 @@ import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
 import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 
-interface SearchApiItem {
-  campaignId: number;
-  title: string;
-  recruitLimit: number;
-  campaignApplicationCount: number;
-  imageUrl: string;
-  categoryId: number;
-  channelId: number;
-}
+import type { PartnerCampaignCard, PartnerSearchResponse } from "@/types/api/dashboard";
 
-function adaptApiItem(item: SearchApiItem) {
+const TYPE_LABEL: Record<string, string> = {
+  DELIVERY: "배송형",
+  VISIT: "방문형",
+  PURCHASE: "구매평",
+  REPORTER: "기자단",
+  MISSION: "미션형",
+};
+
+function adaptApiItem(item: PartnerCampaignCard) {
   return {
     id: String(item.campaignId),
     title: item.title,
-    category: "캠페인",
-    image: item.imageUrl,
+    category: TYPE_LABEL[item.type] ?? item.type,
+    channel: item.requiredPlatform?.channelName ?? "",
+    image: item.thumbnail?.url ?? "",
     recruitment: {
-      current: item.campaignApplicationCount,
-      total: item.recruitLimit,
+      current: item.metrics?.appliedCount ?? 0,
+      total: item.recruit?.recruitLimit ?? 0,
     },
     dayCount: "",
-    isUrgent: false,
+    isUrgent: item.status === "EMERGENCY",
   };
 }
 
 async function fetchSearchResults(keyword: string) {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-    const url = keyword
-      ? `${apiUrl}/reviewer/search?keyword=${encodeURIComponent(keyword)}`
-      : `${apiUrl}/reviewer/search`;
+    const url = `${apiUrl}/partner/search?keyword=${encodeURIComponent(keyword)}`;
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`API error: ${res.status}`);
-    const data: SearchApiItem[] | { items?: SearchApiItem[] } = await res.json();
-    const items = Array.isArray(data) ? data : (data.items ?? []);
-    return items.map(adaptApiItem);
+    const data: PartnerSearchResponse = await res.json();
+    return data.campaigns.map(adaptApiItem);
   } catch {
     return null;
   }
