@@ -232,6 +232,27 @@ module.exports = (req, res, next) => {
     });
   }
 
+  // ============ GET /partner/search ============
+  if (req.method === "GET" && (req.path === "/partner/search" || req.url.startsWith("/partner/search"))) {
+    const db = require("./db.json");
+    const searchData = db.search || { result: "OK", campaigns: [] };
+    const keyword = (req.query.keyword || "").toLowerCase();
+
+    if (keyword) {
+      const filtered = (searchData.campaigns || []).filter(
+        (c) => c.title.toLowerCase().includes(keyword)
+      );
+      return res.status(200).json({
+        ...searchData,
+        keyword: req.query.keyword,
+        totalCount: filtered.length,
+        campaigns: filtered,
+      });
+    }
+
+    return res.status(200).json(searchData);
+  }
+
   // ============ GET /partner/boards/faqs ============
   if (req.method === "GET" && req.path === "/partner/boards/faqs") {
     const db = require("./db.json");
@@ -287,6 +308,40 @@ module.exports = (req, res, next) => {
       result: "OK",
       generatedAt: new Date().toISOString(),
       item: notice,
+    });
+  }
+
+  // ============ GET /partner/notifications ============
+  if (req.method === "GET" && req.path === "/partner/notifications") {
+    const db = require("./db.json");
+    const allItems = db.partner_notifications || [];
+    const cursor = req.query.cursor;
+    const size = Number(req.query.size) || 20;
+
+    // 커서 기반 페이지네이션
+    let startIdx = 0;
+    if (cursor) {
+      const cursorId = Number(cursor);
+      startIdx = allItems.findIndex((n) => n.notificationHistoryId === cursorId);
+      if (startIdx === -1) startIdx = allItems.length;
+      else startIdx += 1; // 커서 다음부터
+    }
+
+    const sliced = allItems.slice(startIdx, startIdx + size);
+    const nextItem = allItems[startIdx + size];
+    const nextCursor = nextItem ? String(nextItem.notificationHistoryId) : null;
+
+    return res.status(200).json({
+      result: "OK",
+      items: sliced,
+      nextCursor,
+    });
+  }
+
+  // ============ DELETE /partner/notifications ============
+  if (req.method === "DELETE" && req.path === "/partner/notifications") {
+    return res.status(200).json({
+      result: "OK",
     });
   }
 

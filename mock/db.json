@@ -11418,6 +11418,26 @@
   "dashboard": {
     "result": "OK",
     "generatedAt": "2026-03-05T02:46:31.762Z",
+    "banners": [
+      {
+        "bannerId": 1,
+        "imageUrl": "/images/main/main_banner.png",
+        "linkUrl": "/campaign/delivery/1",
+        "displayOrder": 1
+      },
+      {
+        "bannerId": 2,
+        "imageUrl": "/images/main/main_banner2.png",
+        "linkUrl": null,
+        "displayOrder": 2
+      },
+      {
+        "bannerId": 3,
+        "imageUrl": "/images/main/main_banner.png",
+        "linkUrl": "/campaign/visit/2",
+        "displayOrder": 3
+      }
+    ],
     "sections": {
       "highSelectionProbability": [
         {
@@ -11434,10 +11454,7 @@
           },
           "category": {
             "categoryId": 1,
-            "categoryName": {
-              "categoryId": 2,
-              "categoryName": "뷰티"
-            }
+            "categoryName": "뷰티"
           },
           "requiredPlatform": {
             "channelId": 2,
@@ -11481,10 +11498,7 @@
           },
           "category": {
             "categoryId": 1,
-            "categoryName": {
-              "categoryId": 5,
-              "categoryName": "생활"
-            }
+            "categoryName": "생활"
           },
           "requiredPlatform": {
             "channelId": 3,
@@ -14165,10 +14179,7 @@
           },
           "category": {
             "categoryId": 1,
-            "categoryName": {
-              "categoryId": 2,
-              "categoryName": "뷰티"
-            }
+            "categoryName": "뷰티"
           },
           "requiredPlatform": {
             "channelId": 2,
@@ -14212,10 +14223,7 @@
           },
           "category": {
             "categoryId": 1,
-            "categoryName": {
-              "categoryId": 5,
-              "categoryName": "생활"
-            }
+            "categoryName": "생활"
           },
           "requiredPlatform": {
             "channelId": 3,
@@ -17629,7 +17637,7 @@
           }
         }
       ],
-      "similar": [
+      "similarCampaigns": [
         {
           "id": 6,
           "campaignId": 6,
@@ -17644,10 +17652,7 @@
           },
           "category": {
             "categoryId": 1,
-            "categoryName": {
-              "categoryId": 2,
-              "categoryName": "뷰티"
-            }
+            "categoryName": "뷰티"
           },
           "requiredPlatform": {
             "channelId": 2,
@@ -18913,44 +18918,63 @@
       ]
     }
   },
-  "search": [
-    {
-      "campaignId": 1,
-      "title": "[배송형] 맛있는 간편식 체험단 모집",
-      "recruitLimit": 30,
-      "campaignApplicationCount": 12,
-      "imageUrl": "/images/main/campaign_img/eximg_1.png",
-      "categoryId": 1,
-      "channelId": 3
-    },
-    {
-      "campaignId": 2,
-      "title": "[방문형] 강남 카페 방문 체험단",
-      "recruitLimit": 10,
-      "campaignApplicationCount": 7,
-      "imageUrl": "/images/main/campaign_img/eximg_2.png",
-      "categoryId": 6,
-      "channelId": 3
-    },
-    {
-      "campaignId": 3,
-      "title": "[구매평] 스킨케어 제품 구매 후기 모집",
-      "recruitLimit": 20,
-      "campaignApplicationCount": 3,
-      "imageUrl": "/images/main/campaign_img/eximg_3.png",
-      "categoryId": 2,
-      "channelId": 1
-    },
-    {
-      "campaignId": 5,
-      "title": "[미션형] SNS 해시태그 미션 참여자 모집",
-      "recruitLimit": 50,
-      "campaignApplicationCount": 18,
-      "imageUrl": "/images/main/campaign_img/eximg_5.png",
-      "categoryId": 5,
-      "channelId": 3
-    }
-  ],
+  "search": {
+    "result": "OK",
+    "generatedAt": "2026-03-20T10:00:00+09:00",
+    "keyword": "",
+    "totalCount": 4,
+    "campaigns": [
+      {
+        "campaignId": 1,
+        "type": "DELIVERY",
+        "status": "RECRUITING",
+        "title": "[배송형] 맛있는 간편식 체험단 모집",
+        "thumbnail": { "attachmentId": 101, "fileId": 1001, "url": "/images/main/campaign_img/eximg_1.png" },
+        "category": { "categoryId": 1, "categoryName": "식품" },
+        "requiredPlatform": { "channelId": 3, "channelName": "INSTAGRAM" },
+        "recruit": { "recruitLimit": 30, "recruitStartAt": "2026-03-20T00:00:00+09:00", "recruitEndAt": "2026-04-05T23:59:59+09:00" },
+        "metrics": { "appliedCount": 12, "selectedCount": 0, "applicationRate": 0.4 },
+        "reward": { "extraRewardPoint": 15000, "paymentRewardPoint": 0 }
+      },
+      {
+        "campaignId": 2,
+        "type": "VISIT",
+        "status": "RECRUITING",
+        "title": "[방문형] 강남 카페 방문 체험단",
+        "thumbnail": { "attachmentId": 102, "fileId": 1002, "url": "/images/main/campaign_img/eximg_2.png" },
+        "category": { "categoryId": 6, "categoryName": "카페" },
+        "requiredPlatform": { "channelId": 3, "channelName": "INSTAGRAM" },
+        "region": { "regionId": 102, "name": "서울/강남", "parentId": null },
+        "recruit": { "recruitLimit": 10, "recruitStartAt": "2026-03-15T00:00:00+09:00", "recruitEndAt": "2026-04-01T23:59:59+09:00" },
+        "metrics": { "appliedCount": 7, "selectedCount": 0, "applicationRate": 0.7 },
+        "reward": { "extraRewardPoint": 10000, "paymentRewardPoint": 0 }
+      },
+      {
+        "campaignId": 3,
+        "type": "PURCHASE",
+        "status": "RECRUITING",
+        "title": "[구매평] 스킨케어 제품 구매 후기 모집",
+        "thumbnail": { "attachmentId": 103, "fileId": 1003, "url": "/images/main/campaign_img/eximg_3.png" },
+        "category": { "categoryId": 2, "categoryName": "뷰티" },
+        "requiredPlatform": { "channelId": 1, "channelName": "NAVER_BLOG" },
+        "recruit": { "recruitLimit": 20, "recruitStartAt": "2026-03-25T00:00:00+09:00", "recruitEndAt": "2026-04-10T23:59:59+09:00" },
+        "metrics": { "appliedCount": 3, "selectedCount": 0, "applicationRate": 0.15 },
+        "reward": { "extraRewardPoint": 5000, "paymentRewardPoint": 30000 }
+      },
+      {
+        "campaignId": 5,
+        "type": "MISSION",
+        "status": "RECRUITING",
+        "title": "[미션형] SNS 해시태그 미션 참여자 모집",
+        "thumbnail": { "attachmentId": 105, "fileId": 1005, "url": "/images/main/campaign_img/eximg_5.png" },
+        "category": { "categoryId": 5, "categoryName": "생활" },
+        "requiredPlatform": { "channelId": 3, "channelName": "INSTAGRAM" },
+        "recruit": { "recruitLimit": 50, "recruitStartAt": "2026-03-10T00:00:00+09:00", "recruitEndAt": "2026-04-15T23:59:59+09:00" },
+        "metrics": { "appliedCount": 18, "selectedCount": 0, "applicationRate": 0.36 },
+        "reward": { "extraRewardPoint": 8000, "paymentRewardPoint": 0 }
+      }
+    ]
+  },
   "reviewer_campaign_management": [
     {
       "id": "961",
@@ -28876,44 +28900,60 @@
   "admin_notifications": [],
   "partner_notifications": [
     {
-      "id": 1,
-      "category": "A_P1",
-      "time": "2026-03-08 18:35",
-      "campaign_id": 1,
-      "campaign_name": "[배송형] 맛있는 간편식 체험단",
-      "is_read": false
+      "notificationHistoryId": 1,
+      "campaignId": 1,
+      "userId": 1001,
+      "type": "CAMPAIGN_STATUS_CHANGED",
+      "message": "캠페인 '[배송형] 맛있는 간편식 체험단'의 진행 상태가 변경되었습니다.",
+      "createdAt": "2026-03-08 18:35"
     },
     {
-      "id": 2,
-      "category": "A_P2",
-      "time": "2026-03-08 17:20",
-      "campaign_id": 2,
-      "campaign_name": "[방문형] 강남 카페 방문 체험단",
-      "is_read": false
+      "notificationHistoryId": 2,
+      "campaignId": 2,
+      "userId": 1001,
+      "type": "CAMPAIGN_COMPLETED",
+      "message": "캠페인 '[방문형] 강남 카페 방문 체험단'이 완료되었습니다.",
+      "createdAt": "2026-03-08 17:20"
     },
     {
-      "id": 3,
-      "category": "A_P3",
-      "time": "2026-03-08 16:15",
-      "campaign_id": 3,
-      "campaign_name": "[구매평] 스킨케어 제품 후기",
-      "is_read": true
+      "notificationHistoryId": 3,
+      "campaignId": 3,
+      "userId": 1001,
+      "type": "CAMPAIGN_SUSPENDED",
+      "message": "운영 정책 위반으로 인해 캠페인 '[구매평] 스킨케어 제품 후기'가 게시 중지되었습니다.",
+      "createdAt": "2026-03-08 16:15"
     },
     {
-      "id": 4,
-      "category": "A_P4",
-      "time": "2026-03-08 15:10",
-      "campaign_id": 4,
-      "campaign_name": "[방문형] 부산 해운대 맛집",
-      "is_read": true
+      "notificationHistoryId": 4,
+      "campaignId": 4,
+      "userId": 1001,
+      "type": "CONTENT_REGISTERED",
+      "message": "리뷰어가 캠페인 '[방문형] 부산 해운대 맛집'에 콘텐츠를 등록했습니다.",
+      "createdAt": "2026-03-08 15:10"
     },
     {
-      "id": 5,
-      "category": "A_P5",
-      "time": "2026-03-08 14:05",
-      "campaign_id": 5,
-      "campaign_name": "[미션형] SNS 해시태그 미션",
-      "is_read": true
+      "notificationHistoryId": 5,
+      "campaignId": 5,
+      "userId": 1001,
+      "type": "CONTENT_EXTENSION_REQUESTED",
+      "message": "리뷰어가 캠페인 '[미션형] SNS 해시태그 미션'의 콘텐츠 등록 기한 연장을 요청했습니다.",
+      "createdAt": "2026-03-08 14:05"
+    },
+    {
+      "notificationHistoryId": 6,
+      "campaignId": null,
+      "userId": 1001,
+      "type": "ACCOUNT_SUSPENDED",
+      "message": "운영 정책 위반으로 인해 7일 동안 캠페인을 등록할 수 없습니다.",
+      "createdAt": "2026-03-07 10:00"
+    },
+    {
+      "notificationHistoryId": 7,
+      "campaignId": null,
+      "userId": 1001,
+      "type": "ACCOUNT_BANNED",
+      "message": "운영 정책 위반으로 인해 이용 제한되었습니다.",
+      "createdAt": "2026-03-06 09:30"
     }
   ],
   "blacklist": [

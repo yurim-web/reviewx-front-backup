@@ -34,7 +34,9 @@ import {
 } from "@/utils/validation/partnerSignup";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getAccountsByType } from "@/data/login/unifiedAccountData";
-import { postPartner } from "@/lib/api/partner";
+import { partnerSignup } from "@/lib/api/partnerSignup";
+import type { PartnerSignupRequest } from "@/types/api/partnerSignup";
+import axios from "axios";
 import commonStyles from "@/styles/common/signup/signup.module.css";
 import styles from "@/styles/partner/signup/partner_signup.module.css";
 
@@ -330,82 +332,78 @@ export default function PartnerSignupPage() {
       return;
     }
 
-    // 회원가입 처리
-    // console.log("파트너 회원가입 시도:", {
-    //   email,
-    //   password,
-    //   name,
-    //   phone,
-    //   companyName,
-    //   representativeName,
-    //   businessNumber,
-    //   businessRegistrationFile: businessRegistrationFileName,
-    //   postalCode,
-    //   address,
-    //   detailAddress,
-    //   contactPhone,
-    //   marketingAgreed,
-    //   thirdPartyMarketingAgreed,
-    // });
-
-    // LocalStorage에 새 파트너 계정 저장
+    // 회원가입 API 호출 (POST /partner/signup — multipart/form-data)
     try {
-      const existingAccounts = localStorage.getItem("partner_accounts");
-      const partnerAccounts = existingAccounts ? JSON.parse(existingAccounts) : [];
-
-      const newPartnerAccount = {
-        id: `partner_${Date.now()}`,
-        number: String(partnerAccounts.length + 1).padStart(6, "0"),
-        userType: "partner" as const,
-        role: "partner" as const,
+      const signupRequest: PartnerSignupRequest = {
         email,
         password,
         name,
-        phone,
-        business_name: companyName,
-        business_number: businessNumber,
-        representative_name: representativeName,
-        postal_code: postalCode,
+        phoneNum: phone.replace(/-/g, ""),
+        businessName: companyName,
+        ceoName: representativeName,
+        businessNumber,
+        businessLicenseFile: businessRegistrationFile!,
+        postNumber: Number(postalCode),
         address,
-        detail_address: detailAddress,
-        contact_phone: contactPhone,
-        business_registration_file: businessRegistrationFileName,
-        approval_status: "approved" as const,
-        signupDate: new Date().toISOString().split("T")[0].replace(/-/g, ". "),
-        isBlocked: false,
-        isBanned: false,
-        redirectUrl: "/partner",
-        marketing_agreed: marketingAgreed,
-        third_party_marketing_agreed: thirdPartyMarketingAgreed,
-        division: "개인" as const,
-        campaign_in_progress: 0,
-        campaign_completed: 0,
-        current_points: 0,
-        used_points: 0,
-        status_type: "모범 회원" as const,
-        status: "정상" as const,
-        last_access_date: new Date().toISOString().replace("T", " ").substring(0, 16),
-        join_date: new Date().toISOString().replace("T", " ").substring(0, 16),
+        addressDetail: detailAddress,
+        csNumber: contactPhone.replace(/-/g, ""),
+        agreements: {
+          termsServicePrivacyAgreed: serviceTermsAgreed && privacyAgreed,
+          privacyThirdPartyAgreed: thirdPartyAgreed,
+          marketingPrivacyAgreed: marketingAgreed,
+          termsServiceAgreed: serviceTermsAgreed,
+          termsAdPromoComplianceAgreed: advertisingAgreed,
+          marketingThirdPartyProvisionAgreed: thirdPartyMarketingAgreed,
+        },
       };
 
-      partnerAccounts.push(newPartnerAccount);
-      localStorage.setItem("partner_accounts", JSON.stringify(partnerAccounts));
+      const response = await partnerSignup(signupRequest);
 
-      // mock DB에 파트너 저장
-      postPartner(newPartnerAccount as unknown as Record<string, unknown>).catch((_apiError) => {
-        console.error("파트너 가입 API 호출 실패:", _apiError);
-      });
+      // 백엔드 응답의 next.redirectPath 사용
+      const redirectPath = response.data.next.redirectPath;
+      router.push(redirectPath || `/partner/signup/complete?name=${encodeURIComponent(name)}`);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+        const errorCode = data?.error?.code;
 
-      router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
-    } catch (_error) {
-      alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+        if (status === 409 && errorCode === "DUPLICATE_EMAIL") {
+          setErrors((prev) => ({ ...prev, email: "이미 사용 중인 이메일입니다." }));
+        } else if (status === 400 && errorCode === "INVALID_PASSWORD_FORMAT") {
+          setErrors((prev) => ({
+            ...prev,
+            password: "비밀번호는 8~16자, 영문/숫자/특수문자를 포함해야 합니다.",
+          }));
+        } else if (status === 400 && errorCode === "REQUIRED_TERMS_NOT_AGREED") {
+          setErrors((prev) => ({ ...prev, terms: "필수 약관에 동의해야 합니다." }));
+        } else if (status === 400 && errorCode === "I_E16") {
+          setErrors((prev) => ({
+            ...prev,
+            businessRegistration:
+              "사업자등록증을 인식할 수 없습니다. 선명한 이미지를 다시 첨부해 주세요.",
+          }));
+        } else if (status === 400 && errorCode === "I_E17") {
+          setErrors((prev) => ({
+            ...prev,
+            businessNumber: "입력한 사업자등록번호가 첨부한 사업자등록증과 일치하지 않습니다.",
+          }));
+        } else if (status === 400 && errorCode === "FILE_SIZE_EXCEEDED") {
+          setErrors((prev) => ({
+            ...prev,
+            businessRegistration: "파일 크기는 10MB를 초과할 수 없습니다.",
+          }));
+        } else if (status === 400 && errorCode === "INVALID_FILE_TYPE") {
+          setErrors((prev) => ({
+            ...prev,
+            businessRegistration: "허용되지 않는 파일 형식입니다. (jpg, png, gif만 허용)",
+          }));
+        } else {
+          alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+      } else {
+        alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
-
-    // TODO: 실제 API 호출
-    // const response = await partnerSignupAPI({ ... });
-    // if (response.success) {
-    //   router.push('/partner/login');
-    // }
   };
 
   // ========================================
