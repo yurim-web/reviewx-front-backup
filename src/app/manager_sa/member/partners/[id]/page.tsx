@@ -31,8 +31,8 @@ export default function PartnerDetailPage() {
   const params = useParams();
   const partner_id = params.id as string;
 
-  const { partner_detail, is_loading, is_withdrawn_modal_open, set_is_withdrawn_modal_open } =
-    usePartnerDetailData(partner_id);
+  // SA(최고관리자)는 탈퇴 회원도 조회 가능 (C_M11: GA만 조회 불가)
+  const { partner_detail, is_loading } = usePartnerDetailData(partner_id);
 
   const [is_campaign_history_modal_open, set_is_campaign_history_modal_open] = useState(false);
   const [is_penalty_history_modal_open, set_is_penalty_history_modal_open] = useState(false);
@@ -40,10 +40,6 @@ export default function PartnerDetailPage() {
   const handle_download_business_certificate = () => {
     // TODO: 실제 다운로드 기능 구현
   };
-
-  // SA(최고관리자)는 탈퇴 회원도 조회 가능 (C_M11: GA만 조회 불가)
-  void is_withdrawn_modal_open;
-  void set_is_withdrawn_modal_open;
 
   const format_number = (num: number | undefined): string => {
     if (num === undefined || num === null) return "0";

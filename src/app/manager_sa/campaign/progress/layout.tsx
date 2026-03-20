@@ -17,7 +17,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "ReviewX | 캠페인 진행 현황",
-  description: "GA 관리자 캠페인 진행 현황 페이지입니다",
+  description: "SA 관리자 캠페인 진행 현황 페이지입니다",
 };
 
 /**
