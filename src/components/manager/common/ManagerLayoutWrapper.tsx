@@ -40,7 +40,7 @@ export default function ManagerLayoutWrapper({ children }: { children: React.Rea
         // 인증되지 않은 경우 로그인 페이지로 리다이렉트
         // 전체 페이지 이동을 사용해 로그인 페이지가 올바른 레이아웃(max-width)으로 로드되도록 함
         if (!isAuthenticated || !user) {
-          window.location.replace("/manager/login");
+          router.replace("/manager/login");
           return;
         }
 
@@ -49,12 +49,12 @@ export default function ManagerLayoutWrapper({ children }: { children: React.Rea
         const isGAPath = pathname === "/manager_ga" || pathname.startsWith("/manager_ga/");
 
         if (isSAPath && user.role !== "manager_sa") {
-          window.location.replace("/manager/login");
+          router.replace("/manager/login");
           return;
         }
 
         if (isGAPath && user.role !== "manager_ga") {
-          window.location.replace("/manager/login");
+          router.replace("/manager/login");
           return;
         }
       }

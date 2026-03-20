@@ -34,7 +34,10 @@ export const fetchCampaignContents = (campaignId: string): Promise<CampaignConte
   apiClient
     .get<CampaignContentApiItem[]>(`/partner/campaign/${campaignId}/contents`)
     .then((res) => (Array.isArray(res.data) ? res.data : []))
-    .catch(() => []);
+    .catch((error) => {
+      console.error("fetchCampaignContents failed:", error);
+      return [];
+    });
 
 /** 콘텐츠 제출 (POST /campaign_contents) */
 export const postCampaignContent = (

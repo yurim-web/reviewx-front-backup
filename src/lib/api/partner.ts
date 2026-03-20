@@ -51,7 +51,10 @@ export const fetchCampaignById = (id: string): Promise<PartnerCampaignApiItem | 
   apiClient
     .get<PartnerCampaignApiItem>(`/campaigns/${id}`)
     .then((res) => res.data ?? null)
-    .catch(() => null);
+    .catch((error) => {
+      console.error("fetchCampaignById failed:", error);
+      return null;
+    });
 
 /**
  * 캠페인 수정
@@ -92,7 +95,10 @@ export const fetchDraftCampaign = (
       const arr = Array.isArray(res.data) ? res.data : [];
       return arr.length > 0 ? arr[0] : null;
     })
-    .catch(() => null);
+    .catch((error) => {
+      console.error("fetchDraftCampaign failed:", error);
+      return null;
+    });
 
 /** 임시 저장 (POST /draft_campaigns) */
 export const postDraftCampaign = (
