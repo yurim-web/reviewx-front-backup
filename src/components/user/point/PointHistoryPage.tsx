@@ -79,13 +79,13 @@ export default function PointHistoryPage({
   const handlePointTabChange = (tab: PointTab) => {
     switch (tab) {
       case "all":
-        if (activePointTab !== "all") window.location.href = "/user/point/all";
+        if (activePointTab !== "all") router.push("/user/point/all");
         break;
       case "earned":
-        if (activePointTab !== "earned") window.location.href = "/user/point/earned";
+        if (activePointTab !== "earned") router.push("/user/point/earned");
         break;
       case "withdrawn":
-        if (activePointTab !== "withdrawn") window.location.href = "/user/point/withdrawn";
+        if (activePointTab !== "withdrawn") router.push("/user/point/withdrawn");
         break;
     }
   };
@@ -359,7 +359,7 @@ export default function PointHistoryPage({
         on_cancel={() => setShowErrorModal(false)}
         on_confirm={() => {
           setShowErrorModal(false);
-          window.location.reload();
+          router.refresh();
         }}
         type="center"
       />

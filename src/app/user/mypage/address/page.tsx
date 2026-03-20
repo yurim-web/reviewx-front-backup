@@ -81,7 +81,9 @@ export default function AddressPage() {
           detailAddress: parsedAddress.detailAddress || "",
         });
       }
-    } catch (_error) {}
+    } catch (error) {
+      console.error("Failed to load address data:", error);
+    }
   }, [user, profile]);
 
   // 뒤로가기 시 모달 상태 복원

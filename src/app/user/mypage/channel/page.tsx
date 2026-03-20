@@ -99,7 +99,7 @@ export default function ChannelPage() {
   const handleSubTabChange = (tab: "profile" | "channel") => {
     switch (tab) {
       case "profile":
-        window.location.href = "/user/mypage/profile";
+        router.push("/user/mypage/profile");
         break;
       case "channel":
         break;
@@ -197,7 +197,7 @@ export default function ChannelPage() {
           on_cancel={() => setShowServerErrorModal(false)}
           on_confirm={() => {
             setShowServerErrorModal(false);
-            window.location.reload();
+            router.refresh();
           }}
           type="center"
         />

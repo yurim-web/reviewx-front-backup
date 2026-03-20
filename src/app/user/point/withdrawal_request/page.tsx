@@ -271,7 +271,7 @@ export default function WithdrawalRequestPage() {
         on_cancel={() => setIsServerErrorModalOpen(false)}
         on_confirm={() => {
           setIsServerErrorModalOpen(false);
-          window.location.reload();
+          router.refresh();
         }}
         type="center"
       />
