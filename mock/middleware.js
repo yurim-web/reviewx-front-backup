@@ -2,6 +2,10 @@
  * json-server 커스텀 미들웨어
  * 파트너 로그인/세션 등 단순 REST로 처리 불가능한 엔드포인트 처리
  */
+
+// 메모리 상태: 알림 전체 삭제 여부
+let notificationsDeleted = false;
+
 module.exports = (req, res, next) => {
   // ============ POST /partner/login ============
   if (req.method === "POST" && req.path === "/partner/login") {
@@ -150,6 +154,49 @@ module.exports = (req, res, next) => {
     return res.status(200).json({
       result: "OK",
       generatedAt: new Date().toISOString(),
+    });
+  }
+
+  // ============ POST /partner/auth/find-id ============
+  if (req.method === "POST" && req.path === "/partner/auth/find-id") {
+    const phone = (req.body.phone || "").replace(/-/g, "");
+    // mock: 01011111111 → 찾기 성공, 그 외 → 404
+    if (phone === "01011111111") {
+      return res.status(200).json({
+        result: "OK",
+        email: "test@cmcm.co.kr",
+        signupDate: "2025-01-15",
+      });
+    }
+    if (phone === "01099999999") {
+      return res.status(403).json({
+        result: "ERROR",
+        error: { code: "BLOCKED_ACCOUNT", message: "정지되었거나 탈퇴된 계정입니다." },
+      });
+    }
+    return res.status(404).json({
+      result: "ERROR",
+      error: { code: "NOT_FOUND", message: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다." },
+    });
+  }
+
+  // ============ POST /partner/auth/find-password ============
+  if (req.method === "POST" && req.path === "/partner/auth/find-password") {
+    const email = req.body.email || "";
+    const phone = (req.body.phone || "").replace(/-/g, "");
+    // mock: test@cmcm.co.kr + 01011111111 → 성공
+    if (email === "test@cmcm.co.kr" && phone === "01011111111") {
+      return res.status(200).json({ result: "OK" });
+    }
+    if (phone === "01099999999") {
+      return res.status(403).json({
+        result: "ERROR",
+        error: { code: "BLOCKED_ACCOUNT", message: "정지되었거나 탈퇴된 계정입니다." },
+      });
+    }
+    return res.status(404).json({
+      result: "ERROR",
+      error: { code: "NOT_FOUND", message: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다." },
     });
   }
 
@@ -313,6 +360,15 @@ module.exports = (req, res, next) => {
 
   // ============ GET /partner/notifications ============
   if (req.method === "GET" && req.path === "/partner/notifications") {
+    // 전체 삭제된 상태면 빈 배열 반환
+    if (notificationsDeleted) {
+      return res.status(200).json({
+        result: "OK",
+        items: [],
+        nextCursor: null,
+      });
+    }
+
     const db = require("./db.json");
     const allItems = db.partner_notifications || [];
     const cursor = req.query.cursor;
@@ -340,8 +396,153 @@ module.exports = (req, res, next) => {
 
   // ============ DELETE /partner/notifications ============
   if (req.method === "DELETE" && req.path === "/partner/notifications") {
+    notificationsDeleted = true;
     return res.status(200).json({
       result: "OK",
+    });
+  }
+
+  // ============ GET /partner/campaign/create ============
+  // 09번 API: 캠페인 등록페이지 조회 (카테고리, 채널, 지역, 파트너 정보)
+  if (req.method === "GET" && (req.path === "/partner/campaign/create" || req.originalUrl === "/partner/campaign/create")) {
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      partner: {
+        partnerId: 501,
+        businessName: "마크엑스컴퍼니",
+        currentPoint: 425000,
+      },
+      categories: [
+        { categoryId: 1, categoryName: "식품" },
+        { categoryId: 2, categoryName: "뷰티" },
+        { categoryId: 3, categoryName: "가전" },
+        { categoryId: 4, categoryName: "유아동" },
+        { categoryId: 5, categoryName: "여가" },
+        { categoryId: 6, categoryName: "서비스" },
+        { categoryId: 7, categoryName: "생활" },
+        { categoryId: 8, categoryName: "패션" },
+        { categoryId: 9, categoryName: "가구" },
+        { categoryId: 10, categoryName: "디지털" },
+        { categoryId: 11, categoryName: "문화" },
+        { categoryId: 12, categoryName: "반려동물" },
+        { categoryId: 13, categoryName: "기타" },
+      ],
+      channels: [
+        { channelId: 1, channelName: "NAVER_BLOG" },
+        { channelId: 2, channelName: "NAVER_CLIP" },
+        { channelId: 3, channelName: "INSTAGRAM" },
+        { channelId: 4, channelName: "INSTAGRAM_REELS" },
+        { channelId: 5, channelName: "YOUTUBE" },
+        { channelId: 6, channelName: "YOUTUBE_SHORTS" },
+      ],
+      regions: [
+        { regionId: 100, name: "서울특별시", level: 1, parentId: null },
+        { regionId: 101, name: "강남구", level: 2, parentId: 100 },
+        { regionId: 102, name: "강동구", level: 2, parentId: 100 },
+        { regionId: 103, name: "강북구", level: 2, parentId: 100 },
+        { regionId: 104, name: "강서구", level: 2, parentId: 100 },
+        { regionId: 105, name: "관악구", level: 2, parentId: 100 },
+        { regionId: 106, name: "성동구", level: 2, parentId: 100 },
+        { regionId: 107, name: "성북구", level: 2, parentId: 100 },
+        { regionId: 108, name: "송파구", level: 2, parentId: 100 },
+        { regionId: 109, name: "마포구", level: 2, parentId: 100 },
+        { regionId: 200, name: "인천광역시", level: 1, parentId: null },
+        { regionId: 201, name: "남동구", level: 2, parentId: 200 },
+        { regionId: 202, name: "부평구", level: 2, parentId: 200 },
+        { regionId: 300, name: "경기도", level: 1, parentId: null },
+        { regionId: 301, name: "수원시", level: 2, parentId: 300 },
+        { regionId: 302, name: "성남시", level: 2, parentId: 300 },
+        { regionId: 303, name: "고양시", level: 2, parentId: 300 },
+        { regionId: 400, name: "부산광역시", level: 1, parentId: null },
+        { regionId: 401, name: "해운대구", level: 2, parentId: 400 },
+        { regionId: 500, name: "대구광역시", level: 1, parentId: null },
+        { regionId: 600, name: "대전광역시", level: 1, parentId: null },
+        { regionId: 700, name: "광주광역시", level: 1, parentId: null },
+        { regionId: 800, name: "울산광역시", level: 1, parentId: null },
+        { regionId: 900, name: "세종특별자치시", level: 1, parentId: null },
+        { regionId: 901, name: "세종시", level: 2, parentId: 900 },
+        { regionId: 1000, name: "강원특별자치도", level: 1, parentId: null },
+        { regionId: 1100, name: "충청북도", level: 1, parentId: null },
+        { regionId: 1200, name: "충청남도", level: 1, parentId: null },
+        { regionId: 1300, name: "전라북도", level: 1, parentId: null },
+        { regionId: 1400, name: "전라남도", level: 1, parentId: null },
+        { regionId: 1500, name: "경상북도", level: 1, parentId: null },
+        { regionId: 1600, name: "경상남도", level: 1, parentId: null },
+        { regionId: 1700, name: "제주특별자치도", level: 1, parentId: null },
+        { regionId: 1701, name: "제주시", level: 2, parentId: 1700 },
+        { regionId: 1702, name: "서귀포시", level: 2, parentId: 1700 },
+      ],
+    });
+  }
+
+  // ============ POST /partner/campaign/create ============
+  // 10번 API: 캠페인 등록하기
+  if (req.method === "POST" && (req.path === "/partner/campaign/create" || req.originalUrl === "/partner/campaign/create")) {
+    const body = req.body || {};
+    const campaignId = Date.now();
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      campaign: {
+        campaignId,
+        partnerId: 501,
+        type: body.type || "DELIVERY",
+        status: "REGISTERING",
+        title: body.title || "새 캠페인",
+        category: body.category || { categoryId: 1, categoryName: "식품" },
+        requiredPlatform: body.requiredPlatform || { channelId: 1, channelName: "NAVER_BLOG" },
+        recruit: body.recruit || {
+          recruitLimit: 10,
+          recruitStartAt: new Date().toISOString(),
+          recruitEndAt: new Date().toISOString(),
+          selectedAt: new Date().toISOString(),
+          contentStartAt: new Date().toISOString(),
+          contentEndAt: new Date().toISOString(),
+        },
+        reward: body.reward || { extraRewardPoint: 0, paymentRewardPoint: 0 },
+        regAt: new Date().toISOString(),
+      },
+      partner: { partnerId: 501, currentPoint: 400000 },
+      next: { action: "REDIRECT", redirectPath: "/partner/campaign_management" },
+    });
+  }
+
+  // ============ POST /partner/campaign/draft ============
+  // 11번 API: 캠페인 임시저장
+  if (req.method === "POST" && req.path === "/partner/campaign/draft") {
+    const body = req.body || {};
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      campaign: {
+        campaignId: Date.now(),
+        partnerId: 501,
+        type: body.type || "DELIVERY",
+        status: "DRAFT",
+        title: body.title || "",
+        category: body.category || null,
+        savedAt: new Date().toISOString(),
+      },
+      message: "임시저장되었습니다.",
+    });
+  }
+
+  // ============ GET /partner/campaign/draft/:campaignId ============
+  // 12번 API: 임시저장 캠페인 불러오기
+  if (req.method === "GET" && req.path.match(/^\/partner\/campaign\/draft\/\d+$/)) {
+    const campaignId = Number(req.path.split("/").pop());
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      campaign: {
+        campaignId,
+        partnerId: 501,
+        type: "DELIVERY",
+        status: "DRAFT",
+        title: "",
+        savedAt: new Date().toISOString(),
+      },
     });
   }
 
