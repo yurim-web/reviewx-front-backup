@@ -21,13 +21,14 @@
 
 import Link from "next/link";
 import styles from "@/styles/fragments/header.module.css";
-import { mockPartnerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
 import { useAuth } from "@/hooks/useAuth";
+import { useHasPartnerNotifications } from "@/hooks/partner/usePartnerNotification";
 import { useEffect, useState } from "react";
 
 export default function PartnerHeader() {
   const { user } = useAuth();
+  const hasNotifications = useHasPartnerNotifications();
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [notificationIconSrc, setNotificationIconSrc] = useState(
@@ -70,21 +71,20 @@ export default function PartnerHeader() {
       return;
     }
 
-    const has_notifications = mockPartnerNotifications.length > 0;
     if (isMobile) {
       setNotificationIconSrc(
-        has_notifications
+        hasNotifications
           ? "/images/header/mobile/mo_notification_ok.svg"
           : "/images/header/mobile/mo_notification_icon.svg"
       );
     } else {
       setNotificationIconSrc(
-        has_notifications
+        hasNotifications
           ? "/images/header/notification_ok.svg"
           : "/images/header/notification_icon.svg"
       );
     }
-  }, [user, isMounted, isMobile]);
+  }, [user, isMounted, isMobile, hasNotifications]);
 
   // 로고 이미지 경로 (모바일/PC 구분)
   const logoSrc = isMobile

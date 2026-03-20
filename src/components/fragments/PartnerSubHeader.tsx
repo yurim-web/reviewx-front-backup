@@ -30,8 +30,8 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "@/styles/fragments/header.module.css";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
-import { mockPartnerNotifications } from "@/data/notification/notificationData";
 import { useAuth } from "@/hooks/useAuth";
+import { useHasPartnerNotifications } from "@/hooks/partner/usePartnerNotification";
 
 /**
  * 파트너 서브헤더 컴포넌트
@@ -83,7 +83,7 @@ export default function PartnerSubHeader() {
   /**
    * 알림 아이콘: 비로그인 시 무조건 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
    */
-  const has_notifications = isAuthenticated && mockPartnerNotifications.length > 0;
+  const has_notifications = useHasPartnerNotifications();
 
   // 마운트 전에는 아이콘 영역을 숨김 처리 (PC 아이콘이 잠깐 보이는 깜빡임 방지)
   const iconVisibility = isMobile === null ? { visibility: "hidden" as const } : {};
