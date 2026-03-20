@@ -16,6 +16,8 @@ import { useState } from "react";
 import type { AccountInfo, AccountStatus } from "@/components/common/find_account/types";
 import type { UnifiedAccount, AccountType } from "@/data/login/unifiedAccountData";
 import { fetchAccountByPhone } from "@/lib/api/admin";
+import { findPartnerId, findPartnerPassword } from "@/lib/api/partnerFindAccount";
+import axios from "axios";
 
 // ================================================================================================
 // 🔧 유틸리티 함수 (Utility Functions)
@@ -256,24 +258,52 @@ export function useFindAccount(options: UseFindAccountOptions = {}): UseFindAcco
       return false;
     }
 
-    // ⚠️ 실제 API 연결 시 사용할 코드
-    // try {
-    //   const response = await findAccountAPI({
-    //     phone,
-    //     email: activeTab === "password" ? email : undefined,
-    //     type: activeTab,
-    //   });
-    //   if (response.success) {
-    //     processAccountStatus(response.data.status, phone.replace(/-/g, ""), activeTab);
-    //     return true;
-    //   }
-    //   return false;
-    // } catch (_error) {
-    //    //   alert("계정 조회 중 오류가 발생했습니다.");
-    //   return false;
-    // }
+    // 에러 초기화
+    setAccountNotFoundError(undefined);
+    setBlockedAccountError(undefined);
 
-    // DB(accounts 컬렉션)에서 전화번호로 계정 찾기
+    const isPartner = options.allowedAccountTypes?.includes("partner");
+
+    // ========================================
+    // 파트너: 실제 API 호출
+    // ========================================
+    if (isPartner) {
+      try {
+        if (activeTab === "id") {
+          const response = await findPartnerId({
+            name: "", // 아이디 찾기 탭에서는 이름 필드가 없으므로 빈 값 (PhoneVerification으로 인증)
+            phone: normalizePhone(phone),
+            verification_code: "",
+          });
+          setFoundAccountInfo({ email: response.email, signupDate: response.signupDate });
+          setIsResultModalOpen(true);
+          return true;
+        } else {
+          await findPartnerPassword({
+            email,
+            phone: normalizePhone(phone),
+            verification_code: "",
+          });
+          return true;
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const { status } = error.response;
+          if (status === 404) {
+            setAccountNotFoundError("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
+          } else if (status === 403) {
+            setBlockedAccountError("정지되었거나 탈퇴된 계정입니다.");
+          } else {
+            setAccountNotFoundError("오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+          }
+        }
+        return false;
+      }
+    }
+
+    // ========================================
+    // 관리자 등: 기존 mock 로직 유지
+    // ========================================
     const normalized_input_phone = normalizePhone(phone);
     const normalized_whitelist = (options.snsOnlyPhoneWhitelist || []).map(normalizePhone);
 
@@ -284,24 +314,15 @@ export function useFindAccount(options: UseFindAccountOptions = {}): UseFindAcco
       ? await fetchAccountByPhone(phone, options.allowedAccountTypes)
       : undefined;
 
-    // 에러 초기화
-    setAccountNotFoundError(undefined);
-    setBlockedAccountError(undefined);
-
-    // 계정 상태 처리 및 성공 여부 확인
     const success = processAccountStatus(foundAccount, activeTab);
 
-    // 비밀번호 찾기 탭인 경우: 이메일 에러도 확인
     if (activeTab === "password") {
-      // 이메일 에러가 있으면 실패
       if (emailError) {
         return false;
       }
-      // processAccountStatus가 성공했고 이메일 에러가 없으면 성공
       return success;
     }
 
-    // 아이디 찾기 탭인 경우: processAccountStatus 결과 반환
     return success;
   };
 

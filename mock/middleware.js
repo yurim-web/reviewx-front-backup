@@ -510,7 +510,7 @@ module.exports = (req, res, next) => {
 
   // ============ POST /partner/campaign/draft ============
   // 11번 API: 캠페인 임시저장
-  if (req.method === "POST" && req.path === "/partner/campaign/draft") {
+  if (req.method === "POST" && (req.path === "/partner/campaign/draft" || (req.originalUrl && req.originalUrl.startsWith("/partner/campaign/draft")))) {
     const body = req.body || {};
     return res.status(200).json({
       result: "OK",
@@ -530,7 +530,7 @@ module.exports = (req, res, next) => {
 
   // ============ GET /partner/campaign/draft/:campaignId ============
   // 12번 API: 임시저장 캠페인 불러오기
-  if (req.method === "GET" && req.path.match(/^\/partner\/campaign\/draft\/\d+$/)) {
+  if (req.method === "GET" && (req.path.match(/^\/partner\/campaign\/draft\/\d+$/) || (req.originalUrl && req.originalUrl.match(/^\/partner\/campaign\/draft\/\d+$/)))) {
     const campaignId = Number(req.path.split("/").pop());
     return res.status(200).json({
       result: "OK",

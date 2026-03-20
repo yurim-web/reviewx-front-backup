@@ -137,7 +137,11 @@ export default function FindAccountPage() {
         onCloseResultModal={() => findAccount.setIsResultModalOpen(false)}
         onClosePhoneAccountModal={() => findAccount.setIsPhoneAccountModalOpen(false)}
         onLogin={() => {
-          // TODO: 실제 로그인 페이지로 이동 로직 추가 (user / partner 구분 필요)
+          if (pathname.startsWith("/partner")) {
+            router.push("/partner/login");
+          } else {
+            router.push("/login");
+          }
         }}
         onSwitchToPasswordTab={() => setActiveTab("password")}
         onKakaoLogin={() => {
