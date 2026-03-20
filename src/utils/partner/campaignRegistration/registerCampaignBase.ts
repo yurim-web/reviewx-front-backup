@@ -188,6 +188,7 @@ export async function registerCampaignBase(
 
     // 캠페인 데이터 생성 (localStorage용)
     const newCampaign = config.addCampaignFn(processedFormData, config.imageUrl);
+    if (!newCampaign) return false;
 
     const registeredAt = new Date().toISOString();
     const partnerName = getPartnerName(userId);
@@ -195,13 +196,14 @@ export async function registerCampaignBase(
     // 확장 데이터 생성 (localStorage 저장용)
     const extendedCampaign = {
       ...newCampaign,
-      partner_id: userId,
+      partner_id: getPartnerId(userId),
       partnerName,
       campaignInfo: {
         ...newCampaign.campaignInfo,
         partnerName,
       },
       isUrgent: isUrgent === true,
+      isEmergency: isUrgent === true,
       registeredAt,
       channel: processedFormData.platform || "",
       description: processedFormData.providedItems || "",
@@ -236,8 +238,9 @@ export async function registerCampaignBase(
         setTimeout(() => reject(new Error("timeout")), 3000)
       );
       await Promise.race([postPartnerCampaign(dbPayload), timeoutPromise]);
-    } catch (_apiError) {
+    } catch (apiError) {
       // mock 서버 미실행/타임아웃 시에도 localStorage 저장은 완료됐으므로 성공 처리
+      console.warn("[registerCampaign] mock DB 저장 실패 (localStorage는 저장됨):", apiError);
     }
 
     return true;

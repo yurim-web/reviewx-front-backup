@@ -66,9 +66,10 @@ export default function CampaignManagementModal({
 }: CampaignManagementModalProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  // 오류 모달 상태 관리
+  // 모달 상태 관리
   const errorModal = useModalState();
   const alreadyCancelledModal = useModalState();
+  const deleteConfirmModal = useModalState();
 
   // 조건부 렌더링: 모달이 열려있지 않으면 아무것도 렌더링하지 않음
   if (!isOpen) return null;
@@ -158,73 +159,47 @@ export default function CampaignManagementModal({
   };
 
   /**
-   * 캠페인 삭제 버튼 클릭 핸들러
-   *
-   * 설명:
-   * - 예정 탭에서 삭제할 때: 취소 탭으로 이동 (cancelCampaign 호출)
-   * - 그 외 탭에서 삭제할 때: 완전 삭제 (deleteCampaign 호출)
-   * - 사용자에게 삭제 확인을 받은 후 삭제를 진행합니다.
-   * - confirm() 함수는 브라우저의 기본 확인 다이얼로그를 표시합니다.
+   * 캠페인 삭제 버튼 클릭 핸들러 — BaseModal로 확인
    */
-  const handleDeleteClick = async () => {
-    // 예정 탭인지 확인
+  const handleDeleteClick = () => {
+    deleteConfirmModal.open();
+  };
+
+  /**
+   * 삭제 확인 모달에서 "확인" 클릭 시 실제 삭제/취소 수행
+   */
+  const handleDeleteConfirm = async () => {
+    deleteConfirmModal.close();
+    if (!campaignId || !campaignType) return;
+
+    const campaignIdString = String(campaignId);
+    const campaignTypeStr = campaignType as "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
     const isScheduledTab = activeTab === "예정";
 
-    // 사용자에게 삭제 확인 받기
-    const confirmMessage = isScheduledTab
-      ? "정말로 이 캠페인을 취소하시겠습니까?\n취소된 캠페인은 취소 탭으로 이동합니다."
-      : "정말로 이 캠페인을 삭제하시겠습니까?\n삭제된 캠페인은 복구할 수 없습니다.";
-
-    const isConfirmed = confirm(confirmMessage);
-
-    if (isConfirmed && campaignId && campaignType) {
-      const campaignIdString = String(campaignId);
-      const campaignTypeStr = campaignType as "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
-
-      // 예정 탭이면 취소 처리, 그 외는 삭제 처리
-      if (isScheduledTab) {
-        // 예정 탭: 취소 탭으로 이동
-        // console.log(
-        //   `[CampaignManagementModal] 캠페인 취소 시도 (예정 탭): ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
-        // );
-
-        try {
-          const result = cancelCampaign(campaignIdString, campaignTypeStr);
-
-          // console.log(
-          //   `[CampaignManagementModal] 취소 결과: ${
-          //     result.success ? "성공" : "실패"
-          //   }, 오류=${result.error || "없음"}`
-          // );
-
-          if (result.success) {
-            onClose(); // 모달 닫기
-            queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
-          } else if (result.error === "ALREADY_CANCELLED") {
-            // 이미 취소된 캠페인: 이미 취소된 상태 모달 표시
-            alreadyCancelledModal.open();
-          } else {
-            // 서버 오류: 서버 오류 모달 표시
-            errorModal.open();
-          }
-        } catch (_error) {
-          // 예상치 못한 오류: 서버 오류 모달 표시
+    if (isScheduledTab) {
+      try {
+        const result = cancelCampaign(campaignIdString, campaignTypeStr);
+        if (result.success) {
+          onClose();
+          queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
+        } else if (result.error === "ALREADY_CANCELLED") {
+          alreadyCancelledModal.open();
+        } else {
           errorModal.open();
         }
-      } else {
-        // 그 외 탭: 완전 삭제 (API + localStorage)
-        try {
-          await deleteCampaignApi(campaignIdString);
-        } catch {
-          // mock 서버 미실행 시 무시
-        }
-        deleteCampaign(campaignIdString, campaignTypeStr);
-        alert("캠페인이 삭제되었습니다.");
-        onClose();
-        queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
+      } catch {
+        errorModal.open();
       }
+    } else {
+      try {
+        await deleteCampaignApi(campaignIdString);
+      } catch {
+        // mock 서버 미실행 시 무시
+      }
+      deleteCampaign(campaignIdString, campaignTypeStr);
+      onClose();
+      queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
     }
-    // 취소를 선택한 경우에는 아무 동작도 하지 않음 (모달 유지)
   };
 
   /**
@@ -296,6 +271,20 @@ export default function CampaignManagementModal({
         on_close={alreadyCancelledModal.close}
         message="이미 취소된 캠페인입니다."
         buttons={["확인"]}
+      />
+
+      {/* 삭제/취소 확인 모달 */}
+      <BaseModal
+        is_open={deleteConfirmModal.isOpen}
+        on_close={deleteConfirmModal.close}
+        message={
+          activeTab === "예정"
+            ? "정말로 이 캠페인을 취소하시겠습니까?<br>취소된 캠페인은 취소 탭으로 이동합니다."
+            : "정말로 이 캠페인을 삭제하시겠습니까?<br>삭제된 캠페인은 복구할 수 없습니다."
+        }
+        buttons={["취소", "확인"]}
+        button_variant="red"
+        on_confirm={handleDeleteConfirm}
       />
     </div>
   );
