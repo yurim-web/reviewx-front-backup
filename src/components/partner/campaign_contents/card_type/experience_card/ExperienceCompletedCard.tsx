@@ -35,13 +35,15 @@ interface ExperienceCompletedCardProps {
   dateLabel?: string;
   /** 신고 버튼 클릭 */
   onReport?: (applicantId: string) => void;
+  /** 확인 완료 버튼 클릭 (API 22-5) */
+  onComplete?: (applicantId: string) => void;
 }
 
 /**
  * 경험형 완료 카드
  *
  * 완료 탭에서 사용되는 카드로, 한 가지 경우의 수만 있습니다:
- * - "확인 완료" 버튼 (비활성화) + footer에 "신고" 버튼
+ * - "확인 완료" 버튼 + footer에 "신고" 버튼
  *
  * 사용 페이지:
  * - 캠페인 콘텐츠 내역 페이지 > "완료" 탭
@@ -57,6 +59,7 @@ export default function ExperienceCompletedCard({
   onContentCheck: _onContentCheck,
   dateLabel = "등록",
   onReport,
+  onComplete,
 }: ExperienceCompletedCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
   const reportModal = useModalState();
@@ -201,7 +204,7 @@ export default function ExperienceCompletedCard({
         <div className={actionStyles.action_button_section}>
           <button
             className={`completion_confirmed_btn ${actionStyles.action_button} ${actionStyles.completion_confirmed_button}`}
-            disabled
+            onClick={() => onComplete?.(applicant.id)}
           >
             확인 완료
           </button>

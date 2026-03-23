@@ -55,11 +55,7 @@ type CardRenderer = (
  */
 interface CampaignContentsLayoutProps {
   // 캠페인 정보
-  campaignInfo:
-    | NonNullable<
-        ReturnType<typeof import("@/data/partner/sharedCampaigns").getCampaignById>
-      >["campaignInfo"]
-    | undefined;
+  campaignInfo: import("@/types/domain/partner").CampaignInfo | undefined;
 
   // 탭 관련
   activeTab: TabKey;

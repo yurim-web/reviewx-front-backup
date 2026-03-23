@@ -30,6 +30,7 @@ export default function VisitContentsDetailPage() {
     contents,
     handleApprove,
     handleReport,
+    handleComplete,
     reportedDates,
     formatDateTime,
   } = useCampaignContents();
@@ -79,6 +80,7 @@ export default function VisitContentsDetailPage() {
     handleApprove,
     handleReject,
     handleReport,
+    handleComplete,
     deadlineDate,
     enableExtensionRequest: true, // visit은 연장 요청 기능 활성화
   });

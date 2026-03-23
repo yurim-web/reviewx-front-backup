@@ -37,8 +37,9 @@ interface RenderReviewCardParams {
   formatDateTime: (date: string | Date) => string;
   handleApprove: (id: string) => void;
   handleReject: (id: string, reason: string) => void;
-  handleReport: (id: string) => void;
+  handleReport: (id: string, reportOption?: string, otherReason?: string) => void;
   handleExtend: (id: string) => void;
+  handleComplete: (id: string) => void;
   openReceiptModal: (images: string[]) => void;
   checkIsInPurchasePeriod: () => boolean;
   params: {
@@ -314,6 +315,7 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
             ? () => openChannelUrl(applicant.channel, applicant.channelId)
             : undefined
         }
+        onComplete={renderParams.handleComplete}
         contentType={renderParams.params.contentType}
         dateLabel={dateLabel}
       />

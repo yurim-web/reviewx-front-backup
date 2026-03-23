@@ -50,7 +50,7 @@ interface UsePendingCardStateConfig<T extends string> {
   deadlineDate?: string;
   reportedDate?: string;
   onExtend?: (id: string) => void;
-  onReport?: (id: string) => void;
+  onReport?: (id: string, reportOption?: string, otherReason?: string) => void;
   /** 신고 시 로컬 상태를 reported로 변경할지 여부 (기본: true) */
   updateLocalOnReport?: boolean;
   /** footer 연장 완료 시 날짜 계산 수행 여부 (기본: true) */
@@ -112,8 +112,8 @@ export function usePendingCardState<T extends string>({
     setOtherReportReason("");
   };
 
-  const handleReportConfirm = (_selectedOption: string, _otherReason?: string) => {
-    onReport?.(applicantId);
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
+    onReport?.(applicantId, selectedOption, otherReason);
     if (updateLocalOnReport) {
       setLocalPendingState("reported" as T);
       setLocalReportedDate(formatNowDateTime());

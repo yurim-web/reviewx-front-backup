@@ -47,6 +47,8 @@ interface CampaignCompletedCardProps {
   onExtend?: (applicantId: string) => void;
   /** 신고 버튼 클릭 */
   onReport?: (applicantId: string) => void;
+  /** 확인 완료 버튼 클릭 (API 22-5) */
+  onComplete?: (applicantId: string) => void;
   /** 등록 기한 연장 요청 사유 (데이터에서 불러옴) */
   extension_request_reason?: string;
   dateLabel?: string;
@@ -63,6 +65,7 @@ export default function CampaignCompletedCard({
   onReject,
   onExtend,
   onReport,
+  onComplete,
   extension_request_reason: _extension_request_reason = "",
   dateLabel = "수정",
 }: CampaignCompletedCardProps) {
@@ -367,10 +370,10 @@ export default function CampaignCompletedCard({
               </button>
             </div>
           ) : (
-            // 일반 완료일 때: 확인 완료 버튼 (비활성화)
+            // 일반 완료일 때: 확인 완료 버튼 (API 22-5)
             <button
-              className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
-              disabled
+              className={`${actionStyles.action_button} ${actionStyles.completion_confirmed_button}`}
+              onClick={() => onComplete?.(applicant.id)}
             >
               확인 완료
             </button>

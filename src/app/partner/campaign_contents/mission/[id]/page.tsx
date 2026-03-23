@@ -35,6 +35,8 @@ export default function MissionContentsDetailPage() {
     handleReject,
     rejectReasons,
     handleReport,
+    handleExtend,
+    handleComplete,
     reportedDates,
     formatDateTime,
   } = useCampaignContents();
@@ -51,10 +53,6 @@ export default function MissionContentsDetailPage() {
     return { contentType, deadlineDate };
   }, [campaignInfo]);
 
-  const handleExtend = (_applicantId: string) => {
-    // TODO: 실제 연장 로직 구현
-  };
-
   const renderCardComponent = createMissionCardRenderer({
     activeTab,
     campaignBrandName: campaignInfo?.brandName,
@@ -65,6 +63,7 @@ export default function MissionContentsDetailPage() {
     handleReject,
     handleReport,
     handleExtend,
+    handleComplete,
     contentType: params.contentType,
     deadlineDate: params.deadlineDate,
   });

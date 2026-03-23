@@ -35,6 +35,8 @@ export default function PurchaseReviewContentsDetailPage() {
     handleReject,
     rejectReasons,
     handleReport,
+    handleExtend,
+    handleComplete,
     reportedDates,
     formatDateTime,
   } = useCampaignContents();
@@ -122,10 +124,6 @@ export default function PurchaseReviewContentsDetailPage() {
     return false;
   }, [campaignInfo]);
 
-  const handleExtend = (_applicantId: string) => {
-    // TODO: 연장 기능 구현
-  };
-
   const renderCardComponent = createReviewCardRenderer({
     activeTab,
     campaignBrandName: campaignInfo?.brandName,
@@ -134,6 +132,7 @@ export default function PurchaseReviewContentsDetailPage() {
     formatDateTime,
     handleApprove,
     handleReject,
+    handleComplete,
     handleReport,
     handleExtend,
     openReceiptModal,

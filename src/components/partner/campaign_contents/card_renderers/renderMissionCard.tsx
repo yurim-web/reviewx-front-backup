@@ -34,8 +34,9 @@ interface RenderMissionCardParams {
   formatDateTime: (date: string | Date) => string;
   handleApprove: (id: string) => void;
   handleReject: (id: string, reason: string) => void;
-  handleReport: (id: string) => void;
+  handleReport: (id: string, reportOption?: string, otherReason?: string) => void;
   handleExtend: (id: string) => void;
+  handleComplete: (id: string) => void;
   contentType: "link" | "image" | "both";
   deadlineDate?: string;
 }
@@ -136,6 +137,7 @@ export function createMissionCardRenderer(params: RenderMissionCardParams) {
           // TODO: 이미지 확인 모달 구현
         }}
         onReport={params.handleReport}
+        onComplete={params.handleComplete}
         contentType={params.contentType}
         registrationDate={registrationDate}
         dateLabel={dateLabel}

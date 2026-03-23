@@ -122,6 +122,8 @@ export interface ContentItem {
   isReported?: boolean;
   /** 신고 처리된 날짜/시간 (대기 탭 전용, 선택사항) */
   reportedDate?: string;
+  /** 신청 ID (기한 연장 API 22-3 등 applicationId 기반 API에서 사용) */
+  applicationId?: number;
 }
 
 /**

@@ -30,6 +30,7 @@ export default function DeliveryContentsDetailPage() {
     contents,
     handleApprove,
     handleReport,
+    handleComplete,
     reportedDates,
     formatDateTime,
   } = useCampaignContents();
@@ -79,6 +80,7 @@ export default function DeliveryContentsDetailPage() {
     handleApprove,
     handleReject,
     handleReport,
+    handleComplete,
     deadlineDate,
     enableExtensionRequest: false,
   });

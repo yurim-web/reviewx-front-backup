@@ -34,6 +34,8 @@ interface MissionCompletedCardProps {
   onCheckImage?: (applicantId: string) => void;
   /** 신고 버튼 클릭 */
   onReport?: (applicantId: string) => void;
+  /** 확인 완료 버튼 클릭 (API 22-5) */
+  onComplete?: (applicantId: string) => void;
   /** 콘텐츠 타입 (링크만, 이미지만, 링크+이미지) */
   contentType: "link" | "image" | "both";
   /** 등록/수정 날짜 */
@@ -47,6 +49,7 @@ export default function MissionCompletedCard({
   onCheckLink: _onCheckLink,
   onCheckImage: _onCheckImage,
   onReport,
+  onComplete,
   contentType,
   registrationDate,
   dateLabel = "등록",
@@ -175,16 +178,15 @@ export default function MissionCompletedCard({
           </button>
         )}
 
-        {/* 확인 완료 버튼 (비활성화, 핑크 배경) */}
+        {/* 확인 완료 버튼 (API 22-5) */}
         <div className={actionStyles.action_button_section}>
           <button
-            className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
-            disabled
+            className={`${actionStyles.action_button} ${actionStyles.completion_confirmed_button}`}
+            onClick={() => onComplete?.(applicant.id)}
             style={{
               backgroundColor: "rgba(255, 86, 148, 0.1)",
               color: "#ff5694",
               border: "1px solid transparent",
-              cursor: "auto",
             }}
           >
             확인 완료

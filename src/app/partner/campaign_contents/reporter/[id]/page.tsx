@@ -30,6 +30,7 @@ export default function ReporterContentsDetailPage() {
     contents,
     handleApprove,
     handleReport,
+    handleComplete,
     reportedDates,
     formatDateTime,
   } = useCampaignContents();
@@ -79,6 +80,7 @@ export default function ReporterContentsDetailPage() {
     handleApprove,
     handleReject,
     handleReport,
+    handleComplete,
     deadlineDate,
     enableExtensionRequest: false,
   });

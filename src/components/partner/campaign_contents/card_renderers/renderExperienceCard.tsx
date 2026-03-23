@@ -35,7 +35,8 @@ interface RenderExperienceCardParams {
   formatDateTime: (date: string | Date) => string;
   handleApprove: (id: string) => void;
   handleReject: (id: string, reason: string) => void;
-  handleReport: (id: string) => void;
+  handleReport: (id: string, reportOption?: string, otherReason?: string) => void;
+  handleComplete: (id: string) => void;
   deadlineDate?: string;
   enableExtensionRequest?: boolean; // visit에서만 true
 }
@@ -133,6 +134,7 @@ export function createExperienceCardRenderer(params: RenderExperienceCardParams)
         applicant={applicant}
         onContentCheck={() => openChannelUrl(applicant.channel, applicant.channelId)}
         onReport={params.handleReport}
+        onComplete={params.handleComplete}
         dateLabel={dateLabel}
       />
     );
