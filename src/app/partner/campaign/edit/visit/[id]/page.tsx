@@ -25,10 +25,10 @@ import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
 import Image from "next/image";
-import { patchCampaign, fetchCampaignById } from "@/lib/api/partner";
+import { getCampaignEditPage, postCampaignEdit } from "@/lib/api/partnerCampaign";
 import {
-  apiCampaignToFormData,
-  platformToChannelName,
+  editApiResponseToFormData,
+  formDataToEditRequest,
 } from "@/utils/partner/campaignEdit/apiToFormData";
 
 export default function VisitCampaignEditPage() {
@@ -80,12 +80,12 @@ export default function VisitCampaignEditPage() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  // 서버 API에서 캠페인 데이터 로드
+  // 서버 API에서 캠페인 데이터 로드 (15번 API)
   useEffect(() => {
-    fetchCampaignById(campaignId)
-      .then((apiItem) => {
-        if (apiItem) {
-          const formData = apiCampaignToFormData(apiItem);
+    getCampaignEditPage(Number(campaignId))
+      .then((response) => {
+        if (response?.campaign) {
+          const formData = editApiResponseToFormData(response);
           setInitialData(formData);
           setIsUrgent(formData.isUrgent ?? false);
           setIsOpen(isCampaignOpen(formData.recruitmentPeriod));
@@ -103,85 +103,26 @@ export default function VisitCampaignEditPage() {
   const handleSubmit = async (formData: CampaignFormData) => {
     setIsSubmitting(true);
     try {
-      const imageUrl =
-        formData.thumbnailImageUrl ||
-        initialData?.thumbnailImageUrl ||
-        "/images/main/campaign_img/eximg_2.png";
+      const editBody = formDataToEditRequest(formData, isUrgent);
+      await postCampaignEdit(
+        Number(campaignId),
+        editBody as Parameters<typeof postCampaignEdit>[1]
+      );
 
-      const [recruitStart, recruitEnd] = (formData.recruitmentPeriod ?? "")
-        .split("~")
-        .map((s) => s.trim());
-      const [contentStart, contentEnd] = (formData.registrationPeriod ?? "")
-        .split("~")
-        .map((s) => s.trim());
-
-      await patchCampaign(campaignId, {
-        title: formData.title,
-        description: formData.providedItems,
-        thumbnailUrl: imageUrl,
-        thumbnail: { url: imageUrl },
-        requiredPlatform: formData.platform
-          ? { channelName: platformToChannelName(formData.platform) }
-          : undefined,
-        isEmergency: isUrgent,
-        recruitLimit: Number(formData.recruitmentCount),
-        reward: {
-          extraRewardPoint: Number(formData.additionalPoints ?? 0),
-          paymentRewardPoint: 0,
-        },
-        additionalPoint: Number(formData.additionalPoints ?? 0),
-        recruitStartAt: recruitStart ? `${recruitStart}T00:00:00` : undefined,
-        recruitEndAt: recruitEnd ? `${recruitEnd}T00:00:00` : undefined,
-        recruit: {
-          recruitLimit: Number(formData.recruitmentCount),
-          recruitStartAt: recruitStart ? `${recruitStart}T00:00:00` : undefined,
-          recruitEndAt: recruitEnd ? `${recruitEnd}T00:00:00` : undefined,
-        },
-        adultOnly: formData.adultOnly,
-        allowReParticipation: formData.allowReParticipation,
-        allowLateSubmission: formData.allowLateSubmission,
-        keywordPolicy: {
-          keyword: formData.keywords,
-          minTextLength: Number(formData.minTextLength ?? 0),
-          minPhotoCount: Number(formData.minImageCount ?? 0),
-          minVideoCount: Number(formData.videoCount ?? 0),
-          minVideoDuration: Number(formData.videoDuration ?? 0),
-          requireBodyLink: Boolean(formData.requireLinkAttachment),
-        },
-        notification: formData.guidelines,
-        contact_phone: formData.contactPhone,
-        visitLink: formData.visitLink,
-        visitZipCode: formData.visitZipCode,
-        visitBaseAddress: formData.visitBaseAddress,
-        visitDetailAddress: formData.visitDetailAddress,
-        visitAddress: formData.visitBaseAddress,
-        addressGuide: formData.addressDetail,
-        visitInfo: {
-          address: [formData.visitBaseAddress, formData.visitDetailAddress]
-            .filter(Boolean)
-            .join(" "),
-          reservationRequired: false,
-        },
-        region: formData.subRegion ? `${formData.region} > ${formData.subRegion}` : formData.region,
-        category: { categoryName: formData.category },
-        detailImages: formData.detailImagePreviews ?? [],
-        content: {
-          contentStartAt: contentStart ? `${contentStart}T00:00:00` : undefined,
-          contentEndAt: contentEnd ? `${contentEnd}T00:00:00` : undefined,
-        },
-      });
-
-      // 저장 후 폼 데이터 갱신
-      const updated = await fetchCampaignById(campaignId);
-      if (updated) {
-        const newFormData = apiCampaignToFormData(updated);
+      // 저장 후 폼 데이터 갱신 (15번 API)
+      const updatedResponse = await getCampaignEditPage(Number(campaignId));
+      if (updatedResponse?.campaign) {
+        const newFormData = editApiResponseToFormData(updatedResponse);
         setInitialData(newFormData);
         setIsUrgent(newFormData.isUrgent ?? false);
       }
 
-      // 캠페인 목록 및 상세 캐시 무효화
+      // 캠페인 목록 및 상세 캐시 강제 재조회
+      await queryClient.refetchQueries({ queryKey: ["partnerCampaignManagement"] });
+      await queryClient.refetchQueries({ queryKey: ["partnerCampaignsByStatus"] });
       queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
       queryClient.invalidateQueries({ queryKey: ["campaign", "detail"] });
+      router.refresh();
       setFormKey((k) => k + 1);
 
       setToast({ is_open: true, message: "저장되었습니다." });
