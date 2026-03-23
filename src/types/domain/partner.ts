@@ -65,6 +65,10 @@ export interface PartnerCampaign {
   brandLogo?: string; // 브랜드 로고 URL - UI에서 자동 계산되거나 별도 제공
   subStatus?: string; // 서브 상태 - 버튼 종류 결정용
   extensionRequested?: boolean; // 연장 요청 여부
+  extensionRequestCount?: number; // 미처리 연장 요청 건수
+  waitingCount?: number; // 콘텐츠 대기 건수
+  submittedCount?: number; // 콘텐츠 확인(검수) 건수
+  approvedCount?: number; // 콘텐츠 완료 건수
 }
 
 /**

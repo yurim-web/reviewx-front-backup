@@ -34,14 +34,14 @@ export const postPartner = (body: Record<string, unknown>): Promise<Record<strin
   apiClient.post<Record<string, unknown>>("/partners", body).then((res) => res.data);
 
 /**
- * 파트너 캠페인 등록
- * POST /campaigns → json-server campaigns 컬렉션에 저장
- * (관리 페이지가 GET /campaigns?partner_id=:id 로 조회하므로 같은 컬렉션에 저장)
+ * 파트너 캠페인 등록 (JSON body — mock 환경용)
+ * POST /partner/campaign/create → 캠페인 등록 (10번 API)
+ * @deprecated 실제 백엔드 연결 시 partnerCampaign.ts의 postCampaignCreate 사용
  */
 export const postPartnerCampaign = (
   body: Record<string, unknown>
 ): Promise<Record<string, unknown>> =>
-  apiClient.post<Record<string, unknown>>("/campaigns", body).then((res) => res.data);
+  apiClient.post<Record<string, unknown>>("/partner/campaign/create", body).then((res) => res.data);
 
 /**
  * 캠페인 단건 조회 (edit 페이지 fallback용)
@@ -69,17 +69,17 @@ export const patchCampaign = (campaignId: string, body: Record<string, unknown>)
 
 /**
  * 캠페인 삭제
- * DELETE /campaigns/:numericId → json-server campaigns 컬렉션에서 제거
- * campaignId: "delivery_1" → numericId: 1
+ * DELETE /partner/campaign/{campaignId} → 백엔드 API 17번
+ * @deprecated 실제 백엔드 연결 시 partnerCampaignManagement.ts의 deleteCampaign 사용
  */
 export const deleteCampaignApi = (campaignId: string): Promise<void> => {
   const numericId = parseInt(campaignId.replace(/\D/g, ""), 10);
   if (!numericId) return Promise.reject(new Error(`Invalid campaign ID: ${campaignId}`));
-  return apiClient.delete(`/campaigns/${numericId}`).then(() => undefined);
+  return apiClient.delete(`/partner/campaign/${numericId}`).then(() => undefined);
 };
 
 // ----------------------------------------
-// 캠페인 임시 저장 (draft_campaigns)
+// 캠페인 임시 저장 (11번, 12번 API)
 // ----------------------------------------
 
 /** 임시 저장 조회 (파트너 ID + 캠페인 타입) */
@@ -100,11 +100,12 @@ export const fetchDraftCampaign = (
       return null;
     });
 
-/** 임시 저장 (POST /draft_campaigns) */
+/** 임시 저장 (POST /partner/campaign/draft) — 11번 API
+ * @deprecated 실제 백엔드 연결 시 partnerCampaign.ts의 postCampaignDraft 사용 */
 export const postDraftCampaign = (
   body: Record<string, unknown>
 ): Promise<Record<string, unknown>> =>
-  apiClient.post<Record<string, unknown>>("/draft_campaigns", body).then((res) => res.data);
+  apiClient.post<Record<string, unknown>>("/partner/campaign/draft", body).then((res) => res.data);
 
 /** 임시 저장 업데이트 (PUT /draft_campaigns/:id) */
 export const putDraftCampaign = (id: number, body: Record<string, unknown>): Promise<void> =>

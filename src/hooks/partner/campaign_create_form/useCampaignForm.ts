@@ -20,6 +20,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { CampaignFormData } from "@/types/domain/user";
 import { useAuth } from "@/hooks/useAuth";
+import { usePartnerProfile } from "@/hooks/partner/mypage/usePartnerMypage";
 import {
   handleNumericInput as utilHandleNumericInput,
   handleNumericChange as utilHandleNumericChange,
@@ -136,6 +137,7 @@ export function useCampaignForm({
   onUrgentLoad: _onUrgentLoad,
 }: UseCampaignFormProps) {
   const { user } = useAuth();
+  const { data: partnerProfile } = usePartnerProfile();
   const isEditMode = mode === "edit";
 
   /**
@@ -245,6 +247,22 @@ export function useCampaignForm({
     minImageCount: false,
     videoCount: false,
   });
+
+  // 프로필에서 담당자 번호 자동 세팅 (생성 모드 + 아직 입력 안 된 경우)
+  useEffect(() => {
+    if (!isEditMode && partnerProfile?.contactPhone && !formData.contactPhone) {
+      const phone = partnerProfile.contactPhone;
+      // 하이픈 포맷팅
+      const numbers = phone.replace(/\D/g, "");
+      let formatted = numbers;
+      if (numbers.length > 7) {
+        formatted = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+      } else if (numbers.length > 3) {
+        formatted = `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+      }
+      setFormData((prev) => ({ ...prev, contactPhone: formatted }));
+    }
+  }, [isEditMode, partnerProfile, formData.contactPhone]);
 
   // 모달 상태 관리
   const [imageErrorModal, setImageErrorModal] = useState({

@@ -44,7 +44,7 @@ export interface CampaignRegistrationConfig {
 const CAMPAIGN_TYPE_TO_API: Record<string, string> = {
   배송형: "DELIVERY",
   방문형: "VISIT",
-  구매평: "PURCHASE_REVIEW",
+  구매평: "PURCHASE",
   기자단: "REPORTER",
   미션형: "MISSION",
 };
@@ -91,33 +91,20 @@ function buildDbPayload(
   const extraReward = Number(formData.additionalPoints) || 0;
   const purchaseReward = Number(formData.purchasePoints) || 0;
 
-  // mock 환경: DataURL은 json-server body-parser 크기 제한에 걸리므로 정적 URL 사용
-  // 썸네일: config.imageUrl (eximg_1), 상세: eximg_2~8 순번 할당
+  // 썸네일/상세: 사용자 업로드 이미지 preview Data URL 사용 (server.js에서 body-parser 50MB 허용)
   const fd = formData as unknown as Record<string, unknown>;
-  const thumbnailUrl = imageUrl;
+  const userThumbnailUrl = fd.thumbnailImageUrl as string | undefined;
+  const thumbnailUrl = userThumbnailUrl || imageUrl;
   const detailPreviews = (fd.detailImagePreviews as string[]) || [];
-  // 상세이미지는 썸네일과 다른 정적 이미지 URL로 구별
-  const DETAIL_IMAGE_URLS = [
-    "/images/main/campaign_img/eximg_2.png",
-    "/images/main/campaign_img/eximg_3.png",
-    "/images/main/campaign_img/eximg_4.png",
-    "/images/main/campaign_img/eximg_5.png",
-    "/images/main/campaign_img/eximg_6.png",
-    "/images/main/campaign_img/eximg_7.png",
-    "/images/main/campaign_img/eximg_8.png",
-  ];
-  const detailImageUrls = detailPreviews.map(
-    (_url, i) => DETAIL_IMAGE_URLS[i % DETAIL_IMAGE_URLS.length]
-  );
 
   return {
     type: CAMPAIGN_TYPE_TO_API[formData.campaignType] || "DELIVERY",
-    status: "SCHEDULED",
+    status: "REGISTERING",
     isEmergency: formData.isUrgent === true,
     title: formData.title,
     thumbnailUrl,
     thumbnail: { url: thumbnailUrl },
-    detailImages: detailImageUrls,
+    detailImages: detailPreviews.length > 0 ? detailPreviews : [],
     category: {
       categoryId: 0,
       categoryName: formData.category || "",
@@ -147,10 +134,31 @@ function buildDbPayload(
       keyword: formData.keywords || "",
       minTextLength: Number(formData.minTextLength) || 0,
       minPhotoCount: Number(formData.minImageCount) || 0,
+      minVideoCount: Number(formData.videoCount) || 0,
+      minVideoDuration: Number(formData.videoDuration) || 0,
       requireBodyLink: formData.requireLinkAttachment === true,
+      requireKeywordAttachment: formData.requireKeywordAttachment === true,
     },
     description: formData.providedItems || "",
     notification: formData.guidelines || "",
+    // 방문형 주소 통합 (상세 페이지에서 전체 주소 표시)
+    visitAddress:
+      [formData.visitBaseAddress, formData.visitDetailAddress].filter(Boolean).join(" ") ||
+      undefined,
+    visitZipCode: formData.visitZipCode || undefined,
+    visitBaseAddress: formData.visitBaseAddress || undefined,
+    visitDetailAddress: formData.visitDetailAddress || undefined,
+    addressGuide: formData.addressDetail || undefined,
+    // 공통 필드
+    contact_phone: formData.contactPhone || undefined,
+    promotionLink: formData.promotionLink || undefined,
+    visitLink: formData.visitLink || undefined,
+    adultOnly: formData.adultOnly || false,
+    allowReParticipation: formData.allowReParticipation || false,
+    allowLateSubmission: formData.allowLateSubmission || false,
+    // 미션형 전용
+    requireContentLink: formData.requireContentLink || false,
+    requireContentImage: formData.requireContentImage || false,
     metrics: {
       appliedCount: 0,
       selectedCount: 0,
