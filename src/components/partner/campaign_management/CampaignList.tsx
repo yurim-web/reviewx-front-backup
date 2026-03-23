@@ -106,8 +106,8 @@ export default function CampaignList({
         if (campaign.status === "종료" || campaign.status === "마감") {
           return false;
         }
-        // extensionRequested 필드로 연장 요청 캠페인 판별
-        return campaign.extensionRequested === true;
+        // 미처리 연장 요청 건수가 1건 이상인 캠페인만 표시
+        return (campaign.extensionRequestCount ?? 0) > 0;
       default:
         return true;
     }

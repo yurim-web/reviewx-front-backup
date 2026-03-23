@@ -36,8 +36,8 @@ function PartnerCampaignManagementPage() {
   // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
 
-  // 통계 탭 상태 (전체 / 예정 / 신청 / 진행 / 종료 / 취소)
-  const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("전체");
+  // 메인 페이지는 항상 "전체" 탭 (탭 클릭 시 router.push로 해당 페이지 이동)
+  const activeStatTab: PartnerStatTab = "전체";
 
   // 필터링된 캠페인 목록 상태
   const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>([]);
@@ -144,7 +144,6 @@ function PartnerCampaignManagementPage() {
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             activeStatTab={activeStatTab}
-            setActiveStatTab={setActiveStatTab}
             apiStats={stats}
           />
 

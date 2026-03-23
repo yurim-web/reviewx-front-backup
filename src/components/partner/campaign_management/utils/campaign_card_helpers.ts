@@ -14,29 +14,8 @@
    📦 의존성 모듈 (데이터 접근 & 타입)
    ---------------------------------------- */
 import type { PartnerCampaign, PartnerStatTab } from "@/types/domain/partner";
-import { getClosedContentsById, getCampaignById } from "@/data/partner/sharedCampaigns";
-import { getVisitContentsById } from "@/data/campaign/visit/visitCampaigns";
-import { getDeliveryContentsById } from "@/data/campaign/delivery/deliveryCampaigns";
-import { getReporterContentsById } from "@/data/campaign/reporter/reporterCampaigns";
-import { getPurchaseReviewContentsById } from "@/data/campaign/review/reviewCampaigns";
-import { getMissionContentsById } from "@/data/campaign/mission/missionCampaigns";
 // getCampaignTypePath, convertToCampaignDataId는 url.ts의 중앙 함수 사용 (중복 제거)
 export { getCampaignTypePath, convertToCampaignDataId } from "@/utils/helpers/url";
-
-/** 콘텐츠 항목 타입 */
-interface ContentItem {
-  extension_request_reason?: string;
-  [key: string]: unknown;
-}
-
-/** 콘텐츠가 있는 캠페인 데이터 타입 */
-interface CampaignWithContents {
-  contents?: {
-    waiting?: ContentItem[];
-    reviewing?: ContentItem[];
-    completed?: ContentItem[];
-  };
-}
 
 /**
  * 콘텐츠 대기/검수/완료 건수를 표현하는 타입
@@ -55,73 +34,14 @@ export interface CampaignContentCounts {
 */
 
 /**
- * 캠페인 타입별 콘텐츠 데이터를 조회하는 내부 유틸 함수
- */
-function getContentsByCampaignType(campaignType: PartnerCampaign["campaignType"], id: string) {
-  switch (campaignType) {
-    case "방문형":
-      return getVisitContentsById(id);
-    case "배송형":
-      return getDeliveryContentsById(id);
-    case "기자단":
-      return getReporterContentsById(id);
-    case "구매평":
-      return getPurchaseReviewContentsById(id);
-    case "미션형":
-      return getMissionContentsById(id);
-    default:
-      return { waiting: [], reviewing: [], completed: [] };
-  }
-}
-
-/**
- * 캠페인 진행 단계에 따른 콘텐츠 검수/완료 건수 계산
+ * 캠페인 진행 단계에 따른 콘텐츠 대기/검수/완료 건수 계산
+ * API 응답 데이터(waitingCount, submittedCount, approvedCount) 사용
  */
 export function calculateContentCounts(campaign: PartnerCampaign): CampaignContentCounts {
-  const id = String(campaign.id);
-  const status = campaign.status as string;
-
-  // 종료/취소 캠페인은 closed 데이터 우선 확인
-  if (status === "종료" || status === "취소") {
-    const closedContents = getClosedContentsById(id);
-    if (closedContents) {
-      return {
-        waitingCount: closedContents.waiting?.length ?? 0,
-        reviewingCount: closedContents.reviewing?.length ?? 0,
-        completedCount: closedContents.completed?.length ?? 0,
-      };
-    }
-
-    const campaignData = getCampaignById(id);
-    const contentsData = (campaignData as CampaignWithContents)?.contents;
-    if (campaignData && contentsData) {
-      return {
-        waitingCount: contentsData.waiting?.length ?? 0,
-        reviewingCount: contentsData.reviewing?.length ?? 0,
-        completedCount: contentsData.completed?.length ?? 0,
-      };
-    }
-
-    return { waitingCount: 0, reviewingCount: 0, completedCount: 0 };
-  }
-
-  // 진행/신청 캠페인: 우선 원본 데이터 contents 확인
-  const campaignData = getCampaignById(id);
-  const contentsData2 = (campaignData as CampaignWithContents)?.contents;
-  if (campaignData && contentsData2) {
-    return {
-      waitingCount: contentsData2.waiting?.length ?? 0,
-      reviewingCount: contentsData2.reviewing?.length ?? 0,
-      completedCount: contentsData2.completed?.length ?? 0,
-    };
-  }
-
-  // 원본 데이터에 없으면 캠페인 타입별 데이터 조회
-  const typeContents = getContentsByCampaignType(campaign.campaignType, id);
   return {
-    waitingCount: typeContents?.waiting?.length ?? 0,
-    reviewingCount: typeContents?.reviewing?.length ?? 0,
-    completedCount: typeContents?.completed?.length ?? 0,
+    waitingCount: campaign.waitingCount ?? 0,
+    reviewingCount: campaign.submittedCount ?? 0,
+    completedCount: campaign.approvedCount ?? 0,
   };
 }
 
@@ -392,36 +312,10 @@ export function getStatusTextForCampaign({
  */
 /**
  * 연장 요청 건수 계산
- *
- * 설명:
- * - 연장 요청한 신청자 수를 계산합니다.
- * - 대기 탭(waiting)에 있는 콘텐츠 중 extension_request_reason이 있는 항목만 카운트합니다.
+ * API 응답의 extensionRequestCount 사용
  */
 export function calculateExtensionRequestCount(campaign: PartnerCampaign): number {
-  try {
-    const id = String(campaign.id);
-
-    // 1️⃣ 종료/취소 캠페인은 closed 데이터에서 먼저 확인
-    const closedContents = getClosedContentsById(id);
-    if (closedContents && closedContents.waiting) {
-      const count = closedContents.waiting.filter((item) => item.extension_request_reason).length;
-      if (count > 0) return count;
-    }
-
-    // 2️⃣ 그 외에는 일반 캠페인 데이터에서 contents 확인
-    const fullCampaign = getCampaignById(id);
-    const fullContents = (fullCampaign as CampaignWithContents)?.contents;
-    if (!fullCampaign || !fullContents) {
-      return 0;
-    }
-
-    const waitingItems = fullContents.waiting || [];
-    const count = waitingItems.filter((item) => item.extension_request_reason).length;
-
-    return count;
-  } catch (_error) {
-    return 0;
-  }
+  return campaign.extensionRequestCount ?? 0;
 }
 
 export function getPrimaryButtonText(

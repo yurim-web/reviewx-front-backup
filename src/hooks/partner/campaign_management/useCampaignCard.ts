@@ -86,10 +86,12 @@ export function useCampaignCard({
     [campaign, reviewingCount, completedCount]
   );
 
-  // 연장 요청 건수 계산
+  // 연장 요청 건수: API에서 제공된 값 우선, 없으면 기존 로직 fallback
   const extensionRequestCount = useMemo(() => {
     if (activeTab === "연장 요청" || campaign.subStatus?.includes("extension_request")) {
-      // 실제 데이터 기반 연장 요청 건수 계산
+      if (campaign.extensionRequestCount && campaign.extensionRequestCount > 0) {
+        return campaign.extensionRequestCount;
+      }
       return calculateExtensionRequestCount(campaign);
     }
     return 0;

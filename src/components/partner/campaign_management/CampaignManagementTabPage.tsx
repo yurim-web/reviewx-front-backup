@@ -40,7 +40,7 @@ export default function CampaignManagementTabPage({ statTab }: CampaignManagemen
   const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { campaigns, stats } = usePartnerCampaigns(activeStatTab);
+  const { campaigns, stats, isLoading: isApiLoading } = usePartnerCampaigns(activeStatTab);
 
   const handleFilteredCampaignsChange = (filtered: PartnerCampaign[]) => {
     setFilteredCampaigns(filtered);
@@ -61,7 +61,7 @@ export default function CampaignManagementTabPage({ statTab }: CampaignManagemen
     return () => clearTimeout(safetyTimer);
   }, [activeStatTab]);
 
-  if (isLoading) {
+  if (isLoading || isApiLoading) {
     return <Loading />;
   }
 

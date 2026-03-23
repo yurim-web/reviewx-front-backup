@@ -76,24 +76,34 @@ export const getBrandLogo = (brandName: string, campaignType?: string): string =
   switch (normalizedBrandName) {
     case "네이버블로그":
     case "NAVER_BLOG":
+    case "naver_blog":
       return "/images/brand_logo/naverblog.svg";
     case "네이버클립":
     case "클립":
     case "NAVER_CLIP":
+    case "naver_clip":
       return "/images/brand_logo/naverclip.svg";
     case "인스타그램":
     case "INSTAGRAM":
+    case "instagram":
       return "/images/brand_logo/insta.svg";
     case "릴스":
     case "INSTAGRAM_REELS":
+    case "instagram_reels":
       return "/images/brand_logo/reels.svg";
     case "유튜브":
     case "YOUTUBE":
+    case "youtube":
       return "/images/brand_logo/youtube.svg";
     case "쇼츠":
     case "숏츠":
     case "YOUTUBE_SHORTS":
+    case "youtube_shorts":
       return "/images/brand_logo/shots.svg";
+    case "틱톡":
+    case "TIKTOK":
+    case "tiktok":
+      return "/images/brand_logo/tiktok.svg";
     default:
       return "/images/brand_logo/naverblog.svg"; // 기본 이미지 (빈 문자열 방지)
   }
