@@ -20,6 +20,29 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
     const pointsKey = `partner_points_${userId}`;
     const storedPoints = localStorage.getItem(pointsKey);
 
+    // 테스트 계정 포인트 초기화 (partner_test_001, 1001 등)
+    // 0P 상태이거나 저장된 값이 없으면 기본값으로 세팅
+    const TEST_ACCOUNTS_INITIAL_POINTS: Record<string, number> = {
+      partner_test_001: 425000,
+      "1001": 500000,
+    };
+
+    if (userId in TEST_ACCOUNTS_INITIAL_POINTS) {
+      const storedPointsParsed = storedPoints ? JSON.parse(storedPoints) : null;
+      const hasPoints = storedPointsParsed && storedPointsParsed.available_points > 0;
+
+      if (!hasPoints) {
+        const points = TEST_ACCOUNTS_INITIAL_POINTS[userId];
+        const initialPoints = {
+          total_points: points,
+          available_points: points,
+          pending_points: 0,
+        };
+        localStorage.setItem(pointsKey, JSON.stringify(initialPoints));
+        return initialPoints;
+      }
+    }
+
     if (storedPoints) {
       const points = JSON.parse(storedPoints);
       return {
@@ -38,7 +61,6 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
       );
 
       if (account && account.current_points) {
-        // partner_accounts에 포인트가 있으면 partner_points에 동기화
         const initialPoints = {
           total_points: account.current_points,
           available_points: account.current_points,
@@ -47,28 +69,6 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
         localStorage.setItem(pointsKey, JSON.stringify(initialPoints));
         return initialPoints;
       }
-    }
-
-    // partner_test_001의 경우 목업 데이터 포인트로 초기화
-    if (userId === "partner_test_001") {
-      const initialPoints = {
-        total_points: 425000,
-        available_points: 425000,
-        pending_points: 0,
-      };
-      localStorage.setItem(pointsKey, JSON.stringify(initialPoints));
-
-      // partner_accounts에도 동기화
-      if (storedAccounts) {
-        const accounts = JSON.parse(storedAccounts);
-        const accountIndex = accounts.findIndex((a: { id?: string }) => a.id === userId);
-        if (accountIndex >= 0) {
-          accounts[accountIndex].current_points = 425000;
-          localStorage.setItem("partner_accounts", JSON.stringify(accounts));
-        }
-      }
-
-      return initialPoints;
     }
 
     // 초기 포인트 0으로 설정

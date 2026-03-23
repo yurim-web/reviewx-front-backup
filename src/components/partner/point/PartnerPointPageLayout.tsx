@@ -16,7 +16,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useModalState } from "@/hooks/useModalState";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -45,10 +45,12 @@ interface PartnerPointPageLayoutProps {
   summary: PartnerPointSummary;
   /** 포인트 내역 필터 함수 (각 페이지별로 다른 필터링 적용) */
   filterHistory?: (history: PartnerPointHistory) => boolean;
-  /** 포인트 내역 데이터 업데이트 함수 (새 충전 내역 추가 시 사용) */
-  onHistoryDataChange?: React.Dispatch<React.SetStateAction<PartnerPointHistory[]>>;
-  /** 포인트 요약 정보 업데이트 함수 (새 충전 내역 추가 시 사용) */
-  onSummaryChange?: React.Dispatch<React.SetStateAction<PartnerPointSummary>>;
+  /** 무한스크롤: 다음 페이지 로드 */
+  onLoadMore?: () => void;
+  /** 무한스크롤: 다음 페이지 존재 여부 */
+  hasMore?: boolean;
+  /** 무한스크롤: 다음 페이지 로딩 중 */
+  isLoadingMore?: boolean;
 }
 
 /**
@@ -65,8 +67,9 @@ export default function PartnerPointPageLayout({
   historyData,
   summary,
   filterHistory,
-  onHistoryDataChange,
-  onSummaryChange,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
 }: PartnerPointPageLayoutProps) {
   const router = useRouter();
   const [activeMainTab, setActiveMainTab] = useState<PartnerMainTab>("point");
@@ -167,55 +170,25 @@ export default function PartnerPointPageLayout({
     setSelectedRejectionReason("");
   };
 
-  /**
-   * localStorage에서 새 충전 내역 확인 및 추가
-   *
-   * 설명:
-   * - 충전 페이지에서 충전 완료 시 localStorage에 저장한 새 내역을 확인합니다.
-   * - 새 내역이 있으면 기존 데이터 배열의 맨 앞에 추가합니다.
-   * - 포인트 요약 정보도 업데이트합니다.
-   * - 처리 완료 후 localStorage에서 삭제합니다.
-   *
-   * 📌 useEffect 훅:
-   * - 컴포넌트 마운트 시 한 번만 실행 (의존성 배열이 빈 배열)
-   * - localStorage에서 데이터를 읽어와서 상태 업데이트
-   */
-  useEffect(() => {
-    // localStorage에서 새 충전 내역 확인
-    const newHistoryJson = localStorage.getItem("partner_new_point_history");
+  // 무한스크롤: IntersectionObserver로 리스트 하단 감지
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-    if (newHistoryJson) {
-      try {
-        const newHistory: PartnerPointHistory = JSON.parse(newHistoryJson);
-
-        // 잔액 계산: 현재 보유 포인트(summary) + 충전 금액
-        // setState의 함수형 업데이트를 사용하여 최신 상태값을 참조
-        if (onSummaryChange) {
-          onSummaryChange((prevSummary) => {
-            const newBalance = prevSummary.total_points + newHistory.amount;
-            newHistory.balance = newBalance; // 새 내역의 잔액 설정
-
-            // 포인트 요약 정보 업데이트
-            return {
-              ...prevSummary,
-              total_points: newBalance,
-              available_points: newBalance,
-            };
-          });
-        }
-
-        // 새 내역을 배열 맨 앞에 추가 (최신 내역이 위에 표시)
-        if (onHistoryDataChange) {
-          onHistoryDataChange((prevData) => [newHistory, ...prevData]);
-        }
-
-        // 처리 완료 후 localStorage에서 삭제 (중복 추가 방지)
-        localStorage.removeItem("partner_new_point_history");
-      } catch (_error) {
-        localStorage.removeItem("partner_new_point_history");
+  const handleIntersect = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      if (entries[0]?.isIntersecting && hasMore && !isLoadingMore && onLoadMore) {
+        onLoadMore();
       }
-    }
-  }, [onHistoryDataChange, onSummaryChange]);
+    },
+    [hasMore, isLoadingMore, onLoadMore]
+  );
+
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(handleIntersect, { threshold: 0.1 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [handleIntersect]);
 
   /**
    * 포인트 내역 필터링 및 정렬
@@ -520,6 +493,14 @@ export default function PartnerPointPageLayout({
               ))
             )}
           </article>
+
+          {/* 무한스크롤 감지 영역 */}
+          <div ref={loadMoreRef} style={{ height: 1 }} />
+          {isLoadingMore && (
+            <div style={{ textAlign: "center", padding: "16px 0", color: "#999" }}>
+              불러오는 중...
+            </div>
+          )}
         </div>
       </main>
 

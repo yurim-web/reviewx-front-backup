@@ -5,7 +5,7 @@
 /**
  * 파트너 포인트 사용 내역 페이지
  *
- * 목적: 파트너의 포인트 사용 내역만 보여주는 페이지입니다.
+ * API: GET /partner/points?type=USE
  *
  * 사용 페이지:
  * - /partner/point/withdrawn
@@ -15,21 +15,23 @@
 
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import PartnerPointPageLayout from "@/components/partner/point/PartnerPointPageLayout";
-import { usePartnerPointData } from "@/hooks/partner/usePartnerPointData";
-import type { PartnerPointHistory } from "@/types/domain/partner";
+import Loading from "@/app/loading";
+import { usePartnerPointList } from "@/hooks/partner/point/usePartnerPoints";
 
 function PartnerWithdrawnPointPage() {
-  const { history, summary } = usePartnerPointData();
+  const { history, summary, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    usePartnerPointList("USE");
 
-  const filterWithdrawnHistory = (h: PartnerPointHistory) =>
-    h.type === "withdrawn" || h.type === "returned";
+  if (isLoading) return <Loading />;
 
   return (
     <PartnerPointPageLayout
       activePointTab="withdrawn"
       historyData={history}
       summary={summary}
-      filterHistory={filterWithdrawnHistory}
+      onLoadMore={fetchNextPage}
+      hasMore={hasNextPage}
+      isLoadingMore={isFetchingNextPage}
     />
   );
 }
