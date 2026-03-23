@@ -21,7 +21,9 @@ import Toast from "@/components/common/toast/Toast";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerChargeTermsModal from "@/components/partner/point/PartnerChargeTermsModal";
 import AmountDropdown from "@/components/partner/point/AmountDropdown";
-import InvoiceTypeDropdown, { InvoiceType } from "@/components/partner/point/InvoiceTypeDropdown";
+import InvoiceTypeDropdown, {
+  type InvoiceType,
+} from "@/components/partner/point/InvoiceTypeDropdown";
 import BankDropdown from "@/components/partner/point/BankDropdown";
 import { validateAmount } from "@/utils/validation/amount";
 import { formatPhone, formatBusinessNumber } from "@/utils/formatting/input";
@@ -32,8 +34,9 @@ import chargeAccountStyles from "@/styles/partner/point/charge_account.module.cs
 import chargeSubmitStyles from "@/styles/partner/point/charge_submit.module.css";
 import chargeTermsStyles from "@/styles/partner/point/charge_terms.module.css";
 import { useAuth } from "@/hooks/useAuth";
-import { usePartnerPointData } from "@/hooks/partner/usePartnerPointData";
-import { postPartnerPayment } from "@/lib/api/point";
+import { usePartnerPointList } from "@/hooks/partner/point/usePartnerPoints";
+import { usePartnerCharge } from "@/hooks/partner/point/usePartnerCharge";
+import type { ReceiptType } from "@/types/api/partnerPoint";
 import { REFUND_BANKS } from "./constants";
 
 const styles = {
@@ -50,11 +53,26 @@ const styles = {
 export default function PartnerPointChargePage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { summary } = usePartnerPointData();
+  const { summary } = usePartnerPointList("ALL");
+  const chargeMutation = usePartnerCharge();
   const [chargeAmount, setChargeAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"bank" | "card">("bank");
+
+  const handleTabChange = (tab: "bank" | "card") => {
+    setActiveTab(tab);
+    setChargeAmount("");
+    setSelectedAmount(null);
+    setAgreeTerms(false);
+    setDepositorName("");
+    setInvoiceType("cash_income");
+    setRefundBank("");
+    setRefundAccountNumber("");
+    setRefundAccountHolder("");
+    setCashReceiptIncome({ name: "", phone: "" });
+    setCashReceiptExpense({ company_name: "", business_number: "" });
+  };
   const [depositorName, setDepositorName] = useState<string>("");
   // 영수증/계산서 발행 옵션: "none" (미발행), "cash_income" (현금영수증 소득공제), "cash_expense" (현금영수증 지출증빙), "tax_invoice" (세금계산서)
   // 초기값: 현금영수증 (소득공제)로 설정
@@ -117,6 +135,17 @@ export default function PartnerPointChargePage() {
     if (invoiceType === "cash_income") return "현금영수증 (소득공제)";
     if (invoiceType === "cash_expense") return "현금영수증 (지출증빙)";
     return "미발행";
+  };
+
+  // 프론트엔드 InvoiceType → 백엔드 ReceiptType 변환
+  const toReceiptType = (type: InvoiceType): ReceiptType => {
+    const map: Record<InvoiceType, ReceiptType> = {
+      none: "NONE",
+      cash_income: "CASH_RECEIPT_INCOME",
+      cash_expense: "CASH_RECEIPT_EXPENSE",
+      tax_invoice: "TAX_INVOICE",
+    };
+    return map[type];
   };
 
   const partnerInfo = {
@@ -190,11 +219,8 @@ export default function PartnerPointChargePage() {
   const isButtonEnabled = activeTab === "bank" ? isBankButtonEnabled() : isCardButtonEnabled();
 
   /**
-   * 카드 결제 처리 (실제 결제 API 호출 시뮬레이션)
-   *
-   * 설명:
-   * - 실제로는 결제 API를 호출하고 성공/실패에 따라 모달을 표시합니다.
-   * - 현재는 시뮬레이션으로 성공/실패를 랜덤하게 처리합니다.
+   * 카드 결제 처리
+   * POST /partner/points/charge (paymentMethod: "CARD")
    */
   const handleCardPayment = () => {
     if (!user?.id) {
@@ -202,33 +228,21 @@ export default function PartnerPointChargePage() {
       return;
     }
 
-    // TODO: 실제 결제 API 호출
-    // 예시: const result = await paymentAPI.charge(chargePoints);
-    // 실제 연동 시: const isSuccess = result.success;
-
-    // 시뮬레이션: API 연동 전까지 항상 성공 처리
-    const isSuccess = true;
-
-    if (isSuccess) {
-      // 관리자 승인 후 포인트 적립 예정 → 파트너 보유포인트/충전 내역에는 반영 안 함
-      // 관리자 결제내역에 추가 (카드 결제 승인 시 '포인트 충전' 항목으로 생성)
-      postPartnerPayment({
-        partner_id: 1,
+    chargeMutation.mutate(
+      {
+        paymentMethod: "CARD",
         amount: chargePoints,
-        payment_method: "CARD",
-        status: "PENDING",
-        paid_at: new Date().toISOString(),
-        points_charged: chargePoints,
-      }).catch((error) => {
-        console.error("결제 기록 저장 실패:", error);
-      });
-
-      // 결제 성공: 성공 모달 표시
-      setCardPaymentSuccessModal({ is_open: true });
-    } else {
-      // 결제 실패: 실패 모달 표시
-      setCardPaymentFailModal({ is_open: true });
-    }
+        agreeToTerms: agreeTerms,
+      },
+      {
+        onSuccess: () => {
+          setCardPaymentSuccessModal({ is_open: true });
+        },
+        onError: () => {
+          setCardPaymentFailModal({ is_open: true });
+        },
+      }
+    );
   };
 
   /**
@@ -256,6 +270,7 @@ export default function PartnerPointChargePage() {
 
   /**
    * 무통장 입금 신청 처리
+   * POST /partner/points/charge (paymentMethod: "BANK_TRANSFER")
    */
   const handleBankDepositSubmit = () => {
     if (!user?.id) {
@@ -263,21 +278,43 @@ export default function PartnerPointChargePage() {
       return;
     }
 
-    // 무통장 입금은 관리자 승인 후 포인트 적립 → 파트너 보유포인트/충전 내역에는 반영 안 함
-    // 관리자 결제내역에 추가
-    postPartnerPayment({
-      partner_id: 1,
-      amount: chargePoints,
-      payment_method: "BANK",
-      status: "PENDING",
-      paid_at: new Date().toISOString(),
-      points_charged: chargePoints,
-    }).catch((error) => {
-      console.error("결제 기록 저장 실패:", error);
-    });
+    // name/phoneNumber: 백엔드에서 항상 필수(Y)이므로
+    // receiptType에 따라 적절한 값을 전송
+    let name = "";
+    let phoneNumber = "";
+    if (invoiceType === "cash_income") {
+      name = cashReceiptIncome.name;
+      phoneNumber = cashReceiptIncome.phone.replace(/-/g, "");
+    } else if (invoiceType === "cash_expense") {
+      name = cashReceiptExpense.company_name;
+      phoneNumber = cashReceiptExpense.business_number.replace(/-/g, "");
+    } else if (invoiceType === "tax_invoice") {
+      name = user?.name || "";
+      phoneNumber = "";
+    }
 
-    // 무통장 입금 신청 모달 표시
-    setBankDepositModal({ is_open: true });
+    chargeMutation.mutate(
+      {
+        paymentMethod: "BANK_TRANSFER",
+        amount: chargePoints,
+        agreeToTerms: agreeTerms,
+        depositorName,
+        receiptType: toReceiptType(invoiceType),
+        name,
+        phoneNumber,
+        refundBank,
+        refundAccountNumber,
+        refundAccountHolder,
+      },
+      {
+        onSuccess: () => {
+          setBankDepositModal({ is_open: true });
+        },
+        onError: () => {
+          alert("입금 확인 요청에 실패했습니다. 다시 시도해주세요.");
+        },
+      }
+    );
   };
 
   /**
@@ -350,7 +387,7 @@ export default function PartnerPointChargePage() {
               role="tab"
               aria-selected={activeTab === "bank"}
               className={`${styles.tab_button} ${activeTab === "bank" ? styles.tab_active : ""}`}
-              onClick={() => setActiveTab("bank")}
+              onClick={() => handleTabChange("bank")}
             >
               무통장 입금
             </button>
@@ -358,7 +395,7 @@ export default function PartnerPointChargePage() {
               role="tab"
               aria-selected={activeTab === "card"}
               className={`${styles.tab_button} ${activeTab === "card" ? styles.tab_active : ""}`}
-              onClick={() => setActiveTab("card")}
+              onClick={() => handleTabChange("card")}
             >
               신용카드 결제
             </button>
@@ -751,10 +788,10 @@ export default function PartnerPointChargePage() {
             }`}
           >
             <button
-              className={`${styles.submit_button} ${!isButtonEnabled ? styles.disabled : ""}`}
+              className={`${styles.submit_button} ${!isButtonEnabled || chargeMutation.isPending ? styles.disabled : ""}`}
               onClick={handleSubmit}
-              disabled={!isButtonEnabled}
-              aria-disabled={!isButtonEnabled}
+              disabled={!isButtonEnabled || chargeMutation.isPending}
+              aria-disabled={!isButtonEnabled || chargeMutation.isPending}
             >
               {activeTab === "bank" ? "입금 확인 요청" : "결제"}
             </button>
