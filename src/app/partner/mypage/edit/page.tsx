@@ -28,49 +28,45 @@ import WithdrawModals from "@/components/common/mypage/WithdrawModals";
 import Toast from "@/components/common/toast/Toast";
 import BusinessNumberInput from "@/components/common/signup/BusinessNumberInput";
 import ContactPhoneInput from "@/components/common/signup/ContactPhoneInput";
-import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/app/loading";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { withPartnerAuth } from "@/components/auth/withAuth";
+import { formatPhoneNumber } from "@/utils/formatting/phone";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
-import { useWithdrawFlow } from "@/hooks/useWithdrawFlow";
-
-interface PartnerAccount {
-  id?: string;
-  email?: string;
-  name?: string;
-  phone?: string;
-  business_name?: string;
-  business_number?: string;
-  business_type?: string;
-  representative_name?: string;
-  postal_code?: string;
-  address?: string;
-  detail_address?: string;
-  contact_phone?: string;
-  division?: string;
-  profile_image?: string;
-  join_date?: string;
-  business_document_file_name?: string;
-}
+import {
+  usePartnerProfile,
+  useUpdateProfileMutation,
+  useUploadProfileImageMutation,
+  useDeleteProfileImageMutation,
+  useUploadBusinessDocumentMutation,
+  useWithdrawMutation,
+} from "@/hooks/partner/mypage/usePartnerMypage";
 
 /**
  * 파트너 내 정보 수정 페이지 컴포넌트
  */
 function PartnerEditProfilePage() {
-  // Next.js 라우터 훅
   const router = useRouter();
-  const { user } = useAuth();
 
-  // 폼 데이터 state - 로그인된 사용자 정보로 초기화
+  // API 훅
+  const { data: profile, isLoading } = usePartnerProfile();
+  const updateMutation = useUpdateProfileMutation();
+  const uploadImageMutation = useUploadProfileImageMutation();
+  const deleteImageMutation = useDeleteProfileImageMutation();
+  const uploadDocMutation = useUploadBusinessDocumentMutation();
+  const withdrawMutation = useWithdrawMutation();
+
+  // 폼 데이터 state
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    contactPhone: user?.phone || "",
-    companyName: user?.business_name || "",
-    ownerName: user?.name || "",
-    businessNumber: user?.business_number || "",
-    businessType: user?.business_type || "법인사업자",
-    businessDocument: "사업자등록증.pdf", // 등록 완료 시 입력란에는 파일명 표시 (실제 파일명은 API 연동 시 user 등에서 로드)
+    name: "",
+    email: "",
+    phone: "",
+    contactPhone: "",
+    companyName: "",
+    ownerName: "",
+    businessNumber: "",
+    businessType: "법인사업자",
+    businessDocument: "사업자등록증.pdf",
     postalCode: "",
     address: "",
     detailAddress: "",
@@ -79,6 +75,7 @@ function PartnerEditProfilePage() {
   // 휴대폰 인증 훅
   const {
     phone,
+    setPhone,
     verificationCode,
     isVerified: isPhoneVerified,
     isVerificationRequested,
@@ -91,37 +88,54 @@ function PartnerEditProfilePage() {
     handleVerifyCode,
   } = usePhoneVerification();
 
-  // 회원 탈퇴 플로우 훅
-  const {
-    isWithdrawConfirmModalOpen,
-    isWithdrawCompleteModalOpen,
-    isWithdrawBlockedModalOpen,
-    setIsWithdrawConfirmModalOpen,
-    setIsWithdrawCompleteModalOpen: _setIsWithdrawCompleteModalOpen,
-    setIsWithdrawBlockedModalOpen,
-    handleWithdraw,
-    handleWithdrawConfirm,
-    handleWithdrawComplete,
-  } = useWithdrawFlow({
-    redirectPath: "/partner",
-    checkOngoingCampaigns: async () => {
-      // TODO: 실제 API 연동 필요
-      return false;
-    },
-  });
+  // 회원 탈퇴 모달 상태
+  const [isWithdrawConfirmModalOpen, setIsWithdrawConfirmModalOpen] = useState(false);
+  const [isWithdrawCompleteModalOpen, setIsWithdrawCompleteModalOpen] = useState(false);
+  const [isWithdrawBlockedModalOpen, setIsWithdrawBlockedModalOpen] = useState(false);
 
-  const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] = useState(false); // 사업자등록증 저장 완료 여부
-  const [hasSelectedNewFileThisSession, setHasSelectedNewFileThisSession] = useState(false); // 이번 세션에서 파일 재선택 여부 (재선택 시 저장 전까지 파일명만 표시)
-  const [profileImage, setProfileImage] = useState<string | null>(null); // 프로필 사진 미리보기 URL
-  const [contactPhoneError, setContactPhoneError] = useState<string | undefined>(undefined); // 문의 담당자 휴대폰 번호 에러 메시지
+  const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] = useState(false);
+  const [hasSelectedNewFileThisSession, setHasSelectedNewFileThisSession] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [contactPhoneError, setContactPhoneError] = useState<string | undefined>(undefined);
+  const [pendingBusinessDocFile, setPendingBusinessDocFile] = useState<File | null>(null);
+  const [pendingProfileImageFile, setPendingProfileImageFile] = useState<File | null>(null);
 
   // Toast 상태
   const [showToast, setShowToast] = useState(false);
 
+  // 프로필 데이터로 폼 초기화
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        name: profile.representativeName || profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        contactPhone: formatPhoneNumber(profile.contactPhone || profile.phone || ""),
+        companyName: profile.businessName || "",
+        ownerName: profile.representativeName || profile.name || "",
+        businessNumber: profile.businessNumber || "",
+        businessType: profile.businessType || "법인사업자",
+        businessDocument: profile.businessDocumentFileName || "사업자등록증.pdf",
+        postalCode: profile.postalCode || "",
+        address: profile.address || "",
+        detailAddress: profile.detailAddress || "",
+      });
+      if (profile.businessDocumentFileName) {
+        setIsBusinessDocumentUploaded(true);
+      }
+      if (profile.profileImage) {
+        setProfileImage(profile.profileImage);
+      }
+      // 휴대폰 인증 훅에 기존 번호 설정
+      if (profile.phone) {
+        setPhone(formatPhoneNumber(profile.phone));
+      }
+    }
+  }, [profile, setPhone]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // 휴대폰 번호 입력 시: 훅의 핸들러 사용
     if (name === "phone") {
       handlePhoneChange(value);
       setFormData((prev) => ({ ...prev, phone: value }));
@@ -131,167 +145,113 @@ function PartnerEditProfilePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  /**
-   * 우편번호 찾기 핸들러
-   */
   const handlePostalCodeSearch = () => {
     // TODO: 다음/카카오 주소 API 연동
   };
 
-  /**
-   * 사업자등록증 파일 선택 핸들러
-   * BusinessDocumentUpload 컴포넌트에서 호출됨
-   * - 파일 선택 시 바로 partner_accounts에 파일명 반영 → 새로고침 후에도 등록한 파일명 유지
-   */
   const handleBusinessDocumentSelect = (file: File | null) => {
     if (!file) {
       setIsBusinessDocumentUploaded(false);
       setHasSelectedNewFileThisSession(true);
+      setPendingBusinessDocFile(null);
       return;
     }
-    const file_name = file.name;
     setFormData((prev) => ({
       ...prev,
-      businessDocument: file_name,
+      businessDocument: file.name,
     }));
     setIsBusinessDocumentUploaded(false);
-    setHasSelectedNewFileThisSession(true); // 재선택했으므로 저장 전까지 파일명만 표시
+    setHasSelectedNewFileThisSession(true);
+    setPendingBusinessDocFile(file);
+  };
 
-    // 파일 선택 시점에 localStorage에 반영 (저장 버튼 없이 새로고침해도 파일명 유지)
-    try {
-      if (!user?.id) return;
-      const storedAccounts = localStorage.getItem("partner_accounts");
-      const accounts: PartnerAccount[] = storedAccounts ? JSON.parse(storedAccounts) : [];
-      const accountIndex = accounts.findIndex(
-        (a: { id?: string; email?: string }) => a.id === user.id || a.email === user.email
-      );
-      if (accountIndex >= 0) {
-        accounts[accountIndex] = {
-          ...accounts[accountIndex],
-          business_document_file_name: file_name,
-        };
-        localStorage.setItem("partner_accounts", JSON.stringify(accounts));
+  /** 프로필 사진 변경 핸들러 */
+  const handleProfileImageChange = async (imageDataOrNull: string | null) => {
+    if (imageDataOrNull === null) {
+      // 사진 삭제
+      try {
+        await deleteImageMutation.mutateAsync();
+        setProfileImage(null);
+        setPendingProfileImageFile(null);
+      } catch {
+        // 삭제 실패 시 무시
       }
-    } catch (_e) {
-      // 사업자등록증 파일명 저장 실패 시 무시
+    } else {
+      // 사진 변경 — 프리뷰 설정 + File 객체 생성 (저장 시 업로드)
+      setProfileImage(imageDataOrNull);
+      try {
+        const res = await fetch(imageDataOrNull);
+        const blob = await res.blob();
+        const file = new File([blob], "profile-image.jpg", { type: blob.type });
+        setPendingProfileImageFile(file);
+      } catch {
+        // data URL → File 변환 실패 시 무시
+      }
     }
   };
 
   const isSaveEnabled = formData.phone.trim().length > 0;
 
-  // 저장 핸들러
-  const handleSave = () => {
-    if (!user?.id) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
-
+  // 저장 핸들러 — API 호출
+  const handleSave = async () => {
     try {
-      // LocalStorage의 인증 사용자 정보 업데이트
-      const authUser = localStorage.getItem("reviewx_auth_user");
-      if (authUser) {
-        const userData = JSON.parse(authUser);
-        const updatedUser = {
-          ...userData,
-          name: formData.ownerName,
-          phone: formData.phone,
-          business_name: formData.companyName,
-          business_number: formData.businessNumber,
-          representative_name: formData.ownerName,
-          contact_phone: formData.contactPhone,
-          postal_code: formData.postalCode,
-          address: formData.address,
-          detail_address: formData.detailAddress,
-          business_type: formData.businessType,
-        };
-        localStorage.setItem("reviewx_auth_user", JSON.stringify(updatedUser));
+      // 1. 사업자등록증 파일이 있으면 먼저 업로드
+      if (pendingBusinessDocFile) {
+        await uploadDocMutation.mutateAsync(pendingBusinessDocFile);
+        setPendingBusinessDocFile(null);
       }
 
-      // 파트너 계정 목록도 업데이트
-      const storedAccounts = localStorage.getItem("partner_accounts");
-      const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+      // 2. 프로필 사진이 변경되었으면 업로드
+      if (pendingProfileImageFile) {
+        await uploadImageMutation.mutateAsync(pendingProfileImageFile);
+        setPendingProfileImageFile(null);
+      }
 
-      const accountIndex = (accounts as PartnerAccount[]).findIndex(
-        (a) => a.id === user.id || a.email === user.email
-      );
-
-      const updatedAccount = {
-        id: user.id || "partner_test_001",
-        email: user.email || formData.email,
-        name: formData.ownerName,
+      // 3. 내 정보 수정 API 호출
+      await updateMutation.mutateAsync({
         phone: formData.phone,
-        business_name: formData.companyName,
-        business_number: formData.businessNumber,
-        business_type: formData.businessType,
-        representative_name: formData.ownerName,
-        postal_code: formData.postalCode,
+        businessName: formData.companyName,
+        representativeName: formData.ownerName,
+        businessNumber: formData.businessNumber,
+        businessType: formData.businessType as "법인사업자" | "개인사업자",
+        postalCode: formData.postalCode,
         address: formData.address,
-        detail_address: formData.detailAddress,
-        contact_phone: formData.contactPhone,
-        division: formData.businessType === "개인사업자" ? "개인" : "법인",
-        profile_image: profileImage, // 프로필 사진 저장
-        join_date: new Date().toISOString().replace("T", " ").substring(0, 16),
-        business_document_file_name: formData.businessDocument, // 사업자등록증 파일명 저장 (새로고침 후 복원)
-      };
+        detailAddress: formData.detailAddress,
+        contactPhone: formData.contactPhone,
+      });
 
-      //      //      //      if (accountIndex >= 0) {
-      // 기존 계정 업데이트
-      accounts[accountIndex] = {
-        ...accounts[accountIndex],
-        ...updatedAccount,
-      };
-      //      } else {
-      // 새 계정 추가
-      accounts.push(updatedAccount);
-      //      }
-
-      localStorage.setItem("partner_accounts", JSON.stringify(accounts));
-      //      // 저장 성공 시 토스트 메시지 표시 및 등록 완료 배지 표시
       setShowToast(true);
       setIsBusinessDocumentUploaded(true);
-      setHasSelectedNewFileThisSession(false); // 저장했으므로 다시 "등록 완료" 표시
-    } catch (_error) {
+      setHasSelectedNewFileThisSession(false);
+    } catch {
       alert("정보 저장에 실패했습니다.");
     }
   };
 
-  // partner_accounts에서 상세 정보 로드
-  useEffect(() => {
-    if (!user?.id) return;
+  // 회원 탈퇴 핸들러
+  const handleWithdraw = () => {
+    setIsWithdrawConfirmModalOpen(true);
+  };
 
+  const handleWithdrawConfirm = async () => {
+    setIsWithdrawConfirmModalOpen(false);
     try {
-      const storedAccounts = localStorage.getItem("partner_accounts");
-      if (storedAccounts) {
-        const accounts = JSON.parse(storedAccounts) as PartnerAccount[];
-        const partnerAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
-        if (partnerAccount) {
-          const savedFileName = partnerAccount.business_document_file_name;
-          setFormData({
-            name: partnerAccount.representative_name || partnerAccount.name || user.name || "",
-            email: partnerAccount.email || user.email || "",
-            phone: partnerAccount.phone || user.phone || "",
-            contactPhone: partnerAccount.contact_phone || partnerAccount.phone || "",
-            companyName: partnerAccount.business_name || user.business_name || "",
-            ownerName: partnerAccount.representative_name || partnerAccount.name || user.name || "",
-            businessNumber: partnerAccount.business_number || user.business_number || "",
-            businessType: partnerAccount.business_type || "법인사업자",
-            businessDocument: savedFileName || "사업자등록증.pdf",
-            postalCode: partnerAccount.postal_code || "",
-            address: partnerAccount.address || "",
-            detailAddress: partnerAccount.detail_address || "",
-          });
-          // 저장된 파일이 있으면 등록 완료 배지 표시
-          if (savedFileName) setIsBusinessDocumentUploaded(true);
-          // 프로필 사진도 불러오기
-          if (partnerAccount.profile_image) {
-            setProfileImage(partnerAccount.profile_image);
-          }
-        }
+      await withdrawMutation.mutateAsync(undefined);
+      setIsWithdrawCompleteModalOpen(true);
+    } catch (error: unknown) {
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      if (status === 409) {
+        setIsWithdrawBlockedModalOpen(true);
       }
-    } catch (_error) {
-      // 파트너 계정 정보 로드 실패 시 무시
     }
-  }, [user, user?.business_name]);
+  };
+
+  const handleWithdrawComplete = () => {
+    setIsWithdrawCompleteModalOpen(false);
+    router.push("/partner");
+  };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={layoutStyles.edit_profile_container}>
@@ -304,7 +264,10 @@ function PartnerEditProfilePage() {
           <h2 className={layoutStyles.section_title}>기본 정보</h2>
 
           {/* 프로필 사진 */}
-          <ProfilePhotoUpload profileImage={profileImage} onImageChange={setProfileImage} />
+          <ProfilePhotoUpload
+            profileImage={profileImage}
+            onImageChange={handleProfileImageChange}
+          />
 
           {/* 이름 (읽기 전용) */}
           <article className={layoutStyles.field_article}>
@@ -397,7 +360,7 @@ function PartnerEditProfilePage() {
             inputClassName={inputStyles.input_field}
           />
 
-          {/* 사업자등록증 - 처음 진입 시 파일 있으면 등록 완료, 재선택 시 저장 전까지 파일명만 표시 */}
+          {/* 사업자등록증 */}
           <BusinessDocumentUpload
             fileName={formData.businessDocument}
             isUploaded={
@@ -480,6 +443,16 @@ function PartnerEditProfilePage() {
           router.back();
         }}
         duration={2000}
+      />
+
+      {/* B_M6: 진행 중인 캠페인 있음 → 탈퇴 불가 모달 */}
+      <BaseModal
+        is_open={isWithdrawBlockedModalOpen}
+        on_close={() => setIsWithdrawBlockedModalOpen(false)}
+        message="진행 중인 캠페인이 있을 경우 탈퇴가 불가합니다.<br>먼저 캠페인을 완료해 주세요."
+        buttons={["닫기"]}
+        on_confirm={() => setIsWithdrawBlockedModalOpen(false)}
+        type="center"
       />
     </div>
   );

@@ -22,11 +22,13 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import BaseModal from "@/components/common/modal/BaseModal";
-import { findAccountByEmail } from "@/data/login/unifiedAccountData";
+import { useChangePasswordMutation } from "@/hooks/partner/mypage/usePartnerMypage";
 import styles from "@/styles/partner/reset_password/reset_password.module.css";
 
 function PartnerResetPasswordPage() {
   const router = useRouter();
+  const changePasswordMutation = useChangePasswordMutation();
+
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isSessionExpiredModalOpen, setIsSessionExpiredModalOpen] = useState(false);
@@ -48,18 +50,6 @@ function PartnerResetPasswordPage() {
       if (header) header.style.display = "block";
     };
   }, []);
-
-  // 현재 로그인한 파트너의 이메일 가져오기 (테스트용)
-  // 실제 구현 시에는 세션이나 쿠키에서 가져와야 합니다
-  const getCurrentPartnerEmail = (): string => {
-    // localStorage에서 이메일 가져오기 (테스트용)
-    if (typeof window !== "undefined") {
-      const savedEmail = localStorage.getItem("partner_email");
-      if (savedEmail) return savedEmail;
-    }
-    // 테스트용 기본값 (실제로는 로그인한 사용자 정보에서 가져와야 함)
-    return "test@test.com";
-  };
 
   const PASSWORD_PATTERN =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+])[A-Za-z\d!@#$%^&*()\-_=+]{8,16}$/;
@@ -108,44 +98,19 @@ function PartnerResetPasswordPage() {
     }
 
     try {
-      // 현재 로그인한 파트너의 이메일 가져오기
-      const currentEmail = getCurrentPartnerEmail();
-
-      // 목업 데이터에서 현재 파트너 계정 찾기
-      const currentAccount = findAccountByEmail(currentEmail);
-
-      if (!currentAccount) {
-        setCurrentPasswordError("계정을 찾을 수 없습니다.");
-        return;
-      }
-
-      // 현재 비밀번호가 맞는지 확인
-      if (currentAccount.password !== currentPassword) {
-        setCurrentPasswordError("비밀번호가 일치하지 않습니다.");
-        return;
-      }
-
-      // TODO: 실제 비밀번호 변경 API 연동
-      // const response = await changePasswordAPI({ currentPassword, newPassword: password });
-      // if (!response.success) {
-      //   if (response.errorCode === 'INVALID_CURRENT_PASSWORD') {
-      //     setCurrentPasswordError("비밀번호가 일치하지 않습니다.");
-      //   } else {
-      //     alert(response.errorMessage || "비밀번호 변경에 실패했습니다.");
-      //   }
-      //   return;
-      // }
-
-      // 테스트용: 목업 데이터의 비밀번호 업데이트 (실제로는 API 호출)
-      if (currentAccount) {
-        currentAccount.password = password;
-      }
+      await changePasswordMutation.mutateAsync({
+        currentPassword,
+        newPassword: password,
+      });
 
       // C_M12: 비밀번호 변경이 완료되었습니다.
       setIsSuccessModalOpen(true);
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response?.status;
-      if (status === 401) {
+      if (status === 400) {
+        // 현재 비밀번호 불일치
+        setCurrentPasswordError("비밀번호가 일치하지 않습니다.");
+      } else if (status === 401) {
         // E_M4: 세션 만료 → 로그인 페이지 리디렉트
         setIsSessionExpiredModalOpen(true);
       } else {

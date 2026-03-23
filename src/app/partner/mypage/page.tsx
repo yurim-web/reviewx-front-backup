@@ -13,78 +13,36 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
 import BaseModal from "@/components/common/modal/BaseModal";
+import Loading from "@/app/loading";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import { useAuth } from "@/hooks/useAuth";
-
-interface PartnerAccount {
-  id?: string;
-  email?: string;
-  profile_image?: string;
-}
+import { usePartnerProfile } from "@/hooks/partner/mypage/usePartnerMypage";
 
 /**
  * 파트너 마이페이지 컴포넌트
  */
 function PartnerMypagePage() {
-  // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { data: profile, isLoading } = usePartnerProfile();
 
-  // useState 훅: 컴포넌트의 상태(state)를 관리합니다.
-  // activeTopTab: 현재 활성화된 상단 탭 (캠페인/포인트/계정 등)
-  // setActiveTopTab: activeTopTab 값을 변경하는 함수
   const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>("account");
-
-  // activeSubTab: 현재 활성화된 서브 탭 (프로필)
   const [activeSubTab, setActiveSubTab] = useState<"profile">("profile");
-
-  // 프로필 이미지 상태
-  const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
 
   // 회원 유형 상태 (리뷰어/광고주)
   const [memberType, setMemberType] = useState<"reviewer" | "partner">("partner");
   // 리뷰어 정보 없음 모달 (광고주 → 리뷰어 전환 시)
   const [showReviewerInfoModal, setShowReviewerInfoModal] = useState(false);
 
-  // 컴포넌트 마운트 시 localStorage에서 프로필 이미지 로드
-  useEffect(() => {
-    if (typeof window !== "undefined" && user) {
-      try {
-        const storedAccounts = localStorage.getItem("partner_accounts");
-        // console.log('📦 [마이페이지] partner_accounts:', storedAccounts);
-
-        if (storedAccounts) {
-          const accounts = JSON.parse(storedAccounts) as PartnerAccount[];
-          const partnerAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
-          // console.log('✅ [마이페이지] partnerAccount:', partnerAccount);
-
-          if (partnerAccount?.profile_image) {
-            setProfileImage(partnerAccount.profile_image);
-            // console.log('🖼️ [마이페이지] 프로필 이미지 설정됨:', partnerAccount.profile_image);
-          } else {
-            // console.log('❌ [마이페이지] profile_image가 없습니다');
-          }
-        }
-      } catch (_error) {}
-    }
-  }, [user]);
-
-  /**
-   * 서브 탭 변경 핸들러
-   *
-   * SubTabNavigation 컴포넌트가 요구하는 함수 타입에 맞추기 위한 핸들러입니다.
-   * 파트너는 프로필 탭만 있으므로 실제로는 사용되지 않지만, 타입 호환성을 위해 필요합니다.
-   */
   const handleSubTabChange = (tab: "profile" | "channel") => {
-    // 파트너는 프로필만 있으므로 상태만 업데이트
     if (tab === "profile") {
       setActiveSubTab(tab);
     }
@@ -94,17 +52,13 @@ function PartnerMypagePage() {
     logout();
   };
 
-  /**
-   * 회원 유형 변경 핸들러
-   * 리뷰어 ↔ 광고주 간 전환
-   */
   const handleMemberTypeChange = (type: "reviewer" | "partner") => {
     if (type === "reviewer") {
       // 리뷰어(유저) 정보 등록 여부 확인
       try {
         const stored = localStorage.getItem("user_accounts");
         const accounts = stored ? (JSON.parse(stored) as { id?: string; email?: string }[]) : [];
-        const hasReviewerInfo = accounts.some((a) => a.id === user?.id || a.email === user?.email);
+        const hasReviewerInfo = accounts.some((a) => a.email === profile?.email);
         if (!hasReviewerInfo) {
           setShowReviewerInfoModal(true);
           return;
@@ -119,6 +73,8 @@ function PartnerMypagePage() {
     }
     setMemberType(type);
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={layoutStyles.mypage_container}>
@@ -135,20 +91,16 @@ function PartnerMypagePage() {
           availableTabs={["profile"]}
         />
 
-        {/* 
+        {/*
           ProfileContent 공통 컴포넌트 사용
-          Props로 필요한 데이터를 전달합니다:
-          - role: 사용자 역할 ("광고주")
-          - nickname: 회사명 또는 닉네임
-          - editPath: 내 정보 수정 페이지 경로
-          - onLogout: 로그아웃 버튼 클릭 시 실행할 함수
+          API에서 가져온 프로필 데이터를 전달
         */}
         <ProfileContent
           role="광고주"
-          nickname={user?.business_name || user?.name || "파트너"}
+          nickname={profile?.businessName || profile?.name || "파트너"}
           editPath="/partner/mypage/edit"
           onLogout={handleLogout}
-          profileImage={profileImage}
+          profileImage={profile?.profileImage || undefined}
           // 광고주,리뷰어 토글 버튼 -- 숨김처리
           showMemberTypeToggle={false}
           activeMemberType={memberType}

@@ -144,7 +144,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 로그아웃 함수 — 현재 역할만 클리어 (다른 역할 로그인 유지)
   const logout = useCallback(async () => {
-    if (user?.role === "partner") {
+    const isPartner = user?.role === "partner";
+    if (isPartner) {
       // 파트너: 서버 세션 무효화 API 호출
       try {
         await partnerLogout();
@@ -156,7 +157,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     performLogout();
     setUser(null);
-    router.push("/");
+    router.push(isPartner ? "/partner" : "/");
   }, [router, user]);
 
   // 사용자 정보 업데이트 함수
