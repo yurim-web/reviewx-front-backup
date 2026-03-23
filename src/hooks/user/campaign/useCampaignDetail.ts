@@ -131,6 +131,7 @@ function buildRequirements(keywordPolicy?: CampaignDetailApiItem["keywordPolicy"
     reqs.push(duration ? `video_${count}_${duration}` : `video_${count}`);
   }
   if (keywordPolicy.requireBodyLink) reqs.push("product_link");
+  if (keywordPolicy.requireKeywordAttachment) reqs.push("keyword");
   return reqs;
 }
 
@@ -201,9 +202,14 @@ export function adaptCampaignDetail(item: CampaignDetailApiItem): CampaignDetail
       purchasePeriod: item.purchasePeriod ?? (item.purchaseInfo ? registrationPeriod : ""),
       registrationPeriod,
     },
-    // 방문형 (nested visitInfo 우선, flat 필드 fallback)
-    visitAddress:
-      item.visitInfo?.address ?? item.visitBaseAddress ?? item.visitAddress ?? undefined,
+    // 방문형 (우편번호 + 기본주소 + 상세주소 합침)
+    visitAddress: (() => {
+      const base = item.visitInfo?.address ?? item.visitBaseAddress ?? item.visitAddress ?? "";
+      if (!base) return undefined;
+      const zip = item.visitZipCode ? `(${item.visitZipCode}) ` : "";
+      const detail = item.visitDetailAddress ? ` ${item.visitDetailAddress}` : "";
+      return `${zip}${base}${detail}`.trim();
+    })(),
     visitLink: item.visitLink ?? undefined,
     visitReservationRequired: item.visitInfo?.reservationRequired,
     addressGuide: item.addressGuide ?? undefined,

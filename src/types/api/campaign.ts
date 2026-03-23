@@ -93,6 +93,7 @@ export interface CampaignDetailApiItem {
     minTextLength: number;
     minPhotoCount: number;
     requireBodyLink: boolean;
+    requireKeywordAttachment?: boolean;
     minVideoCount?: number;
     minVideoDuration?: number;
   };
@@ -106,6 +107,8 @@ export interface CampaignDetailApiItem {
   // mock flat 구조 fallback
   visitBaseAddress?: string;
   visitAddress?: string;
+  visitZipCode?: string;
+  visitDetailAddress?: string;
   visitLink?: string;
   addressGuide?: string; // 방문형 오시는길 안내 (mock DB flat 필드)
   purchaseLink?: string; // flat purchaseLink (mock fallback)
