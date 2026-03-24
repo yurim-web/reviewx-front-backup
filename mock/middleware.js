@@ -5,6 +5,18 @@
 
 // 메모리 상태: 알림 전체 삭제 여부
 let notificationsDeleted = false;
+let adminNotificationsDeleted = false;
+
+// 메모리 상태: 로그인된 관리자 정보 (세션 대용)
+let adminSession = {
+  id: "admin_ga_001",
+  email: "manager_ga@test.com",
+  name: "김관리",
+  role: "manager_ga",
+};
+
+// 메모리 상태: 임시저장 캠페인 데이터 (API 11/12용)
+const draftStore = {};
 
 // 메모리 상태: 로그인된 파트너 정보 (세션 대용)
 let currentSession = {
@@ -34,7 +46,759 @@ module.exports = function createMiddleware(db) {
     return false;
   }
 
+  // 관리자 인증번호 상태 (메모리)
+  let adminVerificationCode = null;
+  let adminVerifiedPhone = null;
+
   return (req, res, next) => {
+
+  // 디버그: 미들웨어 진입 확인 (일시)
+  // console.log("[MW]", req.method, req.path);
+
+  // ============ POST /api/admin/auth/phone/request ============
+  // 관리자 휴대폰 인증번호 발송
+  if (req.method === "POST" && (req.path === "/api/admin/auth/phone/request" || req.path === "/admin/auth/phone/request")) {
+    const { phone } = req.body || {};
+    adminVerificationCode = "123456";
+    return res.status(200).json({
+      result: "OK",
+      message: "인증번호가 발송되었습니다.",
+      expiresIn: 180,
+    });
+  }
+
+  // ============ POST /api/admin/auth/phone/verify ============
+  // 관리자 인증번호 확인
+  if (req.method === "POST" && (req.path === "/api/admin/auth/phone/verify" || req.path === "/admin/auth/phone/verify")) {
+    const { phone, code } = req.body || {};
+    if (code === "123456" || code === adminVerificationCode) {
+      adminVerifiedPhone = phone;
+      return res.status(200).json({ result: "OK", message: "인증이 완료되었습니다." });
+    }
+    return res.status(400).json({
+      result: "ERROR",
+      error: { code: "INVALID_CODE", message: "인증번호가 일치하지 않습니다." },
+    });
+  }
+
+  // ============ GET /admin/accounts ============
+  // 전화번호로 관리자 계정 조회 (아이디/비밀번호 찾기용)
+  if (req.method === "GET" && (req.path === "/admin/accounts" || req.path === "/api/admin/accounts")) {
+    return res.status(200).json([
+      { id: "admin_ga_001", email: "manager_ga@test.com", phone: "01012345678", name: "김관리", userType: "admin_ga", role: "manager_ga", password: "cjdaud1!", isBanned: false, isBlocked: false, signupDate: "2025-01-15" },
+      { id: "admin_sa_001", email: "manager_sa@test.com", phone: "01098765432", name: "박최고", userType: "admin_sa", role: "manager_sa", password: "cjdaud1!", isBanned: false, isBlocked: false, signupDate: "2025-01-10" },
+      { id: "admin_ga_002", email: "blocked_ga@test.com", phone: "01011112222", name: "차단관리자", userType: "admin_ga", role: "manager_ga", password: "cjdaud1!", isBanned: false, isBlocked: true, signupDate: "2025-02-01" },
+      { id: "admin_ga_003", email: "banned_ga@test.com", phone: "01033334444", name: "정지관리자", userType: "admin_ga", role: "manager_ga", password: "cjdaud1!", isBanned: true, isBlocked: false, signupDate: "2025-03-01" },
+    ]);
+  }
+
+  // ============ POST /api/admin/auth/reset-password ============
+  // 관리자 비밀번호 재설정
+  if (req.method === "POST" && (req.path === "/api/admin/auth/reset-password" || req.path === "/admin/auth/reset-password")) {
+    const { email, newPassword } = req.body || {};
+    if (!email || !newPassword) {
+      return res.status(400).json({
+        result: "ERROR",
+        error: { code: "INVALID_INPUT", message: "이메일과 새 비밀번호를 입력해주세요." },
+      });
+    }
+    return res.status(200).json({
+      result: "OK",
+      message: "비밀번호가 변경되었습니다.",
+    });
+  }
+
+  // ============ GET /api/admin/dashboard ============
+  // GA-01: 대시보드 통계 데이터 조회 (period별 데이터 변화)
+  if (req.method === "GET" && (req.path === "/api/admin/dashboard" || req.path === "/admin/dashboard")) {
+    const period = req.query.period || "month";
+
+    // period별 배수 (데이터 변화 시뮬레이션)
+    const multipliers = { today: 0.3, week: 0.7, month: 1.0, custom: 0.85 };
+    const m = multipliers[period] || 1.0;
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      campaignSummary: {
+        recruitRate: +(85.3 * m).toFixed(1),
+        recruitRateChange: +(2.1 * m).toFixed(1),
+        achieveRate: +(72.1 * m).toFixed(1),
+        achieveRateChange: +(-1.3 * m).toFixed(1),
+        rejectRate: +(4.2 * m).toFixed(1),
+        rejectRateChange: +(0.5 * m).toFixed(1),
+        reportRate: +(1.1 * m).toFixed(1),
+        reportRateChange: +(-0.2 * m).toFixed(1),
+      },
+      campaignStats: {
+        total: Math.round(150 * m),
+        registering: Math.round(12 * m),
+        recruiting: Math.round(35 * m),
+        selecting: Math.round(18 * m),
+        purchasing: Math.round(25 * m),
+        emergency: Math.round(3 * m),
+        closed: Math.round(50 * m),
+        cancelled: Math.round(7 * m),
+        byType: [
+          { type: "DELIVERY", label: "배송형", count: Math.round(60 * m) },
+          { type: "VISIT", label: "방문형", count: Math.round(45 * m) },
+          { type: "BUY", label: "구매형", count: Math.round(30 * m) },
+          { type: "REPORTERS", label: "기자단", count: Math.round(15 * m) },
+        ],
+      },
+      rejectReportStats: {
+        totalRejects: Math.round(42 * m),
+        totalReports: Math.round(11 * m),
+        rejectTrend: +(-3.2 * m).toFixed(1),
+        reportTrend: +(1.5 * m).toFixed(1),
+      },
+      accessStats: {
+        totalAccess: Math.round(12500 * m),
+        pcRate: 45.2,
+        mobileRate: 48.3,
+        tabletRate: 6.5,
+      },
+      memberStats: {
+        total: 20,     // 리뷰어 10 + 파트너 10
+        totalChange: 5,
+        newMembers: 2,
+        newMembersChange: 1,
+        active: 14,    // 리뷰어 ACTIVE 8 + 파트너 ACTIVE 6
+        activeChange: 2,
+        dormant: 6,    // 나머지 (탈퇴/정지/제한 등)
+        dormantChange: -1,
+      },
+      memberTypeStats: {
+        reviewer: {
+          total: 10,
+          newMembers: 1,
+          active: 8,    // 탈퇴 1 + 이용제한 1 제외
+          dormant: 2,
+        },
+        partner: {
+          total: 10,
+          newMembers: 1,
+          active: 6,    // PAUSED 1 + BLOCKED 1 + WITHDRAW 1 + 기타 1 제외
+          dormant: 4,
+        },
+      },
+      channelStats: {
+        channels: [
+          { channelName: "blog", memberCount: 7, percentage: 35 },
+          { channelName: "instagram", memberCount: 6, percentage: 30 },
+          { channelName: "youtube", memberCount: 4, percentage: 20 },
+          { channelName: "clip", memberCount: 3, percentage: 15 },
+        ],
+      },
+    });
+  }
+
+  // ============ GET /api/admin/campaigns/summary ============
+  // 캠페인 통계 요약 조회 (상단 카드 6종)
+  if (req.method === "GET" && req.path === "/api/admin/campaigns/summary") {
+    const campaigns = getCampaigns();
+    const STATUS_MAP = {
+      REGISTERING: "scheduled",
+      RECRUITING: "recruiting",
+      SELECTING: "inProgress",
+      PURCHASING: "inProgress",
+      EMERGENCY: "inProgress",
+      CLOSED: "completed",
+      CANCELLED: "cancelled",
+    };
+    const summary = { total: 0, scheduled: 0, recruiting: 0, inProgress: 0, completed: 0, cancelled: 0 };
+    for (const c of campaigns) {
+      summary.total++;
+      const key = STATUS_MAP[c.status];
+      if (key) summary[key]++;
+    }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: { campaignSummary: summary },
+    });
+  }
+
+  // ============ GET /api/admin/campaigns ============
+  // 캠페인 목록 조회 (백엔드 응답 구조로 변환)
+  if (req.method === "GET" && req.path === "/api/admin/campaigns") {
+    const campaigns = getCampaigns();
+    const TYPE_LABEL = { DELIVERY: "배송형", VISIT: "방문형", PURCHASE: "구매평", PURCHASE_REVIEW: "구매평", REPORTER: "기자단", MISSION: "미션형" };
+    const STATUS_LABEL = { REGISTERING: "예정", RECRUITING: "신청", SELECTING: "진행", PURCHASING: "진행", EMERGENCY: "긴급", CLOSED: "종료", CANCELLED: "취소" };
+    const PARTNER_NAMES = {
+      501: "마크엑스컴퍼니", 502: "청불 천막집 방이점", 503: "명륜진사갈비 수원광교점",
+      504: "(주) 레인보우8", 505: "(주)플레티어", 506: "꽃초롱",
+      507: "주식회사 와이디컴퍼니그룹", 508: "(주)아이엠에스커뮤니케이션",
+    };
+    // channelName → platformIconUrl 매핑 (백엔드 channel.icon_url 모사)
+    const CHANNEL_ICON_MAP = {
+      NAVER_BLOG: "/icons/platform/blog.png",
+      BLOG: "/icons/platform/blog.png",
+      NAVER_CLIP: "/icons/platform/clip.png",
+      CLIP: "/icons/platform/clip.png",
+      INSTAGRAM: "/icons/platform/instagram.png",
+      INSTAGRAM_REELS: "/icons/platform/reels.png",
+      REELS: "/icons/platform/reels.png",
+      YOUTUBE: "/icons/platform/youtube.png",
+      YOUTUBE_SHORTS: "/icons/platform/shorts.png",
+      SHORTS: "/icons/platform/shorts.png",
+      STORE: "/icons/platform/store.png",
+      COUPANG: "/icons/platform/store.png",
+      REVIEW: "/icons/platform/review.png",
+      MISSION: "/icons/platform/mission.png",
+    };
+    const { status, type, channel, keyword } = req.query;
+
+    let filtered = campaigns;
+    if (status) filtered = filtered.filter((c) => c.status === status);
+    if (type) filtered = filtered.filter((c) => c.type === type);
+    if (channel) filtered = filtered.filter((c) => (c.requiredPlatform?.channelName || "").toUpperCase().includes(channel.toUpperCase()));
+    if (keyword) {
+      const kw = keyword.toLowerCase();
+      filtered = filtered.filter((c) =>
+        String(c.id).includes(kw) ||
+        (c.title || "").toLowerCase().includes(kw) ||
+        (c.partnerName || "").toLowerCase().includes(kw)
+      );
+    }
+
+    // recruitStartAt 기준 내림차순 정렬 (최신 모집 시작일 먼저)
+    filtered.sort((a, b) => {
+      const da = a.recruitStartAt || a.recruit?.recruitStartAt || "";
+      const db = b.recruitStartAt || b.recruit?.recruitStartAt || "";
+      return db.localeCompare(da);
+    });
+
+    const mapped = filtered.map((c, idx) => {
+      const cid = c.campaignId || c.id;
+      const channelName = c.requiredPlatform?.channelName || "";
+      // 캠페인번호: 작은 ID는 4000+id, timestamp형 ID는 뒤 4자리+50000
+      const campaignNum = cid > 100000 ? String(50000 + (cid % 10000)).padStart(6, "0") : String(4000 + cid).padStart(6, "0");
+      return {
+      campaignId: cid,
+      campaignNumber: campaignNum,
+      partnerId: c.partner_id || c.partnerId || 0,
+      partnerName: c.partnerName || PARTNER_NAMES[c.partner_id || c.partnerId] || "테스트 파트너",
+      title: c.title || "",
+      type: c.type || "DELIVERY",
+      typeLabel: TYPE_LABEL[c.type] || c.type,
+      platformIconUrl: c.platformIconUrl || CHANNEL_ICON_MAP[channelName] || CHANNEL_ICON_MAP[c.type] || "/icons/platform/blog.png",
+      status: c.status || "RECRUITING",
+      statusLabel: STATUS_LABEL[c.status] || c.status,
+      appliedCount: c.appliedCount ?? c.metrics?.appliedCount ?? 0,
+      recruitLimit: parseInt(c.recruitLimit) || c.recruit?.recruitLimit || 0,
+      rewardPoint: c.reward?.extraRewardPoint || c.rewardPoint || 0,
+      recruitStartAt: c.recruitStartAt || c.recruit?.recruitStartAt || "",
+      recruitEndAt: c.recruitEndAt || c.recruit?.recruitEndAt || "",
+    };});
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: { campaigns: mapped },
+    });
+  }
+
+  // ============ POST /api/admin/campaigns/:id/report ============
+  // 캠페인 신고 처리
+  if (req.method === "POST" && /^\/api\/admin\/campaigns\/\d+\/report$/.test(req.path)) {
+    const { reportCode, reportReason } = req.body || {};
+    if (!reportCode) {
+      return res.status(400).json({
+        result: "ERROR",
+        error: { code: "INVALID_REPORT_CODE", message: "올바르지 않은 신고 코드입니다." },
+      });
+    }
+    return res.status(200).json({ result: "OK", message: "신고가 접수되었습니다." });
+  }
+
+  // ============ GET /api/admin/campaigns/rejected ============
+  // GA-03: 캠페인 반려내역 조회
+  if (req.method === "GET" && (req.path === "/api/admin/campaigns/rejected" || req.path === "/admin/campaigns/rejected")) {
+    const rejectedList = [
+      { rejectId: 1, campaignTitle: "[배송형] 건강식품 체험단", partnerName: "마크엑스컴퍼니", reviewerName: "김리뷰", rejectCode: "R001", rejectCodeLabel: "구매 정보 불일치", rejectReason: "영수증 미첨부로 인한 구매 확인 불가", aiRecommendedCodes: ["R001", "R003"], processedAt: "2026-03-20T10:30:00+09:00", processedBy: "AI 자동 탐지" },
+      { rejectId: 2, campaignTitle: "[방문형] 카페 방문 리뷰", partnerName: "카페베네", reviewerName: "박블로거", rejectCode: "R002", rejectCodeLabel: "가이드 불이행", rejectReason: "이미지 수량 부족 (3장 중 1장만 제출)", aiRecommendedCodes: ["R002"], processedAt: "2026-03-19T14:00:00+09:00", processedBy: "김관리" },
+      { rejectId: 3, campaignTitle: "[구매평] 스킨케어 구매 리뷰", partnerName: "뷰티랩", reviewerName: "이인스타", rejectCode: "R003", rejectCodeLabel: "콘텐츠 오류", rejectReason: "게시물 링크 접속 불가 (삭제된 게시물)", aiRecommendedCodes: ["R003", "R004"], processedAt: "2026-03-18T09:00:00+09:00", processedBy: "AI 자동 탐지" },
+      { rejectId: 4, campaignTitle: "[기자단] IT 신제품 리뷰", partnerName: "테크코리아", reviewerName: "최유튜버", rejectCode: "R004", rejectCodeLabel: "이미지 도용 의심", rejectReason: "타 사이트 이미지와 동일한 이미지 사용 의심", aiRecommendedCodes: ["R004"], processedAt: "2026-03-17T16:30:00+09:00", processedBy: "박최고" },
+      { rejectId: 5, campaignTitle: "[미션형] SNS 팔로우 이벤트", partnerName: "소셜플러스", reviewerName: "정소영", rejectCode: "R005", rejectCodeLabel: "반복 반려 의심", rejectReason: "동일 사유로 3회 이상 반복 반려", aiRecommendedCodes: ["R005", "R008"], processedAt: "2026-03-16T11:00:00+09:00", processedBy: "AI 자동 탐지" },
+      { rejectId: 6, campaignTitle: "[배송형] 프리미엄 커피 원두", partnerName: "커피빈즈", reviewerName: "한커피", rejectCode: "R002", rejectCodeLabel: "가이드 불이행", rejectReason: "무성의한 내용 (50자 미만 작성)", aiRecommendedCodes: ["R002", "R008"], processedAt: "2026-03-15T13:00:00+09:00", processedBy: "김관리" },
+      { rejectId: 7, campaignTitle: "[방문형] 레스토랑 방문", partnerName: "맛있는식당", reviewerName: "오맛집", rejectCode: "R006", rejectCodeLabel: "부적절한 콘텐츠 요청", rejectReason: "캠페인 가이드와 무관한 홍보 콘텐츠 요청", aiRecommendedCodes: ["R006"], processedAt: "2026-03-14T10:00:00+09:00", processedBy: "AI 자동 탐지" },
+    ];
+    // 반려 코드별 라벨 맵
+    var rejectCodeLabels = { R001: "구매 정보 불일치", R002: "가이드 불이행", R003: "콘텐츠 오류", R004: "이미지 도용 의심", R005: "반복 반려 의심", R006: "부적절한 콘텐츠 요청", R007: "출금 정보 불일치", R008: "그외 비매너 행위" };
+    var rejectStats = [];
+    ["R001","R002","R003","R004","R005","R006","R007","R008"].forEach(function(c) {
+      var cnt = rejectedList.filter(function(r) { return r.rejectCode === c; }).length;
+      rejectStats.push({ code: c, label: rejectCodeLabels[c], count: cnt });
+    });
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: {
+        rejectStats: rejectStats,
+        rejectList: rejectedList.map(function(r) { return Object.assign({}, r, { campaignId: r.rejectId * 100 + 1000, reviewerId: r.rejectId * 10 + 2000 }); }),
+        pagination: { totalCount: rejectedList.length, currentPage: 1, totalPages: 1, limit: 15 },
+      },
+    });
+  }
+
+  // ============ PUT /api/admin/campaigns/rejected/:id/code ============
+  if (req.method === "PUT" && req.path.match(/^\/api\/admin\/campaigns\/rejected\/\d+\/code$/)) {
+    return res.status(200).json({ result: "OK", message: "반려 코드가 업데이트되었습니다." });
+  }
+
+  // ============ POST /api/admin/campaigns/rejected/:id/report ============
+  if (req.method === "POST" && req.path.match(/^\/api\/admin\/campaigns\/rejected\/\d+\/report$/)) {
+    return res.status(200).json({ result: "OK", message: "신고가 접수되었습니다." });
+  }
+
+  // ============ GET /api/admin/users/blocked ============
+  // GA-05: 이용 제한 목록 조회
+  if (req.method === "GET" && (req.path === "/api/admin/users/blocked" || req.path === "/admin/users/blocked")) {
+    var blockedList = [
+      { blockId: 1, userId: 1, name: "관리자 테스트", businessName: null, division: "admin", id: "admin_1", ip: "192.168.1.1", point: 0, blockCode: "B004", blockReason: "커뮤니티 가이드 위반", createdAt: "2026-02-09T15:30:00+09:00", createdBy: "시스템" },
+      { blockId: 2, userId: 17, name: "탈퇴회원테스트", businessName: null, division: "reviewer", id: "17", ip: "567.567.56.7", point: 0, blockCode: "B001", blockReason: "반복 반려 누적", createdAt: "2026-02-08T14:20:00+09:00", createdBy: "시스템" },
+      { blockId: 3, userId: 6, name: "일이삼사오육칠팔구십", businessName: null, division: "reviewer", id: "6", ip: "192.168.1.1", point: 1500000, blockCode: "B001", blockReason: "반복 반려 누적", createdAt: "2026-03-01T18:56:00+09:00", createdBy: "시스템" },
+      { blockId: 4, userId: 5, name: "김파트너", businessName: "마크엑스컴퍼니", division: "partner", id: "5", ip: "10.0.0.5", point: 350000, blockCode: "B005", blockReason: "비정상 운영 행위", createdAt: "2026-02-28T10:15:00+09:00", createdBy: "김관리" },
+      { blockId: 5, userId: 16, name: "박파트너", businessName: "테스트컴퍼니", division: "partner", id: "16", ip: "172.16.0.1", point: 0, blockCode: "B007", blockReason: "부적절 캠페인 게시", createdAt: "2026-02-25T09:00:00+09:00", createdBy: "시스템" },
+      { blockId: 6, userId: 3, name: "이리뷰어", businessName: null, division: "reviewer", id: "3", ip: "192.168.2.50", point: 25000, blockCode: "B002", blockReason: "무단 이탈·노쇼 누적", createdAt: "2026-03-05T14:30:00+09:00", createdBy: "김관리" },
+      { blockId: 7, userId: 4, name: "최리뷰어", businessName: null, division: "reviewer", id: "4", ip: "192.168.3.100", point: 8000, blockCode: "B003", blockReason: "반복 취소 누적", createdAt: "2026-03-10T11:20:00+09:00", createdBy: "시스템" },
+      { blockId: 8, userId: 2, name: "정파트너", businessName: "뷰티랩", division: "partner", id: "2", ip: "10.0.0.10", point: 120000, blockCode: "B006", blockReason: "콘텐츠 도용/중복", createdAt: "2026-03-15T16:45:00+09:00", createdBy: "AI 자동 탐지" },
+      { blockId: 9, userId: 7, name: "강리뷰어", businessName: null, division: "reviewer", id: "7", ip: "192.168.4.200", point: 45000, blockCode: "B008", blockReason: "비정상 요청/접근", createdAt: "2026-03-18T08:30:00+09:00", createdBy: "시스템" },
+    ];
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: { totalCount: blockedList.length, blockedList: blockedList },
+    });
+  }
+
+  // ============ POST /api/admin/users/:id/block ============
+  // GA-04/05: 이용 제한 등록 (차단)
+  if (req.method === "POST" && req.path.match(/^\/api\/admin\/users\/\d+\/block$/)) {
+    return res.status(200).json({ result: "OK", message: "이용 제한이 등록되었습니다." });
+  }
+
+  // ============ DELETE /api/admin/users/:id/block ============
+  // GA-04/05: 이용 제한 해제
+  if (req.method === "DELETE" && req.path.match(/^\/api\/admin\/users\/\d+\/block$/)) {
+    return res.status(200).json({ result: "OK", message: "이용 제한이 해제되었습니다." });
+  }
+
+  // ============ GET /api/admin/reviewers/stats ============
+  // GA-06: 리뷰어 통계 (stats가 /reviewers/:id보다 먼저 매칭되어야 함)
+  if (req.method === "GET" && req.path === "/api/admin/reviewers/stats") {
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: { monthlyNew: 1, total: 10, monthlyActive: 8, dormant: 2 },
+    });
+  }
+
+  // ============ GET /api/admin/reviewers/:id/campaigns ============
+  // GA-07: 리뷰어 캠페인 진행 내역
+  if (req.method === "GET" && req.path.match(/^\/api\/admin\/reviewers\/\d+\/campaigns$/)) {
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: {
+        totalCount: 3,
+        campaigns: [
+          { campaignId: 501, campaignTitle: "신제품 블로그 리뷰", status: "COMPLETED", type: "DELIVERY", channel: "Blog", rewardPoint: 30000 },
+          { campaignId: 502, campaignTitle: "카페 방문 리뷰 캠페인", status: "IN_PROGRESS", type: "VISIT", channel: "Instagram", rewardPoint: 15000 },
+          { campaignId: 503, campaignTitle: "스킨케어 구매 리뷰", status: "COMPLETED", type: "PURCHASE", channel: "Blog", rewardPoint: 20000 },
+        ],
+      },
+    });
+  }
+
+  // ============ GET /api/admin/reviewers/:id/penalties ============
+  // GA-07: 리뷰어 패널티 내역
+  if (req.method === "GET" && req.path.match(/^\/api\/admin\/reviewers\/\d+\/penalties$/)) {
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: {
+        totalCount: 2,
+        penalties: [
+          { penaltyHistoryId: 10, penaltyCode: "W001", penaltyReason: "선정 후 취소", penaltyScore: 30, imposeType: "SYSTEM", createdAt: "2026-01-15T11:00:00+09:00", currentStatus: "경고" },
+          { penaltyHistoryId: 11, penaltyCode: "W003", penaltyReason: "콘텐츠 미제출", penaltyScore: 50, imposeType: "PARTNER", createdAt: "2026-02-20T14:30:00+09:00", currentStatus: "주의" },
+        ],
+      },
+    });
+  }
+
+  // ============ GET /api/admin/reviewers/:id ============
+  // GA-07: 리뷰어 상세 조회
+  if (req.method === "GET" && req.path.match(/^\/api\/admin\/reviewers\/\d+$/)) {
+    var rvId = Number(req.path.split("/").pop());
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: {
+        basicInfo: {
+          userId: rvId, reviewerId: rvId, status: "ACTIVE",
+          profileImageUrl: null, nickname: "리뷰어" + rvId, name: "테스트" + rvId,
+          gender: "M", age: 28, email: "reviewer" + rvId + "@test.com",
+          phoneNum: "010-1234-" + String(rvId).padStart(4, "0"),
+          address: "서울시 강남구 테헤란로 " + rvId,
+        },
+        activityInfo: {
+          campaignInProgress: 3, campaignCompleted: 25, penaltyCount: 2,
+          lastLoginAt: "2026-03-20T14:30:00+09:00", createdAt: "2025-06-01T09:00:00+09:00",
+          pointBalance: 85000, pointWithdrawn: 200000,
+        },
+        channelInfo: [
+          { channelId: 1, channelName: "Instagram", externalId: "@reviewer" + rvId, channelUrl: "https://instagram.com/reviewer" + rvId, followers: 12000, dailyVisitors: null },
+          { channelId: 2, channelName: "Blog", externalId: "reviewer" + rvId, channelUrl: "https://blog.naver.com/reviewer" + rvId, followers: null, dailyVisitors: 800 },
+        ],
+        bankAccountInfo: {
+          bankName: "국민은행", accountNumber: "123-456-789012",
+          accountHolder: "테스트" + rvId, ssnMasked: "900101-1******",
+        },
+      },
+    });
+  }
+
+  // ============ GET /api/admin/reviewers ============
+  // GA-06: 리뷰어 목록 조회
+  if (req.method === "GET" && (req.path === "/api/admin/reviewers" || req.path === "/admin/reviewers")) {
+    var reviewersList = [
+      { userId: 1, nickname: "오은영", channels: ["blog", "clip", "instagram"], division: "NORMAL", lastLoginAt: "2026-03-10T09:00:00+09:00", createdAt: "2025-06-01T10:00:00+09:00", campaignParticipated: 5, campaignCompleted: 4, holdingPoint: 50000, withdrawalPoint: 30000, memberType: "NORMAL", status: "ACTIVE" },
+      { userId: 2, nickname: "은지블로그", channels: ["blog", "clip"], division: "NORMAL", lastLoginAt: "2026-01-20T16:45:00+09:00", createdAt: "2025-12-12T14:30:00+09:00", campaignParticipated: 12, campaignCompleted: 10, holdingPoint: 1500000, withdrawalPoint: 132500000, memberType: "NORMAL", status: "ACTIVE" },
+      { userId: 3, nickname: "박철수", channels: ["instagram", "youtube"], division: "INFLUENCER", lastLoginAt: "2026-03-18T16:30:00+09:00", createdAt: "2025-05-20T11:00:00+09:00", campaignParticipated: 25, campaignCompleted: 22, holdingPoint: 350000, withdrawalPoint: 500000, memberType: "NORMAL", status: "ACTIVE" },
+      { userId: 4, nickname: "이수진", channels: ["blog", "instagram"], division: "NORMAL", lastLoginAt: "2026-02-01T10:00:00+09:00", createdAt: "2025-08-10T09:00:00+09:00", campaignParticipated: 3, campaignCompleted: 2, holdingPoint: 15000, withdrawalPoint: 10000, memberType: "NORMAL", status: "ACTIVE" },
+      { userId: 5, nickname: "정민호", channels: ["youtube"], division: "SUPPORTERS", lastLoginAt: "2026-03-20T11:00:00+09:00", createdAt: "2025-09-01T09:00:00+09:00", campaignParticipated: 8, campaignCompleted: 7, holdingPoint: 95000, withdrawalPoint: 60000, memberType: "NORMAL", status: "ACTIVE" },
+      { userId: 6, nickname: "한지은", channels: ["blog", "clip"], division: "NORMAL", lastLoginAt: "2026-03-19T09:30:00+09:00", createdAt: "2025-10-15T09:00:00+09:00", campaignParticipated: 6, campaignCompleted: 5, holdingPoint: 45000, withdrawalPoint: 25000, memberType: "RESTRICTED", status: "ACTIVE" },
+      { userId: 7, nickname: "최동욱", channels: ["instagram"], division: "NORMAL", lastLoginAt: "2026-01-05T10:00:00+09:00", createdAt: "2025-04-01T09:00:00+09:00", campaignParticipated: 2, campaignCompleted: 1, holdingPoint: 5000, withdrawalPoint: 0, memberType: "NORMAL", status: "WITHDRAW" },
+      { userId: 8, nickname: "송미래", channels: ["blog", "instagram", "youtube"], division: "INFLUENCER", lastLoginAt: "2026-03-22T15:00:00+09:00", createdAt: "2025-03-15T09:00:00+09:00", campaignParticipated: 30, campaignCompleted: 28, holdingPoint: 500000, withdrawalPoint: 1200000, memberType: "NORMAL", status: "ACTIVE" },
+      { userId: 9, nickname: "임태영", channels: ["clip"], division: "NORMAL", lastLoginAt: "2026-03-21T12:00:00+09:00", createdAt: "2026-01-05T09:00:00+09:00", campaignParticipated: 1, campaignCompleted: 0, holdingPoint: 0, withdrawalPoint: 0, memberType: "NORMAL", status: "ACTIVE" },
+      { userId: 10, nickname: "강서연", channels: ["blog", "instagram"], division: "SUPPORTERS", lastLoginAt: "2026-03-17T10:00:00+09:00", createdAt: "2025-11-01T09:00:00+09:00", campaignParticipated: 10, campaignCompleted: 9, holdingPoint: 75000, withdrawalPoint: 45000, memberType: "NORMAL", status: "ACTIVE" },
+    ];
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: { totalCount: reviewersList.length, reviewers: reviewersList },
+    });
+  }
+
+  // ============ GET /api/admin/reviewers/download ============
+  // GA-06: 리뷰어 목록 다운로드
+  if (req.method === "GET" && req.path === "/api/admin/reviewers/download") {
+    return res.status(200).json({ result: "OK", message: "다운로드 준비 완료" });
+  }
+
+  // ============ GET /api/admin/partners/stats ============
+  // GA-08: 파트너 통계
+  if (req.method === "GET" && req.path === "/api/admin/partners/stats") {
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: { monthlyNew: 1, total: 10, monthlyActive: 6, dormant: 4 },
+    });
+  }
+
+  // ============ GET /api/admin/partners/download ============
+  if (req.method === "GET" && req.path === "/api/admin/partners/download") {
+    return res.status(200).json({ result: "OK", message: "다운로드 준비 완료" });
+  }
+
+  // ============ GET /api/admin/partners/:id/campaigns ============
+  // GA-09: 파트너 캠페인 진행 내역
+  if (req.method === "GET" && req.path.match(/^\/api\/admin\/partners\/\d+\/campaigns$/)) {
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: {
+        totalCount: 3,
+        campaigns: [
+          { campaignId: 201, campaignTitle: "뷰티 제품 인스타 리뷰", status: "COMPLETED", type: "DELIVERY", channel: "Instagram", rewardPoint: 50000 },
+          { campaignId: 202, campaignTitle: "건강식품 블로그 체험단", status: "IN_PROGRESS", type: "DELIVERY", channel: "Blog", rewardPoint: 30000 },
+          { campaignId: 203, campaignTitle: "카페 방문 리뷰", status: "COMPLETED", type: "VISIT", channel: "Blog", rewardPoint: 20000 },
+        ],
+      },
+    });
+  }
+
+  // ============ GET /api/admin/partners/:id/penalties ============
+  // GA-09: 파트너 패널티 내역
+  if (req.method === "GET" && req.path.match(/^\/api\/admin\/partners\/\d+\/penalties$/)) {
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: {
+        totalCount: 1,
+        penalties: [
+          { penaltyHistoryId: 20, penaltyCode: "W006", penaltyReason: "게시 후 삭제", penaltyScore: 20, imposeType: "ADMIN", createdAt: "2026-01-20T14:00:00+09:00", currentStatus: "경고" },
+        ],
+      },
+    });
+  }
+
+  // ============ GET /api/admin/partners/:id/business-license ============
+  // GA-09: 사업자등록증 다운로드
+  if (req.method === "GET" && req.path.match(/^\/api\/admin\/partners\/\d+\/business-license$/)) {
+    return res.status(200).json({ result: "OK", message: "사업자등록증 다운로드" });
+  }
+
+  // ============ GET /api/admin/partners/:id ============
+  // GA-09: 파트너 상세 조회
+  if (req.method === "GET" && req.path.match(/^\/api\/admin\/partners\/\d+$/)) {
+    var ptId = Number(req.path.split("/").pop());
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: {
+        basicInfo: {
+          userId: ptId + 400, partnerId: ptId, status: "ACTIVE",
+          profileImageUrl: null, businessName: "테스트파트너" + ptId,
+          businessType: "CORPORATE", email: "partner" + ptId + "@test.com",
+          phoneNum: "010-9876-" + String(ptId).padStart(4, "0"),
+          address: "서울시 서초구 서초대로 " + ptId,
+        },
+        activityInfo: {
+          campaignInProgress: 2, campaignCompleted: 10, penaltyCount: 1,
+          lastLoginAt: "2026-03-20T09:00:00+09:00", createdAt: "2025-09-15T10:00:00+09:00",
+          pointBalance: 500000, pointPaid: 1500000,
+        },
+        businessInfo: {
+          businessName: "테스트파트너" + ptId, ceoName: "김대표" + ptId,
+          businessNumber: "123-45-6789" + ptId,
+          businessLicenseUrl: null,
+        },
+        contactInfo: { csNumber: "010-1111-" + String(ptId).padStart(4, "0") },
+      },
+    });
+  }
+
+  // ============ GET /api/admin/partners ============
+  // GA-08: 파트너 목록 조회
+  if (req.method === "GET" && (req.path === "/api/admin/partners" || req.path === "/admin/partners")) {
+    var partnersList = [
+      { partnerId: 1, userId: 501, businessName: "주식회사 청명종합광고기획", ceoName: "김민회", businessType: "CORPORATE", email: "contact@cmcm.co.kr", phoneNum: "02-1234-5678", grade: "NORMAL", status: "ACTIVE", campaignCount: 15, penaltyCount: 3, createdAt: "2025-12-07T10:20:00+09:00", lastLoginAt: "2026-01-18T14:30:00+09:00" },
+      { partnerId: 2, userId: 502, businessName: "마크엑스컴퍼니", ceoName: "이사장", businessType: "CORPORATE", email: "test@test.com", phoneNum: "010-1234-5678", grade: "EXCELLENT", status: "ACTIVE", campaignCount: 25, penaltyCount: 0, createdAt: "2025-06-01T09:00:00+09:00", lastLoginAt: "2026-03-20T10:00:00+09:00" },
+      { partnerId: 3, userId: 503, businessName: "테스트컴퍼니", ceoName: "김테스트", businessType: "INDIVIDUAL", email: "aaaa@test.com", phoneNum: "010-5555-5555", grade: "NORMAL", status: "ACTIVE", campaignCount: 3, penaltyCount: 0, createdAt: "2026-01-15T09:00:00+09:00", lastLoginAt: "2026-03-22T15:00:00+09:00" },
+      { partnerId: 4, userId: 504, businessName: "카페베네", ceoName: "박카페", businessType: "CORPORATE", email: "cafe@bene.com", phoneNum: "02-9876-5432", grade: "CAUTION", status: "ACTIVE", campaignCount: 8, penaltyCount: 1, createdAt: "2025-08-20T09:00:00+09:00", lastLoginAt: "2026-03-15T11:00:00+09:00" },
+      { partnerId: 5, userId: 505, businessName: "뷰티랩", ceoName: "정뷰티", businessType: "INDIVIDUAL", email: "beauty@lab.com", phoneNum: "010-3333-4444", grade: "NORMAL", status: "ACTIVE", campaignCount: 12, penaltyCount: 0, createdAt: "2025-10-01T09:00:00+09:00", lastLoginAt: "2026-03-18T09:30:00+09:00" },
+      { partnerId: 6, userId: 506, businessName: "테크코리아", ceoName: "최테크", businessType: "CORPORATE", email: "tech@korea.com", phoneNum: "02-5555-6666", grade: "WARNING", status: "PAUSED", campaignCount: 5, penaltyCount: 2, createdAt: "2025-07-15T09:00:00+09:00", lastLoginAt: "2026-02-28T10:00:00+09:00" },
+      { partnerId: 7, userId: 507, businessName: "소셜플러스", ceoName: "한소셜", businessType: "CORPORATE", email: "social@plus.com", phoneNum: "02-7777-8888", grade: "RESTRICTED", status: "BLOCKED", campaignCount: 2, penaltyCount: 5, createdAt: "2025-09-01T09:00:00+09:00", lastLoginAt: "2026-01-05T10:00:00+09:00" },
+      { partnerId: 8, userId: 508, businessName: "맛있는식당", ceoName: "오맛집", businessType: "INDIVIDUAL", email: "food@yummy.com", phoneNum: "010-8888-9999", grade: "NORMAL", status: "WITHDRAW", campaignCount: 1, penaltyCount: 0, createdAt: "2025-11-20T09:00:00+09:00", lastLoginAt: "2026-01-10T10:00:00+09:00" },
+      { partnerId: 9, userId: 509, businessName: "커피빈즈", ceoName: "강커피", businessType: "INDIVIDUAL", email: "coffee@beans.com", phoneNum: "010-2222-3333", grade: "EXCELLENT", status: "ACTIVE", campaignCount: 18, penaltyCount: 0, createdAt: "2025-05-10T09:00:00+09:00", lastLoginAt: "2026-03-21T14:00:00+09:00" },
+      { partnerId: 10, userId: 510, businessName: "프리미엄마케팅", ceoName: "류마케팅", businessType: "CORPORATE", email: "premium@marketing.com", phoneNum: "02-1111-2222", grade: "NORMAL", status: "ACTIVE", campaignCount: 7, penaltyCount: 1, createdAt: "2025-04-01T09:00:00+09:00", lastLoginAt: "2026-03-19T16:00:00+09:00" },
+    ];
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: { totalCount: partnersList.length, partners: partnersList },
+    });
+  }
+
+  // ============ GET /api/admin/reports/codes ============
+  if (req.method === "GET" && req.path === "/api/admin/reports/codes") {
+    const codes = [
+      { code: "W001", targetType: "리뷰어", label: "선정 후 취소" },
+      { code: "W002", targetType: "리뷰어", label: "지각 제출" },
+      { code: "W003", targetType: "리뷰어", label: "무단 이탈 · 노쇼" },
+      { code: "W004", targetType: "리뷰어", label: "노출 기간 불이행" },
+      { code: "W005", targetType: "리뷰어", label: "수정 요청 불이행" },
+      { code: "W006", targetType: "파트너", label: "게시 후 취소" },
+      { code: "W007", targetType: "파트너", label: "부적절한 캠페인 게시" },
+      { code: "W008", targetType: "파트너", label: "공정위 위반 요청" },
+      { code: "W009", targetType: "시스템", label: "비정상 요청 반복" },
+      { code: "W010", targetType: "시스템", label: "중복 계정 탐지" },
+      { code: "W011", targetType: "시스템", label: "콘텐츠 중복 탐지" },
+      { code: "W012", targetType: "시스템", label: "비정상 접근 기록" },
+      { code: "W013", targetType: "기타", label: "그외 비매너 행위" },
+    ];
+    return res.status(200).json({ result: "OK", data: { codes } });
+  }
+
+  // ============ GET /api/admin/reports/stats ============
+  if (req.method === "GET" && req.path === "/api/admin/reports/stats") {
+    // report_history에서 코드별 집계
+    let reports = [];
+    if (db) {
+      try { reports = db.get("report_history").value() || []; } catch (_e) { /* fallback */ }
+    }
+    if (!reports.length) {
+      try { reports = require("./db.json").report_history || []; } catch (_e) { /* fallback */ }
+    }
+
+    // 날짜 필터 적용
+    const { startDate, endDate } = req.query;
+    let filtered = reports;
+    if (startDate || endDate) {
+      filtered = reports.filter(r => {
+        const d = (r.processed_date || r.processedAt || "").split(" ")[0];
+        if (startDate && d < startDate) return false;
+        if (endDate && d > endDate) return false;
+        return true;
+      });
+    }
+
+    const statsMap = {};
+    for (const r of filtered) {
+      const code = r.report_code || r.reportCode;
+      if (code) statsMap[code] = (statsMap[code] || 0) + 1;
+    }
+    const stats = Object.entries(statsMap).map(([code, count]) => ({ code, count }));
+
+    return res.status(200).json({ result: "OK", data: { stats } });
+  }
+
+  // ============ GET /api/admin/reports ============
+  if (req.method === "GET" && req.path === "/api/admin/reports") {
+    let reports = [];
+    if (db) {
+      try { reports = db.get("report_history").value() || []; } catch (_e) { /* fallback */ }
+    }
+    if (!reports.length) {
+      try { reports = require("./db.json").report_history || []; } catch (_e) { /* fallback */ }
+    }
+
+    const { startDate, endDate, reportCode, keyword, sort, order } = req.query;
+
+    // 필터링
+    let filtered = reports.filter(r => {
+      const d = (r.processed_date || r.processedAt || "").split(" ")[0];
+      if (startDate && d < startDate) return false;
+      if (endDate && d > endDate) return false;
+      const code = r.report_code || r.reportCode;
+      if (reportCode && code !== reportCode) return false;
+      if (keyword) {
+        const kw = keyword.toLowerCase();
+        const name = (r.campaign_name || r.campaignTitle || "").toLowerCase();
+        const target = (r.target || r.targetName || "").toLowerCase();
+        const number = (r.campaign_number || r.reportNumber || "").toLowerCase();
+        if (!name.includes(kw) && !target.includes(kw) && !number.includes(kw)) return false;
+      }
+      return true;
+    });
+
+    // 정렬
+    const sortField = sort || "processedAt";
+    const sortOrder = order || "desc";
+    filtered.sort((a, b) => {
+      let va, vb;
+      if (sortField === "reportCount") {
+        va = a.report_count ?? a.reportCount ?? 0;
+        vb = b.report_count ?? b.reportCount ?? 0;
+      } else {
+        va = a.processed_date || a.processedAt || "";
+        vb = b.processed_date || b.processedAt || "";
+      }
+      if (va < vb) return sortOrder === "asc" ? -1 : 1;
+      if (va > vb) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    // mock 데이터 → 백엔드 응답 형식으로 변환
+    const mapped = filtered.map((r, idx) => ({
+      reportNumber: r.campaign_number || r.reportNumber || String(r.id),
+      campaignTitle: r.campaign_name || r.campaignTitle || "",
+      targetName: r.target || r.targetName || "",
+      targetType: r.targetType || "REVIEWER",
+      targetUserId: r.target_user_id || r.targetUserId || (2000 + (r.id || idx)),
+      inspector: r.inspector || "",
+      inspectorType: r.inspectorType || "ADMIN",
+      reportCode: r.report_code || r.reportCode || "",
+      reportCodeLabel: r.report_reason || r.reportCodeLabel || "",
+      reportCount: r.report_count ?? r.reportCount ?? 1,
+      processedAt: (r.processed_date || r.processedAt || "").includes("T")
+        ? r.processed_date || r.processedAt
+        : (r.processed_date || r.processedAt || "").replace(" ", "T") + ":00",
+    }));
+
+    return res.status(200).json({ result: "OK", data: { reports: mapped } });
+  }
+
+  // ============ POST /api/admin/login ============
+  // GA/SA 관리자 로그인
+  if (req.method === "POST" && (req.path === "/api/admin/login" || req.path === "/admin/login")) {
+    const { email, password } = req.body || {};
+
+    const adminAccounts = {
+      "manager_ga@test.com": {
+        password: "cjdaud1!",
+        id: "admin_ga_001",
+        name: "김관리",
+        role: "manager_ga",
+        admin_level: "GA",
+        status: "ACTIVE",
+      },
+      "manager_sa@test.com": {
+        password: "cjdaud1!",
+        id: "admin_sa_001",
+        name: "박최고",
+        role: "manager_sa",
+        admin_level: "SA",
+        status: "ACTIVE",
+      },
+      "blocked_ga@test.com": {
+        password: "cjdaud1!",
+        id: "admin_ga_002",
+        name: "차단관리자",
+        role: "manager_ga",
+        admin_level: "GA",
+        status: "BLOCKED",
+      },
+      "banned_ga@test.com": {
+        password: "cjdaud1!",
+        id: "admin_ga_003",
+        name: "정지관리자",
+        role: "manager_ga",
+        admin_level: "GA",
+        status: "BANNED",
+      },
+    };
+
+    const account = adminAccounts[email];
+
+    if (!account) {
+      return res.status(401).json({
+        result: "ERROR",
+        error: { code: "INVALID_CREDENTIALS", message: "아이디 또는 비밀번호가 일치하지 않습니다." },
+      });
+    }
+
+    if (account.password !== password) {
+      return res.status(401).json({
+        result: "ERROR",
+        error: { code: "INVALID_CREDENTIALS", message: "아이디 또는 비밀번호가 일치하지 않습니다." },
+      });
+    }
+
+    if (account.status === "BANNED") {
+      return res.status(403).json({
+        result: "ERROR",
+        error: { code: "ACCOUNT_BANNED", message: "정지되었거나 탈퇴된 계정입니다." },
+      });
+    }
+
+    if (account.status === "BLOCKED") {
+      return res.status(200).json({
+        result: "OK",
+        user: {
+          id: account.id,
+          email,
+          name: account.name,
+          role: account.role,
+          admin_level: account.admin_level,
+          status: "BLOCKED",
+        },
+        token: "mock_admin_token_" + account.id + "_" + Date.now(),
+      });
+    }
+
+    // 관리자 세션 업데이트
+    adminSession = { id: account.id, email, name: account.name, role: account.role };
+    adminNotificationsDeleted = false; // 세션 변경 시 삭제 상태 초기화
+
+    return res.status(200).json({
+      result: "OK",
+      user: {
+        id: account.id,
+        email,
+        name: account.name,
+        role: account.role,
+        admin_level: account.admin_level,
+        status: "ACTIVE",
+      },
+      token: "mock_admin_token_" + account.id + "_" + Date.now(),
+    });
+  }
+
   // ============ POST /partner/login ============
   if (req.method === "POST" && req.path === "/partner/login") {
     const { email, password } = req.body;
@@ -67,10 +831,29 @@ module.exports = function createMiddleware(db) {
       },
     };
 
+    // GA 파트너 목록 계정 (전부 로그인 가능)
+    var gaPartnerAccounts = {
+      "contact@cmcm.co.kr": { password: "cjdaud1!", status: "ACTIVE", userId: 501, name: "김민회", phoneNum: "02-1234-5678", partnerId: 1, businessName: "주식회사 청명종합광고기획", ceoName: "김민회", businessNumber: "122-86-45790", grade: "NORMAL" },
+      "test@test.com": { password: "cjdaud1!", status: "ACTIVE", userId: 502, name: "이사장", phoneNum: "010-1234-5678", partnerId: 2, businessName: "마크엑스컴퍼니", ceoName: "이사장", businessNumber: "123-45-67890", grade: "EXCELLENT" },
+      "aaaa@test.com": { password: "akzmdprtm1!", status: "ACTIVE", userId: 503, name: "김테스트", phoneNum: "010-5555-5555", partnerId: 3, businessName: "테스트컴퍼니", ceoName: "김테스트", businessNumber: "234-56-78901", grade: "NORMAL" },
+      "cafe@bene.com": { password: "cjdaud1!", status: "ACTIVE", userId: 504, name: "박카페", phoneNum: "02-9876-5432", partnerId: 4, businessName: "카페베네", ceoName: "박카페", businessNumber: "345-67-89012", grade: "CAUTION" },
+      "beauty@lab.com": { password: "cjdaud1!", status: "ACTIVE", userId: 505, name: "정뷰티", phoneNum: "010-3333-4444", partnerId: 5, businessName: "뷰티랩", ceoName: "정뷰티", businessNumber: "456-78-90123", grade: "NORMAL" },
+      "tech@korea.com": { password: "cjdaud1!", status: "PAUSED", userId: 506, name: "최테크", phoneNum: "02-5555-6666", partnerId: 6, businessName: "테크코리아", ceoName: "최테크", businessNumber: "567-89-01234", grade: "WARNING" },
+      "social@plus.com": { password: "cjdaud1!", status: "BLOCKED", userId: 507, name: "한소셜", phoneNum: "02-7777-8888", partnerId: 7, businessName: "소셜플러스", ceoName: "한소셜", businessNumber: "678-90-12345", grade: "RESTRICTED" },
+      "food@yummy.com": { password: "cjdaud1!", status: "WITHDRAW", userId: 508, name: "오맛집", phoneNum: "010-8888-9999", partnerId: 8, businessName: "맛있는식당", ceoName: "오맛집", businessNumber: "789-01-23456", grade: "NORMAL" },
+      "coffee@beans.com": { password: "cjdaud1!", status: "ACTIVE", userId: 509, name: "강커피", phoneNum: "010-2222-3333", partnerId: 9, businessName: "커피빈즈", ceoName: "강커피", businessNumber: "890-12-34567", grade: "EXCELLENT" },
+      "premium@marketing.com": { password: "cjdaud1!", status: "ACTIVE", userId: 510, name: "류마케팅", phoneNum: "02-1111-2222", partnerId: 10, businessName: "프리미엄마케팅", ceoName: "류마케팅", businessNumber: "901-23-45678", grade: "NORMAL" },
+    };
+
     // 1) 특수 계정 체크
     let account = specialAccounts[email];
 
-    // 2) db.json partner_mypage에서 계정 조회
+    // 2) GA 파트너 목록 계정 체크
+    if (!account && gaPartnerAccounts[email]) {
+      account = gaPartnerAccounts[email];
+    }
+
+    // 3) db.json partner_mypage에서 계정 조회
     if (!account && db) {
       const profiles = db.get("partner_mypage").value() || [];
       const profile = profiles.find((p) => p.email === email);
@@ -521,6 +1304,287 @@ module.exports = function createMiddleware(db) {
     });
   }
 
+  // ============ 관리자(GA/SA) 알림 API ============
+
+  // GET /api/admin/notifications — 알림 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin/notifications") {
+    if (adminNotificationsDeleted) {
+      return res.status(200).json({
+        result: "OK",
+        generatedAt: new Date().toISOString(),
+        data: { totalCount: 0, unreadCount: 0, totalPages: 0, currentPage: 1, size: 20, notifications: [] },
+      });
+    }
+
+    const dbData = require("./db.json");
+    let items = (dbData.admin_notifications || []).filter(
+      (n) => n.userId === adminSession.id
+    );
+
+    // 필터: category
+    if (req.query.category) {
+      items = items.filter((n) => n.category === req.query.category);
+    }
+    // 필터: isRead
+    if (req.query.isRead !== undefined) {
+      const isRead = req.query.isRead === "true";
+      items = items.filter((n) => n.isRead === isRead);
+    }
+
+    const page = Number(req.query.page) || 1;
+    const size = Number(req.query.size) || 20;
+    const totalCount = items.length;
+    const unreadCount = items.filter((n) => !n.isRead).length;
+    const totalPages = Math.ceil(totalCount / size);
+    const start = (page - 1) * size;
+    const sliced = items.slice(start, start + size);
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: { totalCount, unreadCount, totalPages, currentPage: page, size, notifications: sliced.map(({ userId, ...rest }) => rest) },
+    });
+  }
+
+  // PATCH /api/admin/notifications/:id/read — 알림 읽음 처리
+  if (req.method === "PATCH" && /^\/api\/admin\/notifications\/\d+\/read$/.test(req.path)) {
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // PATCH /api/admin/notifications/read-all — 전체 읽음 처리
+  if (req.method === "PATCH" && req.path === "/api/admin/notifications/read-all") {
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // DELETE /api/admin/notifications/all — 전체 삭제
+  if (req.method === "DELETE" && req.path === "/api/admin/notifications/all") {
+    adminNotificationsDeleted = true;
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // DELETE /api/admin/notifications/:id — 개별 삭제
+  if (req.method === "DELETE" && /^\/api\/admin\/notifications\/\d+$/.test(req.path)) {
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // ============ 카테고리 API ============
+
+  /** community_categories 컬렉션에서 데이터 읽기 */
+  function getCategories() {
+    if (db) {
+      try { return db.get("community_categories").value() || []; } catch (_e) { /* fallback */ }
+    }
+    return [];
+  }
+
+  // GET /api/admin/board-categories — 카테고리 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin/board-categories") {
+    let categories = getCategories();
+    const { division, keyword } = req.query;
+    if (division) categories = categories.filter((c) => c.division === division);
+    if (keyword) categories = categories.filter((c) => c.categoryName && c.categoryName.includes(keyword));
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: { categories: categories.map(({ id, ...rest }) => ({ categoryId: rest.categoryId || id, ...rest })) },
+    });
+  }
+
+  // GET /api/admin/board-categories/form — 카테고리 등록 폼 옵션 조회
+  if (req.method === "GET" && req.path === "/api/admin/board-categories/form") {
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: {
+        divisions: [
+          { value: "NOTICE", label: "공지사항" },
+          { value: "QUESTIONS", label: "자주 묻는 질문" },
+        ],
+      },
+    });
+  }
+
+  // GET /api/admin/board-categories/:id — 카테고리 상세 조회
+  if (req.method === "GET" && /^\/api\/admin\/board-categories\/\d+$/.test(req.path)) {
+    const catId = parseInt(req.path.split("/").pop(), 10);
+    const categories = getCategories();
+    const cat = categories.find((c) => (c.categoryId || c.id) === catId);
+    if (!cat) return res.status(404).json({ result: "ERROR", error: { code: "CATEGORY_NOT_FOUND", message: "카테고리를 찾을 수 없습니다" } });
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: { categoryId: cat.categoryId || cat.id, division: cat.division, categoryName: cat.categoryName, boardCount: cat.boardCount || 0, createdAt: cat.createdAt, updatedAt: cat.updatedAt },
+    });
+  }
+
+  // POST /api/admin/board-categories — 카테고리 등록
+  if (req.method === "POST" && req.path === "/api/admin/board-categories") {
+    const { division, categoryName } = req.body || {};
+    if (!categoryName || categoryName.length < 2 || categoryName.length > 10) {
+      return res.status(400).json({ result: "ERROR", error: { code: "INVALID_CATEGORY_NAME_LENGTH", message: "카테고리명은 2~10자 이내로 입력해주세요" } });
+    }
+    const categories = getCategories();
+    const dup = categories.find((c) => c.division === division && c.categoryName === categoryName);
+    if (dup) return res.status(409).json({ result: "ERROR", error: { code: "DUPLICATE_CATEGORY_NAME", message: "이미 존재하는 카테고리명입니다" } });
+    const maxId = categories.reduce((m, c) => Math.max(m, c.categoryId || c.id || 0), 0);
+    const now = new Date().toISOString();
+    const newCat = { id: maxId + 1, categoryId: maxId + 1, division, categoryName, boardCount: 0, createdAt: now, updatedAt: now };
+    if (db) { try { db.get("community_categories").push(newCat).write(); } catch (_e) { /* */ } }
+    return res.status(200).json({ result: "OK", generatedAt: now, data: { categoryId: newCat.categoryId, division, categoryName, createdAt: now, updatedAt: now } });
+  }
+
+  // PUT /api/admin/board-categories/:id — 카테고리 수정
+  if (req.method === "PUT" && /^\/api\/admin\/board-categories\/\d+$/.test(req.path)) {
+    const catId = parseInt(req.path.split("/").pop(), 10);
+    const { categoryName } = req.body || {};
+    if (!categoryName || categoryName.length < 2 || categoryName.length > 10) {
+      return res.status(400).json({ result: "ERROR", error: { code: "INVALID_CATEGORY_NAME_LENGTH", message: "카테고리명은 2~10자 이내로 입력해주세요" } });
+    }
+    const categories = getCategories();
+    const cat = categories.find((c) => (c.categoryId || c.id) === catId);
+    if (!cat) return res.status(404).json({ result: "ERROR", error: { code: "CATEGORY_NOT_FOUND", message: "카테고리를 찾을 수 없습니다" } });
+    const dup = categories.find((c) => c.division === cat.division && c.categoryName === categoryName && (c.categoryId || c.id) !== catId);
+    if (dup) return res.status(409).json({ result: "ERROR", error: { code: "DUPLICATE_CATEGORY_NAME", message: "이미 존재하는 카테고리명입니다" } });
+    const now = new Date().toISOString();
+    cat.categoryName = categoryName;
+    cat.updatedAt = now;
+    if (db) { try { db.write(); } catch (_e) { /* */ } }
+    return res.status(200).json({ result: "OK", generatedAt: now, data: { categoryId: catId, division: cat.division, categoryName, boardCount: cat.boardCount || 0, createdAt: cat.createdAt, updatedAt: now } });
+  }
+
+  // DELETE /api/admin/board-categories/:id — 카테고리 삭제
+  if (req.method === "DELETE" && /^\/api\/admin\/board-categories\/\d+$/.test(req.path)) {
+    const catId = parseInt(req.path.split("/").pop(), 10);
+    const categories = getCategories();
+    const cat = categories.find((c) => (c.categoryId || c.id) === catId);
+    if (!cat) return res.status(404).json({ result: "ERROR", error: { code: "CATEGORY_NOT_FOUND", message: "카테고리를 찾을 수 없습니다" } });
+    if (cat.boardCount > 0) return res.status(409).json({ result: "ERROR", error: { code: "CATEGORY_HAS_BOARDS", message: "게시글이 등록된 상태에서는 삭제할 수 없습니다. 게시글을 삭제한 후 진행해 주세요." } });
+    if (db) { try { db.get("community_categories").remove((c) => (c.categoryId || c.id) === catId).write(); } catch (_e) { /* */ } }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString(), data: null });
+  }
+
+  // ============================================================
+  // 게시글 (Boards) CRUD — /api/admin/boards
+  // ============================================================
+
+  const getBoards = () => {
+    if (db) try { return db.get("community_posts").value() || []; } catch (_e) { /* */ }
+    return [];
+  };
+
+  // GET /api/admin/boards — 게시글 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin/boards") {
+    const boards = getBoards();
+    const { division, target, keyword, startDate, endDate, page = "1", size = "20" } = req.query;
+    let filtered = [...boards];
+    if (division) filtered = filtered.filter((b) => b.division === division);
+    if (target) filtered = filtered.filter((b) => b.target === target);
+    if (keyword) {
+      const kw = keyword.toLowerCase();
+      filtered = filtered.filter((b) => b.title.toLowerCase().includes(kw));
+    }
+    if (startDate) filtered = filtered.filter((b) => b.createdAt >= startDate);
+    if (endDate) filtered = filtered.filter((b) => b.createdAt <= endDate + " 23:59");
+    filtered.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+    const p = parseInt(page, 10);
+    const s = parseInt(size, 10);
+    const totalCount = filtered.length;
+    const totalPages = Math.ceil(totalCount / s) || 1;
+    const paged = filtered.slice((p - 1) * s, p * s);
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: { boards: paged, totalCount, totalPages, currentPage: p, size: s }
+    });
+  }
+
+  // GET /api/admin/boards/form — 폼 옵션 조회
+  if (req.method === "GET" && req.path === "/api/admin/boards/form") {
+    const categories = getCategories();
+    const boardCategories = categories.map((c) => ({
+      boardCategoryId: c.categoryId || c.id,
+      categoryName: c.categoryName || c.category_name,
+      division: c.division
+    }));
+    return res.status(200).json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      data: {
+        divisions: [{ value: "NOTICE", label: "공지사항" }, { value: "QUESTIONS", label: "자주 묻는 질문" }],
+        targets: [{ value: "ALL", label: "전체" }, { value: "REVIEWER", label: "리뷰어" }, { value: "PARTNER", label: "파트너" }, { value: "ADMIN", label: "관리자" }],
+        boardCategories
+      }
+    });
+  }
+
+  // GET /api/admin/boards/:id — 게시글 상세 조회
+  if (req.method === "GET" && /^\/api\/admin\/boards\/\d+$/.test(req.path)) {
+    const boardId = parseInt(req.path.split("/").pop(), 10);
+    const boards = getBoards();
+    const board = boards.find((b) => (b.boardId || b.id) === boardId);
+    if (!board) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString(), data: board });
+  }
+
+  // POST /api/admin/boards — 게시글 등록
+  if (req.method === "POST" && req.path === "/api/admin/boards") {
+    const { division, boardCategoryId, target, title, content } = req.body;
+    const boards = getBoards();
+    const categories = getCategories();
+    const cat = categories.find((c) => (c.categoryId || c.id) === boardCategoryId);
+    const maxId = boards.reduce((m, b) => Math.max(m, b.boardId || b.id || 0), 0);
+    const now = new Date();
+    const dateStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0") + " " + String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0");
+    const newBoard = {
+      id: maxId + 1, boardId: maxId + 1,
+      division, boardCategory: cat ? (cat.categoryName || cat.category_name) : "전체",
+      target, title, content: content || "",
+      viewCount: 0, isFixed: false, createdAt: dateStr, createdBy: "관리자"
+    };
+    if (db) try { db.get("community_posts").push(newBoard).write(); } catch (_e) { /* */ }
+    return res.status(201).json({ result: "OK", generatedAt: new Date().toISOString(), data: { boardId: newBoard.boardId } });
+  }
+
+  // PUT /api/admin/boards/:id — 게시글 수정
+  if (req.method === "PUT" && /^\/api\/admin\/boards\/\d+$/.test(req.path)) {
+    const boardId = parseInt(req.path.split("/").pop(), 10);
+    const boards = getBoards();
+    const board = boards.find((b) => (b.boardId || b.id) === boardId);
+    if (!board) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
+    const { division, boardCategoryId, target, title, content } = req.body;
+    const categories = getCategories();
+    const cat = categories.find((c) => (c.categoryId || c.id) === boardCategoryId);
+    const now = new Date();
+    const dateStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0") + " " + String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0");
+    if (db) try {
+      db.get("community_posts").find((b) => (b.boardId || b.id) === boardId)
+        .assign({ division, boardCategory: cat ? (cat.categoryName || cat.category_name) : board.boardCategory, target, title, content, updatedAt: dateStr }).write();
+    } catch (_e) { /* */ }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString(), data: { boardId } });
+  }
+
+  // PATCH /api/admin/boards/:id/fix — 게시글 고정/해제
+  if (req.method === "PATCH" && /^\/api\/admin\/boards\/\d+\/fix$/.test(req.path)) {
+    const parts = req.path.split("/");
+    const boardId = parseInt(parts[parts.length - 2], 10);
+    const boards = getBoards();
+    const board = boards.find((b) => (b.boardId || b.id) === boardId);
+    if (!board) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
+    const { isFixed } = req.body;
+    if (db) try {
+      db.get("community_posts").find((b) => (b.boardId || b.id) === boardId).assign({ isFixed }).write();
+    } catch (_e) { /* */ }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString(), data: { boardId, isFixed } });
+  }
+
+  // DELETE /api/admin/boards/:id — 게시글 삭제
+  if (req.method === "DELETE" && /^\/api\/admin\/boards\/\d+$/.test(req.path)) {
+    const boardId = parseInt(req.path.split("/").pop(), 10);
+    const boards = getBoards();
+    const board = boards.find((b) => (b.boardId || b.id) === boardId);
+    if (!board) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
+    if (db) try { db.get("community_posts").remove((b) => (b.boardId || b.id) === boardId).write(); } catch (_e) { /* */ }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString(), data: null });
+  }
+
   // ============ GET /partner/point/history (기존 mock API — 하위 호환) ============
   if (req.method === "GET" && (req.path === "/partner/point/history" || req.path === "/partner_point_history")) {
     const pid = currentSession.userId;
@@ -814,18 +1878,35 @@ module.exports = function createMiddleware(db) {
   // 11번 API: 캠페인 임시저장
   if (req.method === "POST" && (req.path === "/partner/campaign/draft" || (req.originalUrl && req.originalUrl.startsWith("/partner/campaign/draft")))) {
     const body = req.body || {};
+    const campaignId = Date.now();
+    // 인메모리에 draft 데이터 저장 (API 12 불러오기용)
+    draftStore[campaignId] = {
+      campaignId,
+      partnerId: 501,
+      type: body.type || "DELIVERY",
+      status: "DRAFT",
+      title: body.title || "",
+      description: body.description || undefined,
+      category: body.categoryId ? { categoryId: Number(body.categoryId), categoryName: "" } : null,
+      requiredPlatform: body.requiredPlatformId ? { channelId: Number(body.requiredPlatformId), channelName: "" } : undefined,
+      recruit: (body.recruitLimit || body.recruitStartAt) ? {
+        recruitLimit: Number(body.recruitLimit) || 0,
+        recruitStartAt: body.recruitStartAt || "",
+        recruitEndAt: body.recruitEndAt || "",
+      } : undefined,
+      reward: (body.extraRewardPoint != null || body.paymentRewardPoint != null) ? {
+        extraRewardPoint: Number(body.extraRewardPoint) || 0,
+        paymentRewardPoint: Number(body.paymentRewardPoint) || 0,
+      } : undefined,
+      promotionUrl: body.promotionUrl || undefined,
+      keyword: body.keyword || undefined,
+      notification: body.notification || undefined,
+      savedAt: new Date().toISOString(),
+    };
     return res.status(200).json({
       result: "OK",
       generatedAt: new Date().toISOString(),
-      campaign: {
-        campaignId: Date.now(),
-        partnerId: 501,
-        type: body.type || "DELIVERY",
-        status: "DRAFT",
-        title: body.title || "",
-        category: body.category || null,
-        savedAt: new Date().toISOString(),
-      },
+      campaign: draftStore[campaignId],
       message: "임시저장되었습니다.",
     });
   }
@@ -834,10 +1915,11 @@ module.exports = function createMiddleware(db) {
   // 12번 API: 임시저장 캠페인 불러오기
   if (req.method === "GET" && (req.path.match(/^\/partner\/campaign\/draft\/\d+$/) || (req.originalUrl && req.originalUrl.match(/^\/partner\/campaign\/draft\/\d+$/)))) {
     const campaignId = Number(req.path.split("/").pop());
+    const draft = draftStore[campaignId];
     return res.status(200).json({
       result: "OK",
       generatedAt: new Date().toISOString(),
-      campaign: {
+      campaign: draft || {
         campaignId,
         partnerId: 501,
         type: "DELIVERY",
@@ -848,9 +1930,9 @@ module.exports = function createMiddleware(db) {
     });
   }
 
-  // ============ GET /partner/campaign/edit/:campaignId ============
+  // ============ GET /partner/campaign/edit/:campaignId or /partner/campaign/edit/:type/:campaignId ============
   // 15번 API: 캠페인 수정페이지 조회
-  if (req.method === "GET" && req.path.match(/^\/partner\/campaign\/edit\/\d+$/)) {
+  if (req.method === "GET" && (req.path.match(/^\/partner\/campaign\/edit\/\d+$/) || req.path.match(/^\/partner\/campaign\/edit\/[A-Z]+\/\d+$/))) {
     const campaignId = Number(req.path.split("/").pop());
     const campaigns = getCampaigns();
     const campaign = campaigns.find(c => c.id === campaignId || c.campaignId === campaignId);
@@ -927,7 +2009,6 @@ module.exports = function createMiddleware(db) {
         { channelId: 2, channelName: "NAVER_CLIP" },
         { channelId: 3, channelName: "INSTAGRAM" },
         { channelId: 4, channelName: "YOUTUBE" },
-        { channelId: 5, channelName: "TIKTOK" },
       ],
       regions: [
         { regionId: 100, name: "전국", level: 1, parentId: null },
@@ -940,9 +2021,9 @@ module.exports = function createMiddleware(db) {
     });
   }
 
-  // ============ POST /partner/campaign/edit/:campaignId ============
+  // ============ POST /partner/campaign/edit/:campaignId or /partner/campaign/edit/:type/:campaignId ============
   // 16번 API: 캠페인 수정하기
-  if (req.method === "POST" && req.path.match(/^\/partner\/campaign\/edit\/\d+$/)) {
+  if (req.method === "POST" && (req.path.match(/^\/partner\/campaign\/edit\/\d+$/) || req.path.match(/^\/partner\/campaign\/edit\/[A-Z]+\/\d+$/))) {
     const campaignId = Number(req.path.split("/").pop());
     const body = req.body || {};
 
@@ -1067,7 +2148,6 @@ module.exports = function createMiddleware(db) {
       REELS: "reels",
       YOUTUBE: "youtube",
       YOUTUBE_SHORTS: "youtube_shorts",
-      TIKTOK: "tiktok",
     };
     const channelName = (c.requiredPlatform && c.requiredPlatform.channelName) || "";
     const platform = platformMap[channelName] || channelName.toLowerCase();
@@ -1150,35 +2230,34 @@ module.exports = function createMiddleware(db) {
 
     return {
       id: c.id,
-      campaign_id: c.id,
-      partner_id: c.partner_id,
+      campaignId: c.id,
       title: c.title || "",
-      campaign_type: (c.type || "DELIVERY").toLowerCase(),
+      campaignType: (c.type || "DELIVERY").toLowerCase(),
       platform,
-      thumbnail_url: c.thumbnailUrl || (c.thumbnail && c.thumbnail.url) || "",
+      thumbnailUrl: c.thumbnailUrl || (c.thumbnail && c.thumbnail.url) || "",
       category: (c.category && c.category.categoryName) || "",
       points,
       status: normalizedStatus,
-      recruit_count: c.recruitLimit || (c.recruit && c.recruit.recruitLimit) || 0,
-      current_applicants: finalApplicants,
-      selected_count: finalSelected,
-      application_start_date: (c.recruit && c.recruit.recruitStartAt) || c.recruitStartAt || "",
-      application_end_date: (c.recruit && c.recruit.recruitEndAt) || c.recruitEndAt || "",
-      campaign_start_date: (c.content && c.content.contentStartAt) || "",
-      campaign_end_date: (c.content && c.content.contentEndAt) || "",
+      recruitCount: c.recruitLimit || (c.recruit && c.recruit.recruitLimit) || 0,
+      currentApplicants: finalApplicants,
+      selectedCount: finalSelected,
+      applicationStartDate: (c.recruit && c.recruit.recruitStartAt) || c.recruitStartAt || "",
+      applicationEndDate: (c.recruit && c.recruit.recruitEndAt) || c.recruitEndAt || "",
+      campaignStartDate: (c.content && c.content.contentStartAt) || "",
+      campaignEndDate: (c.content && c.content.contentEndAt) || "",
       description: c.description || "",
       notification: c.notification || "",
-      created_at: c.created_at || (c.recruit && c.recruit.recruitStartAt) || c.recruitStartAt || new Date().toISOString(),
-      updated_at: c.updated_at || c.created_at || (c.recruit && c.recruit.recruitStartAt) || c.recruitStartAt || new Date().toISOString(),
+      createdAt: c.created_at || (c.recruit && c.recruit.recruitStartAt) || c.recruitStartAt || new Date().toISOString(),
+      updatedAt: c.updated_at || c.created_at || (c.recruit && c.recruit.recruitStartAt) || c.recruitStartAt || new Date().toISOString(),
       extensionRequested: c.extensionRequested || false,
       // 연장 요청 건수: extensionRequested 캠페인만 1~5건 부여
-      extension_request_count: c.extensionRequested
+      extensionRequestCount: c.extensionRequested
         ? (c.extension_request_count || ((c.id % 5) + 1))
         : 0,
       // 콘텐츠 건수: 상태별 일관성 적용
-      waiting_count: finalWaiting,
-      submitted_count: finalSubmitted,
-      approved_count: finalApproved,
+      waitingCount: finalWaiting,
+      submittedCount: finalSubmitted,
+      approvedCount: finalApproved,
     };
   }
 
@@ -1276,12 +2355,12 @@ module.exports = function createMiddleware(db) {
     // type 필터
     if (req.query.type) {
       const types = req.query.type.split(",").map((t) => t.toLowerCase());
-      filtered = filtered.filter((c) => types.includes(c.campaign_type));
+      filtered = filtered.filter((c) => types.includes(c.campaignType));
     }
     // channel 필터
     if (req.query.channel) {
       const channels = req.query.channel.split(",").map((ch) => ch.toLowerCase());
-      const channelPlatformMap = { blog: "naver_blog", instagram: "instagram", youtube: "youtube", tiktok: "tiktok", reels: "reels" };
+      const channelPlatformMap = { blog: "naver_blog", instagram: "instagram", youtube: "youtube", reels: "reels" };
       filtered = filtered.filter((c) => {
         return channels.some((ch) => c.platform === (channelPlatformMap[ch] || ch));
       });
@@ -1619,7 +2698,7 @@ module.exports = function createMiddleware(db) {
     const transformedCampaign = transformCampaign(campaign);
     const platformLabelMap2 = {
       naver_blog: "NAVER_BLOG", instagram: "INSTAGRAM", youtube: "YOUTUBE",
-      tiktok: "TIKTOK", reels: "REELS",
+      reels: "REELS",
     };
     const fmt = (s) => s ? s.slice(0, 10) : "";
 
@@ -1633,17 +2712,17 @@ module.exports = function createMiddleware(db) {
       // mock 추가 필드 (프론트엔드 UI용)
       campaignType: (campaign.type || "DELIVERY").toUpperCase(),
       platform: platformLabelMap2[transformedCampaign.platform] || transformedCampaign.platform || "NAVER_BLOG",
-      thumbnailUrl: transformedCampaign.thumbnail_url,
+      thumbnailUrl: transformedCampaign.thumbnailUrl,
       category: transformedCampaign.category || "",
       status: transformedCampaign.status,
-      recruitCount: transformedCampaign.recruit_count,
-      currentApplicants: transformedCampaign.current_applicants,
-      recruitmentPeriod: transformedCampaign.application_start_date && transformedCampaign.application_end_date
-        ? fmt(transformedCampaign.application_start_date) + " ~ " + fmt(transformedCampaign.application_end_date)
+      recruitCount: transformedCampaign.recruitCount,
+      currentApplicants: transformedCampaign.currentApplicants,
+      recruitmentPeriod: transformedCampaign.applicationStartDate && transformedCampaign.applicationEndDate
+        ? fmt(transformedCampaign.applicationStartDate) + " ~ " + fmt(transformedCampaign.applicationEndDate)
         : "",
-      announcementDate: fmt(transformedCampaign.campaign_start_date),
-      registrationPeriod: transformedCampaign.campaign_start_date && transformedCampaign.campaign_end_date
-        ? fmt(transformedCampaign.campaign_start_date) + " ~ " + fmt(transformedCampaign.campaign_end_date)
+      announcementDate: fmt(transformedCampaign.campaignStartDate),
+      registrationPeriod: transformedCampaign.campaignStartDate && transformedCampaign.campaignEndDate
+        ? fmt(transformedCampaign.campaignStartDate) + " ~ " + fmt(transformedCampaign.campaignEndDate)
         : "",
     };
 

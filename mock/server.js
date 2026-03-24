@@ -21,6 +21,26 @@ const bodyParser = require("body-parser");
 server.use(bodyParser.json({ limit: "50mb" }));
 server.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
+// multipart/form-data 파싱 (캠페인 등록/수정/임시저장 API)
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
+server.use((req, res, next) => {
+  const isMultipartRoute =
+    req.path === "/partner/campaign/create" ||
+    req.path === "/partner/campaign/draft" ||
+    /^\/partner\/campaign\/edit\/\d+$/.test(req.path);
+  const isMultipart =
+    req.headers["content-type"] &&
+    req.headers["content-type"].includes("multipart/form-data");
+  if (isMultipartRoute && isMultipart) {
+    return upload.any()(req, res, (err) => {
+      if (err) return next(err);
+      next();
+    });
+  }
+  next();
+});
+
 // CORS 허용 (defaults보다 먼저)
 // withCredentials: true 사용 시 Access-Control-Allow-Origin에 * 대신 실제 Origin 필요
 server.use((req, res, next) => {
