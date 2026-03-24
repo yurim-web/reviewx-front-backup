@@ -43,7 +43,7 @@ interface StatusFilterDropdownProps {
 }
 
 // 상태 옵션 목록
-const status_options: CampaignStatus[] = ["예정", "긴급", "신청", "진행", "종료"];
+const status_options: CampaignStatus[] = ["예정", "긴급", "신청", "진행", "종료", "취소"];
 
 // FilterOption 배열로 변환
 // map 함수: 배열을 순회하며 각 요소를 FilterOption 형태로 변환합니다

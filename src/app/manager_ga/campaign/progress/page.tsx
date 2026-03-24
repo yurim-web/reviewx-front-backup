@@ -24,6 +24,7 @@
 
 "use client";
 
+import { useCallback } from "react";
 import ProgressPageCommon from "@/components/manager/common/campaign/progress/ProgressPageCommon";
 import Loading from "@/app/loading";
 import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
@@ -32,7 +33,18 @@ import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
  * GA 관리자 진행 상황 페이지 컴포넌트
  */
 export default function ProgressPage() {
-  const { campaigns, isLoading } = useAdminCampaigns();
+  const { campaigns, isLoading, reportCampaign } = useAdminCampaigns();
+
+  // mutation 시그니처를 컴포넌트 prop 시그니처로 변환
+  const handleReport = useCallback(
+    async (campaignId: number, body: { reportCode: string; reportReason?: string }) => {
+      await reportCampaign({ campaignId, body });
+    },
+    [reportCampaign]
+  );
+
   if (isLoading) return <Loading />;
-  return <ProgressPageCommon manager_type="ga" campaigns={campaigns} />;
+  return (
+    <ProgressPageCommon manager_type="ga" campaigns={campaigns} onReportCampaign={handleReport} />
+  );
 }

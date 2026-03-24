@@ -55,6 +55,11 @@ interface ProgressPageCommonProps {
   manager_type: ManagerType;
   // API 데이터 (제공 시 정적 데이터 대신 사용)
   campaigns?: CampaignProgressItem[];
+  // 신고 API 콜백 (실제 백엔드 연동)
+  onReportCampaign?: (
+    campaignId: number,
+    body: { reportCode: string; reportReason?: string }
+  ) => Promise<void>;
 }
 
 /**
@@ -68,6 +73,7 @@ interface ProgressPageCommonProps {
 export default function ProgressPageCommon({
   manager_type,
   campaigns: campaignsProp,
+  onReportCampaign,
 }: ProgressPageCommonProps) {
   /* ========================================
      📌 필터 상태 관리
@@ -234,9 +240,11 @@ export default function ProgressPageCommon({
     "W005", // 예정 신청 불이행
     "W006", // 게시 취소
     "W007", // 부적절한 캠페인 게시
+    "W008", // 공정위 위반 요청
     "W009", // 비정상적 신청 반복
     "W010", // 중복 계정 사용
     "W011", // 콘텐츠 중복 사용
+    "W012", // 비정상 접근 기록
     "W013", // 기타 비매너 위반
   ];
 
@@ -414,6 +422,7 @@ export default function ProgressPageCommon({
             selected_channels.length > 0 ||
             selected_date_range !== undefined
           }
+          onReportCampaign={onReportCampaign}
         />
       </div>
     </div>

@@ -158,8 +158,8 @@ export function create_sort_handler(
           return { column_key, direction: "desc" };
         }
       } else {
-        // 다른 컬럼을 클릭하면 내림차순으로 시작 (첫 클릭 시 내림차순으로 정렬)
-        return { column_key, direction: "desc" };
+        // 다른 컬럼을 클릭하면 오름차순으로 시작 (첫 클릭 시 오름차순으로 정렬)
+        return { column_key, direction: "asc" };
       }
     });
   };

@@ -256,13 +256,9 @@ export const block_code_filter_options: BlockCode[] = [
  * 설명:
  * - 게시글 목록 페이지에서 사용하는 구분입니다.
  */
-export type PostDivision = "공지사항" | "자주 묻는 질문" | "이벤트";
+export type PostDivision = "NOTICE" | "QUESTIONS";
 
 /**
  * 게시글 구분 필터 옵션 배열
  */
-export const post_division_filter_options: PostDivision[] = [
-  "공지사항",
-  "자주 묻는 질문",
-  "이벤트",
-];
+export const post_division_filter_options: PostDivision[] = ["NOTICE", "QUESTIONS"];

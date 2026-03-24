@@ -79,6 +79,11 @@ interface CampaignTableProps {
   // 필터/검색 상태 (빈 메시지 결정용)
   search_query?: string; // 검색어
   has_active_filters?: boolean; // 활성 필터가 있는지 여부 (상태, 유형, 채널, 날짜 필터)
+  // 신고 API 콜백 (실제 백엔드 연동)
+  onReportCampaign?: (
+    campaignId: number,
+    body: { reportCode: string; reportReason?: string }
+  ) => Promise<void>;
 }
 
 // 캠페인 타입별 상세 페이지 경로 매핑
@@ -149,6 +154,7 @@ export default function CampaignProgressTable({
   channelIconStyles,
   search_query = "",
   has_active_filters = false,
+  onReportCampaign,
 }: CampaignTableProps) {
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
@@ -210,12 +216,27 @@ export default function CampaignProgressTable({
     });
   };
 
-  const handle_report_submit = (report_code: string, report_item_from_modal?: unknown) => {
+  const handle_report_submit = async (report_code: string, report_item_from_modal?: unknown) => {
     const row = report_item_from_modal as CampaignProgressItem | null;
     if (!row?.campaign_number) return;
 
     const code_info = report_code_info.find((info) => info.code === report_code);
     const report_reason = code_info?.reason ?? "";
+
+    // 실제 백엔드 API 호출 (연결된 경우)
+    if (onReportCampaign) {
+      try {
+        await onReportCampaign(Number(row.id), {
+          reportCode: report_code,
+          reportReason: report_reason,
+        });
+      } catch {
+        // API 에러 시 로컬 처리도 스킵
+        return;
+      }
+    }
+
+    // 로컬 신고 내역 리스트에도 추가 (신고 내역 페이지 표시용)
     const max_id = Math.max(
       0,
       ...reported_campaign_list.map((item) => parseInt(item.id) || 0),

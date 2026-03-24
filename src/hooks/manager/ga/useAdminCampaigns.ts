@@ -5,19 +5,31 @@
 /**
  * useAdminCampaigns
  *
- * 목적: 관리자 캠페인 현황을 mock API에서 로드하고
+ * 목적: 관리자 캠페인 현황을 실제 백엔드 API에서 로드하고
  *       CampaignProgressItem 타입으로 변환하여 반환합니다.
  *
  * 사용 페이지:
  * - /manager_ga/campaign/progress
  * - /manager_sa/campaign/progress
+ *
+ * 백엔드 API:
+ * - GET /api/admin/campaigns          → 캠페인 목록
+ * - GET /api/admin/campaigns/summary  → 통계 요약 (6종 카드)
+ * - POST /api/admin/campaigns/{id}/report → 캠페인 신고
  */
 
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchAdminCampaigns } from "@/lib/api/admin";
-import { campaign_list } from "@/data/manager_ga/progress";
-import type { AdminCampaignApiItem } from "@/types/api/admin";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchAdminCampaigns,
+  fetchAdminCampaignsSummary,
+  reportAdminCampaign,
+} from "@/lib/api/admin";
+import type {
+  AdminCampaignListItem,
+  AdminCampaignListParams,
+  ReportCampaignRequest,
+} from "@/types/api/admin";
 import type {
   CampaignProgressItem,
   CampaignStatus,
@@ -25,31 +37,14 @@ import type {
 } from "@/data/manager_ga/progress";
 import type { Channel } from "@/data/manager/common/filterOptions";
 
-const PARTNER_NAME_MAP: Record<number, string> = {
-  1: "주식회사 청명종합광고기획",
-  2: "청불 천막집 방이점",
-  3: "명륜진사갈비 수원광교점",
-  4: "(주) 레인보우8",
-  5: "(주)플레티어",
-  6: "꽃초롱",
-  7: "주식회사 와이디컴퍼니그룹",
-  8: "(주)아이엠에스커뮤니케이션",
-  9: "주식회사 청명미디어",
-  10: "(주)아이엠에스커뮤니케이션",
-  11: "(주)아이엠에스커뮤니케이션",
-  12: "(주)아이엠에스커뮤니케이션",
-};
+// ── 백엔드 → 프론트 매핑 ──
 
 const STATUS_MAP: Record<string, CampaignStatus> = {
-  SCHEDULED: "예정",
   REGISTERING: "예정",
   RECRUITING: "신청",
-  IN_PROGRESS: "진행",
   SELECTING: "진행",
   PURCHASING: "진행",
   EMERGENCY: "긴급",
-  REVIEW: "진행",
-  COMPLETED: "종료",
   CLOSED: "종료",
   CANCELLED: "취소",
 };
@@ -63,56 +58,130 @@ const TYPE_MAP: Record<string, CampaignType> = {
   MISSION: "미션형",
 };
 
-const CHANNEL_MAP: Record<string, Channel> = {
-  INSTAGRAM: "Instagram",
-  NAVER_BLOG: "Blog",
-  NAVER_CLIP: "Clip",
-  YOUTUBE: "Youtube",
-  COUPANG: "Review",
-  MISSION: "Mission",
+/** 백엔드 type → 상세 페이지 slug */
+const TYPE_SLUG_MAP: Record<string, string> = {
+  DELIVERY: "delivery",
+  VISIT: "visit",
+  PURCHASE: "review",
+  PURCHASE_REVIEW: "review",
+  REPORTER: "reporter",
+  MISSION: "mission",
 };
 
-function adaptCampaign(
-  item: AdminCampaignApiItem & {
-    partnerName?: string;
-    points?: number;
-    recruit?: { recruitLimit?: number };
-    metrics?: { appliedCount?: number };
-  }
-): CampaignProgressItem {
+/** platformIconUrl에서 채널 추론 (아이콘 URL 기반) */
+function inferChannel(platformIconUrl: string, type: string): Channel {
+  // 구매평·미션형은 채널 무관하게 타입 고정 아이콘 사용
+  if (type === "PURCHASE" || type === "PURCHASE_REVIEW") return "Review";
+  if (type === "MISSION") return "Mission";
+
+  const url = (platformIconUrl ?? "").toLowerCase();
+  if (url.includes("blog")) return "Blog";
+  if (url.includes("clip")) return "Clip";
+  if (url.includes("instagram")) return "Instagram";
+  if (url.includes("reels")) return "Reels";
+  if (url.includes("youtube")) return "Youtube";
+  if (url.includes("shorts")) return "Shorts";
+  if (url.includes("store") || url.includes("coupang")) return "Store";
+  if (url.includes("review")) return "Review";
+  return "Blog";
+}
+
+/** 백엔드 AdminCampaignListItem → 프론트 CampaignProgressItem */
+function adaptCampaign(item: AdminCampaignListItem): CampaignProgressItem {
   return {
-    id: String(item.id),
-    campaign_number: String(item.id).padStart(6, "0"),
-    partner_name: item.partnerName ?? PARTNER_NAME_MAP[item.partner_id ?? 0] ?? "",
+    id: String(item.campaignId),
+    campaign_number: item.campaignNumber,
+    partner_name: item.partnerName,
     campaign_name: item.title,
     type: (TYPE_MAP[item.type] ?? "배송형") as CampaignType,
-    channel: (CHANNEL_MAP[item.requiredPlatform?.channelName] ?? "Instagram") as Channel,
+    channel: inferChannel(item.platformIconUrl, item.type),
     status: (STATUS_MAP[item.status] ?? "진행") as CampaignStatus,
-    recruit_count: item.recruitLimit ?? item.recruit?.recruitLimit ?? 0,
-    apply_count: item.appliedCount ?? item.metrics?.appliedCount ?? 0,
-    point: item.reward?.extraRewardPoint ?? item.points ?? 0,
-    detail_campaign_id: String(item.id),
-    created_at: item.recruitStartAt
-      ? new Date(item.recruitStartAt)
-      : item.recruit?.recruitStartAt
-        ? new Date(item.recruit.recruitStartAt)
-        : undefined,
+    recruit_count: item.recruitLimit,
+    apply_count: item.appliedCount,
+    point: item.rewardPoint,
+    detail_campaign_id: String(item.campaignId),
+    created_at: item.recruitStartAt ? new Date(item.recruitStartAt) : undefined,
   };
 }
 
-export function useAdminCampaigns() {
-  const { data: apiData, isLoading } = useQuery({
-    queryKey: ["adminCampaigns"],
-    queryFn: fetchAdminCampaigns,
+// ── 통계 요약 타입 ──
+
+export interface CampaignSummaryStats {
+  total: number;
+  scheduled: number;
+  recruiting: number;
+  inProgress: number;
+  completed: number;
+  cancelled: number;
+}
+
+// ── 메인 훅 ──
+
+export function useAdminCampaigns(params?: AdminCampaignListParams) {
+  const queryClient = useQueryClient();
+
+  // 캠페인 목록 조회
+  const {
+    data: apiData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["adminCampaigns", params],
+    queryFn: () => fetchAdminCampaigns(params),
     staleTime: 30_000,
   });
 
+  // 통계 요약 조회 (향후 서버사이드 필터링 시 활용)
+  const { data: summaryData } = useQuery({
+    queryKey: ["adminCampaignsSummary", params?.startDate, params?.endDate],
+    queryFn: () =>
+      fetchAdminCampaignsSummary({
+        startDate: params?.startDate,
+        endDate: params?.endDate,
+      }),
+    staleTime: 30_000,
+  });
+
+  // 신고 mutation
+  const reportMutation = useMutation({
+    mutationFn: ({ campaignId, body }: { campaignId: number; body: ReportCampaignRequest }) =>
+      reportAdminCampaign(campaignId, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminCampaigns"] });
+      queryClient.invalidateQueries({ queryKey: ["adminCampaignsSummary"] });
+    },
+  });
+
+  // 백엔드 응답 → CampaignProgressItem 변환
   const campaigns = useMemo<CampaignProgressItem[]>(() => {
     if (apiData != null && apiData.length > 0) {
       return apiData.map(adaptCampaign);
     }
-    return campaign_list;
+    return [];
   }, [apiData]);
 
-  return { campaigns, isLoading };
+  // 통계 요약
+  const summary = useMemo<CampaignSummaryStats>(() => {
+    return (
+      summaryData ?? {
+        total: 0,
+        scheduled: 0,
+        recruiting: 0,
+        inProgress: 0,
+        completed: 0,
+        cancelled: 0,
+      }
+    );
+  }, [summaryData]);
+
+  return {
+    campaigns,
+    summary,
+    isLoading,
+    isError,
+    reportCampaign: reportMutation.mutateAsync,
+    isReporting: reportMutation.isPending,
+  };
 }
+
+export { TYPE_SLUG_MAP };
