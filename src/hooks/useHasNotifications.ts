@@ -18,7 +18,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchNotifications } from "@/lib/api/notification";
+import { fetchNotifications, fetchAdminNotifications } from "@/lib/api/notification";
 import { useAuth } from "@/hooks/useAuth";
 
 function getReviewerId(userId: string): number {
@@ -41,25 +41,39 @@ function checkLocalStorage(userId: string): boolean {
 
 export function useHasNotifications(): boolean {
   const { user } = useAuth();
-  const reviewerId = user ? getReviewerId(user.id) : 0;
+  const isAdmin = user?.role === "manager_ga" || user?.role === "manager_sa";
+  const reviewerId = user && !isAdmin ? getReviewerId(user.id) : 0;
 
+  // 리뷰어용 알림 조회
   const { data: apiNotifications } = useQuery({
     queryKey: ["notifications", reviewerId],
     queryFn: () => fetchNotifications(reviewerId),
-    enabled: !!user && reviewerId > 0,
+    enabled: !!user && !isAdmin && reviewerId > 0,
+    staleTime: 30_000,
+    retry: false,
+  });
+
+  // 관리자(GA/SA)용 알림 조회
+  const { data: adminResponse } = useQuery({
+    queryKey: ["adminNotifications", "badge"],
+    queryFn: () => fetchAdminNotifications({ size: 1 }),
+    enabled: !!user && isAdmin,
     staleTime: 30_000,
     retry: false,
   });
 
   if (!user) return false;
 
-  // 1. API 응답 완료 → API 기준
+  // 관리자: unreadCount > 0이면 뱃지 활성
+  if (isAdmin) {
+    return (adminResponse?.data?.unreadCount ?? 0) > 0;
+  }
+
+  // 리뷰어: 기존 로직
   if (apiNotifications != null) {
     if (apiNotifications.length > 0) return true;
-    // API가 빈 배열 → localStorage도 확인 (전체 삭제 이후에도 로컬 알림이 있을 수 있음)
     return checkLocalStorage(user.id);
   }
 
-  // 2. API 로딩 중 / 실패 (undefined) → localStorage 확인
   return checkLocalStorage(user.id);
 }

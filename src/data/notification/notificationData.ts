@@ -59,9 +59,14 @@ export type PartnerNotificationCategory =
   | "A_P2" // 캠페인 완료
   | "A_P3" // 캠페인 중지
   | "A_P4" // 콘텐츠 등록
-  | "A_P5" // 콘텐츠 등록 기한 연장 요청
-  | "A_P6" // 계정 정지
-  | "A_P7"; // 계정 차단
+  | "A_P5" // 리뷰어 기한 연장 요청
+  | "A_P6" // 무통장입금 확인 신청
+  | "A_P7" // 무통장입금 확인 완료
+  | "A_P8" // 무통장입금 미확인
+  | "A_P9" // 신용카드 결제 완료
+  | "A_P10" // 콘텐츠 미확인 요청
+  | "A_P11" // 계정 정지
+  | "A_P12"; // 계정 차단
 
 /**
  * 관리자(GA/SA 공통) 알림 카테고리 코드
@@ -137,8 +142,7 @@ export const reviewer_notification_templates: Record<
   A_R4: {
     category: "A_R4",
     label: "콘텐츠 등록 요청",
-    message_template:
-      "콘텐츠 등록 기간이 {남은기간}일 남았습니다. 콘텐츠를 등록해 주세요.",
+    message_template: "콘텐츠 등록 기간이 {남은기간}일 남았습니다. 콘텐츠를 등록해 주세요.",
     color: "red",
     has_campaign_link: true,
   },
@@ -152,16 +156,14 @@ export const reviewer_notification_templates: Record<
   A_R6: {
     category: "A_R6",
     label: "콘텐츠 반려",
-    message_template:
-      "등록한 콘텐츠가 반려되었습니다. 반려 사유를 확인해 주세요.",
+    message_template: "등록한 콘텐츠가 반려되었습니다. 반려 사유를 확인해 주세요.",
     color: "red",
     has_campaign_link: true,
   },
   A_R7: {
     category: "A_R7",
     label: "지각 제출 기간",
-    message_template:
-      "지각 제출 기간입니다. {남은기간}일 안에 콘텐츠를 등록해 주세요.",
+    message_template: "지각 제출 기간입니다. {남은기간}일 안에 콘텐츠를 등록해 주세요.",
     color: "red",
     has_campaign_link: true,
   },
@@ -212,8 +214,7 @@ export const reviewer_notification_templates: Record<
   A_R15: {
     category: "A_R15",
     label: "계정 일시 정지",
-    message_template:
-      "운영 정책 위반으로 인해 {정지기간}일 동안 캠페인에 참여할 수 없습니다.",
+    message_template: "운영 정책 위반으로 인해 {정지기간}일 동안 캠페인에 참여할 수 없습니다.",
     color: "orange",
   },
   A_R16: {
@@ -267,20 +268,50 @@ export const partner_notification_templates: Record<
   },
   A_P5: {
     category: "A_P5",
-    label: "콘텐츠 등록 기한 연장 요청",
+    label: "기한 연장 요청",
     message_template: "리뷰어가 콘텐츠 등록 기한 연장을 요청했습니다.",
     color: "red",
     has_campaign_link: true,
   },
   A_P6: {
     category: "A_P6",
-    label: "계정 일시 정지",
-    message_template:
-      "운영 정책 위반으로 인해 {정지기간}일 동안 캠페인을 등록할 수 없습니다.",
-    color: "orange",
+    label: "무통장입금 확인 신청",
+    message_template: "무통장입금 확인이 신청되었습니다.",
+    color: "blue",
   },
   A_P7: {
     category: "A_P7",
+    label: "무통장입금 확인 완료",
+    message_template: "무통장입금 확인이 완료되었습니다.",
+    color: "blue",
+  },
+  A_P8: {
+    category: "A_P8",
+    label: "무통장입금 미확인",
+    message_template: "무통장입금이 확인되지 않았습니다.",
+    color: "orange",
+  },
+  A_P9: {
+    category: "A_P9",
+    label: "신용카드 결제 완료",
+    message_template: "신용카드 결제가 완료되었습니다.",
+    color: "blue",
+  },
+  A_P10: {
+    category: "A_P10",
+    label: "콘텐츠 미확인 요청",
+    message_template: "콘텐츠 확인을 요청합니다.",
+    color: "orange",
+    has_campaign_link: true,
+  },
+  A_P11: {
+    category: "A_P11",
+    label: "계정 일시 정지",
+    message_template: "운영 정책 위반으로 인해 캠페인을 등록할 수 없습니다.",
+    color: "orange",
+  },
+  A_P12: {
+    category: "A_P12",
     label: "계정 이용 제한",
     message_template: "운영 정책 위반으로 인해 이용 제한되었습니다.",
     color: "orange",
@@ -290,65 +321,56 @@ export const partner_notification_templates: Record<
 /**
  * 관리자(GA/SA 공통) 알림 카테고리별 메시지 템플릿 맵
  */
-export const admin_notification_templates: Record<
-  AdminNotificationCategory,
-  NotificationTemplate
-> = {
-  A_A1: {
-    category: "A_A1",
-    label: "반려 발생",
-    message_template:
-      "캠페인/콘텐츠 반려가 {개수}건 발생했습니다. 반려 내역을 확인해 주세요.",
-    color: "red",
-  },
-  A_A2: {
-    category: "A_A2",
-    label: "신고 발생",
-    message_template:
-      "캠페인/콘텐츠 신고 또는 정책 위반 요소가 {개수}건 발생했습니다. 신고 내역을 확인해 주세요.",
-    color: "red",
-  },
-  A_A3: {
-    category: "A_A3",
-    label: "이용 제한 발생",
-    message_template:
-      "운영 정책 위반으로 이용 제한된 계정이 {개수}건 발생했습니다. 이용 제한 내역을 확인해 주세요.",
-    color: "red",
-  },
-  A_A4: {
-    category: "A_A4",
-    label: "카카오톡 문의",
-    message_template: "신규 채팅 문의가 {개수}건 있습니다.",
-    color: "orange",
-  },
-  A_A5: {
-    category: "A_A5",
-    label: "출금 요청",
-    message_template: "출금 요청이 {개수}건 접수되었습니다.",
-    color: "blue",
-  },
-  A_A6: {
-    category: "A_A6",
-    label: "긴급 출금 요청",
-    message_template: "긴급 출금 요청이 {개수}건 접수되었습니다.",
-    color: "orange",
-  },
-};
+export const admin_notification_templates: Record<AdminNotificationCategory, NotificationTemplate> =
+  {
+    A_A1: {
+      category: "A_A1",
+      label: "반려 발생",
+      message_template: "캠페인/콘텐츠 반려가 {개수}건 발생했습니다. 반려 내역을 확인해 주세요.",
+      color: "red",
+    },
+    A_A2: {
+      category: "A_A2",
+      label: "신고 발생",
+      message_template:
+        "캠페인/콘텐츠 신고 또는 정책 위반 요소가 {개수}건 발생했습니다. 신고 내역을 확인해 주세요.",
+      color: "red",
+    },
+    A_A3: {
+      category: "A_A3",
+      label: "이용 제한 발생",
+      message_template:
+        "운영 정책 위반으로 이용 제한된 계정이 {개수}건 발생했습니다. 이용 제한 내역을 확인해 주세요.",
+      color: "red",
+    },
+    A_A4: {
+      category: "A_A4",
+      label: "카카오톡 문의",
+      message_template: "신규 채팅 문의가 {개수}건 있습니다.",
+      color: "orange",
+    },
+    A_A5: {
+      category: "A_A5",
+      label: "출금 요청",
+      message_template: "출금 요청이 {개수}건 접수되었습니다.",
+      color: "blue",
+    },
+    A_A6: {
+      category: "A_A6",
+      label: "긴급 출금 요청",
+      message_template: "긴급 출금 요청이 {개수}건 접수되었습니다.",
+      color: "orange",
+    },
+  };
 
 /**
  * 알림 카테고리로 템플릿을 가져오는 함수
  */
-export function get_notification_template(
-  category: NotificationCategory
-): NotificationTemplate {
+export function get_notification_template(category: NotificationCategory): NotificationTemplate {
   if (category.startsWith("A_R")) {
-    return reviewer_notification_templates[
-      category as ReviewerNotificationCategory
-    ];
+    return reviewer_notification_templates[category as ReviewerNotificationCategory];
   } else if (category.startsWith("A_P")) {
-    return partner_notification_templates[
-      category as PartnerNotificationCategory
-    ];
+    return partner_notification_templates[category as PartnerNotificationCategory];
   } else if (category.startsWith("A_A")) {
     return admin_notification_templates[category as AdminNotificationCategory];
   }
@@ -421,8 +443,7 @@ export const mockReviewerNotifications: NotificationItem[] = [
     category: "A_R2",
     time: "2025-09-01 17:20",
     campaign_id: 2,
-    campaign_name:
-      "[쿠팡/바울리] 판도로 크리스마스 빵 이탈리아 케이크 디저트 500g, 1개",
+    campaign_name: "[쿠팡/바울리] 판도로 크리스마스 빵 이탈리아 케이크 디저트 500g, 1개",
   },
   {
     id: 3,
@@ -535,8 +556,7 @@ export const mockPartnerNotifications: NotificationItem[] = [
     category: "A_P2",
     time: "2025-09-01 17:20",
     campaign_id: 2,
-    campaign_name:
-      "[쿠팡/바울리] 판도로 크리스마스 빵 이탈리아 케이크 디저트 500g, 1개",
+    campaign_name: "[쿠팡/바울리] 판도로 크리스마스 빵 이탈리아 케이크 디저트 500g, 1개",
   },
   {
     id: 3,
