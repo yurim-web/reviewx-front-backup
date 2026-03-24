@@ -27,20 +27,19 @@ interface TargetFilterDropdownProps {
   container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
-// 대상 필터 옵션 배열 (전체, 리뷰어, 파트너만)
+// 대상 필터 옵션 배열 (백엔드 enum 값 사용)
 const target_options: { value: PostTarget; label: string }[] = [
-  { value: "전체", label: "전체" },
-  { value: "리뷰어", label: "리뷰어" },
-  { value: "파트너", label: "파트너" },
+  { value: "ALL", label: "전체" },
+  { value: "REVIEWER", label: "리뷰어" },
+  { value: "PARTNER", label: "파트너" },
+  { value: "ADMIN", label: "관리자" },
 ];
 
 // 대상 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<PostTarget>[] = target_options.map(
-  (option) => ({
-    value: option.value,
-    label: option.label,
-  })
-);
+const filter_options: FilterOption<PostTarget>[] = target_options.map((option) => ({
+  value: option.value,
+  label: option.label,
+}));
 
 export default function TargetFilterDropdown({
   is_open,
@@ -60,4 +59,3 @@ export default function TargetFilterDropdown({
     />
   );
 }
-

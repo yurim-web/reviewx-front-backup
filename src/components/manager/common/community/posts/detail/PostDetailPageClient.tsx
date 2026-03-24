@@ -1,6 +1,6 @@
 "use client";
 /* ========================================
-   📄 게시글 상세 페이지 컴포넌트 (공통)
+   게시글 상세 페이지 컴포넌트 (공통)
    ======================================== */
 
 /**
@@ -15,11 +15,8 @@
  */
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import {
-  get_post_detail,
-  type PostDetail,
-} from "@/data/manager_ga/community/postsData";
+import { useBoardDetail } from "@/hooks/manager/ga/useAdminPosts";
+import { BOARD_DIVISION_LABEL_MAP } from "@/lib/api/posts";
 import PostDetailPageCommon, {
   type PostDetailData,
 } from "@/components/common/post/PostDetailPageCommon";
@@ -49,52 +46,28 @@ interface PostDetailPageClientProps {
   manager_type: "ga" | "sa";
 }
 
-export default function PostDetailPageClient({
-  manager_type,
-}: PostDetailPageClientProps) {
-  // useParams: Next.js의 동적 라우트 파라미터를 가져오는 Hook입니다.
-  // 클라이언트 컴포넌트에서는 useParams를 사용하여 [id]와 같은 동적 라우트 값을 가져옵니다.
+export default function PostDetailPageClient({ manager_type }: PostDetailPageClientProps) {
   const params = useParams();
   const post_id = params?.id as string;
 
-  // manager_type에 따른 base path 설정
   const base_path =
-    manager_type === "ga"
-      ? "/manager_ga/community/posts"
-      : "/manager_sa/community/posts";
+    manager_type === "ga" ? "/manager_ga/community/posts" : "/manager_sa/community/posts";
 
-  // 게시글 상세 정보 상태 관리
-  // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다.
-  // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다.
-  const [post_detail, set_post_detail] = useState<PostDetail | null>(null);
+  const { data: detailRes, isLoading } = useBoardDetail(Number(post_id));
+  const board = detailRes?.data;
 
-  // useEffect: 컴포넌트가 마운트될 때 게시글 상세 정보를 가져옵니다.
-  // useEffect는 React의 Hook으로, 컴포넌트의 생명주기와 관련된 작업을 수행합니다.
-  // post_id가 변경될 때마다 실행됩니다.
-  useEffect(() => {
-    if (!post_id) return;
-
-    // 게시글 ID로 상세 정보를 가져옵니다.
-    const detail = get_post_detail(post_id);
-    set_post_detail(detail);
-  }, [post_id]);
-
-  // PostDetail을 PostDetailData로 변환
-  // meta_label에는 실제 카테고리 정보를 사용합니다
-  const post_detail_data: PostDetailData | null = post_detail
+  const post_detail_data: PostDetailData | null = board
     ? {
-        title: post_detail.title,
-        content: post_detail.content,
-        meta_label: post_detail.category, // 실제 카테고리 정보 사용
-        date: post_detail.updated_date || post_detail.registered_date,
-        division_title: post_detail.division,
+        title: board.title,
+        content: board.content,
+        meta_label: board.boardCategory,
+        date: board.updatedAt || board.createdAt,
+        division_title: BOARD_DIVISION_LABEL_MAP[board.division] || board.division,
       }
     : null;
 
-  // 사이드바 렌더링
   const sidebar_content = (
     <>
-      {/* 배열 map 메서드를 사용하여 메뉴 아이템을 렌더링합니다. */}
       {sideMenuItems.map((item) => (
         <p
           key={item.label}
@@ -110,7 +83,7 @@ export default function PostDetailPageClient({
 
   return (
     <PostDetailPageCommon
-      post_detail={post_detail_data}
+      post_detail={isLoading ? null : post_detail_data}
       back_path={base_path}
       loading_message="게시글을 불러오는 중..."
       sidebar={sidebar_content}

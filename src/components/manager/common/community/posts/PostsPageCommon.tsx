@@ -1,5 +1,5 @@
 /* ========================================
-   📝 관리자 게시글 목록 페이지 (공통 컴포넌트)
+   관리자 게시글 목록 페이지 (공통 컴포넌트)
    ======================================== */
 
 /**
@@ -15,63 +15,38 @@
 
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { startOfMonth, endOfMonth } from "date-fns";
+import { useCallback, useState } from "react";
+import { startOfMonth, endOfMonth, format } from "date-fns";
 import styles from "@/styles/manager/common/manager_common_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import PostFilterSection from "@/components/manager/common/community/posts/section/PostFilterSection";
 import PostTable from "@/components/manager/common/community/posts/section/PostTable";
-import {
-  posts_data,
-  initialize_posts_data,
-  delete_posts,
-  type PostDivision,
-  type PostTarget,
-  type PostItem,
-} from "@/data/manager_ga/community/postsData";
+import type { PostDivision } from "@/data/manager_ga/common/filterOptions";
+import type { PostTarget } from "@/data/manager_ga/community/postsData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import {
-  apply_pinned_state_to_posts,
-  extract_pinned_state_from_posts,
-  load_pinned_posts_state,
-  save_pinned_posts_state,
-} from "@/utils/community/posts/pinnedPostsLocalStorage";
+import { useAdminPosts, useDeleteBoard, useToggleBoardFix } from "@/hooks/manager/ga/useAdminPosts";
+import Loading from "@/app/loading";
 import BaseModal from "@/components/common/modal/BaseModal";
 import Toast from "@/components/common/toast/Toast";
 
 // 관리자 타입 정의
 export type ManagerType = "ga" | "sa";
 
-/**
- * PostsPageCommon 컴포넌트의 Props 타입 정의
- *
- * @property manager_type - 관리자 타입 ('ga' | 'sa')
- */
 interface PostsPageCommonProps {
   manager_type: ManagerType;
 }
 
-/**
- * 관리자 게시글 목록 페이지 공통 컴포넌트
- *
- * @param props - PostsPageCommonProps 객체
- * @param props.manager_type - 관리자 타입 ('ga' 또는 'sa')
- * @returns 게시글 목록 페이지 JSX 요소
- */
 export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) {
-  // 검색어 상태 관리
+  // 검색어 상태
   const [search_query, set_search_query] = useState<string>("");
 
-  // 구분 필터 상태 관리
+  // 구분 필터 상태
   const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>([]);
 
-  // 대상 필터 상태 관리
+  // 대상 필터 상태
   const [selected_targets, set_selected_targets] = useState<PostTarget[]>([]);
 
-  // 날짜 범위 필터 상태 관리
-  // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
-  // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
-  // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
+  // 날짜 범위 필터 상태 (기본: 이번 달)
   const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(() => {
     const today = new Date();
     return {
@@ -80,180 +55,86 @@ export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) 
     };
   });
 
-  // 게시글 목록 상태 (고정 여부 등 변경을 위해 목업 데이터를 상태로 관리)
-  // Hydration 오류 방지: 초기 상태는 항상 빈 배열로 시작 (서버/클라이언트 동일)
-  // useEffect에서만 localStorage에서 데이터를 로드하여 클라이언트에서만 실행되도록 함
-  const [posts, set_posts] = useState<PostItem[]>([]);
-
-  /**
-   * 게시글 목록 업데이트
-   * - 컴포넌트가 마운트될 때와 주기적으로 최신 게시글 데이터를 가져와서
-   *   관리자에서 새로 등록한 게시글이 즉시 반영되도록 합니다
-   */
-  useEffect(() => {
-    // 서버 사이드에서는 실행하지 않음
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    // 게시글 목록 업데이트 함수
-    const update_posts = () => {
-      // 게시글 데이터 초기화 (localStorage에서 최신 데이터 불러오기)
-      initialize_posts_data();
-
-      // localStorage에서 고정 상태를 불러와서 적용
-      const pinned_state = load_pinned_posts_state();
-      if (!pinned_state || Object.keys(pinned_state).length === 0) {
-        set_posts([...posts_data]);
-        return;
-      }
-
-      const updated_posts = apply_pinned_state_to_posts(posts_data, pinned_state);
-      set_posts(updated_posts);
-    };
-
-    // 초기 마운트 시 게시글 목록 업데이트
-    update_posts();
-
-    // 탭 전환/포커스 시 최신 데이터 반영 (이벤트 기반)
-    const handle_focus = () => update_posts();
-    const handle_visibility = () => {
-      if (!document.hidden) update_posts();
-    };
-    const handle_storage = (e: StorageEvent) => {
-      if (e.key?.includes("post")) update_posts();
-    };
-
-    window.addEventListener("focus", handle_focus);
-    document.addEventListener("visibilitychange", handle_visibility);
-    window.addEventListener("storage", handle_storage);
-
-    return () => {
-      window.removeEventListener("focus", handle_focus);
-      document.removeEventListener("visibilitychange", handle_visibility);
-      window.removeEventListener("storage", handle_storage);
-    };
-  }, []);
-
-  // 테이블에서 선택된 게시글 ID 목록 상태
+  // 선택된 게시글 ID 목록 (boardId 문자열)
   const [selected_post_ids, set_selected_post_ids] = useState<string[]>([]);
 
-  // 삭제 확인 모달 상태
+  // 삭제 확인 모달
   const [is_delete_modal_open, set_is_delete_modal_open] = useState(false);
 
-  // 토스트 상태 (고정/고정 해제 시 "저장되었습니다." 표시)
+  // 토스트
   const [toast, set_toast] = useState<{ is_open: boolean; message: string }>({
     is_open: false,
     message: "",
   });
 
-  // onClose를 고정 참조로 두어 1초마다 갱신되는 목록 때문에 타이머가 리셋되지 않도록 함
   const handle_toast_close = useCallback(() => {
     set_toast((prev) => (prev.is_open ? { is_open: false, message: "" } : prev));
   }, []);
 
-  /* ========================================
-     🔄 게시글 고정 상태 변경 공통 함수
-     - 고정/해제 이후 변경된 posts 상태를
-       localStorage에도 함께 반영합니다.
-     ======================================== */
-
-  const update_posts_and_persist_pins = (updater: (posts: PostItem[]) => PostItem[]) => {
-    set_posts((previous_posts) => {
-      const updated_posts = updater(previous_posts);
-
-      // 변경된 게시글 목록에서 고정 상태만 추출하여 localStorage에 저장
-      const pinned_state = extract_pinned_state_from_posts(updated_posts);
-      save_pinned_posts_state(pinned_state);
-
-      return updated_posts;
-    });
+  // API 파라미터 구성 (단일 division/target만 서버 필터, 복수는 클라이언트 필터)
+  const api_params = {
+    page: 1,
+    size: 100,
+    ...(selected_divisions.length === 1 ? { division: selected_divisions[0] } : {}),
+    ...(selected_targets.length === 1 ? { target: selected_targets[0] } : {}),
+    ...(search_query ? { keyword: search_query } : {}),
+    ...(selected_date_range?.from
+      ? { startDate: format(selected_date_range.from, "yyyy-MM-dd") }
+      : {}),
+    ...(selected_date_range?.to ? { endDate: format(selected_date_range.to, "yyyy-MM-dd") } : {}),
   };
 
-  // 검색어 변경 핸들러
-  const handle_search_change = (query: string) => {
-    set_search_query(query);
-  };
+  // API 훅
+  const { data: listResponse, isLoading } = useAdminPosts(api_params);
+  const deleteBoard = useDeleteBoard();
+  const toggleFix = useToggleBoardFix();
 
-  // 선택된 게시글 고정 처리
-  const handle_pin_selected_posts = () => {
+  // API 데이터 → 테이블 행 변환
+  const boards = listResponse?.data?.boards || [];
+
+  // 고정 토글 핸들러
+  const handle_pin_selected_posts = async () => {
     if (selected_post_ids.length === 0) return;
-
-    update_posts_and_persist_pins((previous_posts) =>
-      previous_posts.map((post) =>
-        selected_post_ids.includes(post.id) ? { ...post, is_pinned: true } : post
-      )
-    );
-    set_toast({ is_open: true, message: "저장되었습니다." });
-  };
-
-  // 선택된 게시글 고정 해제 처리
-  const handle_unpin_selected_posts = () => {
-    if (selected_post_ids.length === 0) return;
-
-    update_posts_and_persist_pins((previous_posts) =>
-      previous_posts.map((post) =>
-        selected_post_ids.includes(post.id) ? { ...post, is_pinned: false } : post
-      )
-    );
-    set_toast({ is_open: true, message: "저장되었습니다." });
-  };
-
-  // 삭제 버튼 클릭 핸들러
-  const handle_delete_click = () => {
-    if (selected_post_ids.length === 0) {
-      return;
+    for (const id of selected_post_ids) {
+      await toggleFix.mutateAsync({ boardId: Number(id), body: { isFixed: true } });
     }
+    set_toast({ is_open: true, message: "저장되었습니다." });
+  };
+
+  const handle_unpin_selected_posts = async () => {
+    if (selected_post_ids.length === 0) return;
+    for (const id of selected_post_ids) {
+      await toggleFix.mutateAsync({ boardId: Number(id), body: { isFixed: false } });
+    }
+    set_toast({ is_open: true, message: "저장되었습니다." });
+  };
+
+  // 삭제 핸들러
+  const handle_delete_click = () => {
+    if (selected_post_ids.length === 0) return;
     set_is_delete_modal_open(true);
   };
 
-  // 삭제 확인 핸들러
-  const handle_delete_confirm = () => {
-    if (selected_post_ids.length === 0) {
-      return;
+  const handle_delete_confirm = async () => {
+    for (const id of selected_post_ids) {
+      await deleteBoard.mutateAsync(Number(id));
     }
-
-    // localStorage에서 게시글 삭제
-    delete_posts(selected_post_ids);
-
-    // 삭제된 게시글의 고정 상태도 localStorage에서 제거
-    const pinned_state = load_pinned_posts_state();
-    if (pinned_state) {
-      selected_post_ids.forEach((post_id) => {
-        delete pinned_state[post_id];
-      });
-      save_pinned_posts_state(pinned_state);
-    }
-
-    // 게시글 목록 업데이트
-    initialize_posts_data();
-
-    // localStorage에서 고정 상태를 불러와서 적용
-    const updated_pinned_state = load_pinned_posts_state();
-    if (!updated_pinned_state || Object.keys(updated_pinned_state).length === 0) {
-      set_posts([...posts_data]);
-    } else {
-      const updated_posts = apply_pinned_state_to_posts(posts_data, updated_pinned_state);
-      set_posts(updated_posts);
-    }
-
-    // 선택된 게시글 ID 목록 초기화
     set_selected_post_ids([]);
-
-    // 모달 닫기
     set_is_delete_modal_open(false);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
-        {/* 페이지 제목 */}
         <ManagerPageTitle title="게시글 목록" />
 
-        {/* 필터 섹션 컴포넌트 */}
         <PostFilterSection
           search_query={search_query}
-          on_search_change={handle_search_change}
+          on_search_change={set_search_query}
           selected_divisions={selected_divisions}
           on_divisions_change={set_selected_divisions}
           selected_targets={selected_targets}
@@ -266,20 +147,16 @@ export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) 
           manager_type={manager_type}
         />
 
-        {/* 게시글 테이블 컴포넌트 */}
         <PostTable
-          posts={posts}
-          search_query={search_query}
+          boards={boards}
           selected_divisions={selected_divisions}
           selected_targets={selected_targets}
-          selected_date_range={selected_date_range}
           selected_post_ids={selected_post_ids}
           on_selected_post_ids_change={set_selected_post_ids}
           manager_type={manager_type}
         />
       </div>
 
-      {/* 삭제 확인 모달 */}
       <BaseModal
         is_open={is_delete_modal_open}
         on_close={() => set_is_delete_modal_open(false)}
@@ -289,7 +166,6 @@ export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) 
         on_confirm={handle_delete_confirm}
       />
 
-      {/* 고정/고정 해제 시 토스트 (이 페이지만 위치 조금 아래) */}
       <Toast
         message={toast.message}
         isOpen={toast.is_open}

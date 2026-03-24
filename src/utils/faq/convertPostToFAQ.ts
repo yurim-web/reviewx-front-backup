@@ -17,10 +17,7 @@
  * - division이 "자주 묻는 질문"인 경우만 변환
  */
 
-import type {
-  PostItem,
-  PostDetail,
-} from "@/data/manager_ga/community/postsData";
+import type { PostItem, PostDetail } from "@/data/manager_ga/community/postsData";
 
 /**
  * FAQ 타입 정의
@@ -44,15 +41,13 @@ export interface FAQItem {
  *
  * 참고: "전체" 대상은 undefined로 변환하여 양쪽 페이지에서 별도로 처리합니다.
  */
-function convertPostTargetToFAQTarget(
-  postTarget: string
-): FAQTarget | undefined {
+function convertPostTargetToFAQTarget(postTarget: string): FAQTarget | undefined {
   switch (postTarget) {
-    case "리뷰어":
+    case "REVIEWER":
       return "user";
-    case "파트너":
+    case "PARTNER":
       return "partner";
-    case "전체":
+    case "ALL":
       // 전체 대상인 경우 undefined 반환 (양쪽 모두 표시)
       return undefined;
     default:
@@ -66,12 +61,9 @@ function convertPostTargetToFAQTarget(
  * @param postDetail - 관리자 게시글 상세 데이터 (PostDetail | null, 선택적)
  * @returns FAQ 데이터 (FAQItem) 또는 null (FAQ가 아닌 경우)
  */
-export function convertPostToFAQ(
-  post: PostItem,
-  postDetail?: PostDetail | null
-): FAQItem | null {
-  // division이 "자주 묻는 질문"이 아닌 경우 null 반환
-  if (post.division !== "자주 묻는 질문") {
+export function convertPostToFAQ(post: PostItem, postDetail?: PostDetail | null): FAQItem | null {
+  // division이 "QUESTIONS"(자주 묻는 질문)이 아닌 경우 null 반환
+  if (post.division !== "QUESTIONS") {
     return null;
   }
 

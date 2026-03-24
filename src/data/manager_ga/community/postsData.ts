@@ -25,8 +25,8 @@ export type { PostDivision };
 // 실제 카테고리 목록은 categories_data에서 관리됩니다.
 export type PostCategory = string;
 
-// 대상(유저 타입) 정의: 게시글 목록 전용. 기존 UserType + "전체" 확장.
-export type PostTarget = "리뷰어" | "파트너" | "관리자" | "전체";
+// 대상(유저 타입) 정의: 백엔드 enum 값 사용
+export type PostTarget = "ALL" | "REVIEWER" | "PARTNER" | "ADMIN";
 
 // 게시글 아이템 타입 정의
 export interface PostItem {
@@ -58,9 +58,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "1",
     number: "0000123",
-    division: "공지사항",
+    division: "NOTICE",
     category: "전체",
-    target: "파트너",
+    target: "PARTNER",
     title: "[건강기능식품] 체험단 등록 유의 사항",
     view_count: 115000,
     registered_date: "2026-03-01 10:15",
@@ -70,9 +70,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "2",
     number: "000001",
-    division: "공지사항",
+    division: "NOTICE",
     category: "중요",
-    target: "파트너",
+    target: "PARTNER",
     title: "[의료기기] 체험단 진행 불가 공지",
     view_count: 0,
     registered_date: "2026-03-02 14:20",
@@ -82,9 +82,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "3",
     number: "0000222",
-    division: "공지사항",
+    division: "NOTICE",
     category: "공지사항",
-    target: "파트너",
+    target: "PARTNER",
     title: "내 브랜드에 참여한 인플루언서의 중복 당첨 이력을 확인 할 수 있습니다.",
     view_count: 0,
     registered_date: "2026-03-03 09:30",
@@ -94,9 +94,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "4",
     number: "000001",
-    division: "공지사항",
+    division: "NOTICE",
     category: "공지사항",
-    target: "파트너",
+    target: "PARTNER",
     title: `스타일씨 무제한 체험단 (추천할인코드) 를 사용해서 '할인'을 받아보세요`,
     view_count: 1100000,
     registered_date: "2026-03-04 16:45",
@@ -106,9 +106,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "5",
     number: "000001",
-    division: "공지사항",
+    division: "NOTICE",
     category: "공지사항",
-    target: "파트너",
+    target: "PARTNER",
     title: "구매평 체험단 메뉴 가 신설되었습니니다.",
     view_count: 12000,
     registered_date: "2026-03-05 11:20",
@@ -118,9 +118,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "6",
     number: "000001",
-    division: "공지사항",
+    division: "NOTICE",
     category: "공지사항",
-    target: "리뷰어",
+    target: "REVIEWER",
     title:
       "[ 구매평 제한 사이트 안내 ] 카카오선물하기 / 톡딜(톡스토어) / 화해 의 구매평 체험단이 제한됩니다.텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트",
     view_count: 999999999,
@@ -131,9 +131,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "7",
     number: "000001",
-    division: "공지사항",
+    division: "NOTICE",
     category: "공지사항",
-    target: "리뷰어",
+    target: "REVIEWER",
     title:
       "정산 내역을 확인할 수 있는 시스템이 추가되었습니다.텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트",
     view_count: 6828,
@@ -144,9 +144,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "8",
     number: "000001",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "취소/환불",
-    target: "리뷰어",
+    target: "REVIEWER",
     title:
       "*체험단 구독 중지 시 모든 서비스 활용이 불가합니다.일이삼사오육칠팔구십일이삼사오육칠팔구십",
     view_count: 0,
@@ -157,9 +157,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "9",
     number: "000001",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "회원가입/로그인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "인플루언서 신청사유 추가 선정 시 참고/ 확인해주세요.",
     view_count: 0,
     registered_date: "2026-03-09 09:45",
@@ -169,9 +169,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "10",
     number: "000001",
-    division: "공지사항",
+    division: "NOTICE",
     category: "공지사항",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "(중요) 체험단 광고주 (구독/환불) 관련 재공지",
     view_count: 0,
     registered_date: "2026-03-10 14:27",
@@ -181,9 +181,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "11",
     number: "000008",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "주문/배송",
-    target: "파트너",
+    target: "PARTNER",
     title: "스타일씨 공식 홈페이지에 나오는 체험단 필터링이 리뉴얼 되었습니다!",
     view_count: 0,
     registered_date: "2026-03-11 16:10",
@@ -193,9 +193,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "12",
     number: "000001",
-    division: "이벤트",
+    division: "NOTICE",
     category: "이벤트",
-    target: "파트너",
+    target: "PARTNER",
     title: "* 인스타릴스 (영상) 공식 오픈 *",
     view_count: 144,
     registered_date: "2026-03-12 11:33",
@@ -205,9 +205,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "13",
     number: "000001",
-    division: "공지사항",
+    division: "NOTICE",
     category: "공지사항",
-    target: "파트너",
+    target: "PARTNER",
     title: `체험단 등록 실시간 '미리보기' 기능 추가`,
     view_count: 0,
     registered_date: "2026-03-13 10:48",
@@ -217,9 +217,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "14",
     number: "000001",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "자주 묻는 질문",
-    target: "파트너",
+    target: "PARTNER",
     title: "*중요* 블로그 리뷰 콘텐츠 스폰서 배너 표시 지침이 변경됩니다.",
     view_count: 0,
     registered_date: "2026-03-14 15:22",
@@ -229,9 +229,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "15",
     number: "000002",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "교환/반품",
-    target: "파트너",
+    target: "PARTNER",
     title: "체험단 등록 시 불러오기 기능이 추가 되었습니다!",
     view_count: 0,
     registered_date: "2026-03-15 09:15",
@@ -241,9 +241,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "16",
     number: "000003",
-    division: "공지사항",
+    division: "NOTICE",
     category: "중요",
-    target: "전체",
+    target: "ALL",
     title: "공정위문구 (대가성 표기) 안내",
     view_count: 250,
     registered_date: "2026-03-16 13:40",
@@ -253,9 +253,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "17",
     number: "000001",
-    division: "공지사항",
+    division: "NOTICE",
     category: "공지사항",
-    target: "전체",
+    target: "ALL",
     title: "송장 일괄 업로드 기능이 추가 되었습니다.",
     view_count: 0,
     registered_date: "2026-03-17 17:25",
@@ -266,9 +266,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "18",
     number: "000101",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인 신청은 어떻게 하나요?",
     view_count: 0,
     registered_date: "2026-03-18 09:00",
@@ -278,9 +278,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "19",
     number: "000102",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인 당첨 결과는 언제 확인할 수 있나요?",
     view_count: 0,
     registered_date: "2026-03-18 09:10",
@@ -290,9 +290,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "20",
     number: "000103",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인별로 신청 가능한 횟수에 제한이 있나요?",
     view_count: 0,
     registered_date: "2026-03-18 09:20",
@@ -302,9 +302,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "21",
     number: "000104",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 이미 신청한 캠페인을 취소하고 다시 신청할 수 있나요?",
     view_count: 0,
     registered_date: "2026-03-18 09:30",
@@ -314,9 +314,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "22",
     number: "000105",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인별 콘텐츠 제출 기한은 어디서 확인하나요?",
     view_count: 0,
     registered_date: "2026-03-18 09:40",
@@ -326,9 +326,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "23",
     number: "000106",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인 선정 기준이 궁금해요.",
     view_count: 0,
     registered_date: "2026-03-18 09:50",
@@ -338,9 +338,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "24",
     number: "000107",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인별 제공 혜택은 어디에서 확인하나요?",
     view_count: 0,
     registered_date: "2026-03-18 10:00",
@@ -350,9 +350,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "25",
     number: "000108",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인 참여 후 콘텐츠 수정이 필요한 경우 어떻게 하나요?",
     view_count: 0,
     registered_date: "2026-03-18 10:10",
@@ -362,9 +362,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "26",
     number: "000109",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인별 필수 가이드는 어디에서 확인할 수 있나요?",
     view_count: 0,
     registered_date: "2026-03-18 10:20",
@@ -374,9 +374,9 @@ const default_posts_data: PostItem[] = [
   {
     id: "27",
     number: "000110",
-    division: "자주 묻는 질문",
+    division: "QUESTIONS",
     category: "캠페인",
-    target: "리뷰어",
+    target: "REVIEWER",
     title: "[캠페인] 캠페인 심사 중 상태에서 변경되는 사항이 있나요?",
     view_count: 0,
     registered_date: "2026-03-18 10:30",

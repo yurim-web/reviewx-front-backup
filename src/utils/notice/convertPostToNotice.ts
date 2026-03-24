@@ -55,8 +55,8 @@ function convertPostCategoryToNoticeCategory(postCategory: string): string {
  * @returns 공지사항 데이터 (NoticeDetail) 또는 null (공지사항이 아닌 경우)
  */
 export function convertPostToNotice(post: PostItem): NoticeDetail | null {
-  // division이 "공지사항"이 아닌 경우 null 반환
-  if (post.division !== "공지사항") {
+  // division이 "NOTICE"(공지사항)가 아닌 경우 null 반환
+  if (post.division !== "NOTICE") {
     return null;
   }
 

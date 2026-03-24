@@ -23,7 +23,9 @@ import BaseFilterSection, {
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
 import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import type { PostDivision, PostTarget } from "@/data/manager_ga/community/postsData";
+import type { PostDivision } from "@/data/manager_ga/common/filterOptions";
+import type { PostTarget } from "@/data/manager_ga/community/postsData";
+import { BOARD_DIVISION_LABEL_MAP, BOARD_TARGET_LABEL_MAP } from "@/lib/api/posts";
 import DivisionFilterDropdown from "@/components/manager/common/community/posts/filter/DivisionFilterDropdown";
 import TargetFilterDropdown from "@/components/manager/common/community/posts/filter/TargetFilterDropdown";
 import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
@@ -174,11 +176,12 @@ export default function PostFilterSection({
   const active_filter_tags: FilterTag<string>[] = [
     ...selected_divisions.map((division) => ({
       value: division,
-      label: division,
+      label:
+        BOARD_DIVISION_LABEL_MAP[division as keyof typeof BOARD_DIVISION_LABEL_MAP] || division,
     })),
     ...selected_targets.map((target) => ({
       value: target,
-      label: target,
+      label: BOARD_TARGET_LABEL_MAP[target as keyof typeof BOARD_TARGET_LABEL_MAP] || target,
     })),
   ];
 

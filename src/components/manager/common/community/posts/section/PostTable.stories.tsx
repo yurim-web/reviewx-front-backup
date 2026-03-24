@@ -14,35 +14,40 @@ const meta: Meta<typeof PostTable> = {
   parameters: {
     layout: "padded",
   },
-  argTypes: {
-    search_query: {
-      description: "검색어",
-      control: "text",
-    },
-  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof PostTable>;
 
-// 기본 테이블 (검색어 없음)
+// 기본 테이블
 export const Default: Story = {
   args: {
-    search_query: "",
+    boards: [],
+    selected_post_ids: [],
+    on_selected_post_ids_change: () => {},
+    manager_type: "ga",
   },
 };
 
-// 검색 결과가 있는 상태
-export const WithSearchQuery: Story = {
+// 데이터가 있는 상태
+export const WithData: Story = {
   args: {
-    search_query: "공지",
-  },
-};
-
-// 검색 결과가 없는 상태
-export const NoSearchResults: Story = {
-  args: {
-    search_query: "존재하지않는게시글",
+    boards: [
+      {
+        boardId: 1,
+        division: "NOTICE",
+        boardCategory: "공지사항",
+        target: "ALL",
+        title: "[공지] 테스트 게시글",
+        viewCount: 100,
+        isFixed: false,
+        createdAt: "2026-03-01 10:00",
+        createdBy: "관리자 A",
+      },
+    ],
+    selected_post_ids: [],
+    on_selected_post_ids_change: () => {},
+    manager_type: "ga",
   },
 };

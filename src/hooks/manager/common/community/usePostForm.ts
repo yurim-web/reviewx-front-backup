@@ -6,6 +6,7 @@
  * usePostForm
  *
  * 목적: PostFormPageClient의 폼 상태, 카테고리 필터, 제출 로직을 관리
+ *       localStorage 완전 제거 → API 훅 사용
  *
  * 사용 페이지:
  * - /manager_ga/community/posts/create, /manager_ga/community/posts/[id]/edit
@@ -15,49 +16,46 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
-  categories_data,
-  initialize_categories_data,
-  type CategoryDivision,
-} from "@/data/manager_ga/community/categoriesData";
-import {
-  posts_data,
-  add_post,
-  update_post,
-  type PostItem,
-  type PostTarget,
-  type PostDivision,
-} from "@/data/manager_ga/community/postsData";
-import { postCommunityPost, patchCommunityPost } from "@/lib/api/community";
+  useBoardFormOptions,
+  useCreateBoard,
+  useUpdateBoard,
+} from "@/hooks/manager/ga/useAdminPosts";
+import type { BoardDivision, BoardTarget, BoardCategoryOption } from "@/lib/api/posts";
+import { BOARD_DIVISION_LABEL_MAP, BOARD_TARGET_LABEL_MAP } from "@/lib/api/posts";
 
 interface UsePostFormConfig {
   mode: "create" | "edit";
   post_id?: string;
   initial_data?: {
-    category_type: string;
-    category: string;
-    target: string;
+    category_type: string; // division enum (e.g. "NOTICE")
+    category: string; // boardCategory name (e.g. "전체")
+    target: string; // target enum (e.g. "ALL")
     title: string;
     body: string;
   };
   manager_type: "ga" | "sa";
-  /** 에디터 인스턴스 ref (제출 시 HTML 추출용) */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   editor_ref: React.RefObject<any>;
-  /** 에디터 준비 완료 여부 */
   is_editor_ready: boolean;
-  /** 에디터 내용 (변경 추적용) */
   editor_content: string;
-  /** 강제 리렌더링 카운터 */
   force_check: number;
 }
 
-// 드롭다운 옵션
-const CATEGORY_TYPE_OPTIONS = ["공지사항", "자주 묻는 질문"].sort((a, b) =>
-  a.localeCompare(b, "ko-KR")
-);
-const TARGET_OPTIONS = ["전체", "리뷰어", "파트너", "관리자"];
+// 드롭다운 옵션 (한글 레이블 표시, value는 enum)
+const CATEGORY_TYPE_OPTIONS = Object.entries(BOARD_DIVISION_LABEL_MAP).map(([, label]) => label);
+const TARGET_OPTIONS = Object.entries(BOARD_TARGET_LABEL_MAP).map(([, label]) => label);
 
 export { CATEGORY_TYPE_OPTIONS, TARGET_OPTIONS };
+
+// 한글 → enum 역매핑
+const divisionLabelToEnum: Record<string, BoardDivision> = {};
+for (const [k, v] of Object.entries(BOARD_DIVISION_LABEL_MAP)) {
+  divisionLabelToEnum[v] = k as BoardDivision;
+}
+const targetLabelToEnum: Record<string, BoardTarget> = {};
+for (const [k, v] of Object.entries(BOARD_TARGET_LABEL_MAP)) {
+  targetLabelToEnum[v] = k as BoardTarget;
+}
 
 export default function usePostForm({
   mode,
@@ -76,15 +74,35 @@ export default function usePostForm({
   const button_text = mode === "create" ? "등록" : "저장";
   const form_aria_label = mode === "create" ? "게시글 등록 폼" : "게시글 수정 폼";
 
-  // 폼 상태
+  // 폼 옵션 API 조회
+  const { data: formOptionsRes } = useBoardFormOptions();
+  const formOptions = formOptionsRes?.data;
+
+  // 뮤테이션
+  const createBoard = useCreateBoard();
+  const updateBoard = useUpdateBoard();
+
+  // initial_data의 division/target은 enum 값으로 올 수 있음 → 한글 레이블로 변환
+  const toLabel = (val: string, map: Record<string, string>) => map[val] || val;
+
+  // 폼 상태 (한글 레이블로 관리)
   const [category_type, setCategoryType] = useState(
-    initial_data?.category_type || (mode === "create" ? "공지사항" : "")
+    initial_data?.category_type
+      ? toLabel(initial_data.category_type, BOARD_DIVISION_LABEL_MAP)
+      : mode === "create"
+        ? "공지사항"
+        : ""
   );
   const [category, setCategory] = useState(initial_data?.category || "");
-  const [target, setTarget] = useState(initial_data?.target || (mode === "create" ? "전체" : ""));
+  const [target, setTarget] = useState(
+    initial_data?.target
+      ? toLabel(initial_data.target, BOARD_TARGET_LABEL_MAP)
+      : mode === "create"
+        ? "전체"
+        : ""
+  );
   const [title, setTitle] = useState(initial_data?.title || "");
   const [show_toast, set_show_toast] = useState(false);
-  const [categories_list, setCategoriesList] = useState(categories_data);
   const is_initial_mount = useRef(true);
 
   const is_faq_type = category_type === "자주 묻는 질문";
@@ -92,14 +110,15 @@ export default function usePostForm({
   // initial_data 동기화 (수정 모드)
   useEffect(() => {
     if (mode === "edit" && initial_data) {
-      if (initial_data.category_type) setCategoryType(initial_data.category_type);
+      if (initial_data.category_type)
+        setCategoryType(toLabel(initial_data.category_type, BOARD_DIVISION_LABEL_MAP));
       if (initial_data.category) setCategory(initial_data.category);
-      if (initial_data.target) setTarget(initial_data.target);
+      if (initial_data.target) setTarget(toLabel(initial_data.target, BOARD_TARGET_LABEL_MAP));
       if (initial_data.title) setTitle(initial_data.title);
     }
   }, [mode, initial_data]);
 
-  // 구분 변경 핸들러 (초기 마운트 제외)
+  // 구분 변경 핸들러
   const handleCategoryTypeChange = (new_type: string) => {
     setCategoryType(new_type);
     if (!is_initial_mount.current) {
@@ -107,14 +126,26 @@ export default function usePostForm({
     }
   };
 
-  // 카테고리 옵션 필터링
+  // 카테고리 옵션 필터링 (API formOptions 기반)
   const category_options = useMemo(() => {
-    if (!category_type) return [];
-    return categories_list
-      .filter((item) => item.division === (category_type as CategoryDivision))
-      .map((item) => item.category_name)
-      .sort((a, b) => a.localeCompare(b, "ko-KR"));
-  }, [category_type, categories_list]);
+    if (!category_type || !formOptions?.boardCategories) return [];
+    const divisionEnum = divisionLabelToEnum[category_type];
+    if (!divisionEnum) return [];
+    return formOptions.boardCategories
+      .filter((c: BoardCategoryOption) => c.division === divisionEnum)
+      .map((c: BoardCategoryOption) => c.categoryName)
+      .sort((a: string, b: string) => a.localeCompare(b, "ko-KR"));
+  }, [category_type, formOptions]);
+
+  // boardCategoryId 가져오기
+  const getBoardCategoryId = (catName: string, divLabel: string): number => {
+    if (!formOptions?.boardCategories) return 0;
+    const divEnum = divisionLabelToEnum[divLabel];
+    const found = formOptions.boardCategories.find(
+      (c: BoardCategoryOption) => c.categoryName === catName && c.division === divEnum
+    );
+    return found?.boardCategoryId || 0;
+  };
 
   // 작성 모드: 카테고리 기본 선택
   useEffect(() => {
@@ -124,11 +155,8 @@ export default function usePostForm({
     }
   }, [mode, category_options, category]);
 
-  // 카테고리 데이터 초기화 (localStorage)
+  // 초기 마운트 플래그 해제
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    initialize_categories_data();
-    setCategoriesList([...categories_data]);
     setTimeout(() => {
       is_initial_mount.current = false;
     }, 200);
@@ -182,76 +210,47 @@ export default function usePostForm({
       return;
     }
 
-    const now = new Date();
-    const date_string = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-    const time_string = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-    const registered_date = `${date_string} ${time_string}`;
+    const divisionEnum = divisionLabelToEnum[category_type] || "NOTICE";
+    const targetEnum = targetLabelToEnum[target] || "ALL";
+    const boardCategoryId = getBoardCategoryId(category, category_type);
 
-    if (mode === "create") {
-      const max_id = Math.max(...posts_data.map((item) => Number(item.id)), 0);
-      const max_number = Math.max(...posts_data.map((item) => Number(item.number)), 0);
-      const new_post: PostItem = {
-        id: String(max_id + 1),
-        number: String(max_number + 1).padStart(6, "0"),
-        division: category_type as PostDivision,
-        category,
-        target: target as PostTarget,
-        title: title.trim(),
-        view_count: 0,
-        registered_date,
-        registered_by: "관리자",
-        is_pinned: false,
-      };
-      add_post(new_post, content);
-      // mock DB에 게시글 저장
-      try {
-        await postCommunityPost({ ...new_post, content });
-      } catch (_apiError) {
-        console.warn("게시글 작성 API 호출 실패 (로컬 저장 완료):", _apiError);
-      }
-    } else {
-      if (!post_id) {
-        alert("게시글 ID가 없습니다.");
-        return;
-      }
-      const existing = posts_data.find((p) => p.id === post_id);
-      if (!existing) {
-        alert("수정할 게시글을 찾을 수 없습니다.");
-        return;
-      }
-      update_post(
-        post_id,
-        {
-          ...existing,
-          division: category_type as PostDivision,
-          category,
-          target: target as PostTarget,
-          title: title.trim(),
-        },
-        content
-      );
-      // mock DB에 게시글 수정 저장
-      try {
-        await patchCommunityPost(post_id, {
-          division: category_type as PostDivision,
-          category,
-          target: target as PostTarget,
+    try {
+      if (mode === "create") {
+        await createBoard.mutateAsync({
+          division: divisionEnum,
+          boardCategoryId,
+          target: targetEnum,
           title: title.trim(),
           content,
         });
-      } catch (_apiError) {
-        console.warn("게시글 수정 API 호출 실패 (로컬 저장 완료):", _apiError);
+      } else {
+        if (!post_id) {
+          alert("게시글 ID가 없습니다.");
+          return;
+        }
+        await updateBoard.mutateAsync({
+          boardId: Number(post_id),
+          body: {
+            division: divisionEnum,
+            boardCategoryId,
+            target: targetEnum,
+            title: title.trim(),
+            content,
+          },
+        });
       }
-    }
 
-    set_show_toast(true);
-    setTimeout(() => {
-      router.push(base_path);
-    }, 2000);
+      set_show_toast(true);
+      setTimeout(() => {
+        router.push(base_path);
+      }, 2000);
+    } catch (error) {
+      console.error("게시글 저장 실패:", error);
+      alert("게시글 저장에 실패했습니다.");
+    }
   };
 
   return {
-    // 상태
     category_type,
     category,
     setCategory,
@@ -261,7 +260,6 @@ export default function usePostForm({
     setTitle,
     show_toast,
     set_show_toast,
-    // 파생값
     base_path,
     page_title,
     button_text,
@@ -269,7 +267,6 @@ export default function usePostForm({
     is_faq_type,
     category_options,
     is_button_disabled,
-    // 핸들러
     handleCategoryTypeChange,
     handle_submit,
   };

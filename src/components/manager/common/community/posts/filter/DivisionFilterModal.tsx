@@ -25,7 +25,7 @@ interface DivisionFilterModalProps {
 }
 
 const DivisionFilterModalComponent = createFilterModal<PostDivision>({
-  options: ["공지사항", "자주 묻는 질문", "이벤트"],
+  options: ["NOTICE", "QUESTIONS"],
   section_title: "구분",
 });
 
