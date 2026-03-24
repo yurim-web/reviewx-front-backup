@@ -14,22 +14,24 @@ import MemberActivationSection from "./section/MemberActivationSection";
 import MemberTypeSection from "./section/MemberTypeSection";
 import ChannelMemberSection from "./section/ChannelMemberSection";
 import type { DateRange } from "./section/DateRangePickerModal";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 
 interface MemberStatsSectionProps {
   dateRange: DateRange;
+  dashboardData?: AdminDashboardResponse | null;
 }
 
-export default function MemberStatsSection({ dateRange }: MemberStatsSectionProps) {
+export default function MemberStatsSection({ dateRange, dashboardData }: MemberStatsSectionProps) {
   return (
     <div className={styles.member_stats_grid}>
       {/* 전체 회원 통계 섹션 1 - 활성화 통계 */}
-      <MemberActivationSection dateRange={dateRange} />
+      <MemberActivationSection dateRange={dateRange} dashboardData={dashboardData} />
 
       {/* 전체 회원 통계 섹션 2 - 회원 유형 통계 */}
-      <MemberTypeSection dateRange={dateRange} />
+      <MemberTypeSection dateRange={dateRange} dashboardData={dashboardData} />
 
       {/* 채널별 회원 통계 섹션 */}
-      <ChannelMemberSection />
+      <ChannelMemberSection dashboardData={dashboardData} />
     </div>
   );
 }

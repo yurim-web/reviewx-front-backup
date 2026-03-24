@@ -14,22 +14,24 @@ import CampaignRecruitmentSection from "./section/CampaignRecruitmentSection";
 import RejectionReportSection from "./section/RejectionReportSection";
 import AccessStatsSection from "./section/AccessStatsSection";
 import type { DateRange } from "./section/DateRangePickerModal";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 
 interface ChartsSectionProps {
   dateRange: DateRange;
+  dashboardData?: AdminDashboardResponse | null;
 }
 
-export default function ChartsSection({ dateRange }: ChartsSectionProps) {
+export default function ChartsSection({ dateRange, dashboardData }: ChartsSectionProps) {
   return (
     <div className={styles.charts_grid_three}>
       {/* 캠페인 모집 통계 섹션 */}
-      <CampaignRecruitmentSection />
+      <CampaignRecruitmentSection dashboardData={dashboardData} />
 
       {/* 반려/신고 통계 섹션 */}
-      <RejectionReportSection dateRange={dateRange} />
+      <RejectionReportSection dateRange={dateRange} dashboardData={dashboardData} />
 
       {/* 접속 통계 섹션 */}
-      <AccessStatsSection />
+      <AccessStatsSection dashboardData={dashboardData} />
     </div>
   );
 }

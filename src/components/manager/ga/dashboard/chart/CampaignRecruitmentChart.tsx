@@ -47,8 +47,12 @@ interface ChartTooltipProps {
   coordinate?: { x: number; y: number };
 }
 
-// 차트 데이터 (Figma 디자인 기반)
-const chart_data: ChartData[] = [
+interface CampaignRecruitmentChartProps {
+  data?: ChartData[];
+}
+
+// 기본 차트 데이터 (Figma 디자인 기반)
+const default_chart_data: ChartData[] = [
   {
     category: "생활",
     recruitmentRate: 22,
@@ -233,7 +237,8 @@ const CustomTooltip = ({ active, payload, coordinate }: ChartTooltipProps) => {
   );
 };
 
-export default function CampaignRecruitmentChart() {
+export default function CampaignRecruitmentChart({ data }: CampaignRecruitmentChartProps) {
+  const chart_data = data && data.length > 0 ? data : default_chart_data;
   return (
     <div
       className={`${styles.chart_area} ${styles.chart_area_campaign_recruitment}`}

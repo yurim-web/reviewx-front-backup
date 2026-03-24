@@ -21,9 +21,9 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from "react";
 import {
   startOfMonth,
   endOfMonth,
@@ -31,28 +31,29 @@ import {
   endOfWeek,
   startOfDay,
   endOfDay,
-} from 'date-fns';
-import layoutStyles from '@/styles/manager_ga/layout/ga_layout.module.css';
-import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
+  format,
+} from "date-fns";
+import layoutStyles from "@/styles/manager_ga/layout/ga_layout.module.css";
+import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import DateFilterSection, {
   DateFilter,
-} from '@/components/manager/ga/dashboard/section/DateFilterSection';
-import CampaignSummarySection from '@/components/manager/ga/dashboard/section/CampaignSummarySection';
-import ChartsSection from '@/components/manager/ga/dashboard/ChartsSection';
-import MemberStatsSection from '@/components/manager/ga/dashboard/MemberStatsSection';
-import type { DateRange } from '@/components/manager/ga/dashboard/section/DateRangePickerModal';
+} from "@/components/manager/ga/dashboard/section/DateFilterSection";
+import CampaignSummarySection from "@/components/manager/ga/dashboard/section/CampaignSummarySection";
+import ChartsSection from "@/components/manager/ga/dashboard/ChartsSection";
+import MemberStatsSection from "@/components/manager/ga/dashboard/MemberStatsSection";
+import { useAdminDashboard } from "@/hooks/manager/ga/useAdminDashboard";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import type { DashboardPeriod } from "@/types/api/admin";
 
 export default function ManagerGAPage() {
   // 날짜 필터 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [dateFilter, setDateFilter] = useState<DateFilter>('month');
+  const [dateFilter, setDateFilter] = useState<DateFilter>("month");
 
   // 커스텀 날짜 범위 상태 관리
   // 사용자가 날짜 선택기에서 직접 날짜 범위를 선택한 경우 사용
-  const [custom_date_range, setCustomDateRange] = useState<
-    DateRange | undefined
-  >(undefined);
+  const [custom_date_range, setCustomDateRange] = useState<DateRange | undefined>(undefined);
 
   // 날짜 필터 변경 핸들러
   // 이벤트 핸들러 함수로, 사용자가 필터를 변경할 때 호출됩니다
@@ -81,23 +82,33 @@ export default function ManagerGAPage() {
     const today = new Date();
 
     switch (dateFilter) {
-      case 'today':
+      case "today":
         return {
           from: startOfDay(today),
           to: endOfDay(today),
         };
-      case 'week':
+      case "week":
         return {
           from: startOfWeek(today, { weekStartsOn: 0 }),
           to: endOfWeek(today, { weekStartsOn: 0 }),
         };
-      case 'month':
+      case "month":
         return {
           from: startOfMonth(today),
           to: endOfMonth(today),
         };
     }
   }, [dateFilter, custom_date_range]);
+
+  // GA-01: 대시보드 API 호출
+  const dashboardPeriod: DashboardPeriod = custom_date_range
+    ? "custom"
+    : (dateFilter as DashboardPeriod);
+  const { dashboard: dashboardData } = useAdminDashboard({
+    period: dashboardPeriod,
+    startDate: dateRange.from ? format(dateRange.from, "yyyy-MM-dd") : undefined,
+    endDate: dateRange.to ? format(dateRange.to, "yyyy-MM-dd") : undefined,
+  });
 
   return (
     <div className={layoutStyles.container}>
@@ -116,13 +127,13 @@ export default function ManagerGAPage() {
         </div>
 
         {/* 캠페인 관리 요약 통계 섹션 컴포넌트 */}
-        <CampaignSummarySection dateRange={dateRange} />
+        <CampaignSummarySection dateRange={dateRange} dashboardData={dashboardData} />
 
         {/* 차트 섹션 컴포넌트 */}
-        <ChartsSection dateRange={dateRange} />
+        <ChartsSection dateRange={dateRange} dashboardData={dashboardData} />
 
         {/* 회원 통계 섹션 컴포넌트 */}
-        <MemberStatsSection dateRange={dateRange} />
+        <MemberStatsSection dateRange={dateRange} dashboardData={dashboardData} />
       </div>
     </div>
   );

@@ -12,12 +12,17 @@
 import styles from "@/styles/manager_ga/dashboard/sections/rejection_report_section.module.css";
 import RejectionReportChart from "../chart/RejectionReportChart";
 import type { DateRange } from "./DateRangePickerModal";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 
 interface RejectionReportSectionProps {
   dateRange: DateRange;
+  dashboardData?: AdminDashboardResponse | null;
 }
 
-export default function RejectionReportSection({ dateRange }: RejectionReportSectionProps) {
+export default function RejectionReportSection({
+  dateRange,
+  dashboardData,
+}: RejectionReportSectionProps) {
   return (
     <div className={styles.rejection_report_section_card}>
       {/* 제목과 범례를 같은 줄에 배치 (제목: 왼쪽, 범례: 오른쪽) */}

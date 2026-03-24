@@ -11,8 +11,18 @@
 
 import styles from "@/styles/manager_ga/dashboard/sections/campaign_recruitment_section.module.css";
 import CampaignRecruitmentChart from "../chart/CampaignRecruitmentChart";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 
-export default function CampaignRecruitmentSection() {
+interface CampaignRecruitmentSectionProps {
+  dashboardData?: AdminDashboardResponse | null;
+}
+
+export default function CampaignRecruitmentSection({
+  dashboardData,
+}: CampaignRecruitmentSectionProps) {
+  // 참고: 이 차트는 "카테고리별" 모집 통계 (생활/식품/패션 등 13개)
+  // API campaignStats.byType은 "유형별" (배송형/방문형 등 4개)이므로 다른 데이터
+  // 카테고리별 세부 데이터는 백엔드에 별도 API가 필요하므로, 현재는 기본 데이터 사용
   return (
     <div className={styles.campaign_recruitment_section_card}>
       {/* 제목과 범례를 같은 줄에 배치 (제목: 왼쪽, 범례: 오른쪽) */}

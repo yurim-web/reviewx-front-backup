@@ -19,6 +19,7 @@ import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
 import { useAdminRejections } from "@/hooks/manager/ga/useAdminRejections";
 import { useAdminReports } from "@/hooks/manager/ga/useAdminReports";
 import type { DateRange } from "./DateRangePickerModal";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 import { differenceInDays, subDays } from "date-fns";
 import { isDateInRange } from "@/utils/formatting/date";
 
@@ -26,9 +27,14 @@ import { isDateInRange } from "@/utils/formatting/date";
 interface CampaignSummarySectionProps {
   // 날짜 범위 (필터에 따라 변경됨)
   dateRange: DateRange;
+  // GA-01 대시보드 API 데이터 (있으면 사용, 없으면 클라이언트 계산)
+  dashboardData?: AdminDashboardResponse | null;
 }
 
-export default function CampaignSummarySection({ dateRange }: CampaignSummarySectionProps) {
+export default function CampaignSummarySection({
+  dateRange,
+  dashboardData,
+}: CampaignSummarySectionProps) {
   // React Query 훅으로 데이터 로드 (API 우선, 정적 데이터 fallback)
   const { campaigns: campaign_list, isLoading: campaignsLoading } = useAdminCampaigns();
   const { rejections: rejected_list, isLoading: rejectionsLoading } = useAdminRejections();
@@ -59,6 +65,49 @@ export default function CampaignSummarySection({ dateRange }: CampaignSummarySec
 
   // 날짜 범위에 따라 통계 계산
   const stats = useMemo<StatCardData[]>(() => {
+    // GA-01 API 데이터가 있으면 우선 사용
+    if (dashboardData?.campaignSummary) {
+      const s = dashboardData.campaignSummary;
+      const fmt = (
+        val: number,
+        change: number
+      ): { change: string; changeType: "positive" | "negative" | "neutral" } => {
+        if (change > 0)
+          return { change: `${Math.abs(Math.round(change))}%`, changeType: "positive" };
+        if (change < 0)
+          return { change: `${Math.abs(Math.round(change))}%`, changeType: "negative" };
+        return { change: "0%", changeType: "neutral" };
+      };
+      return [
+        {
+          title: "총 모집률",
+          value: `${Math.round(s.recruitRate)}%`,
+          ...fmt(s.recruitRate, s.recruitRateChange),
+          progress: Math.min(Math.round(s.recruitRate), 100),
+        },
+        {
+          title: "콘텐츠 완료율",
+          value: `${Math.round(s.achieveRate)}%`,
+          ...fmt(s.achieveRate, s.achieveRateChange),
+          progress: Math.min(Math.round(s.achieveRate), 100),
+        },
+        {
+          title: "콘텐츠 반려율",
+          value: `${Math.round(s.rejectRate)}%`,
+          ...fmt(s.rejectRate, s.rejectRateChange),
+          progress: Math.min(Math.round(s.rejectRate), 100),
+        },
+        {
+          title: "신고 접수율",
+          value: `${Math.round(s.reportRate)}%`,
+          ...fmt(s.reportRate, s.reportRateChange),
+          progress: Math.min(Math.round(s.reportRate), 100),
+          progressColor: "red",
+        },
+      ];
+    }
+
+    // Fallback: 클라이언트 계산
     if (!dateRange.from || !dateRange.to) {
       return [
         {
@@ -305,9 +354,10 @@ export default function CampaignSummarySection({ dateRange }: CampaignSummarySec
         progressColor: "red",
       },
     ];
-  }, [campaign_list, rejected_list, reported_list, dateRange]);
+  }, [campaign_list, rejected_list, reported_list, dateRange, dashboardData]);
 
-  if (campaignsLoading || rejectionsLoading || reportsLoading) {
+  // dashboardData가 있으면 개별 훅 로딩을 기다리지 않음
+  if (!dashboardData && (campaignsLoading || rejectionsLoading || reportsLoading)) {
     return <Loading />;
   }
 

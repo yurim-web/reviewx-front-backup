@@ -17,6 +17,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import styles from "@/styles/manager/common/dashboard/section/channel_member_section.module.css";
 import { get_reviewer_list } from "@/data/manager_ga/member/reviewers";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 
 /* ========================================
    📌 타입 정의 (TypeScript)
@@ -53,6 +54,7 @@ interface ChannelMemberStats {
 interface ChannelMemberSectionProps {
   title: string;
   chart: (channelData: { name: string; value: number; count: number }[]) => React.ReactNode;
+  dashboardData?: AdminDashboardResponse | null;
 }
 
 /* ========================================
@@ -64,7 +66,11 @@ interface ChannelMemberSectionProps {
  * - props로 받은 데이터/차트를 화면에 배치합니다.
  * - JSX로 레이아웃을 구성하고, props로 UI를 재사용합니다.
  */
-export default function ChannelMemberSection({ title, chart }: ChannelMemberSectionProps) {
+export default function ChannelMemberSection({
+  title,
+  chart,
+  dashboardData,
+}: ChannelMemberSectionProps) {
   // 리뷰어 목록 데이터 로드
   const [reviewer_list, set_reviewer_list] = useState<ReturnType<typeof get_reviewer_list>>([]);
 
@@ -79,7 +85,41 @@ export default function ChannelMemberSection({ title, chart }: ChannelMemberSect
 
   // 전체 리뷰어의 채널별 통계 계산 (날짜 필터 적용 안 함)
   const channel_member_stats = useMemo<ChannelMemberStats>(() => {
-    // 전체 리뷰어 기준으로 채널별 카운트 계산
+    // GA-01 API 데이터가 있으면 우선 사용
+    if (dashboardData?.channelStats?.channels) {
+      const channels = dashboardData.channelStats.channels;
+      const channelMap: Record<string, { count: number; pct: number }> = {};
+      channels.forEach((ch) => {
+        channelMap[ch.channelName.toLowerCase()] = {
+          count: ch.memberCount,
+          pct: Math.round(ch.percentage),
+        };
+      });
+      return {
+        blog: {
+          label: "네이버 블로그",
+          value: `${channelMap.blog?.count ?? 0}명`,
+          percentage: `${channelMap.blog?.pct ?? 0}%`,
+        },
+        instagram: {
+          label: "인스타그램",
+          value: `${channelMap.instagram?.count ?? 0}명`,
+          percentage: `${channelMap.instagram?.pct ?? 0}%`,
+        },
+        clip: {
+          label: "네이버 클립",
+          value: `${channelMap.clip?.count ?? 0}명`,
+          percentage: `${channelMap.clip?.pct ?? 0}%`,
+        },
+        youtube: {
+          label: "유튜브",
+          value: `${channelMap.youtube?.count ?? 0}명`,
+          percentage: `${channelMap.youtube?.pct ?? 0}%`,
+        },
+      };
+    }
+
+    // Fallback: 전체 리뷰어 기준으로 채널별 카운트 계산
     let blog_count = 0;
     let instagram_count = 0;
     let clip_count = 0;
@@ -124,7 +164,7 @@ export default function ChannelMemberSection({ title, chart }: ChannelMemberSect
         percentage: `${youtube_percentage}%`,
       },
     };
-  }, [reviewer_list]);
+  }, [reviewer_list, dashboardData]);
 
   // 구조 분해 할당으로 props 사용
   const { blog, instagram, clip, youtube } = channel_member_stats;
@@ -172,7 +212,7 @@ export default function ChannelMemberSection({ title, chart }: ChannelMemberSect
               <p className={styles.channel_member_section_info_label}>{blog.label}</p>
               <p className={styles.channel_member_section_info_value}>{blog.value}</p>
               {/* 비율 표시 */}
-              <p className={styles.channel_member_section_info_percentage}>{blog.percentage}</p>
+              <p className={styles.channel_member_section_info_percentage}>({blog.percentage})</p>
             </div>
 
             {/* 클립 등록 */}
@@ -180,7 +220,7 @@ export default function ChannelMemberSection({ title, chart }: ChannelMemberSect
               <p className={styles.channel_member_section_info_label}>{clip.label}</p>
               <p className={styles.channel_member_section_info_value}>{clip.value}</p>
               {/* 비율 표시 */}
-              <p className={styles.channel_member_section_info_percentage}>{clip.percentage}</p>
+              <p className={styles.channel_member_section_info_percentage}>({clip.percentage})</p>
             </div>
 
             {/* 인스타그램 등록 */}
@@ -189,7 +229,7 @@ export default function ChannelMemberSection({ title, chart }: ChannelMemberSect
               <p className={styles.channel_member_section_info_value}>{instagram.value}</p>
               {/* 비율 표시 */}
               <p className={styles.channel_member_section_info_percentage}>
-                {instagram.percentage}
+                ({instagram.percentage})
               </p>
             </div>
 
@@ -198,7 +238,9 @@ export default function ChannelMemberSection({ title, chart }: ChannelMemberSect
               <p className={styles.channel_member_section_info_label}>{youtube.label}</p>
               <p className={styles.channel_member_section_info_value}>{youtube.value}</p>
               {/* 비율 표시 */}
-              <p className={styles.channel_member_section_info_percentage}>{youtube.percentage}</p>
+              <p className={styles.channel_member_section_info_percentage}>
+                ({youtube.percentage})
+              </p>
             </div>
           </div>
         </div>

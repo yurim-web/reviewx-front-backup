@@ -22,7 +22,11 @@ import deviceStyles from "@/styles/manager_ga/dashboard/device_stats.module.css"
  * 디바이스 통계 차트
  */
 
-import { deviceProgressData, type DeviceColorKey } from "@/data/manager_ga/dashboard/dashboardData";
+import {
+  deviceProgressData as defaultDeviceProgressData,
+  type DeviceColorKey,
+  type DeviceProgress,
+} from "@/data/manager_ga/dashboard/dashboardData";
 
 // 색상 모듈 클래스 매핑 (JS 객체 -> CSS 모듈 연결)
 const progress_bar_color_map: Record<DeviceColorKey, string> = {
@@ -32,7 +36,12 @@ const progress_bar_color_map: Record<DeviceColorKey, string> = {
   app: deviceStyles.device_progress_bar_fill_app,
 };
 
-export default function DeviceStatsChart() {
+interface DeviceStatsChartProps {
+  data?: DeviceProgress[];
+}
+
+export default function DeviceStatsChart({ data }: DeviceStatsChartProps) {
+  const deviceProgressData = data && data.length > 0 ? data : defaultDeviceProgressData;
   return (
     <div
       className={chartStyles.chart_area}

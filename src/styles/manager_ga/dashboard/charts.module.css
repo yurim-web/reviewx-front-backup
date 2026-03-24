@@ -253,3 +253,76 @@
 .chart_tooltip_campaign_recruitment .chart_tooltip_campaign_value {
   color: #ffffff;
 }
+
+/* ========================================
+   반려/신고 요약 표시 (시계열 데이터 없을 때)
+   ======================================== */
+
+.rejection_report_summary {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px 20px;
+  height: 100%;
+  justify-content: center;
+}
+
+.rejection_report_summary_item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rejection_report_summary_header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rejection_report_summary_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rejection_report_summary_label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  font-family: "Pretendard", sans-serif;
+}
+
+.rejection_report_summary_value_row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.rejection_report_summary_value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+  font-family: "Pretendard", sans-serif;
+  letter-spacing: -0.44px;
+}
+
+.rejection_report_summary_trend {
+  font-size: 12px;
+  font-weight: 500;
+  font-family: "Pretendard", sans-serif;
+}
+
+.rejection_report_summary_bar_bg {
+  width: 100%;
+  height: 6px;
+  background-color: #f2f2f2;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.rejection_report_summary_bar_fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}

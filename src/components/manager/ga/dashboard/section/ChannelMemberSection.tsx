@@ -11,12 +11,18 @@
 
 import ChannelMemberSectionCommon from "@/components/manager/common/dashboard/ChannelMemberSection";
 import ChannelMemberPieChart from "../chart/ChannelMemberPieChart";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 
-export default function ChannelMemberSection() {
+interface ChannelMemberSectionProps {
+  dashboardData?: AdminDashboardResponse | null;
+}
+
+export default function ChannelMemberSection({ dashboardData }: ChannelMemberSectionProps) {
   return (
     <ChannelMemberSectionCommon
       title="채널별 회원 통계"
       chart={(channelData) => <ChannelMemberPieChart channelData={channelData} />}
+      dashboardData={dashboardData}
     />
   );
 }

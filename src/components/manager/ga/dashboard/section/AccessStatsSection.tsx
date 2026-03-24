@@ -10,11 +10,68 @@
  
  */
 
+import { useMemo } from "react";
 import styles from "@/styles/manager_ga/dashboard/sections/access_stats_section.module.css";
 import DeviceStatsChart from "../chart/DeviceStatsChart";
-import { accessStats } from "@/data/manager_ga/dashboard/dashboardData";
+import { accessStats as defaultAccessStats } from "@/data/manager_ga/dashboard/dashboardData";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 
-export default function AccessStatsSection() {
+interface AccessStatsSectionProps {
+  dashboardData?: AdminDashboardResponse | null;
+}
+
+export default function AccessStatsSection({ dashboardData }: AccessStatsSectionProps) {
+  // API 데이터가 있으면 변환, 없으면 기존 정적 데이터 사용
+  const accessStats = useMemo(() => {
+    if (dashboardData?.accessStats) {
+      const a = dashboardData.accessStats;
+      return {
+        visits: {
+          label: "방문 수",
+          value: `${a.totalAccess.toLocaleString("ko-KR")}회`,
+          change: defaultAccessStats.visits.change,
+          changeType: defaultAccessStats.visits.changeType,
+        },
+        referrals: defaultAccessStats.referrals,
+      };
+    }
+    return defaultAccessStats;
+  }, [dashboardData]);
+
+  // API pcRate/mobileRate/tabletRate를 디바이스 차트 데이터로 변환
+  const deviceData = useMemo(() => {
+    if (dashboardData?.accessStats) {
+      const a = dashboardData.accessStats;
+      const appRate = Math.max(0, 100 - a.pcRate - a.mobileRate - a.tabletRate);
+      return [
+        {
+          label: "PC",
+          percentage: a.pcRate,
+          colorKey: "pc" as const,
+          description: `PC 접속 비율 ${a.pcRate}%`,
+        },
+        {
+          label: "Tablet",
+          percentage: a.tabletRate,
+          colorKey: "tablet" as const,
+          description: `태블릿 접속 비율 ${a.tabletRate}%`,
+        },
+        {
+          label: "Mobile",
+          percentage: a.mobileRate,
+          colorKey: "mobile" as const,
+          description: `모바일 접속 비율 ${a.mobileRate}%`,
+        },
+        {
+          label: "App",
+          percentage: appRate,
+          colorKey: "app" as const,
+          description: `앱 접속 비율 ${appRate}%`,
+        },
+      ];
+    }
+    return undefined;
+  }, [dashboardData]);
   return (
     <div className={styles.access_stats_section_card}>
       <div className={styles.access_stats_section_header}>
@@ -95,7 +152,7 @@ export default function AccessStatsSection() {
       <div className={styles.access_stats_section_device_stats_section}>
         <h3 className={styles.access_stats_section_device_stats_title}>디바이스 통계</h3>
         {/* recharts 라이브러리를 사용한 막대 차트 */}
-        <DeviceStatsChart />
+        <DeviceStatsChart data={deviceData} />
       </div>
     </div>
   );

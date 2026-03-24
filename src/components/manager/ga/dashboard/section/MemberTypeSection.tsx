@@ -19,12 +19,14 @@ import Loading from "@/app/loading";
 import { useAdminReviewers } from "@/hooks/manager/ga/useAdminReviewers";
 import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
 import type { DateRange } from "./DateRangePickerModal";
+import type { AdminDashboardResponse } from "@/types/api/admin";
 
 interface MemberTypeSectionProps {
   dateRange: DateRange;
+  dashboardData?: AdminDashboardResponse | null;
 }
 
-export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps) {
+export default function MemberTypeSection({ dateRange, dashboardData }: MemberTypeSectionProps) {
   // 클라이언트에서만 데이터 로드 (Hydration 오류 방지)
   const [isClient, setIsClient] = useState(false);
 
@@ -38,6 +40,40 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
 
   // 날짜 범위에 따라 회원 유형 통계 계산
   const stats = useMemo(() => {
+    // GA-01 API 데이터가 있으면 우선 사용
+    if (dashboardData?.memberTypeStats) {
+      const mt = dashboardData.memberTypeStats;
+      const totalMembers = mt.partner.total + mt.reviewer.total;
+      const partnerPct =
+        totalMembers > 0 ? Math.round((mt.partner.total / totalMembers) * 1000) / 10 : 0;
+      const reviewerPct =
+        totalMembers > 0 ? Math.round((mt.reviewer.total / totalMembers) * 1000) / 10 : 0;
+      const partnerActivePct =
+        mt.partner.total > 0 ? Math.round((mt.partner.active / mt.partner.total) * 100) : 0;
+      const reviewerActivePct =
+        mt.reviewer.total > 0 ? Math.round((mt.reviewer.active / mt.reviewer.total) * 100) : 0;
+      return {
+        totalMembers,
+        totalPartners: mt.partner.total,
+        activePartners: mt.partner.active,
+        totalReviewers: mt.reviewer.total,
+        activeReviewers: mt.reviewer.active,
+        partnerPercentage: partnerPct,
+        reviewerPercentage: reviewerPct,
+        totalPartnersChange: {
+          percentage: Math.abs(mt.partner.newMembers),
+          type: mt.partner.newMembers > 0 ? ("positive" as const) : ("neutral" as const),
+        },
+        activePartnerPercentage: partnerActivePct,
+        totalReviewersChange: {
+          percentage: Math.abs(mt.reviewer.newMembers),
+          type: mt.reviewer.newMembers > 0 ? ("positive" as const) : ("neutral" as const),
+        },
+        activeReviewerPercentage: reviewerActivePct,
+      };
+    }
+
+    // Fallback: 클라이언트 계산
     if (!dateRange.from || !dateRange.to) {
       return {
         totalMembers: 0,
@@ -231,7 +267,7 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
       totalPartnersChange: total_partners_change,
       totalReviewersChange: total_reviewers_change,
     };
-  }, [dateRange, isClient, reviewers, partners]);
+  }, [dateRange, isClient, reviewers, partners, dashboardData]);
 
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
