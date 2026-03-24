@@ -43,6 +43,7 @@ export interface ReportedCampaignItem {
   report_reason: string; // 신고 사유 (상세)
   inspector: string; // 검수자
   target: string; // 대상자
+  target_user_id?: number; // 대상자 유저 ID (차단/해제 API용)
   processed_date: string; // 처리일 (예: 2025-08-01 18:56)
   report_count: number; // 신고 횟수
 }

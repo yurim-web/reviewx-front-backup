@@ -20,7 +20,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { startOfMonth, endOfMonth } from "date-fns";
 import styles from "@/styles/manager_ga/campaign/campaign_common.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
@@ -30,6 +30,7 @@ import CampaignReportedFilterSection from "@/components/manager/ga/campaign/repo
 import ReportedCampaignTable from "@/components/manager/ga/campaign/reported/section/ReportedCampaignTable";
 import Loading from "@/app/loading";
 import { useAdminReports } from "@/hooks/manager/ga/useAdminReports";
+import { blockUser, unblockUser } from "@/lib/api/admin";
 import type { ReportCode } from "@/data/manager_ga/reported";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
@@ -57,7 +58,7 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
  * @returns 신고 이력 페이지 JSX
  */
 export default function ReportedPage() {
-  const { reports, isLoading } = useAdminReports();
+  const { reports, reportCodes, reportStats, isLoading } = useAdminReports();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -77,6 +78,19 @@ export default function ReportedPage() {
     };
   });
 
+  // 이용 제한 등록 (차단) — POST /api/admin/users/{userId}/block
+  const handleBlockUser = useCallback(
+    async (userId: number, body: { blockCode: string; blockReason: string }) => {
+      await blockUser(userId, body);
+    },
+    []
+  );
+
+  // 이용 제한 해제 — DELETE /api/admin/users/{userId}/block
+  const handleUnblockUser = useCallback(async (userId: number) => {
+    await unblockUser(userId);
+  }, []);
+
   if (isLoading) return <Loading />;
 
   return (
@@ -86,7 +100,7 @@ export default function ReportedPage() {
         <ManagerPageTitle title="전체 신고 내역" />
 
         {/* 신고 코드 안내 섹션 */}
-        <ReportCodeInfoSection />
+        <ReportCodeInfoSection reportCodes={reportCodes} />
 
         {/* 신고 이력 섹션 제목 */}
         <h2 className={styles.page_section_title}>신고 내역</h2>
@@ -105,6 +119,7 @@ export default function ReportedPage() {
         {/* 필터에 따라 동적으로 통계를 계산하여 표시 */}
         <ReportStatsSection
           reports={reports}
+          reportStats={reportStats}
           search_query={search_query}
           selected_report_codes={selected_report_codes}
           selected_date_range={selected_date_range}
@@ -116,6 +131,8 @@ export default function ReportedPage() {
           search_query={search_query}
           selected_report_codes={selected_report_codes}
           selected_date_range={selected_date_range}
+          onBlockUser={handleBlockUser}
+          onUnblockUser={handleUnblockUser}
         />
       </div>
     </div>

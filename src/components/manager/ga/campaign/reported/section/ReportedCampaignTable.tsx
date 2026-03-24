@@ -55,6 +55,9 @@ interface ReportedCampaignTableProps {
   search_query: string;
   selected_report_codes: ReportCode[];
   selected_date_range?: DateRange | undefined;
+  // 이용 제한 등록/해제 API 콜백
+  onBlockUser?: (userId: number, body: { blockCode: string; blockReason: string }) => Promise<void>;
+  onUnblockUser?: (userId: number) => Promise<void>;
 }
 
 // ReportedCampaignItem이 TableRowData를 확장하도록 확장
@@ -117,6 +120,8 @@ export default function ReportedCampaignTable({
   search_query,
   selected_report_codes,
   selected_date_range,
+  onBlockUser,
+  onUnblockUser,
 }: ReportedCampaignTableProps) {
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
@@ -142,9 +147,11 @@ export default function ReportedCampaignTable({
   const [clear_confirm_modal_state, set_clear_confirm_modal_state] = useState<{
     is_open: boolean;
     campaign_id: string | null;
+    item: ReportedCampaignItem | null;
   }>({
     is_open: false,
     campaign_id: null,
+    item: null,
   });
 
   // 해제 완료 모달 상태
@@ -172,10 +179,11 @@ export default function ReportedCampaignTable({
   };
 
   // 해제 버튼 클릭 핸들러
-  const handle_clear_click = (campaign_id: string) => {
+  const handle_clear_click = (campaign_id: string, item: ReportedCampaignItem) => {
     set_clear_confirm_modal_state({
       is_open: true,
       campaign_id,
+      item,
     });
   };
 
@@ -184,12 +192,24 @@ export default function ReportedCampaignTable({
     set_clear_confirm_modal_state({
       is_open: false,
       campaign_id: null,
+      item: null,
     });
   };
 
   // 해제 확인 모달에서 해제 버튼 클릭 핸들러
-  const handle_clear_confirm = () => {
+  const handle_clear_confirm = async () => {
+    const itemToClear = clear_confirm_modal_state.item;
+
     if (clear_confirm_modal_state.campaign_id) {
+      // 실제 API 호출 (onUnblockUser가 있고 target_user_id가 있을 때)
+      if (onUnblockUser && itemToClear?.target_user_id) {
+        try {
+          await onUnblockUser(itemToClear.target_user_id);
+        } catch {
+          return;
+        }
+      }
+
       // 신고 내역 제거 (localStorage에 저장)
       remove_reported_campaign(clear_confirm_modal_state.campaign_id);
 
@@ -201,6 +221,7 @@ export default function ReportedCampaignTable({
     set_clear_confirm_modal_state({
       is_open: false,
       campaign_id: null,
+      item: null,
     });
 
     // 해제 완료 모달 표시
@@ -223,38 +244,22 @@ export default function ReportedCampaignTable({
 
   // 이용 제한 핸들러
   // 이용 제한 사유 모달에서 "확인" 버튼을 클릭했을 때 실행됩니다
-  const handle_block_submit = (block_reason: string) => {
+  const handle_block_submit = async (block_reason: string) => {
     if (!block_modal_state.item) return;
 
-    // 리뷰어 정보 추출
-    const reviewer_name = block_modal_state.item.target;
-
-    // 이미 이용 제한된 계정인지 확인
-    // 같은 이름으로 이미 블랙리스트에 등록된 내역이 있는지 체크
-    const existing_blacklist = get_blacklist_data();
-    const is_already_blocked = existing_blacklist.some((item) => item.name === reviewer_name);
-
-    // 이미 이용 제한된 경우 예외 처리
-    if (is_already_blocked) {
-      // 이용 제한 모달 닫기
-      handle_block_modal_close();
-      // 이미 처리된 요청 모달 표시
-      set_already_processed_modal_state(true);
-      return;
-    }
+    const item = block_modal_state.item;
 
     // 차단 사유를 BlockReason 타입으로 변환
-    // 모달의 차단 사유 옵션과 BlockReason 타입을 매핑
     const block_reason_map: Record<string, BlockReason> = {
       "반복 반려 누적": "반복 반려 누적",
-      "반복 취소 누적": "반복 반려 누적", // 가장 유사한 것으로 매핑
+      "반복 취소 누적": "반복 반려 누적",
       "무단 이탈 · 노쇼 누적": "무단 이탈 · 노쇼 누적",
       "공정위 위반 게시 요청 누적": "공정위 위반 게시 요청",
       "부적절 캠페인 게시": "부적절 캠페인 게시",
       "콘텐츠 도용 · 중복": "콘텐츠 중복 · 도용",
       "비정상 요청 · 접근": "비정상 운영 행위",
       "외부 결제 · 금전 요구": "외부 결제 · 금전 요구",
-      "비매너 행위": "커뮤니티 가이드 위반", // 가장 유사한 것으로 매핑
+      "비매너 행위": "커뮤니티 가이드 위반",
     };
 
     const mapped_block_reason: BlockReason =
@@ -264,39 +269,58 @@ export default function ReportedCampaignTable({
     const block_code =
       (Object.keys(block_code_reason_map) as BlockCode[]).find(
         (code) => block_code_reason_map[code] === mapped_block_reason
-      ) || "B004"; // 기본값
+      ) || "B004";
 
-    // 새로운 블랙리스트 항목 ID 생성
-    const existing_data = get_blacklist_data();
-    const max_id = Math.max(...existing_data.map((item) => parseInt(item.id) || 0));
-    const new_id = (max_id + 1).toString();
+    // 실제 API 호출 (onBlockUser가 있으면 우선 사용)
+    if (onBlockUser && item.target_user_id) {
+      try {
+        await onBlockUser(item.target_user_id, {
+          blockCode: block_code,
+          blockReason: mapped_block_reason,
+        });
+      } catch (err: unknown) {
+        // E_M18: 이미 이용 제한된 사용자
+        const error = err as { response?: { status?: number } };
+        if (error?.response?.status === 409) {
+          handle_block_modal_close();
+          set_already_processed_modal_state(true);
+          return;
+        }
+        return;
+      }
+    } else {
+      // mock fallback: localStorage 기반 블랙리스트
+      const existing_blacklist = get_blacklist_data();
+      const is_already_blocked = existing_blacklist.some((b) => b.name === item.target);
+      if (is_already_blocked) {
+        handle_block_modal_close();
+        set_already_processed_modal_state(true);
+        return;
+      }
 
-    // 현재 날짜/시간 생성 (기존 데이터 형식과 동일하게)
-    // 기존 데이터 형식: "2026-01-28 09:40"
-    const current_date = format(new Date(), "yyyy-MM-dd HH:mm");
+      const existing_data = get_blacklist_data();
+      const max_id = Math.max(...existing_data.map((b) => parseInt(b.id) || 0));
+      const new_id = (max_id + 1).toString();
+      const current_date = format(new Date(), "yyyy-MM-dd HH:mm");
 
-    // 블랙리스트 항목 생성
-    const new_blacklist_item: BlacklistItem = {
-      id: new_id,
-      name: reviewer_name,
-      user_id: `reviewer_${new_id}`, // 임시 user_id 생성
-      division: "리뷰어",
-      current_points: 0,
-      ip_address: "0.0.0.0", // 임시 IP 주소
-      block_code: block_code as BlockCode,
-      block_reason: mapped_block_reason,
-      registered_date: current_date,
-      registered_by: "관리자",
-    };
-
-    // 블랙리스트에 추가
-    add_blacklist_item(new_blacklist_item);
+      const new_blacklist_item: BlacklistItem = {
+        id: new_id,
+        name: item.target,
+        user_id: `reviewer_${new_id}`,
+        division: "리뷰어",
+        current_points: 0,
+        ip_address: "0.0.0.0",
+        block_code: block_code as BlockCode,
+        block_reason: mapped_block_reason,
+        registered_date: current_date,
+        registered_by: "관리자",
+      };
+      add_blacklist_item(new_blacklist_item);
+    }
 
     // 신고 내역에서 제거 (localStorage에 저장)
-    if (block_modal_state.item) {
-      remove_reported_campaign(block_modal_state.item.id);
-      trigger_update();
-    }
+    remove_reported_campaign(item.id);
+    trigger_update();
 
     // 모달은 완료 안내 모달에서 "닫기" 클릭 시 on_close로 닫힘 (페이지 이동 없음)
   };
@@ -426,7 +450,7 @@ export default function ReportedCampaignTable({
               return is_hovered ? (
                 <div className={styles.block_button_group}>
                   <button
-                    onClick={() => handle_clear_click(row.id)}
+                    onClick={() => handle_clear_click(row.id, row)}
                     className={styles.clear_button}
                     aria-label={`${row.campaign_name} 해제`}
                   >

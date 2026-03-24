@@ -26,6 +26,8 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
 interface ReportStatsSectionProps {
   // API 데이터 (제공 시 정적 데이터 대신 사용)
   reports?: ReportedCampaignItem[];
+  // API 통계 데이터 (서버에서 집계된 통계)
+  reportStats?: { code: ReportCode; count: number }[];
   // 검색어 필터
   search_query: string;
   // 선택된 신고 코드 필터
@@ -53,6 +55,7 @@ const all_report_codes: ReportCode[] = [
 
 export default function ReportStatsSection({
   reports,
+  reportStats,
   search_query,
   selected_report_codes,
   selected_date_range,
