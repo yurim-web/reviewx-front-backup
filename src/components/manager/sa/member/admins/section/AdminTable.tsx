@@ -99,7 +99,8 @@ const columns: TableColumn[] = [
   },
   {
     key: "join_date",
-    label: "가입일",
+    // 가입일 --> 생성일로 명칭바뀜 참고!!
+    label: "생성일",
     sortable: true,
   },
   {
