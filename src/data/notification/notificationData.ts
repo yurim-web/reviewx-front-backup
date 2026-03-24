@@ -59,14 +59,9 @@ export type PartnerNotificationCategory =
   | "A_P2" // 캠페인 완료
   | "A_P3" // 캠페인 중지
   | "A_P4" // 콘텐츠 등록
-  | "A_P5" // 리뷰어 기한 연장 요청
-  | "A_P6" // 무통장입금 확인 신청
-  | "A_P7" // 무통장입금 확인 완료
-  | "A_P8" // 무통장입금 미확인
-  | "A_P9" // 신용카드 결제 완료
-  | "A_P10" // 콘텐츠 미확인 요청
-  | "A_P11" // 계정 정지
-  | "A_P12"; // 계정 차단
+  | "A_P5" // 콘텐츠 등록 기한 연장 요청
+  | "A_P6" // 계정 정지
+  | "A_P7"; // 계정 차단
 
 /**
  * 관리자(GA/SA 공통) 알림 카테고리 코드
@@ -268,50 +263,19 @@ export const partner_notification_templates: Record<
   },
   A_P5: {
     category: "A_P5",
-    label: "기한 연장 요청",
+    label: "콘텐츠 등록 기한 연장 요청",
     message_template: "리뷰어가 콘텐츠 등록 기한 연장을 요청했습니다.",
     color: "red",
     has_campaign_link: true,
   },
   A_P6: {
     category: "A_P6",
-    label: "무통장입금 확인 신청",
-    message_template: "무통장입금 확인이 신청되었습니다.",
-    color: "blue",
+    label: "계정 일시 정지",
+    message_template: "운영 정책 위반으로 인해 {정지기간}일 동안 캠페인을 등록할 수 없습니다.",
+    color: "orange",
   },
   A_P7: {
     category: "A_P7",
-    label: "무통장입금 확인 완료",
-    message_template: "무통장입금 확인이 완료되었습니다.",
-    color: "blue",
-  },
-  A_P8: {
-    category: "A_P8",
-    label: "무통장입금 미확인",
-    message_template: "무통장입금이 확인되지 않았습니다.",
-    color: "orange",
-  },
-  A_P9: {
-    category: "A_P9",
-    label: "신용카드 결제 완료",
-    message_template: "신용카드 결제가 완료되었습니다.",
-    color: "blue",
-  },
-  A_P10: {
-    category: "A_P10",
-    label: "콘텐츠 미확인 요청",
-    message_template: "콘텐츠 확인을 요청합니다.",
-    color: "orange",
-    has_campaign_link: true,
-  },
-  A_P11: {
-    category: "A_P11",
-    label: "계정 일시 정지",
-    message_template: "운영 정책 위반으로 인해 캠페인을 등록할 수 없습니다.",
-    color: "orange",
-  },
-  A_P12: {
-    category: "A_P12",
     label: "계정 이용 제한",
     message_template: "운영 정책 위반으로 인해 이용 제한되었습니다.",
     color: "orange",
@@ -678,9 +642,73 @@ export const mockManagerGANotifications: NotificationItem[] = [
 
 /**
  * @deprecated 각 사용자 유형별 목업 데이터를 사용하세요.
- * - mockReviewerNotifications: 리뷰어(유저) 알림
- * - mockPartnerNotifications: 파트너 알림
- * - mockManagerSANotifications: 관리자 SA 알림
- * - mockManagerGANotifications: 관리자 GA 알림
  */
 export const mockNotifications = mockReviewerNotifications;
+
+/* ========================================
+   백엔드 API → UI NotificationItem 변환
+   ======================================== */
+
+import type {
+  AdminNotificationApiItem,
+  PartnerNotificationApiItem,
+} from "@/types/api/notification";
+
+/** 파트너 알림 type → A_P* 카테고리 매핑 (프론트엔드 명세서 16번 기준) */
+const PARTNER_TYPE_TO_CATEGORY: Record<string, PartnerNotificationCategory> = {
+  CAMPAIGN_STATUS_CHANGED: "A_P1",
+  CAMPAIGN_COMPLETED: "A_P2",
+  CAMPAIGN_SUSPENDED: "A_P3",
+  CONTENT_REGISTERED: "A_P4",
+  EXTENSION_REQUESTED: "A_P5",
+  ACCOUNT_SUSPENDED: "A_P6",
+  ACCOUNT_BANNED: "A_P7",
+};
+
+/**
+ * 파트너 백엔드 알림 → UI NotificationItem 변환
+ */
+export function mapPartnerNotificationToItem(
+  item: PartnerNotificationApiItem
+): NotificationItem & { message?: string } {
+  return {
+    id: item.notificationHistoryId,
+    category: PARTNER_TYPE_TO_CATEGORY[item.type] || "A_P1",
+    time: formatSentAt(item.createdAt),
+    message: item.message,
+    campaign_id: item.campaignId ?? undefined,
+  };
+}
+
+/** 관리자 알림 title → A_A* 카테고리 매핑 */
+const ADMIN_TITLE_TO_CATEGORY: Record<string, AdminNotificationCategory> = {
+  "반려 발생": "A_A1",
+  "신고 발생": "A_A2",
+  "이용 제한 발생": "A_A3",
+  "카카오톡 문의": "A_A4",
+  "출금 요청": "A_A5",
+  "긴급 출금 요청": "A_A6",
+};
+
+/**
+ * sentAt(ISO 8601) → "YYYY-MM-DD HH:mm" 포맷
+ */
+function formatSentAt(sentAt: string): string {
+  const d = new Date(sentAt);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/**
+ * 관리자(GA/SA) 백엔드 알림 → UI NotificationItem 변환
+ */
+export function mapAdminNotificationToItem(
+  item: AdminNotificationApiItem
+): NotificationItem & { message?: string } {
+  return {
+    id: item.notificationId,
+    category: ADMIN_TITLE_TO_CATEGORY[item.title] || "A_A1",
+    time: formatSentAt(item.sentAt),
+    message: item.message,
+  };
+}

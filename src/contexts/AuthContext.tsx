@@ -158,7 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     performLogout();
     setUser(null);
-    router.push(isPartner ? "/partner" : "/");
+    router.push(isPartner ? "/partner/login" : "/");
   }, [router, user]);
 
   // 사용자 정보 업데이트 함수

@@ -2,8 +2,68 @@
    알림 API 타입 정의
    ======================================== */
 
-// ── 리뷰어 알림 (Mock 기반, 레거시) ──
+/**
+ * 리뷰어 알림 API 응답 타입 (GET /user/notification)
+ */
+export interface ReviewerNotificationApiItem {
+  notificationHistoryId: number;
+  campaignId: number | null;
+  userId: number;
+  type: string;
+  message: string;
+  createdAt: string;
+}
 
+/**
+ * 리뷰어 알림 목록 응답
+ */
+export interface ReviewerNotificationListResponse {
+  result: string;
+  items: ReviewerNotificationApiItem[];
+  nextCursor: string | null;
+}
+
+/**
+ * 관리자(GA/SA) 알림 항목 (GET /api/admin/notifications)
+ */
+export interface AdminNotificationApiItem {
+  notificationId: number;
+  category: "OPERATION" | "INQUIRY";
+  notificationType: "EMAIL" | "SMS" | "KAKAO" | "PUSH";
+  title: string;
+  message: string;
+  isRead: boolean;
+  sentAt: string;
+}
+
+/**
+ * 관리자 알림 목록 응답
+ */
+export interface AdminNotificationListResponse {
+  result: string;
+  generatedAt: string;
+  data: {
+    totalCount: number;
+    unreadCount: number;
+    notifications: AdminNotificationApiItem[];
+  };
+}
+
+/**
+ * 파트너 알림 항목 (GET /partner/notifications)
+ */
+export interface PartnerNotificationApiItem {
+  notificationHistoryId: number;
+  campaignId: number | null;
+  userId: number;
+  type: string;
+  message: string;
+  createdAt: string;
+}
+
+/**
+ * @deprecated 리뷰어 mock용 — ReviewerNotificationApiItem 사용
+ */
 export interface NotificationApiItem {
   id: number;
   reviewer_id: number;
@@ -14,39 +74,4 @@ export interface NotificationApiItem {
   created_at: string;
   campaign_id?: number;
   campaign_name?: string;
-}
-
-// ── 관리자(GA/SA) 알림 API 타입 (백엔드 API 기준) ──
-
-/** 알림 목록 조회 파라미터 */
-export interface AdminNotificationParams {
-  page?: number;
-  size?: number;
-  category?: "OPERATION" | "INQUIRY";
-  isRead?: boolean;
-}
-
-/** 알림 항목 */
-export interface AdminNotificationItem {
-  notificationId: number;
-  category: "OPERATION" | "INQUIRY";
-  notificationType: "EMAIL" | "SMS" | "KAKAO" | "PUSH";
-  title: string;
-  message: string;
-  isRead: boolean;
-  sentAt: string; // ISO 8601
-}
-
-/** 알림 목록 응답 */
-export interface AdminNotificationListResponse {
-  result: "OK";
-  generatedAt: string;
-  data: {
-    totalCount: number;
-    unreadCount: number;
-    totalPages: number;
-    currentPage: number;
-    size: number;
-    notifications: AdminNotificationItem[];
-  };
 }
