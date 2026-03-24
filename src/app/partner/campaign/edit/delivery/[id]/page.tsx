@@ -87,7 +87,7 @@ export default function DeliveryCampaignEditPage() {
 
   // 서버 API에서 캠페인 데이터 로드 (15번 API)
   useEffect(() => {
-    getCampaignEditPage(Number(campaignId))
+    getCampaignEditPage("DELIVERY", Number(campaignId))
       .then((response) => {
         if (response?.campaign) {
           const formData = editApiResponseToFormData(response);
@@ -105,18 +105,19 @@ export default function DeliveryCampaignEditPage() {
       });
   }, [campaignId]);
 
-  /** 캠페인 수정 처리 — POST /partner/campaign/edit/{campaignId} (16번 API) */
+  /** 캠페인 수정 처리 — POST /partner/campaign/edit/{type}/{campaignId} (16번 API) */
   const handleSubmit = async (formData: CampaignFormData) => {
     setIsSubmitting(true);
     try {
       const editBody = formDataToEditRequest(formData, isUrgent);
       await postCampaignEdit(
+        "DELIVERY",
         Number(campaignId),
-        editBody as Parameters<typeof postCampaignEdit>[1]
+        editBody as Parameters<typeof postCampaignEdit>[2]
       );
 
       // 저장 후 폼 데이터 갱신 (15번 API)
-      const updatedResponse = await getCampaignEditPage(Number(campaignId));
+      const updatedResponse = await getCampaignEditPage("DELIVERY", Number(campaignId));
       if (updatedResponse?.campaign) {
         const newFormData = editApiResponseToFormData(updatedResponse);
         setInitialData(newFormData);

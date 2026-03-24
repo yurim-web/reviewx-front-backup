@@ -100,10 +100,6 @@ export const getBrandLogo = (brandName: string, campaignType?: string): string =
     case "YOUTUBE_SHORTS":
     case "youtube_shorts":
       return "/images/brand_logo/shots.svg";
-    case "틱톡":
-    case "TIKTOK":
-    case "tiktok":
-      return "/images/brand_logo/tiktok.svg";
     default:
       return "/images/brand_logo/naverblog.svg"; // 기본 이미지 (빈 문자열 방지)
   }

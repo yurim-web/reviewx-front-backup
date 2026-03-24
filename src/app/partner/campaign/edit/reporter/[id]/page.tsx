@@ -77,7 +77,7 @@ export default function ReporterCampaignEditPage() {
 
   // 서버 API에서 캠페인 데이터 로드
   useEffect(() => {
-    getCampaignEditPage(Number(campaignId))
+    getCampaignEditPage("REPORTER", Number(campaignId))
       .then((response) => {
         if (response?.campaign) {
           const formData = editApiResponseToFormData(response);
@@ -100,12 +100,13 @@ export default function ReporterCampaignEditPage() {
     try {
       const editBody = formDataToEditRequest(formData, isUrgent);
       await postCampaignEdit(
+        "REPORTER",
         Number(campaignId),
-        editBody as Parameters<typeof postCampaignEdit>[1]
+        editBody as Parameters<typeof postCampaignEdit>[2]
       );
 
       // 저장 후 폼 데이터 갱신 (15번 API)
-      const updatedResponse = await getCampaignEditPage(Number(campaignId));
+      const updatedResponse = await getCampaignEditPage("REPORTER", Number(campaignId));
       if (updatedResponse?.campaign) {
         const newFormData = editApiResponseToFormData(updatedResponse);
         setInitialData(newFormData);

@@ -15,7 +15,11 @@ import { useMemo } from "react";
 import { CampaignFormData, CampaignCreateFormBaseProps } from "@/types/domain/user";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import { CustomDropdown } from "./common/selectors/CustomDropdown";
-import { platforms, regions, sub_regions } from "./common/constants/campaignFormConstants";
+import {
+  platforms as fallbackPlatforms,
+  regions as fallbackRegions,
+  sub_regions,
+} from "./common/constants/campaignFormConstants";
 import { getRegionKey } from "./common/utils/formUtils";
 import CampaignFormBase from "./CampaignFormBase";
 
@@ -33,14 +37,14 @@ export default function VisitCampaignForm(props: VisitCampaignFormProps) {
       {...props}
       campaignType="방문형"
       titlePlaceholder="지역, 브랜드, 제공하는 서비스/제품 등"
-      renderBeforeImages={({ formData, updateFormData, isEditMode, isEditableField }) => (
+      renderBeforeImages={({ formData, updateFormData, isEditMode, isEditableField, pageData }) => (
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>
             등록 플랫폼<span className={infoStyles.required}>*</span>
           </label>
           <CustomDropdown
             value={formData.platform || ""}
-            options={platforms}
+            options={pageData?.channelOptions ?? fallbackPlatforms}
             onChange={(value) => updateFormData("platform", value)}
             disabled={isEditMode && !isEditableField("platform")}
             placeholder="플랫폼 선택"
@@ -153,7 +157,7 @@ function VisitRegionSelector({ ctx }: { ctx: import("./CampaignFormBase").Campai
           </label>
           <CustomDropdown
             value={formData.region || ""}
-            options={regions}
+            options={ctx.pageData?.regionOptions ?? fallbackRegions}
             onChange={(value) => {
               updateFormData("region", value);
               updateFormData("subRegion", "");
@@ -168,7 +172,13 @@ function VisitRegionSelector({ ctx }: { ctx: import("./CampaignFormBase").Campai
           </label>
           <CustomDropdown
             value={formData.subRegion || ""}
-            options={formData.region ? sub_regions[getRegionKey(formData.region)] || [] : []}
+            options={
+              formData.region
+                ? (ctx.pageData?.subRegionMap[formData.region] ??
+                  sub_regions[getRegionKey(formData.region)] ??
+                  [])
+                : []
+            }
             onChange={(value) => updateFormData("subRegion", value)}
             disabled={!formData.region || (isEditMode && !isEditableField("region"))}
             placeholder={subRegionPlaceholder}

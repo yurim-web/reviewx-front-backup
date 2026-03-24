@@ -19,6 +19,8 @@ import { CampaignFormData } from "@/types/domain/user";
 import { getPartnerName } from "@/utils/partner/partnerHelpers";
 import { saveCampaignToStorage } from "@/utils/partner/campaignStorage";
 import { postPartnerCampaign } from "@/lib/api/partner";
+import { postCampaignCreate } from "@/lib/api/partnerCampaign";
+import type { CreateCampaignRequest } from "@/types/api/partnerCampaign";
 
 /** 캠페인 유형별 설정 */
 export interface CampaignRegistrationConfig {
@@ -171,14 +173,56 @@ function buildDbPayload(
 }
 
 /**
+ * formData → CreateCampaignRequest 변환
+ */
+function buildApiRequest(
+  formData: CampaignFormData & { isUrgent: boolean },
+  fd: Record<string, unknown>
+): CreateCampaignRequest {
+  const recruit = parsePeriod(formData.recruitmentPeriod);
+  const content = parsePeriod(formData.registrationPeriod);
+  const selectedAt = parsePeriod(formData.announcementDate).start;
+
+  return {
+    type: (CAMPAIGN_TYPE_TO_API[formData.campaignType] ||
+      "DELIVERY") as CreateCampaignRequest["type"],
+    categoryId: Number(fd._categoryId) || 0,
+    requiredPlatformId: fd._channelId != null ? Number(fd._channelId) : undefined,
+    title: formData.title,
+    description: formData.providedItems || "",
+    thumbnailImage:
+      (fd.thumbnailImage as File) || new File([], "placeholder.jpg", { type: "image/jpeg" }),
+    detailImages: (fd.detailImages as File[]) || [],
+    recruitLimit: Number(formData.recruitmentCount) || 1,
+    recruitStartAt: recruit.start,
+    recruitEndAt: recruit.end,
+    selectedAt,
+    contentStartAt: content.start,
+    contentEndAt: content.end,
+    extraRewardPoint: Number(String(formData.additionalPoints).replace(/,/g, "")) || undefined,
+    paymentRewardPoint: Number(String(formData.purchasePoints).replace(/,/g, "")) || undefined,
+    promotionUrl: formData.promotionLink || undefined,
+    keyword: formData.keywords || undefined,
+    notification: formData.guidelines || undefined,
+    regionId: fd._regionId != null ? Number(fd._regionId) : undefined,
+    visitAddress:
+      formData.visitAddress ||
+      [formData.visitBaseAddress, formData.visitDetailAddress].filter(Boolean).join(" ") ||
+      undefined,
+    is_urgent: formData.isUrgent === true,
+    contact_phone: formData.contactPhone || "",
+    ftc_agreement: formData.fairTradeAgreement || false,
+  };
+}
+
+/**
  * 캠페인 등록 공통 처리 함수
  *
  * 5개 캠페인 유형의 공통 흐름:
  * 1. formData에 isUrgent 추가
  * 2. (선택) formData 전처리
- * 3. addCampaignFn으로 캠페인 데이터 생성
- * 4. 파트너 정보·공통 필드·유형별 추가 필드를 합친 확장 데이터 생성
- * 5. localStorage에 저장 + mock DB에 저장
+ * 3. POST /partner/campaign/create (API 10) 호출
+ * 4. localStorage에도 저장 (캠페인 관리 페이지 표시용 fallback)
  */
 export async function registerCampaignBase(
   formData: CampaignFormData,
@@ -194,65 +238,78 @@ export async function registerCampaignBase(
       ? config.preprocessFormData(finalFormData)
       : finalFormData;
 
-    // 캠페인 데이터 생성 (localStorage용)
-    const newCampaign = config.addCampaignFn(processedFormData, config.imageUrl);
-    if (!newCampaign) return false;
+    // CampaignFormBase.handleSubmit이 추가한 ID 필드 추출
+    const fd = formData as unknown as Record<string, unknown>;
 
-    const registeredAt = new Date().toISOString();
+    // API 10: POST /partner/campaign/create 호출
+    const apiRequest = buildApiRequest(processedFormData, fd);
+    const apiResponse = await postCampaignCreate(apiRequest);
+
+    // 등록 성공 → localStorage에도 저장 (캠페인 관리 페이지 fallback)
     const partnerName = getPartnerName(userId);
-
-    // 확장 데이터 생성 (localStorage 저장용)
-    const extendedCampaign = {
-      ...newCampaign,
-      partner_id: getPartnerId(userId),
-      partnerName,
-      campaignInfo: {
-        ...newCampaign.campaignInfo,
+    const registeredAt = new Date().toISOString();
+    const newCampaign = config.addCampaignFn(processedFormData, config.imageUrl);
+    if (newCampaign) {
+      const extraFields = config.getExtraFields?.(processedFormData) ?? {};
+      const extendedCampaign = {
+        ...newCampaign,
+        id: apiResponse.campaign.campaignId,
+        campaignId: apiResponse.campaign.campaignId,
+        partner_id: getPartnerId(userId),
         partnerName,
-      },
-      isUrgent: isUrgent === true,
-      isEmergency: isUrgent === true,
-      registeredAt,
-      channel: processedFormData.platform || "",
-      description: processedFormData.providedItems || "",
-      keywords: processedFormData.keywords || "",
-      guidelines: processedFormData.guidelines || "",
-      minTextLength: Number(processedFormData.minTextLength) || 0,
-      minImageCount: Number(processedFormData.minImageCount) || 0,
-      videoCount: Number(processedFormData.videoCount) || 0,
-      videoDuration: Number(processedFormData.videoDuration) || 0,
-      requireLinkAttachment: processedFormData.requireLinkAttachment,
-      requireKeywordAttachment: processedFormData.requireKeywordAttachment,
-      additionalPoints: Number(processedFormData.additionalPoints) || 0,
-      ...config.getExtraFields?.(processedFormData),
-    };
-
-    const saved = saveCampaignToStorage(
-      extendedCampaign as Record<string, unknown>,
-      config.storageKey
-    );
-
-    if (!saved) return false;
-
-    // mock DB에 캠페인 저장 (DB 스키마 호환 payload)
-    // 타임아웃 3초: json-server 미실행/지연 시 빠르게 실패 처리
-    const extraFields = config.getExtraFields?.(processedFormData) ?? {};
-    const dbPayload = {
-      ...buildDbPayload(processedFormData, config.imageUrl, userId),
-      ...extraFields,
-    };
-    try {
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("timeout")), 3000)
-      );
-      await Promise.race([postPartnerCampaign(dbPayload), timeoutPromise]);
-    } catch (apiError) {
-      // mock 서버 미실행/타임아웃 시에도 localStorage 저장은 완료됐으므로 성공 처리
-      console.warn("[registerCampaign] mock DB 저장 실패 (localStorage는 저장됨):", apiError);
+        isUrgent: isUrgent === true,
+        isEmergency: isUrgent === true,
+        registeredAt,
+        ...extraFields,
+      };
+      saveCampaignToStorage(extendedCampaign as Record<string, unknown>, config.storageKey);
     }
 
     return true;
-  } catch (_error) {
-    return false;
+  } catch (apiError) {
+    // API 실패 시 구버전 mock 방식으로 fallback (개발 환경 호환)
+    console.warn("[registerCampaign] API 호출 실패, mock fallback 시도:", apiError);
+    try {
+      const finalFormData = { ...formData, isUrgent };
+      const processedFormData = config.preprocessFormData
+        ? config.preprocessFormData(finalFormData)
+        : finalFormData;
+      const newCampaign = config.addCampaignFn(processedFormData, config.imageUrl);
+      if (!newCampaign) return false;
+
+      const partnerName = getPartnerName(userId);
+      const extendedCampaign = {
+        ...newCampaign,
+        partner_id: getPartnerId(userId),
+        partnerName,
+        isUrgent: isUrgent === true,
+        isEmergency: isUrgent === true,
+        registeredAt: new Date().toISOString(),
+        ...config.getExtraFields?.(processedFormData),
+      };
+      const saved = saveCampaignToStorage(
+        extendedCampaign as Record<string, unknown>,
+        config.storageKey
+      );
+      if (!saved) return false;
+
+      const fd = formData as unknown as Record<string, unknown>;
+      const dbPayload = {
+        ...buildDbPayload(processedFormData, config.imageUrl, userId),
+        ...config.getExtraFields?.(processedFormData),
+      };
+      try {
+        await Promise.race([
+          postPartnerCampaign(dbPayload),
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error("timeout")), 3000)),
+        ]);
+      } catch {
+        /* ignore */
+      }
+      void fd;
+      return true;
+    } catch (_fallbackError) {
+      return false;
+    }
   }
 }

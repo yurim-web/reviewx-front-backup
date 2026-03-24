@@ -10,8 +10,8 @@
  * - 10번: POST /partner/campaign/create (캠페인 등록)
  * - 11번: POST /partner/campaign/draft (임시저장)
  * - 12번: GET /partner/campaign/draft/{campaignId} (임시저장 불러오기)
- * - 15번: GET /partner/campaign/edit/{campaignId} (수정페이지 조회)
- * - 16번: POST /partner/campaign/edit/{campaignId} (캠페인 수정)
+ * - 15번: GET /partner/campaign/edit/{type}/{campaignId} (수정페이지 조회)
+ * - 16번: POST /partner/campaign/edit/{type}/{campaignId} (캠페인 수정)
  *
  * 사용 위치:
  * - src/hooks/partner/campaign_create_form/useCampaignCreatePage.ts
@@ -20,8 +20,9 @@
  * - src/app/partner/campaign/edit/
  */
 
-import { apiClient } from "@/lib/api/client";
+import { partnerApiClient } from "@/lib/api/partnerClient";
 import type {
+  CampaignType,
   CampaignCreatePageResponse,
   CreateCampaignRequest,
   CampaignCreateResponse,
@@ -38,7 +39,9 @@ import type {
  * → 파트너 정보, 카테고리, 채널, 지역 목록 반환
  */
 export const getCampaignCreatePage = async (): Promise<CampaignCreatePageResponse> => {
-  const { data } = await apiClient.get<CampaignCreatePageResponse>("/partner/campaign/create");
+  const { data } = await partnerApiClient.get<CampaignCreatePageResponse>(
+    "/partner/campaign/create"
+  );
   return data;
 };
 
@@ -82,7 +85,7 @@ export const postCampaignCreate = async (
   if (request.visitAddress) formData.append("visitAddress", request.visitAddress);
 
   // axios가 FormData에서 boundary를 자동 설정하도록 Content-Type 헤더 생략
-  const { data } = await apiClient.post<CampaignCreateResponse>(
+  const { data } = await partnerApiClient.post<CampaignCreateResponse>(
     "/partner/campaign/create",
     formData
   );
@@ -126,7 +129,7 @@ export const postCampaignDraft = async (
   if (request.visitAddress) formData.append("visitAddress", request.visitAddress);
 
   // axios가 FormData에서 boundary를 자동 설정하도록 Content-Type 헤더 생략
-  const { data } = await apiClient.post<CampaignDraftSaveResponse>(
+  const { data } = await partnerApiClient.post<CampaignDraftSaveResponse>(
     "/partner/campaign/draft",
     formData
   );
@@ -138,7 +141,7 @@ export const postCampaignDraft = async (
  * GET /partner/campaign/draft/{campaignId}
  */
 export const getCampaignDraft = async (campaignId: number): Promise<CampaignDraftLoadResponse> => {
-  const { data } = await apiClient.get<CampaignDraftLoadResponse>(
+  const { data } = await partnerApiClient.get<CampaignDraftLoadResponse>(
     `/partner/campaign/draft/${campaignId}`
   );
   return data;
@@ -146,25 +149,27 @@ export const getCampaignDraft = async (campaignId: number): Promise<CampaignDraf
 
 /**
  * 5. 캠페인 수정페이지 조회
- * GET /partner/campaign/edit/{campaignId}
+ * GET /partner/campaign/edit/{type}/{campaignId}
  * → 기존 캠페인 데이터 + 파트너 정보 + 카테고리/채널/지역 목록
  */
 export const getCampaignEditPage = async (
+  type: CampaignType,
   campaignId: number
 ): Promise<CampaignEditPageResponse> => {
-  const { data } = await apiClient.get<CampaignEditPageResponse>(
-    `/partner/campaign/edit/${campaignId}`
+  const { data } = await partnerApiClient.get<CampaignEditPageResponse>(
+    `/partner/campaign/edit/${type}/${campaignId}`
   );
   return data;
 };
 
 /**
  * 6. 캠페인 수정
- * POST /partner/campaign/edit/{campaignId}
+ * POST /partner/campaign/edit/{type}/{campaignId}
  * → 파일 업로드 있으면 multipart/form-data, 없으면 JSON
  * → 변경된 필드만 전송 (모든 필드 optional)
  */
 export const postCampaignEdit = async (
+  type: CampaignType,
   campaignId: number,
   request: UpdateCampaignRequest
 ): Promise<CampaignEditResponse> => {
@@ -201,8 +206,8 @@ export const postCampaignEdit = async (
     if (request.regionId != null) formData.append("regionId", String(request.regionId));
     if (request.visitAddress) formData.append("visitAddress", request.visitAddress);
 
-    const { data } = await apiClient.post<CampaignEditResponse>(
-      `/partner/campaign/edit/${campaignId}`,
+    const { data } = await partnerApiClient.post<CampaignEditResponse>(
+      `/partner/campaign/edit/${type}/${campaignId}`,
       formData
     );
     return data;
@@ -217,8 +222,8 @@ export const postCampaignEdit = async (
     }
   });
 
-  const { data } = await apiClient.post<CampaignEditResponse>(
-    `/partner/campaign/edit/${campaignId}`,
+  const { data } = await partnerApiClient.post<CampaignEditResponse>(
+    `/partner/campaign/edit/${type}/${campaignId}`,
     jsonBody
   );
   return data;

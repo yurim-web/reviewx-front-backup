@@ -126,74 +126,74 @@ function statusToTab(status: string): string {
 // (API 13: `id` 필드 사용)
 // ----------------------------------------
 function adaptManagementItem(item: CampaignManagementItem, tab: string): PartnerCampaign {
-  const campaignType = (CAMPAIGN_TYPE_LABEL[item.campaign_type] ??
+  const campaignType = (CAMPAIGN_TYPE_LABEL[item.campaignType] ??
     "배송형") as PartnerCampaign["campaignType"];
   const brandName = PLATFORM_LABEL[item.platform] ?? item.platform ?? "";
   const currentTab = tab === "전체" ? statusToTab(item.status) : tab;
-  const selectedCount = item.selected_count ?? 0;
+  const selectedCount = item.selectedCount ?? 0;
 
   return {
     id: String(item.id),
     title: item.title,
-    image: item.thumbnail_url ?? "",
+    image: item.thumbnailUrl ?? "",
     status: (STATUS_LABEL[item.status] ?? "대기 중") as PartnerCampaign["status"],
     campaignType,
     category: item.category ?? "",
     brandName,
     brandLogo: getBrandLogo(brandName, campaignType),
-    recruitmentPeriod: formatPeriod(item.application_start_date, item.application_end_date),
-    announcementDate: formatDate(item.campaign_start_date),
-    registrationPeriod: formatPeriod(item.campaign_start_date, item.campaign_end_date),
-    recruitedCount: item.current_applicants ?? 0,
-    totalCount: item.recruit_count ?? 0,
-    applicants: item.current_applicants ?? 0,
-    recruits: item.recruit_count ?? 0,
+    recruitmentPeriod: formatPeriod(item.applicationStartDate, item.applicationEndDate),
+    announcementDate: formatDate(item.campaignStartDate),
+    registrationPeriod: formatPeriod(item.campaignStartDate, item.campaignEndDate),
+    recruitedCount: item.currentApplicants ?? 0,
+    totalCount: item.recruitCount ?? 0,
+    applicants: item.currentApplicants ?? 0,
+    recruits: item.recruitCount ?? 0,
     selected: selectedCount,
-    daysLeft: calcDaysLeft(item.application_end_date),
+    daysLeft: calcDaysLeft(item.applicationEndDate),
     subStatus: computeSubStatus(item.status, currentTab, selectedCount),
     extensionRequested: item.extensionRequested ?? false,
-    extensionRequestCount: item.extension_request_count ?? 0,
-    waitingCount: item.waiting_count ?? 0,
-    submittedCount: item.submitted_count ?? 0,
-    approvedCount: item.approved_count ?? 0,
+    extensionRequestCount: item.extensionRequestCount ?? 0,
+    waitingCount: item.waitingCount ?? 0,
+    submittedCount: item.submittedCount ?? 0,
+    approvedCount: item.approvedCount ?? 0,
   };
 }
 
 // ----------------------------------------
 // API 14 아이템 → PartnerCampaign 어댑터
-// (API 14: `campaign_id` 필드 사용)
+// (API 14: `campaignId` 필드 사용)
 // ----------------------------------------
 function adaptStatusItem(item: CampaignStatusItem, tab: string): PartnerCampaign {
-  const campaignType = (CAMPAIGN_TYPE_LABEL[item.campaign_type] ??
+  const campaignType = (CAMPAIGN_TYPE_LABEL[item.campaignType] ??
     "배송형") as PartnerCampaign["campaignType"];
   const brandName = PLATFORM_LABEL[item.platform] ?? item.platform ?? "";
   const currentTab = tab === "전체" ? statusToTab(item.status) : tab;
-  const selectedCount = item.selected_count ?? 0;
+  const selectedCount = item.selectedCount ?? 0;
 
   return {
-    id: String(item.campaign_id),
+    id: String(item.campaignId),
     title: item.title,
-    image: item.thumbnail_url ?? "",
+    image: item.thumbnailUrl ?? "",
     status: (STATUS_LABEL[item.status] ?? "대기 중") as PartnerCampaign["status"],
     campaignType,
     category: item.category ?? "",
     brandName,
     brandLogo: getBrandLogo(brandName, campaignType),
-    recruitmentPeriod: formatPeriod(item.application_start_date, item.application_end_date),
-    announcementDate: formatDate(item.campaign_start_date),
-    registrationPeriod: formatPeriod(item.campaign_start_date, item.campaign_end_date),
-    recruitedCount: item.current_applicants ?? 0,
-    totalCount: item.recruit_count ?? 0,
-    applicants: item.current_applicants ?? 0,
-    recruits: item.recruit_count ?? 0,
+    recruitmentPeriod: formatPeriod(item.applicationStartDate, item.applicationEndDate),
+    announcementDate: formatDate(item.campaignStartDate),
+    registrationPeriod: formatPeriod(item.campaignStartDate, item.campaignEndDate),
+    recruitedCount: item.currentApplicants ?? 0,
+    totalCount: item.recruitCount ?? 0,
+    applicants: item.currentApplicants ?? 0,
+    recruits: item.recruitCount ?? 0,
     selected: selectedCount,
-    daysLeft: calcDaysLeft(item.application_end_date),
+    daysLeft: calcDaysLeft(item.applicationEndDate),
     subStatus: computeSubStatus(item.status, currentTab, selectedCount),
     extensionRequested: item.extensionRequested ?? false,
-    extensionRequestCount: item.extension_request_count ?? 0,
-    waitingCount: item.waiting_count ?? 0,
-    submittedCount: item.submitted_count ?? 0,
-    approvedCount: item.approved_count ?? 0,
+    extensionRequestCount: item.extensionRequestCount ?? 0,
+    waitingCount: item.waitingCount ?? 0,
+    submittedCount: item.submittedCount ?? 0,
+    approvedCount: item.approvedCount ?? 0,
   };
 }
 

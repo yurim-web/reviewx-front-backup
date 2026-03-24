@@ -18,8 +18,18 @@ import { useRouter } from "next/navigation";
 import { CampaignFormData } from "@/types/domain/user";
 import { useAuth } from "@/hooks/useAuth";
 import { getPartnerPointSummary } from "@/data/partner/point/pointData";
-import { fetchDraftCampaign, postDraftCampaign, putDraftCampaign } from "@/lib/api/partner";
+import { postCampaignDraft, getCampaignDraft } from "@/lib/api/partnerCampaign";
 import type { CampaignType } from "./useCampaignForm";
+import type { CampaignCreatePageData } from "./useCampaignCreatePage";
+
+/** 임시저장 campaignId를 저장하는 localStorage 키 (유형별) */
+const DRAFT_ID_KEYS: Record<CampaignType, string> = {
+  방문형: "draft_id_visit",
+  구매평: "draft_id_review",
+  미션형: "draft_id_mission",
+  배송형: "draft_id_delivery",
+  기자단: "draft_id_reporter",
+};
 
 /**
  * 캠페인 타입별 localStorage 키
@@ -53,6 +63,8 @@ interface UseCampaignFormStorageProps {
   setIsLoadDisabled: React.Dispatch<React.SetStateAction<boolean>>;
   /** 제출 중 여부 */
   isSubmitting?: boolean;
+  /** API 09 pageData (채널/카테고리/파트너 정보) */
+  pageData?: CampaignCreatePageData | null;
   /** 썸네일 미리보기 URL */
   thumbnailPreview: string | null;
   /** 상세 이미지 미리보기 URL 배열 */
@@ -91,17 +103,22 @@ export function useCampaignFormStorage({
   setDetailPreviews,
   checkboxStates,
   updateCheckboxState,
+  pageData,
 }: UseCampaignFormStorageProps) {
   const router = useRouter();
   const { user } = useAuth();
   const STORAGE_KEY = STORAGE_KEYS[campaignType];
+  const DRAFT_ID_KEY = DRAFT_ID_KEYS[campaignType];
 
   /**
    * 보유 포인트 가져오기 함수
+   * API 09 pageData 우선, 없으면 localStorage mock 데이터 사용
    */
   const getAvailablePoints = (): string => {
+    if (pageData?.partner?.currentPoint != null) {
+      return String(pageData.partner.currentPoint);
+    }
     if (typeof window === "undefined" || !user?.id) return "0";
-
     try {
       const summary = getPartnerPointSummary(user.id);
       return String(summary.available_points || 0);
@@ -136,10 +153,11 @@ export function useCampaignFormStorage({
   };
 
   /**
-   * 임시 저장 확인 처리
-   * - 썸네일/상세 이미지는 Data URL로 저장하여 불러오기 시 복원
+   * 임시 저장 확인 처리 (API 11: POST /partner/campaign/draft)
+   * - 실제 API 호출 → campaignId를 localStorage에 저장
+   * - 썸네일/상세 이미지 Data URL도 localStorage에 보관 (불러오기 시 복원)
    */
-  const handleSaveConfirm = () => {
+  const handleSaveConfirm = async () => {
     try {
       if (typeof window === "undefined") return;
 
@@ -155,29 +173,31 @@ export function useCampaignFormStorage({
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
 
-      // mock DB에도 저장 (이미지 Data URL 제외, 폼 필드만)
-      if (user?.id) {
-        const { thumbnailImageUrl: _t, detailImagePreviews: _d, ...dbFields } = dataToSave;
-        const dbPayload = {
-          ...dbFields,
-          partner_id: user.id,
-          campaignType,
-          updated_at: new Date().toISOString(),
-        };
-        // 기존 draft가 있으면 업데이트, 없으면 새로 생성
-        fetchDraftCampaign(user.id, campaignType)
-          .then((existing) => {
-            if (existing?.id) {
-              return putDraftCampaign(Number(existing.id), dbPayload);
-            } else {
-              return postDraftCampaign(dbPayload).then(() => undefined);
-            }
-          })
-          .catch((_apiError) => {
-            console.error("임시저장 API 호출 실패:", _apiError);
-          });
+      // API 11: POST /partner/campaign/draft 호출
+      const CAMPAIGN_TYPE_MAP: Record<string, string> = {
+        배송형: "DELIVERY",
+        방문형: "VISIT",
+        구매평: "PURCHASE",
+        기자단: "REPORTER",
+        미션형: "MISSION",
+      };
+      const draftPayload: Parameters<typeof postCampaignDraft>[0] = {
+        type: CAMPAIGN_TYPE_MAP[campaignType] as Parameters<typeof postCampaignDraft>[0]["type"],
+        title: formData.title || undefined,
+        description: formData.providedItems || undefined,
+        recruitLimit: Number(formData.recruitmentCount) || undefined,
+        promotionUrl: formData.promotionLink || undefined,
+        keyword: formData.keywords || undefined,
+        notification: formData.guidelines || undefined,
+      };
+
+      const response = await postCampaignDraft(draftPayload);
+      // 반환된 campaignId 저장 (API 12 불러오기용)
+      if (response.campaign?.campaignId) {
+        localStorage.setItem(DRAFT_ID_KEY, String(response.campaign.campaignId));
       }
 
+      setIsLoadDisabled(false);
       setToast({ is_open: true, message: "저장되었습니다." });
     } catch (_error) {
       alert("임시 저장에 실패했습니다.");
@@ -185,62 +205,99 @@ export function useCampaignFormStorage({
   };
 
   /**
-   * 불러오기 확인 처리
+   * 불러오기 확인 처리 (API 12: GET /partner/campaign/draft/{campaignId})
+   * - 저장된 campaignId로 API 호출 → 폼 데이터 복원
+   * - API 실패 시 localStorage fallback
    */
-  const handleLoadConfirm = () => {
+  const handleLoadConfirm = async () => {
     try {
       if (typeof window === "undefined") return;
 
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
+      // API 12 시도: localStorage에서 campaignId 읽기
+      const storedDraftId = localStorage.getItem(DRAFT_ID_KEY);
+      if (storedDraftId) {
+        const campaignId = Number(storedDraftId);
+        const response = await getCampaignDraft(campaignId);
+        const draft = response.campaign;
 
-      const savedData = JSON.parse(saved) as CampaignFormData;
+        // 카테고리명/채널명 역매핑 (ID → 이름)
+        const CHANNEL_LABELS: Record<string, string> = {
+          NAVER_BLOG: "네이버 블로그",
+          NAVER_CLIP: "네이버 클립",
+          INSTAGRAM: "인스타그램",
+          INSTAGRAM_REELS: "릴스",
+          REELS: "릴스",
+          YOUTUBE: "유튜브",
+          YOUTUBE_SHORTS: "쇼츠",
+        };
+        const TYPE_KR: Record<string, string> = {
+          DELIVERY: "배송형",
+          VISIT: "방문형",
+          PURCHASE: "구매평",
+          REPORTER: "기자단",
+          MISSION: "미션형",
+        };
+        const toDateRange = (start?: string, end?: string) =>
+          start && end ? `${start.slice(0, 10)} ~ ${end.slice(0, 10)}` : "";
 
-      // 불러온 데이터의 긴급 상태를 부모 컴포넌트로 먼저 전달
-      if (onUrgentLoad) {
-        if (savedData?.isUrgent === true) {
-          onUrgentLoad(true);
-        } else if (savedData?.isUrgent === false) {
-          onUrgentLoad(false);
-        }
+        const restored: Partial<CampaignFormData> = {
+          campaignType: (TYPE_KR[draft.type] as CampaignFormData["campaignType"]) || campaignType,
+          title: draft.title || "",
+          category: draft.category?.categoryName || "",
+          platform: draft.requiredPlatform
+            ? ((CHANNEL_LABELS[draft.requiredPlatform.channelName] ??
+                draft.requiredPlatform.channelName) as CampaignFormData["platform"])
+            : "",
+          providedItems: draft.description || "",
+          recruitmentCount: String(draft.recruit?.recruitLimit || ""),
+          recruitmentPeriod: toDateRange(
+            draft.recruit?.recruitStartAt,
+            draft.recruit?.recruitEndAt
+          ),
+          additionalPoints: String(draft.reward?.extraRewardPoint || ""),
+          purchasePoints: String(draft.reward?.paymentRewardPoint || ""),
+          promotionLink: draft.promotionUrl || "",
+          keywords: draft.keyword || "",
+          guidelines: draft.notification || "",
+          visitAddress: draft.visitAddress || "",
+        };
+
+        setFormData((prev) => ({ ...prev, ...restored }));
+        setThumbnailPreview(draft.thumbnail?.url || null);
+        setDetailPreviews(draft.detailImages?.map((i) => i.url) || []);
+        setLoadConfirmModal({ is_open: false });
+        setToast({ is_open: true, message: "불러오기 완료" });
+        return;
       }
 
-      // 저장된 데이터로 formData 업데이트
-      setFormData(savedData);
+      // API 12 campaignId 없음 → localStorage fallback
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        setLoadConfirmModal({ is_open: false });
+        return;
+      }
+      const savedData = JSON.parse(saved) as CampaignFormData;
 
-      // 썸네일/상세 이미지 미리보기 복원 (Data URL)
+      if (onUrgentLoad) {
+        if (savedData?.isUrgent === true) onUrgentLoad(true);
+        else if (savedData?.isUrgent === false) onUrgentLoad(false);
+      }
+      setFormData(savedData);
       const savedWithImages = savedData as CampaignFormData & {
         thumbnailImageUrl?: string;
         detailImagePreviews?: string[];
       };
-      if (savedWithImages.thumbnailImageUrl) {
-        setThumbnailPreview(savedWithImages.thumbnailImageUrl);
-      } else {
-        setThumbnailPreview(null);
-      }
-      if (savedWithImages.detailImagePreviews?.length) {
-        setDetailPreviews(savedWithImages.detailImagePreviews);
-      } else {
-        setDetailPreviews([]);
-      }
-
-      // 체크박스 상태 복원
+      setThumbnailPreview(savedWithImages.thumbnailImageUrl || null);
+      setDetailPreviews(savedWithImages.detailImagePreviews || []);
       const savedDataWithCheckbox = savedData as CampaignFormData & {
         checkboxStates?: { minTextLength?: boolean; minImageCount?: boolean; videoCount?: boolean };
       };
       if (savedDataWithCheckbox.checkboxStates) {
-        const savedCheckboxStates = savedDataWithCheckbox.checkboxStates;
-        if (savedCheckboxStates.minTextLength !== undefined) {
-          updateCheckboxState("minTextLength", savedCheckboxStates.minTextLength);
-        }
-        if (savedCheckboxStates.minImageCount !== undefined) {
-          updateCheckboxState("minImageCount", savedCheckboxStates.minImageCount);
-        }
-        if (savedCheckboxStates.videoCount !== undefined) {
-          updateCheckboxState("videoCount", savedCheckboxStates.videoCount);
-        }
+        const s = savedDataWithCheckbox.checkboxStates;
+        if (s.minTextLength !== undefined) updateCheckboxState("minTextLength", s.minTextLength);
+        if (s.minImageCount !== undefined) updateCheckboxState("minImageCount", s.minImageCount);
+        if (s.videoCount !== undefined) updateCheckboxState("videoCount", s.videoCount);
       }
-
       setLoadConfirmModal({ is_open: false });
       setToast({ is_open: true, message: "불러오기 완료" });
     } catch (_error) {

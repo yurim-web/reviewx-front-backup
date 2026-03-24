@@ -2,6 +2,7 @@ import { partnerApiClient } from "@/lib/api/partnerClient";
 import type {
   PartnerNotificationsResponse,
   PartnerNotificationsParams,
+  PartnerNotificationsDeleteResponse,
 } from "@/types/api/partnerNotification";
 
 /**
@@ -22,6 +23,8 @@ export async function getPartnerNotifications(
  * 파트너 알림 전체 삭제
  * DELETE /partner/notifications
  */
-export async function deleteAllPartnerNotifications(): Promise<void> {
-  await partnerApiClient.delete("/partner/notifications");
+export async function deleteAllPartnerNotifications(): Promise<PartnerNotificationsDeleteResponse> {
+  const { data } =
+    await partnerApiClient.delete<PartnerNotificationsDeleteResponse>("/partner/notifications");
+  return data;
 }

@@ -13,7 +13,8 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
 import pageStyles from "@/styles/login/login/login_page.module.css";
@@ -21,9 +22,18 @@ import formStyles from "@/styles/login/login/form.module.css";
 import optionsStyles from "@/styles/login/login/options.module.css";
 import linksStyles from "@/styles/login/login/links.module.css";
 import { useAuth } from "@/hooks/useAuth";
+import BaseModal from "@/components/common/modal/BaseModal";
 
 export default function PartnerLoginPage() {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, user } = useAuth();
+  const router = useRouter();
+
+  // 세션 유효 시 대시보드로 자동 리다이렉트
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.replace("/partner");
+    }
+  }, [user, isLoading, router]);
 
   // ========================================
   // 상태 관리
@@ -31,7 +41,9 @@ export default function PartnerLoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
 
   // ========================================
   // 이벤트 핸들러
@@ -55,7 +67,7 @@ export default function PartnerLoginPage() {
     setErrorMessage("");
 
     try {
-      await login({ email, password }, "partner");
+      await login({ email, password, rememberMe: autoLogin }, "partner");
     } catch (error) {
       // axios 에러 → 백엔드 HTTP 상태 코드 기반 에러 처리
       const axiosError = error as { response?: { status?: number } };
@@ -67,10 +79,8 @@ export default function PartnerLoginPage() {
         setErrorMessage("입력하신 정보와 일치하는 계정을 찾을 수 없습니다."); // I_E12
       } else if (status === 403) {
         setErrorMessage("정지되었거나 탈퇴된 계정입니다."); // I_E11
-      } else if (error instanceof Error) {
-        setErrorMessage(error.message);
       } else {
-        setErrorMessage("오류가 발생했습니다. 잠시 후 다시 시도해주세요."); // E_M5
+        setShowErrorModal(true); // E_M5
       }
     }
   };
@@ -114,16 +124,38 @@ export default function PartnerLoginPage() {
             </div>
 
             <div className={formStyles.input_wrapper}>
-              <input
-                id="password"
-                type="password"
-                className={formStyles.input_field}
-                placeholder="비밀번호"
-                value={password}
-                onChange={handlePasswordChange}
-                required
-                aria-label="비밀번호 입력"
-              />
+              <div style={{ position: "relative" }}>
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  className={formStyles.input_field}
+                  placeholder="비밀번호"
+                  value={password}
+                  onChange={handlePasswordChange}
+                  required
+                  aria-label="비밀번호 입력"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                  style={{
+                    position: "absolute",
+                    right: "12px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: "4px",
+                    color: "#999",
+                    fontSize: "14px",
+                    lineHeight: 1,
+                  }}
+                >
+                  {showPassword ? "숨김" : "표시"}
+                </button>
+              </div>
               {/* 에러 메시지 */}
               {errorMessage && (
                 <div className={formStyles.error_message_section}>
@@ -189,6 +221,14 @@ export default function PartnerLoginPage() {
           </a>
         </div>
       </main>
+
+      {/* E_M5 서버 오류 모달 */}
+      <BaseModal
+        is_open={showErrorModal}
+        on_close={() => setShowErrorModal(false)}
+        message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
+        buttons={["닫기"]}
+      />
 
       {/* 리뷰어 회원 로그인 링크 - 화면 하단 고정 */}
       <div className={linksStyles.user_login_section}>

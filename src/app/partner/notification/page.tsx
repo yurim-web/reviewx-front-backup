@@ -40,9 +40,14 @@ const TYPE_TO_CATEGORY: Record<PartnerNotificationType, PartnerNotificationCateg
   CAMPAIGN_COMPLETED: "A_P2",
   CAMPAIGN_SUSPENDED: "A_P3",
   CONTENT_REGISTERED: "A_P4",
-  CONTENT_EXTENSION_REQUESTED: "A_P5",
-  ACCOUNT_SUSPENDED: "A_P6",
-  ACCOUNT_BANNED: "A_P7",
+  EXTENSION_REQUESTED: "A_P5",
+  PAYMENT_CONFIRMED: "A_P6",
+  PAYMENT_COMPLETED: "A_P7",
+  PAYMENT_UNCONFIRMED: "A_P8",
+  CARD_PAYMENT_COMPLETED: "A_P9",
+  CONTENT_UNCONFIRMED_REQUEST: "A_P10",
+  ACCOUNT_SUSPENDED: "A_P11",
+  ACCOUNT_BANNED: "A_P12",
 };
 
 /** API 응답 → NotificationItem 변환 (message 포함) */
@@ -52,10 +57,10 @@ function mapApiToNotificationItem(
   return {
     id: api.notificationHistoryId,
     category: TYPE_TO_CATEGORY[api.type] ?? "A_P1",
-    time: api.createdAt,
+    time: api.sentAt,
     campaign_id: api.campaignId ?? undefined,
     message: api.message,
-    is_read: false,
+    is_read: api.isRead,
   };
 }
 

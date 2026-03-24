@@ -10,8 +10,8 @@
  * - 10번: POST /partner/campaign/create (캠페인 등록)
  * - 11번: POST /partner/campaign/draft (임시저장)
  * - 12번: GET /partner/campaign/draft/{campaignId} (임시저장 불러오기)
- * - 15번: GET /partner/campaign/edit/{campaignId} (수정페이지 조회)
- * - 16번: POST /partner/campaign/edit/{campaignId} (캠페인 수정)
+ * - 15번: GET /partner/campaign/edit/{type}/{campaignId} (수정페이지 조회)
+ * - 16번: POST /partner/campaign/edit/{type}/{campaignId} (캠페인 수정)
  *
  * 사용 위치:
  * - src/lib/api/partnerCampaign.ts
@@ -175,7 +175,7 @@ export interface CampaignDraftSaveResponse {
   message: string;
 }
 
-// ── GET /partner/campaign/edit/{campaignId} 응답 (15번 API) ──
+// ── GET /partner/campaign/edit/{type}/{campaignId} 응답 (15번 API) ──
 
 export interface CampaignEditPageResponse {
   result: "OK";
@@ -235,7 +235,7 @@ export interface CampaignEditPageResponse {
   regions: Array<{ regionId: number; name: string; level: number; parentId: number | null }>;
 }
 
-// ── POST /partner/campaign/edit/{campaignId} 요청 (16번 API) ──
+// ── POST /partner/campaign/edit/{type}/{campaignId} 요청 (16번 API) ──
 
 export type UpdateCampaignRequest = Partial<
   Omit<CreateCampaignRequest, "thumbnailImage" | "detailImages">
@@ -244,7 +244,7 @@ export type UpdateCampaignRequest = Partial<
   detailImages?: File[];
 };
 
-// ── POST /partner/campaign/edit/{campaignId} 응답 (16번 API) ──
+// ── POST /partner/campaign/edit/{type}/{campaignId} 응답 (16번 API) ──
 
 export interface CampaignEditResponse {
   result: "OK";

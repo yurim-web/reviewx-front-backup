@@ -14,7 +14,7 @@
 import { CampaignFormData, CampaignCreateFormBaseProps } from "@/types/domain/user";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import { CustomDropdown } from "./common/selectors/CustomDropdown";
-import { platforms } from "./common/constants/campaignFormConstants";
+import { platforms as fallbackPlatforms } from "./common/constants/campaignFormConstants";
 import CampaignFormBase from "./CampaignFormBase";
 
 interface DeliveryCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
@@ -30,14 +30,14 @@ export default function DeliveryCampaignForm(props: DeliveryCampaignFormProps) {
     <CampaignFormBase
       {...props}
       campaignType="배송형"
-      renderBeforeImages={({ formData, updateFormData, isEditMode, isEditableField }) => (
+      renderBeforeImages={({ formData, updateFormData, isEditMode, isEditableField, pageData }) => (
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>
             등록 플랫폼<span className={infoStyles.required}>*</span>
           </label>
           <CustomDropdown
             value={formData.platform || ""}
-            options={platforms}
+            options={pageData?.channelOptions ?? fallbackPlatforms}
             onChange={(value) => updateFormData("platform", value)}
             disabled={isEditMode && !isEditableField("platform")}
             placeholder="플랫폼 선택"

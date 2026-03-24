@@ -81,7 +81,6 @@ function adaptCampaignInfo(api: {
     NAVER_BLOG: "네이버블로그",
     INSTAGRAM: "인스타그램",
     YOUTUBE: "유튜브",
-    TIKTOK: "틱톡",
     REELS: "릴스",
   };
 

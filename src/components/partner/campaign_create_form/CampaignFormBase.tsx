@@ -16,6 +16,7 @@
 
 import { useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
 import { CampaignFormData, CampaignCreateFormBaseProps } from "@/types/domain/user";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
@@ -23,7 +24,11 @@ import styles from "@/styles/partner/campaign_create/campaign_create.module.css"
 
 import { CampaignTypeSelector } from "./common/selectors/CampaignTypeSelector";
 import { CustomDropdown } from "./common/selectors/CustomDropdown";
-import { categories } from "./common/constants/campaignFormConstants";
+import { categories as fallbackCategories } from "./common/constants/campaignFormConstants";
+import {
+  useCampaignCreatePage,
+  CampaignCreatePageData,
+} from "@/hooks/partner/campaign_create_form/useCampaignCreatePage";
 import NoticeSection from "./common/sections/NoticeSection";
 import { ThumbnailAndDetailImages } from "./common/images/ThumbnailAndDetailImages";
 import { PointsManagementSection } from "./common/sections/PointsManagementSection";
@@ -67,6 +72,8 @@ export interface CampaignFormContext {
   handleNumericChangeWrapper: (field: string, e: React.ChangeEvent<HTMLInputElement>) => void;
   isOpen: boolean;
   infoStyles: Record<string, string>;
+  /** API 09 pageData (카테고리/채널/지역/파트너 정보) */
+  pageData: CampaignCreatePageData | null;
 }
 
 export interface CampaignFormBaseProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
@@ -183,6 +190,20 @@ export default function CampaignFormBase({
     isEditMode,
   });
 
+  const { pageData, isLoading: isPageLoading } = useCampaignCreatePage();
+
+  // API 09 파트너 정보로 보유 포인트·브랜드명 초기화 (항상 API 값 우선)
+  useEffect(() => {
+    if (!pageData || isEditMode || initialData) return;
+    if (pageData.partner.currentPoint != null) {
+      updateFormData("currentPoints", String(pageData.partner.currentPoint));
+    }
+    if (pageData.partner.businessName && !formData.brandName) {
+      updateFormData("brandName", pageData.partner.businessName);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageData]);
+
   const { handleChargeClick, handleSaveConfirm, handleLoadConfirm } = useCampaignFormStorage({
     campaignType,
     formData,
@@ -200,6 +221,7 @@ export default function CampaignFormBase({
     setDetailPreviews,
     checkboxStates,
     updateCheckboxState,
+    pageData,
   });
 
   useEffect(() => {
@@ -207,6 +229,9 @@ export default function CampaignFormBase({
       updateFormData("isUrgent", isUrgent);
     }
   }, [isUrgent, formData.isUrgent, updateFormData]);
+
+  // API 09 로딩 중 Loading 컴포넌트 표시
+  if (isPageLoading) return <Loading />;
 
   const handleCampaignTypeChange = (type: string) => {
     if (type === campaignType) return;
@@ -224,6 +249,14 @@ export default function CampaignFormBase({
       thumbnailImageUrl: thumbnailPreview || undefined,
       detailImages,
       detailImagePreviews: detailPreviews,
+      // API 09 ID 매핑 (API 10 등록 시 사용)
+      _categoryId: pageData?.categoryNameToId[formData.category] ?? 0,
+      _channelId: formData.platform
+        ? (pageData?.channelNameToId[formData.platform] ?? undefined)
+        : undefined,
+      _regionId: formData.subRegion
+        ? (pageData?.regionNameToId[formData.subRegion] ?? undefined)
+        : undefined,
     };
 
     if (transformSubmitData) {
@@ -243,6 +276,7 @@ export default function CampaignFormBase({
     handleNumericChangeWrapper,
     isOpen,
     infoStyles,
+    pageData,
   };
 
   return (
@@ -330,7 +364,7 @@ export default function CampaignFormBase({
             </label>
             <CustomDropdown
               value={formData.category}
-              options={categories}
+              options={pageData?.categoryOptions ?? fallbackCategories}
               onChange={(value) => updateFormData("category", value)}
               disabled={isEditMode && !isEditableField("category")}
               placeholder="카테고리 선택"
