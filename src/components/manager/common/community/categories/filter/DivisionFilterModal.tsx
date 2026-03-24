@@ -15,7 +15,7 @@
 "use client";
 
 import { createFilterModal } from "@/components/manager/common/campaign/progress/filter/createFilterModal";
-import type { CategoryDivision } from "@/data/manager_ga/community/categoriesData";
+import type { CategoryDivision } from "@/lib/api/categories";
 
 interface DivisionFilterModalProps {
   is_open: boolean;
@@ -25,7 +25,7 @@ interface DivisionFilterModalProps {
 }
 
 const DivisionFilterModalComponent = createFilterModal<CategoryDivision>({
-  options: ["공지사항", "자주 묻는 질문", "이벤트"],
+  options: ["NOTICE", "QUESTIONS"],
   section_title: "구분",
 });
 

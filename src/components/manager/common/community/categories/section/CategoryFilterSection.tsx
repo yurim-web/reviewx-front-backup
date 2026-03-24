@@ -1,5 +1,5 @@
 /* ========================================
-   🔍 카테고리 목록 필터 섹션 컴포넌트
+   카테고리 목록 필터 섹션 컴포넌트
    ======================================== */
 /* eslint-disable @next/next/no-img-element */
 
@@ -13,11 +13,10 @@
  * - /manager_sa/community/categories (SA 관리자 카테고리 관리 페이지)
  *
  * 주요 기능:
- * - 구분 필터 (공지사항/자주 묻는 질문/이벤트)
+ * - 구분 필터 (NOTICE/QUESTIONS)
  * - 검색어 필터
  * - 등록 버튼
- * - 삭제 버튼
- *
+ * - 삭제 버튼 (API 호출, 409 에러 시 게시글 존재 모달)
  */
 
 "use client";
@@ -29,27 +28,20 @@ import BaseFilterSection, {
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import BaseModal from "@/components/common/modal/BaseModal";
 import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
-import type { CategoryDivision } from "@/data/manager_ga/community/categoriesData";
-import { categories_data, delete_categories } from "@/data/manager_ga/community/categoriesData";
-import { posts_data, initialize_posts_data } from "@/data/manager_ga/community/postsData";
+import type { CategoryDivision } from "@/lib/api/categories";
+import { DIVISION_LABEL_MAP } from "@/lib/api/categories";
+import { useDeleteCategory } from "@/hooks/manager/ga/useAdminCategories";
 import DivisionFilterDropdown from "@/components/manager/common/community/categories/filter/DivisionFilterDropdown";
 import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface CategoryFilterSectionProps {
-  // 검색어 상태를 props로 받습니다
   search_query: string;
-  // 검색어 변경 핸들러를 props로 받습니다
   on_search_change: (query: string) => void;
-  // manager_type: "ga" | "sa" - GA 또는 SA 관리자 구분
   manager_type: "ga" | "sa";
-  // selected_category_ids: 선택된 카테고리 ID 목록
   selected_category_ids: string[];
-  // selected_divisions: 상위 컴포넌트에서 관리하는 구분 필터 상태
   selected_divisions: CategoryDivision[];
-  // on_divisions_change: 구분 필터 변경 시 상위 컴포넌트에 알리는 핸들러
   on_divisions_change: (divisions: CategoryDivision[]) => void;
-  // on_delete_complete: 삭제 완료 후 상위 컴포넌트에 알리는 핸들러
   on_delete_complete?: () => void;
 }
 
@@ -62,102 +54,66 @@ export default function CategoryFilterSection({
   on_divisions_change,
   on_delete_complete,
 }: CategoryFilterSectionProps) {
-  // Next.js 라우터 사용
-  // useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
   const router = useRouter();
+  const deleteMutation = useDeleteCategory();
 
-  // 구분 필터 드롭다운 열림/닫힘 상태 관리
   const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
   const division_filter_button_ref = useRef<HTMLDivElement>(null);
 
-  // 게시글 존재 모달 열림/닫힘 상태 관리
-  // useState: React Hook으로 게시글 존재 모달의 열림/닫힘 상태를 관리합니다
+  // 게시글 존재 모달 (409 CATEGORY_HAS_BOARDS)
   const [is_post_exists_modal_open, set_is_post_exists_modal_open] = useState(false);
 
-  // 삭제 확인 모달 열림/닫힘 상태 관리
+  // 삭제 확인 모달
   const [is_delete_confirm_modal_open, set_is_delete_confirm_modal_open] = useState(false);
 
-  // 구분 필터 적용 핸들러 — 상위 컴포넌트로 전달
   const handle_division_apply = (divisions: CategoryDivision[]) => {
     on_divisions_change(divisions);
   };
 
-  // 등록 버튼 핸들러
-  // 화살표 함수로 이벤트 핸들러를 정의합니다
-  // 카테고리 등록 페이지로 이동합니다
   const handle_create = () => {
-    // router.push: Next.js에서 페이지를 이동하는 메서드입니다
     router.push(`/manager_${manager_type}/community/categories/create`);
   };
 
-  // 삭제 버튼 핸들러
-  // 화살표 함수로 이벤트 핸들러를 정의합니다
   const handle_delete = () => {
-    // 선택된 카테고리가 없으면 삭제할 수 없습니다
-    if (selected_category_ids.length === 0) {
-      return;
-    }
-
-    // 게시글 데이터를 최신 상태로 업데이트
-    // initialize_posts_data: localStorage에서 최신 게시글 데이터를 불러옵니다
-    initialize_posts_data();
-
-    // 선택된 카테고리들 중에 게시글이 있는지 확인
-    // find(): 배열에서 조건에 맞는 첫 번째 요소를 찾습니다
-    // some(): 배열의 요소 중 하나라도 조건을 만족하면 true를 반환합니다
-    const has_posts = selected_category_ids.some((category_id) => {
-      // 카테고리 ID로 카테고리 정보 찾기
-      const category = categories_data.find((item) => item.id === category_id);
-      if (!category) return false;
-
-      // 해당 카테고리명과 구분을 가진 게시글이 있는지 확인
-      // posts_data에서 category 필드가 카테고리명과 일치하는 게시글을 찾습니다
-      const post_exists = posts_data.some(
-        (post) => post.category === category.category_name && post.division === category.division
-      );
-
-      return post_exists;
-    });
-
-    // 게시글이 있으면 삭제 불가 모달 표시
-    if (has_posts) {
-      set_is_post_exists_modal_open(true);
-      return;
-    }
-
-    // 게시글이 없으면 삭제 확인 모달 표시
+    if (selected_category_ids.length === 0) return;
     set_is_delete_confirm_modal_open(true);
   };
 
-  // 삭제 확인 핸들러
-  const handle_delete_confirm = () => {
-    // delete_categories: 선택된 카테고리들을 삭제하는 함수입니다
-    delete_categories(selected_category_ids);
+  /** 삭제 확인 → API 순차 호출 */
+  const handle_delete_confirm = async () => {
     set_is_delete_confirm_modal_open(false);
-    // 상위 컴포넌트에 삭제 완료를 알려 목록 갱신
+
+    for (const id of selected_category_ids) {
+      try {
+        await deleteMutation.mutateAsync(Number(id));
+      } catch (error) {
+        const status = (error as { response?: { status?: number } })?.response?.status;
+        if (status === 409) {
+          // 게시글이 존재하는 카테고리
+          set_is_post_exists_modal_open(true);
+          return;
+        }
+        // 다른 에러는 무시하고 계속 진행
+      }
+    }
     on_delete_complete?.();
   };
 
-  // 활성 필터 태그 목록 생성
-  // 배열 map 메서드를 사용하여 필터 태그를 생성합니다
-  // selected_divisions 배열의 각 구분에 대해 필터 태그를 생성합니다
+  // 활성 필터 태그 목록
   const active_filter_tags: FilterTag<CategoryDivision>[] = selected_divisions.map((division) => ({
     value: division,
-    label: division, // "구분: " 접두사 제거
+    label: DIVISION_LABEL_MAP[division] || division,
   }));
 
-  // 필터 태그 제거 핸들러 — 상위 컴포넌트로 전달
   const handle_filter_tag_remove = (value: CategoryDivision) => {
     on_divisions_change(selected_divisions.filter((division) => division !== value));
   };
 
   return (
     <div>
-      {/* BaseFilterSection 공통 컴포넌트 사용 */}
       <BaseFilterSection<CategoryDivision>
         search_query={search_query}
         on_search_change={on_search_change}
-        // 필터 드롭다운 버튼 (구분 필터)
         filter_modal_button={
           <div
             ref={division_filter_button_ref}
@@ -187,10 +143,8 @@ export default function CategoryFilterSection({
             />
           </div>
         }
-        // 오른쪽 액션 버튼들 (등록, 삭제)
         right_buttons={
           <>
-            {/* 등록 버튼 */}
             <div
               className={filterStyles.filter_item}
               onClick={handle_create}
@@ -203,7 +157,6 @@ export default function CategoryFilterSection({
               />
               <span className={filterStyles.post_action_text}>등록</span>
             </div>
-            {/* 삭제 버튼 */}
             <div
               className={filterStyles.filter_item}
               onClick={handle_delete}
@@ -214,17 +167,11 @@ export default function CategoryFilterSection({
             </div>
           </>
         }
-        // 활성 필터 태그 목록
         active_filter_tags={active_filter_tags}
-        // 필터 태그 제거 핸들러
         on_filter_tag_remove={handle_filter_tag_remove}
       />
 
-      {/* 구분 필터 모달 (드롭다운으로 대체) */}
-      {/* DivisionFilterModal은 드롭다운으로 대체되었습니다 */}
-
-      {/* 게시글 존재 모달 */}
-      {/* BaseModal: 게시글이 등록된 상태에서는 삭제할 수 없다는 메시지를 표시하는 모달 */}
+      {/* 게시글 존재 모달 (409 CATEGORY_HAS_BOARDS) */}
       <BaseModal
         is_open={is_post_exists_modal_open}
         on_close={() => set_is_post_exists_modal_open(false)}

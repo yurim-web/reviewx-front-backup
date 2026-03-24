@@ -19,7 +19,7 @@ import styles from "@/styles/manager/common/manager_common_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import CategoryFilterSection from "@/components/manager/common/community/categories/section/CategoryFilterSection";
 import CategoryTable from "@/components/manager/common/community/categories/section/CategoryTable";
-import type { CategoryDivision } from "@/data/manager_ga/community/categoriesData";
+import type { CategoryDivision } from "@/lib/api/categories";
 
 // 관리자 타입 정의
 export type ManagerType = "ga" | "sa";
