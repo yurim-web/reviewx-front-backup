@@ -67,7 +67,6 @@ const PARTNER_CHANNEL_NAME_MAP: Record<string, Channel> = {
   YOUTUBE: "Youtube",
   NAVER_CLIP: "Clip",
   REELS: "Instagram",
-  TIKTOK: "Instagram",
 };
 
 function mapCampaignStatus(status: string): "진행" | "종료" {

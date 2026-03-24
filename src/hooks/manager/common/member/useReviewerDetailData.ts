@@ -232,7 +232,6 @@ const API_CHANNEL_MAP: Record<string, Channel> = {
   YOUTUBE: "Youtube",
   NAVER_CLIP: "Clip",
   REELS: "Instagram",
-  TIKTOK: "Instagram",
 };
 
 // 캠페인 신청 상태 → 진행/종료/취소 매핑
