@@ -34,17 +34,26 @@ apiClient.interceptors.request.use((config) => {
 });
 
 // 응답 인터셉터: 401 → 경로별 로그인 페이지 이동
+// 단, 로그인 API 자체의 401은 제외 (인라인 에러로 처리해야 함)
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
-      const pathname = window.location.pathname;
-      if (pathname.startsWith("/partner")) {
-        window.location.href = "/partner/login";
-      } else if (pathname.startsWith("/manager_sa") || pathname.startsWith("/manager_ga")) {
-        window.location.href = "/manager/login";
-      } else {
-        window.location.href = "/user/login";
+      const requestUrl = error.config?.url || "";
+      const isLoginApi = requestUrl.includes("/login");
+      if (!isLoginApi) {
+        const pathname = window.location.pathname;
+        if (pathname.startsWith("/partner")) {
+          window.location.href = "/partner/login";
+        } else if (
+          pathname.startsWith("/manager_sa") ||
+          pathname.startsWith("/manager_ga") ||
+          pathname.startsWith("/manager")
+        ) {
+          window.location.href = "/manager/login";
+        } else {
+          window.location.href = "/user/login";
+        }
       }
     }
     return Promise.reject(error);

@@ -20,6 +20,7 @@ import PageTitle from "@/components/fragments/PageTitle";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import styles from "@/styles/common/reset_password/reset_password.module.css";
+import { apiClient } from "@/lib/api/client";
 
 export default function ResetPasswordPage() {
   // useState: React의 상태 관리 훅
@@ -106,9 +107,19 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    // TODO: 실제 비밀번호 변경 API 연동
-    // 비밀번호 변경 완료 모달 표시
-    setIsSuccessModalOpen(true);
+    // POST /api/admin/auth/reset-password API 호출
+    const resetEmail = sessionStorage.getItem("resetPasswordEmail") || "";
+    apiClient
+      .post("/api/admin/auth/reset-password", {
+        email: resetEmail,
+        newPassword: password,
+      })
+      .then(() => {
+        setIsSuccessModalOpen(true);
+      })
+      .catch(() => {
+        setPasswordError("비밀번호 변경에 실패했습니다. 다시 시도해주세요.");
+      });
   };
 
   /**

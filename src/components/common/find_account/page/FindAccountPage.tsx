@@ -122,6 +122,9 @@ export default function FindAccountPage() {
                 }
                 router.push("/partner/reset-password");
               } else {
+                if (typeof window !== "undefined" && findAccount.email) {
+                  window.sessionStorage.setItem("resetPasswordEmail", findAccount.email);
+                }
                 router.push("/reset-password");
               }
             }

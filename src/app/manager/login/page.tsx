@@ -20,7 +20,7 @@ import pageStyles from "@/styles/login/login/login_page.module.css";
 import formStyles from "@/styles/login/login/form.module.css";
 import optionsStyles from "@/styles/login/login/options.module.css";
 import { useAuth } from "@/hooks/useAuth";
-import { unifiedAccountData } from "@/data/login/unifiedAccountData";
+import { apiClient } from "@/lib/api/client";
 
 /**
  * 관리자 로그인 페이지 컴포넌트
@@ -28,31 +28,17 @@ import { unifiedAccountData } from "@/data/login/unifiedAccountData";
  * @returns JSX.Element - 사용자 로그인 페이지 UI
  */
 export default function AdminLoginPage() {
-  const { login, isLoading } = useAuth();
+  const { login } = useAuth();
 
   // ========================================
   // 상태 관리 (State Management)
   // ========================================
 
-  /**
-   * 아이디 상태
-   */
   const [username, setUsername] = useState<string>("");
-
-  /**
-   * 비밀번호 상태
-   */
   const [password, setPassword] = useState<string>("");
-
-  /**
-   * 자동 로그인 체크박스 상태
-   */
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
-
-  /**
-   * 로그인 에러 메시지 상태
-   */
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // ========================================
   // 이벤트 핸들러 (Event Handlers)
@@ -101,36 +87,53 @@ export default function AdminLoginPage() {
 
     // 에러 메시지 초기화
     setErrorMessage("");
+    setIsSubmitting(true);
 
     try {
-      // 관리자 계정인지 먼저 확인 (GA 또는 SA)
-      const account = unifiedAccountData.find(
-        (acc) => acc.email === username && acc.password === password
-      );
+      // POST /api/admin/login API 호출
+      const { data } = await apiClient.post("/api/admin/login", {
+        email: username,
+        password,
+      });
 
-      if (!account) {
-        setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
+      if (data.result !== "OK") {
+        setErrorMessage(data.error?.message || "로그인에 실패했습니다.");
         return;
       }
 
-      // 관리자 계정인지 확인
-      if (account.role !== "manager_ga" && account.role !== "manager_sa") {
+      // BLOCKED 상태 체크
+      if (data.user?.status === "BLOCKED") {
+        setErrorMessage("이용이 제한된 계정입니다.");
+        return;
+      }
+
+      // 역할 확인 (GA 또는 SA)
+      const role = data.user?.role;
+      if (role !== "manager_ga" && role !== "manager_sa") {
         setErrorMessage("관리자 계정만 로그인할 수 있습니다.");
         return;
       }
 
-      // 인증 시스템을 통한 로그인 (토큰 기반)
-      // login 함수는 토큰을 localStorage에 저장하고 사용자 정보를 설정합니다
-      await login({ email: username, password }, account.role);
-
-      // login 함수에서 자동으로 리다이렉트하므로 여기서는 추가 처리 불필요
+      // 인증 시스템을 통한 로그인 (토큰 저장 + 리다이렉트)
+      await login({ email: username, password }, role);
     } catch (error) {
-      // 에러 메시지 표시
-      if (error instanceof Error) {
+      // API 에러 응답 처리
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const axiosError = error as any;
+      const errorData = axiosError?.response?.data;
+      const errorCode = errorData?.error?.code;
+
+      if (errorCode === "INVALID_CREDENTIALS") {
+        setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
+      } else if (errorCode === "ACCOUNT_BANNED") {
+        setErrorMessage("정지되었거나 탈퇴된 계정입니다.");
+      } else if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
         setErrorMessage("로그인 중 오류가 발생했습니다.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -224,9 +227,9 @@ export default function AdminLoginPage() {
               type="submit"
               className={optionsStyles.partner_login_button}
               aria-label="로그인"
-              disabled={isLoading}
+              disabled={isSubmitting}
             >
-              {isLoading ? "로그인 중..." : "로그인"}
+              {isSubmitting ? "로그인 중..." : "로그인"}
             </button>
           </div>
         </form>

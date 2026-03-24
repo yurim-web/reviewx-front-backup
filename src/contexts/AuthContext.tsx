@@ -89,6 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const response = await partnerLogin({
             email: credentials.email,
             password: credentials.password,
+            rememberMe: credentials.rememberMe,
           });
 
           const { user: loginUser, partner } = response.data;
@@ -113,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           };
 
           setUser(authUser);
-          router.push(response.data.next.redirectPath || "/partner/campaign_management");
+          router.push(response.data.next.redirectPath || "/partner");
           return;
         }
 

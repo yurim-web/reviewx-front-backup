@@ -16,7 +16,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { validatePhone, validateVerificationCode } from "@/utils/validation";
-import { checkTestVerificationCode } from "@/data/signup/testVerificationData";
+import { apiClient } from "@/lib/api/client";
 
 interface UsePhoneVerificationReturn {
   phone: string;
@@ -121,7 +121,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     }
   };
 
-  /** 인증 요청 핸들러 - 실제 구현 시 API를 호출하여 인증번호를 전송해야 함 */
+  /** 인증 요청 핸들러 - POST /api/admin/auth/phone/request 호출 */
   const handleVerificationRequest = async () => {
     // 인증번호 요청 횟수 제한 체크
     if (requestCount >= MAX_REQUEST_COUNT) {
@@ -135,46 +135,48 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
       return;
     }
 
-    // ⚠️ 실제 API 연결 시 사용할 코드
-    // try {
-    //   const response = await requestVerificationAPI({ phone });
-    //   if (response.success) {
-    //    //   } else {
-    //     alert("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
-    //   }
-    // } catch (_error) {
-    //    //   alert("인증번호 전송 중 오류가 발생했습니다.");
-    // }
+    try {
+      const normalizedPhone = phone.replace(/-/g, "");
+      await apiClient.post("/api/admin/auth/phone/request", { phone: normalizedPhone });
 
-    // 인증번호 요청 상태로 변경
-    setIsVerificationRequested(true);
-    setIsVerified(false);
-    setVerificationCode("");
-    setPhoneError(undefined); // 요청 성공 시 에러 초기화
-    setVerificationCodeError(undefined); // 재전송 시 인증번호 에러도 초기화 (시간 초과 에러 포함)
-    setRequestCount((prev) => prev + 1); // 요청 횟수 증가
-    setTimer(240); // 4분 = 240초 타이머 시작
+      // 인증번호 요청 상태로 변경
+      setIsVerificationRequested(true);
+      setIsVerified(false);
+      setVerificationCode("");
+      setPhoneError(undefined);
+      setVerificationCodeError(undefined);
+      setRequestCount((prev) => prev + 1);
+      setTimer(240); // 4분 = 240초 타이머 시작
+    } catch {
+      setPhoneError("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
-  /** 인증번호 확인 핸들러 - 실제 구현 시 서버에 검증 요청해야 함 */
-  const handleVerifyCode = () => {
+  /** 인증번호 확인 핸들러 - POST /api/admin/auth/phone/verify 호출 */
+  const handleVerifyCode = async () => {
     // 인증번호 형식 검증 (6자리 숫자)
     if (!verificationCode || !validateVerificationCode(verificationCode)) {
       setVerificationCodeError("인증번호 6자리를 입력해주세요.");
       return;
     }
 
-    // 📌 테스트용: 테스트 인증번호 확인
-    // 실제 서비스에서는 서버 API를 호출해서 인증번호를 확인합니다
-    if (checkTestVerificationCode(verificationCode)) {
-      setIsVerified(true); // 인증 완료 상태로 변경
-      setIsVerificationRequested(false);
-      setVerificationCode(""); // 인증번호 입력 필드 초기화
-      setTimer(0); // 타이머 정지
-      setVerificationCodeError(undefined); // 에러 초기화
-    } else {
-      // 실제 에러 문구는 UI 컴포넌트(PhoneVerification)에서 관리하므로
-      // 여기서는 "에러가 있다"는 신호만 전달합니다.
+    try {
+      const normalizedPhone = phone.replace(/-/g, "");
+      const { data } = await apiClient.post("/api/admin/auth/phone/verify", {
+        phone: normalizedPhone,
+        code: verificationCode,
+      });
+
+      if (data.result === "OK") {
+        setIsVerified(true);
+        setIsVerificationRequested(false);
+        setVerificationCode("");
+        setTimer(0);
+        setVerificationCodeError(undefined);
+      } else {
+        setVerificationCodeError("인증번호가 일치하지 않습니다.");
+      }
+    } catch {
       setVerificationCodeError("인증번호가 일치하지 않습니다.");
     }
   };
