@@ -18,8 +18,9 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchNotifications, fetchAdminNotifications } from "@/lib/api/notification";
+import { fetchNotifications } from "@/lib/api/notification";
 import { useAuth } from "@/hooks/useAuth";
+import { mockReviewerNotifications } from "@/data/notification/notificationData";
 
 function getReviewerId(userId: string): number {
   if (userId.includes("kakao")) return 1;
@@ -41,39 +42,27 @@ function checkLocalStorage(userId: string): boolean {
 
 export function useHasNotifications(): boolean {
   const { user } = useAuth();
-  const isAdmin = user?.role === "manager_ga" || user?.role === "manager_sa";
-  const reviewerId = user && !isAdmin ? getReviewerId(user.id) : 0;
+  const reviewerId = user ? getReviewerId(user.id) : 0;
 
-  // 리뷰어용 알림 조회
   const { data: apiNotifications } = useQuery({
     queryKey: ["notifications", reviewerId],
     queryFn: () => fetchNotifications(reviewerId),
-    enabled: !!user && !isAdmin && reviewerId > 0,
-    staleTime: 30_000,
-    retry: false,
-  });
-
-  // 관리자(GA/SA)용 알림 조회
-  const { data: adminResponse } = useQuery({
-    queryKey: ["adminNotifications", "badge"],
-    queryFn: () => fetchAdminNotifications({ size: 1 }),
-    enabled: !!user && isAdmin,
+    enabled: !!user && reviewerId > 0,
     staleTime: 30_000,
     retry: false,
   });
 
   if (!user) return false;
 
-  // 관리자: unreadCount > 0이면 뱃지 활성
-  if (isAdmin) {
-    return (adminResponse?.data?.unreadCount ?? 0) > 0;
-  }
-
-  // 리뷰어: 기존 로직
+  // 1. API 응답 완료 → API 기준
   if (apiNotifications != null) {
     if (apiNotifications.length > 0) return true;
+    // API가 빈 배열 → localStorage도 확인 (전체 삭제 이후에도 로컬 알림이 있을 수 있음)
     return checkLocalStorage(user.id);
   }
 
-  return checkLocalStorage(user.id);
+  // 2. API 로딩 중 / 실패 (undefined) → localStorage → mock fallback
+  //    로딩 중 깜빡임 방지: 알림이 있을 가능성이 있으면 active 유지
+  if (checkLocalStorage(user.id)) return true;
+  return mockReviewerNotifications.length > 0;
 }

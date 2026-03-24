@@ -19,9 +19,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import styles from "@/styles/manager_ga/layout/header.module.css";
+import { mockManagerGANotifications } from "@/data/notification/notificationData";
 import { performLogout } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { useHasNotifications } from "@/hooks/useHasNotifications";
 
 interface ManagerGAHeaderProps {
   managerType?: "ga" | "sa";
@@ -29,9 +29,8 @@ interface ManagerGAHeaderProps {
 
 export default function ManagerGAHeader({ managerType }: ManagerGAHeaderProps = {}) {
   const pathname = usePathname();
-  const router = useRouter();
+  const _router = useRouter();
   const { isAuthenticated } = useAuth();
-  const hasNotifications = useHasNotifications();
   const [is_logout_menu_open, setIsLogoutMenuOpen] = useState(false);
   const user_menu_ref = useRef<HTMLDivElement>(null);
 
@@ -41,8 +40,8 @@ export default function ManagerGAHeader({ managerType }: ManagerGAHeaderProps = 
   const notificationPath =
     detectedType === "sa" ? "/manager_sa/notification" : "/manager_ga/notification";
 
-  // 비로그인 → 무조건 비활성 아이콘 / 로그인 + 미읽음 알림 있으면 → 활성 아이콘
-  const has_notifications = isAuthenticated && hasNotifications;
+  // 비로그인 → 무조건 비활성 아이콘 / 로그인 + 알림 1개 이상 → 활성 아이콘
+  const has_notifications = isAuthenticated && mockManagerGANotifications.length > 0;
   // 📌 관리자 헤더 전용 흰색 알림 아이콘 사용
   const notification_icon_src = has_notifications
     ? "/images/header/manager/notification_ok_white.svg"
@@ -76,7 +75,8 @@ export default function ManagerGAHeader({ managerType }: ManagerGAHeaderProps = 
     // LocalStorage에 저장된 인증 정보 제거
     performLogout();
     setIsLogoutMenuOpen(false);
-    router.push("/manager/login");
+    // 관리자 공용 로그인 페이지로 이동 (새로고침 포함)
+    window.location.href = "/manager/login";
   };
 
   return (
