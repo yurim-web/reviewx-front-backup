@@ -71,22 +71,26 @@ function adaptReviewerFromApi(item: ReviewerListApiItem): ReviewerItem {
     status_type: MEMBER_TYPE_MAP[item.memberType] ?? (item.memberType as ReviewerStatusType),
     status: STATUS_MAP[item.status] ?? (item.status as ReviewerStatus),
     last_access_date: item.lastLoginAt
-      ? new Date(item.lastLoginAt).toLocaleString("ko-KR", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
+      ? (() => {
+          const d = new Date(item.lastLoginAt);
+          const yyyy = d.getFullYear();
+          const mm = String(d.getMonth() + 1).padStart(2, "0");
+          const dd = String(d.getDate()).padStart(2, "0");
+          const hh = String(d.getHours()).padStart(2, "0");
+          const mi = String(d.getMinutes()).padStart(2, "0");
+          return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+        })()
       : "",
     join_date: item.createdAt
-      ? new Date(item.createdAt).toLocaleString("ko-KR", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
+      ? (() => {
+          const d = new Date(item.createdAt);
+          const yyyy = d.getFullYear();
+          const mm = String(d.getMonth() + 1).padStart(2, "0");
+          const dd = String(d.getDate()).padStart(2, "0");
+          const hh = String(d.getHours()).padStart(2, "0");
+          const mi = String(d.getMinutes()).padStart(2, "0");
+          return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+        })()
       : "",
   };
 }
