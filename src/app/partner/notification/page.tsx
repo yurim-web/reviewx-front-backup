@@ -5,7 +5,7 @@
 /**
  * PartnerNotificationPage
  *
- * 목적: 파트너 전용 알림 목록 표시 (실제 API 연동, 커서 기반 무한 스크롤)
+ * 목적: 파트너 전용 알림 목록 표시 (API 연결, 정적 데이터 fallback)
  *
  * 사용 페이지:
  * - /partner/notification
@@ -13,61 +13,22 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
-import Loading from "@/app/loading";
 import { withPartnerAuth } from "@/components/auth/withAuth";
+import { fetchPartnerNotifications } from "@/lib/api/notification";
 import {
-  usePartnerNotifications,
-  useDeleteAllPartnerNotifications,
-} from "@/hooks/partner/usePartnerNotification";
-import type {
-  PartnerNotificationItem,
-  PartnerNotificationType,
-} from "@/types/api/partnerNotification";
-import type {
-  NotificationItem,
-  PartnerNotificationCategory,
+  mockPartnerNotifications,
+  mapPartnerNotificationToItem,
 } from "@/data/notification/notificationData";
-
-/** 백엔드 type → 프론트엔드 category 코드 매핑 */
-const TYPE_TO_CATEGORY: Record<PartnerNotificationType, PartnerNotificationCategory> = {
-  CAMPAIGN_STATUS_CHANGED: "A_P1",
-  CAMPAIGN_COMPLETED: "A_P2",
-  CAMPAIGN_SUSPENDED: "A_P3",
-  CONTENT_REGISTERED: "A_P4",
-  EXTENSION_REQUESTED: "A_P5",
-  PAYMENT_CONFIRMED: "A_P6",
-  PAYMENT_COMPLETED: "A_P7",
-  PAYMENT_UNCONFIRMED: "A_P8",
-  CARD_PAYMENT_COMPLETED: "A_P9",
-  CONTENT_UNCONFIRMED_REQUEST: "A_P10",
-  ACCOUNT_SUSPENDED: "A_P11",
-  ACCOUNT_BANNED: "A_P12",
-};
-
-/** API 응답 → NotificationItem 변환 (message 포함) */
-function mapApiToNotificationItem(
-  api: PartnerNotificationItem
-): NotificationItem & { message: string; is_read: boolean } {
-  return {
-    id: api.notificationHistoryId,
-    category: TYPE_TO_CATEGORY[api.type] ?? "A_P1",
-    time: api.sentAt,
-    campaign_id: api.campaignId ?? undefined,
-    message: api.message,
-    is_read: api.isRead,
-  };
-}
 
 function PartnerNotificationPage() {
   const [isMobile, setIsMobile] = useState(false);
-  const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
-  const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -78,51 +39,30 @@ function PartnerNotificationPage() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    usePartnerNotifications();
+  const [notifications, setNotifications] = useState(mockPartnerNotifications);
+  const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
-  const deleteAll = useDeleteAllPartnerNotifications();
-
-  // 무한 스크롤 — IntersectionObserver
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [entry] = entries;
-      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    },
-    [hasNextPage, isFetchingNextPage, fetchNextPage]
-  );
+  const { data: apiData } = useQuery({
+    queryKey: ["partnerNotifications"],
+    queryFn: () => fetchPartnerNotifications(),
+    retry: false,
+    staleTime: 30_000,
+  });
 
   useEffect(() => {
-    const el = observerRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [handleObserver]);
-
-  // 전체 페이지 → 단일 배열
-  const notifications = useMemo<NotificationItem[]>(() => {
-    if (!data?.pages) return [];
-    return data.pages.flatMap((page) => page.items.map(mapApiToNotificationItem));
-  }, [data]);
+    if (apiData && apiData.items.length > 0) {
+      setNotifications(apiData.items.map(mapPartnerNotificationToItem));
+    }
+  }, [apiData]);
 
   const handle_delete_all_click = () => {
-    deleteAll.mutate(undefined, {
-      onSuccess: () => {
-        set_is_delete_toast_open(true);
-      },
-    });
+    setNotifications([]);
+    set_is_delete_toast_open(true);
   };
 
-  const handle_notification_click = (_notification: NotificationItem) => {
+  const handle_notification_click = (_notification: (typeof mockPartnerNotifications)[0]) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   return (
     <div className={`${styles.notification_container} ${isMobile ? styles.mobile : ""}`}>
@@ -151,14 +91,6 @@ function PartnerNotificationPage() {
           notifications={notifications}
           on_notification_click={handle_notification_click}
         />
-
-        {/* 무한 스크롤 감지 영역 */}
-        <div ref={observerRef} style={{ height: 1 }} />
-        {isFetchingNextPage && (
-          <div style={{ textAlign: "center", padding: "16px 0" }}>
-            <Loading />
-          </div>
-        )}
       </main>
 
       <Toast

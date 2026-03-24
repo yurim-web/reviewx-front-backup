@@ -41,7 +41,7 @@ export default function PartnerLoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
 
@@ -124,38 +124,16 @@ export default function PartnerLoginPage() {
             </div>
 
             <div className={formStyles.input_wrapper}>
-              <div style={{ position: "relative" }}>
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  className={formStyles.input_field}
-                  placeholder="비밀번호"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  required
-                  aria-label="비밀번호 입력"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-                  style={{
-                    position: "absolute",
-                    right: "12px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: "4px",
-                    color: "#999",
-                    fontSize: "14px",
-                    lineHeight: 1,
-                  }}
-                >
-                  {showPassword ? "숨김" : "표시"}
-                </button>
-              </div>
+              <input
+                id="password"
+                type="password"
+                className={formStyles.input_field}
+                placeholder="비밀번호"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+                aria-label="비밀번호 입력"
+              />
               {/* 에러 메시지 */}
               {errorMessage && (
                 <div className={formStyles.error_message_section}>
