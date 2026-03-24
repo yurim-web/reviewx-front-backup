@@ -5,48 +5,70 @@
 /**
  * useAdminRejections
  *
- * 목적: 관리자 반려 내역을 mock API에서 로드하고
+ * 목적: 관리자 반려 내역을 실제 백엔드 API에서 로드하고
  *       RejectedCampaignItem 타입으로 변환하여 반환합니다.
  *
  * 사용 페이지:
  * - /manager_ga/campaign/rejected
  * - /manager_sa/campaign/rejected
+ *
+ * 백엔드 API: GET /api/admin/campaigns/rejected
  */
 
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchAdminRejections } from "@/lib/api/admin";
+import { getRejectedCampaigns } from "@/lib/api/admin";
 import { rejected_campaign_list } from "@/data/manager_ga/rejected";
-import type { AdminRejectionApiItem } from "@/types/api/admin";
+import type { RejectedCampaignApiItem, RejectedListParams } from "@/types/api/admin";
 import type { RejectedCampaignItem, RejectCode } from "@/data/manager_ga/rejected";
 
-function adaptRejection(item: AdminRejectionApiItem): RejectedCampaignItem {
+/** 백엔드 API 응답 → 프론트 UI 타입 변환 */
+function adaptRejection(item: RejectedCampaignApiItem): RejectedCampaignItem {
   return {
-    id: String(item.id),
-    campaign_number: item.campaign_number,
-    campaign_name: item.campaign_name,
-    reject_code: item.reject_code as RejectCode,
-    reject_reason: item.reject_reason,
-    inspector: item.inspector,
-    target: item.target,
-    processed_date: item.processed_date,
-    reject_count: item.reject_count,
+    id: String(item.rejectId),
+    campaign_number: String(item.campaignId).padStart(6, "0"),
+    campaign_name: item.campaignTitle,
+    reject_code: (item.rejectCode ?? "R001") as RejectCode,
+    reject_reason: item.rejectReason,
+    inspector: item.processedBy,
+    target: item.reviewerName,
+    processed_date: item.processedAt
+      ? (() => {
+          const d = new Date(item.processedAt);
+          const yyyy = d.getFullYear();
+          const mm = String(d.getMonth() + 1).padStart(2, "0");
+          const dd = String(d.getDate()).padStart(2, "0");
+          const hh = String(d.getHours()).padStart(2, "0");
+          const mi = String(d.getMinutes()).padStart(2, "0");
+          return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+        })()
+      : "",
+    reject_count: 1,
   };
 }
 
-export function useAdminRejections() {
-  const { data: apiData, isLoading } = useQuery({
-    queryKey: ["adminRejections"],
-    queryFn: fetchAdminRejections,
+export function useAdminRejections(params?: RejectedListParams) {
+  const { data: apiResponse, isLoading } = useQuery({
+    queryKey: ["adminRejections", params],
+    queryFn: () => getRejectedCampaigns(params),
     staleTime: 30_000,
   });
 
   const rejections = useMemo<RejectedCampaignItem[]>(() => {
-    if (apiData != null && apiData.length > 0) {
-      return apiData.map(adaptRejection);
+    const list = apiResponse?.data?.rejectList;
+    if (list != null && list.length > 0) {
+      return list.map(adaptRejection);
     }
     return rejected_campaign_list;
-  }, [apiData]);
+  }, [apiResponse]);
 
-  return { rejections, isLoading };
+  const stats = useMemo(() => {
+    return apiResponse?.data?.rejectStats ?? [];
+  }, [apiResponse]);
+
+  const pagination = useMemo(() => {
+    return apiResponse?.data?.pagination ?? null;
+  }, [apiResponse]);
+
+  return { rejections, stats, pagination, isLoading };
 }
