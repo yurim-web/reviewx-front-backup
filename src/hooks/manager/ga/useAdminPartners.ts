@@ -53,7 +53,7 @@ function adaptPartnerFromApi(item: PartnerListApiItem): PartnerItem {
     id: String(item.partnerId),
     number: String(item.userId).padStart(6, "0"),
     business_name: item.businessName,
-    business_number: "",
+    business_number: item.businessNumber ?? "",
     representative_name: item.ceoName,
     division: BUSINESS_TYPE_MAP[item.businessType] ?? (item.businessType as PartnerDivision),
     campaign_in_progress: item.campaignCount,

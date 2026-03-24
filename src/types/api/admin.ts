@@ -240,6 +240,7 @@ export interface PartnerListApiItem {
   businessName: string;
   ceoName: string;
   businessType: string;
+  businessNumber: string;
   email: string;
   phoneNum: string;
   grade: string;

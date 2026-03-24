@@ -490,9 +490,12 @@ async function fetch_from_local_storage(
 
 // API 응답 → ReviewerDetail 변환 함수
 function map_api_to_reviewer_detail(api: AdminReviewerApiItem): ReviewerDetail {
-  const channel_details: ChannelDetail[] = (api.channels ?? []).map((ch) => ({
-    channel: ch as Channel,
-    is_connected: true,
+  // 4개 채널 모두 표시 (연결 안 된 채널도 "연결 필요"로 표시)
+  const connectedChannels = new Set(api.channels ?? []);
+  const allChannels: Channel[] = ["Blog", "Clip", "Instagram", "Youtube"];
+  const channel_details: ChannelDetail[] = allChannels.map((ch) => ({
+    channel: ch,
+    is_connected: connectedChannels.has(ch),
     channel_url: "",
   }));
 

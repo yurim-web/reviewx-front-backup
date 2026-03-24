@@ -46,9 +46,9 @@
   gap: 12px;
 }
 
-/* 이름/상호명 (리뷰어/파트너 공통 크기, 글자색만 구분) */
+/* 이름/상호명 (리뷰어: 핑크 #ff5694, 파트너: 파랑 #2b7fff) */
 .name {
-  color: #444444;
+  color: #ff5694;
   font-size: 16px;
   font-weight: 600;
   line-height: 16px;
