@@ -1,8 +1,19 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(node -e \":*)",
+      "Bash(taskkill //F //IM \"node.exe\")",
+      "mcp__playwright__browser_close"
+    ]
+  },
   "mcpServers": {
     "playwright-test": {
       "command": "npx",
-      "args": ["@playwright/mcp@latest", "--config", "playwright.config.ts"],
+      "args": [
+        "@playwright/mcp@latest",
+        "--config",
+        "playwright.config.ts"
+      ],
       "type": "stdio"
     }
   }
