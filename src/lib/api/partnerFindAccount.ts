@@ -4,6 +4,8 @@ import type {
   FindPartnerIdResponse,
   FindPartnerPasswordRequest,
   FindPartnerPasswordResponse,
+  ResetPartnerPasswordRequest,
+  ResetPartnerPasswordResponse,
 } from "@/types/api/partnerFindAccount";
 
 /**
@@ -24,6 +26,20 @@ export const findPartnerPassword = async (
 ): Promise<FindPartnerPasswordResponse> => {
   const { data } = await partnerApiClient.post<FindPartnerPasswordResponse>(
     "/partner/auth/find-password",
+    req
+  );
+  return data;
+};
+
+/**
+ * 파트너 비밀번호 재설정 (비밀번호 찾기 후 새 비밀번호 설정)
+ * POST /partner/auth/reset-password
+ */
+export const resetPartnerPassword = async (
+  req: ResetPartnerPasswordRequest
+): Promise<ResetPartnerPasswordResponse> => {
+  const { data } = await partnerApiClient.post<ResetPartnerPasswordResponse>(
+    "/partner/auth/reset-password",
     req
   );
   return data;

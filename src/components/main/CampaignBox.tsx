@@ -280,7 +280,9 @@ export default function CampaignBox({
 
         {/* 제품 이미지 영역 */}
         <div className={styles.product_image_container}>
-          <img src={campaign.image} alt={campaign.title} className={styles.product_image} />
+          {campaign.image && (
+            <img src={campaign.image} alt={campaign.title} className={styles.product_image} />
+          )}
 
           {/* 조건부 렌더링: 오픈 예정일 때만 스케줄 오버레이 표시 */}
           {/* 오픈 예정인 경우 (오늘 < applicationStart) schedule 오버레이 표시 */}

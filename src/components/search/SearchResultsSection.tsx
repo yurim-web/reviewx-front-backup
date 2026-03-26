@@ -33,6 +33,8 @@ interface SearchCampaign {
 
 interface SearchResultsSectionProps {
   campaigns: SearchCampaign[];
+  keyword?: string;
+  totalCount?: number;
 }
 
 const SORT_OPTIONS = ["최신순", "인기순", "마감임박순", "포인트높은순"];
@@ -76,7 +78,11 @@ const sort_campaigns = (campaigns: SearchCampaign[], sort_by: string) => {
   }
 };
 
-export default function SearchResultsSection({ campaigns }: SearchResultsSectionProps) {
+export default function SearchResultsSection({
+  campaigns,
+  keyword,
+  totalCount,
+}: SearchResultsSectionProps) {
   const [selected_sort, set_selected_sort] = useState<string>(DEFAULT_SORT);
   const [is_sort_modal_open, set_is_sort_modal_open] = useState(false);
   const [temp_sort, set_temp_sort] = useState<string>(DEFAULT_SORT);
@@ -130,11 +136,11 @@ export default function SearchResultsSection({ campaigns }: SearchResultsSection
               <CampaignBox key={campaign.id} campaign={campaign} />
             ))}
           </div>
-        ) : (
+        ) : keyword ? (
           <div className={home_styles.empty_state}>
             <p className={home_styles.empty_text}>검색 결과가 없습니다.</p>
           </div>
-        )}
+        ) : null}
       </section>
 
       <SortModalFilter

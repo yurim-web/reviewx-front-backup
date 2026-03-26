@@ -14,12 +14,13 @@
 import React from "react";
 import styles from "@/styles/login/login/login_page.module.css";
 
-export default function ManagerLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ManagerLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={styles.partner_login_page_container}>{children}</div>
+    <div
+      className={styles.partner_login_page_container}
+      style={{ maxWidth: 1000, margin: "0 auto", minHeight: "100vh", backgroundColor: "#f2f2f2" }}
+    >
+      {children}
+    </div>
   );
 }

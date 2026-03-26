@@ -13,6 +13,7 @@
 
 "use client";
 
+import { useState } from "react";
 import CampaignListPage from "@/components/campaign/CampaignListPage";
 import { useCampaignFilters } from "@/hooks/common/campaign/useCampaignFilters";
 import { useReporterCampaignList } from "@/hooks/user/campaign/useCampaignList";
@@ -20,18 +21,45 @@ import {
   reporterCategoryOptions,
   reporterChannelOptions,
   reporterSortOptions,
+  CATEGORY_ID_MAP,
+  CHANNEL_ID_MAP,
 } from "@/data/campaign/campaignFilterOptions";
 
 export default function ReporterPage() {
-  const { data: campaigns = [] } = useReporterCampaignList();
+  const [apiFilters, setApiFilters] = useState<{ categoryId?: number; channelId?: number }>({});
+
+  const { data: campaigns = [] } = useReporterCampaignList(apiFilters);
 
   const {
     activeFilters,
     closingSoon,
-    handleFilterChange,
+    handleFilterChange: _handleFilterChange,
     setClosingSoon,
     filteredAndSortedCampaigns,
   } = useCampaignFilters({ campaigns });
+
+  const handleFilterChange = (filters: {
+    category?: string;
+    channel?: string;
+    region?: string;
+    closingSoon?: boolean;
+    sortBy?: string;
+  }) => {
+    _handleFilterChange(filters);
+
+    setApiFilters((prev) => {
+      const next = { ...prev };
+      if (filters.category !== undefined) {
+        const cats = filters.category ? filters.category.split(",").filter(Boolean) : [];
+        next.categoryId = cats.length === 1 ? CATEGORY_ID_MAP[cats[0]] : undefined;
+      }
+      if (filters.channel !== undefined) {
+        const chs = filters.channel ? filters.channel.split(",").filter(Boolean) : [];
+        next.channelId = chs.length === 1 ? CHANNEL_ID_MAP[chs[0]] : undefined;
+      }
+      return next;
+    });
+  };
 
   return (
     <CampaignListPage

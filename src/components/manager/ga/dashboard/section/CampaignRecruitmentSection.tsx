@@ -20,9 +20,9 @@ interface CampaignRecruitmentSectionProps {
 export default function CampaignRecruitmentSection({
   dashboardData,
 }: CampaignRecruitmentSectionProps) {
-  // 참고: 이 차트는 "카테고리별" 모집 통계 (생활/식품/패션 등 13개)
-  // API campaignStats.byType은 "유형별" (배송형/방문형 등 4개)이므로 다른 데이터
-  // 카테고리별 세부 데이터는 백엔드에 별도 API가 필요하므로, 현재는 기본 데이터 사용
+  // API campaignStats.byCategory가 있으면 사용, 없으면 차트 기본 데이터 사용
+  const byCategoryData = dashboardData?.campaignStats?.byCategory;
+
   return (
     <div className={styles.campaign_recruitment_section_card}>
       {/* 제목과 범례를 같은 줄에 배치 (제목: 왼쪽, 범례: 오른쪽) */}
@@ -58,7 +58,7 @@ export default function CampaignRecruitmentSection({
         </div>
       </div>
       {/* recharts 라이브러리를 사용한 복합 차트 */}
-      <CampaignRecruitmentChart />
+      <CampaignRecruitmentChart data={byCategoryData} />
     </div>
   );
 }

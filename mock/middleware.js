@@ -6,6 +6,7 @@
 // 메모리 상태: 알림 전체 삭제 여부
 let notificationsDeleted = false;
 let adminNotificationsDeleted = false;
+let saAdminNotificationsDeleted = false;
 
 // 메모리 상태: 로그인된 관리자 정보 (세션 대용)
 let adminSession = {
@@ -54,6 +55,35 @@ module.exports = function createMiddleware(db) {
 
   // 디버그: 미들웨어 진입 확인 (일시)
   // console.log("[MW]", req.method, req.path);
+
+  // ============ POST /api/v1/auth/phone/verify/request ============
+  // 사용자/파트너 휴대폰 인증번호 발송
+  if (req.method === "POST" && req.path === "/api/v1/auth/phone/verify/request") {
+    const { phoneNum } = req.body || {};
+    const verificationId = "vrf_" + Date.now();
+    adminVerificationCode = "123456";
+    return res.status(200).json({
+      result: "OK",
+      verificationId,
+      expireAt: new Date(Date.now() + 240 * 1000).toISOString(),
+    });
+  }
+
+  // ============ POST /api/v1/auth/phone/verify/confirm ============
+  // 사용자/파트너 인증번호 확인
+  if (req.method === "POST" && req.path === "/api/v1/auth/phone/verify/confirm") {
+    const { verificationId, code } = req.body || {};
+    if (code === "123456" || code === adminVerificationCode) {
+      return res.status(200).json({
+        result: "VERIFIED",
+        verifiedPhoneToken: "tok_" + Date.now(),
+      });
+    }
+    return res.status(400).json({
+      result: "ERROR",
+      error: { code: "INVALID_CODE", message: "인증번호가 일치하지 않습니다." },
+    });
+  }
 
   // ============ POST /api/admin/auth/phone/request ============
   // 관리자 휴대폰 인증번호 발송
@@ -145,6 +175,21 @@ module.exports = function createMiddleware(db) {
           { type: "BUY", label: "구매형", count: Math.round(30 * m) },
           { type: "REPORTERS", label: "기자단", count: Math.round(15 * m) },
         ],
+        byCategory: [
+          { category: "생활", recruitmentRate: +(82.5 * m).toFixed(1), achievementRate: +(78.0 * m).toFixed(1), averageDuration: 21 },
+          { category: "식품", recruitmentRate: +(91.3 * m).toFixed(1), achievementRate: +(85.2 * m).toFixed(1), averageDuration: 18 },
+          { category: "패션", recruitmentRate: +(76.8 * m).toFixed(1), achievementRate: +(71.5 * m).toFixed(1), averageDuration: 24 },
+          { category: "뷰티", recruitmentRate: +(88.0 * m).toFixed(1), achievementRate: +(80.3 * m).toFixed(1), averageDuration: 20 },
+          { category: "가구", recruitmentRate: +(65.2 * m).toFixed(1), achievementRate: +(60.1 * m).toFixed(1), averageDuration: 28 },
+          { category: "가전", recruitmentRate: +(70.5 * m).toFixed(1), achievementRate: +(68.9 * m).toFixed(1), averageDuration: 25 },
+          { category: "디지털", recruitmentRate: +(85.1 * m).toFixed(1), achievementRate: +(79.4 * m).toFixed(1), averageDuration: 22 },
+          { category: "유아동", recruitmentRate: +(90.2 * m).toFixed(1), achievementRate: +(83.7 * m).toFixed(1), averageDuration: 19 },
+          { category: "문화", recruitmentRate: +(73.6 * m).toFixed(1), achievementRate: +(65.8 * m).toFixed(1), averageDuration: 26 },
+          { category: "여가", recruitmentRate: +(79.3 * m).toFixed(1), achievementRate: +(74.2 * m).toFixed(1), averageDuration: 23 },
+          { category: "반려동물", recruitmentRate: +(92.8 * m).toFixed(1), achievementRate: +(88.1 * m).toFixed(1), averageDuration: 17 },
+          { category: "서비스", recruitmentRate: +(68.4 * m).toFixed(1), achievementRate: +(62.5 * m).toFixed(1), averageDuration: 27 },
+          { category: "기타", recruitmentRate: +(55.0 * m).toFixed(1), achievementRate: +(50.3 * m).toFixed(1), averageDuration: 30 },
+        ],
       },
       rejectReportStats: {
         totalRejects: Math.round(42 * m),
@@ -154,9 +199,13 @@ module.exports = function createMiddleware(db) {
       },
       accessStats: {
         totalAccess: Math.round(12500 * m),
-        pcRate: 45.2,
-        mobileRate: 48.3,
+        totalAccessChange: +(8.3 * m).toFixed(1),
+        inflowCount: Math.round(3200 * m),
+        inflowChange: +(-2.1 * m).toFixed(1),
+        pcRate: 40.5,
+        mobileRate: 35.2,
         tabletRate: 6.5,
+        appRate: 17.8,
       },
       memberStats: {
         total: 20,     // 리뷰어 10 + 파트너 10
@@ -191,6 +240,361 @@ module.exports = function createMiddleware(db) {
         ],
       },
     });
+  }
+
+  // ============ GET /api/admin-sa/campaign/progress/stats ============
+  // SA-02: SA 캠페인 상태별 통계 카드 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/campaign/progress/stats") {
+    var saStats = db ? (db.get("sa_campaign_progress_stats").value() || null) : null;
+    if (!saStats) {
+      try { saStats = require("./db.json").sa_campaign_progress_stats || null; } catch (_e) {}
+    }
+    if (saStats) {
+      return res.status(200).json(saStats);
+    }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      stats: { total: 0, openScheduled: 0, applying: 0, inProgress: 0, ended: 0, cancelled: 0, urgent: 0 },
+    });
+  }
+
+  // ============ GET /api/admin-sa/campaign/progress ============
+  // SA-02: SA 캠페인 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/campaign/progress") {
+    var saList = db ? (db.get("sa_campaign_progress").value() || []) : [];
+    if (!saList || saList.length === 0) {
+      try { saList = require("./db.json").sa_campaign_progress || []; } catch (_e) {}
+    }
+    var { status: saStatus, type: saType, channel: saChannel, keyword: saKeyword } = req.query;
+    var saFiltered = saList;
+    if (saStatus) {
+      var saStatusList = saStatus.split(",").map(function(s) { return s.trim(); });
+      saFiltered = saFiltered.filter(function(c) { return saStatusList.includes(c.status); });
+    }
+    if (saType) {
+      var saTypeList = saType.split(",").map(function(s) { return s.trim(); });
+      saFiltered = saFiltered.filter(function(c) { return saTypeList.includes(c.type); });
+    }
+    if (saChannel) {
+      var saChannelList = saChannel.split(",").map(function(s) { return s.trim(); });
+      saFiltered = saFiltered.filter(function(c) { return saChannelList.includes(c.channel); });
+    }
+    if (saKeyword) {
+      var saKw = saKeyword.toLowerCase();
+      saFiltered = saFiltered.filter(function(c) {
+        return (c.campaignNumber || "").toLowerCase().includes(saKw) ||
+          (c.campaignName || "").toLowerCase().includes(saKw) ||
+          (c.partnerName || "").toLowerCase().includes(saKw);
+      });
+    }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: saFiltered.length,
+      campaigns: saFiltered,
+    });
+  }
+
+  // ============ POST /api/admin-sa/campaigns/:id/report ============
+  // SA-02: SA 캠페인 신고 처리
+  if (req.method === "POST" && /^\/api\/admin-sa\/campaigns\/\d+\/report$/.test(req.path)) {
+    var saReportCode = (req.body || {}).reportCode;
+    if (!saReportCode) {
+      return res.status(400).json({
+        result: "ERROR",
+        error: { code: "INVALID_REPORT_CODE", message: "올바르지 않은 신고 코드입니다." },
+      });
+    }
+    return res.status(200).json({ result: "OK", message: "신고가 접수되었습니다." });
+  }
+
+  // ============ GET /api/admin-sa/settlement/withdrawal/stats ============
+  // SA-04: SA 출금 현황 통계 카드 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/settlement/withdrawal/stats") {
+    var wsStats = db.get("sa_withdrawal_status_stats").value();
+    if (!wsStats) {
+      wsStats = { urgentAmount: 0, urgentCount: 0, weekScheduledAmount: 0, weekScheduledCount: 0, monthTotalAmount: 0, monthTotalCount: 0, totalDepositAmount: 0 };
+    }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      stats: wsStats,
+    });
+  }
+
+  // ============ GET /api/admin-sa/settlement/withdrawal ============
+  // SA-04: SA 출금 현황 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/settlement/withdrawal") {
+    var wsItems = db.get("sa_withdrawal_status").value() || [];
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: wsItems.length,
+      withdrawals: wsItems,
+    });
+  }
+
+  // ============ GET /api/admin-sa/settlement/withdrawal/requests ============
+  // SA-05: SA 출금 요청 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/settlement/withdrawal/requests") {
+    var wTab = (req.query.tab || "URGENT").toUpperCase();
+    var wSource = wTab === "ROUND" ? "sa_withdrawal_requests_round" : "sa_withdrawal_requests_urgent";
+    var wItems = db.get(wSource).value() || [];
+    var wTotalAmount = wItems.reduce(function (sum, item) { return sum + (item.withdrawalPoints || 0); }, 0);
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: wItems.length,
+      totalAmount: wTotalAmount,
+      withdrawalRequests: wItems,
+    });
+  }
+
+  // ============ POST /api/admin-sa/withdrawal/requests/approve ============
+  // SA-05: SA 출금 승인 (일괄)
+  if (req.method === "POST" && req.path === "/api/admin-sa/withdrawal/requests/approve") {
+    var approveIds = (req.body || {}).withdrawalRequestIds || [];
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      approvedCount: approveIds.length,
+      approvedIds: approveIds,
+    });
+  }
+
+  // ============ POST /api/admin-sa/withdrawal/requests/reject ============
+  // SA-05: SA 출금 반려 (일괄)
+  if (req.method === "POST" && req.path === "/api/admin-sa/withdrawal/requests/reject") {
+    var rejectIds = (req.body || {}).withdrawalRequestIds || [];
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      rejectedCount: rejectIds.length,
+      rejectedIds: rejectIds,
+    });
+  }
+
+  // ============ GET /api/admin-sa/settlement/payment/stats ============
+  // SA-06: SA 결제 내역 통계 카드 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/settlement/payment/stats") {
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      weekBankCount: 5,
+      weekBankAmount: 1500000,
+      weekCardCount: 12,
+      weekCardAmount: 3600000,
+      monthTotalCount: 45,
+      monthTotalAmount: 13500000,
+    });
+  }
+
+  // ============ GET /api/admin-sa/settlement/payment ============
+  // SA-06: SA 결제 내역 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/settlement/payment") {
+    var payItems = db.get("sa_payment_history").value() || [];
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: payItems.length,
+      payments: payItems,
+    });
+  }
+
+  // ============ GET /api/admin-sa/reviewer/stats ============
+  // SA-07: SA 리뷰어 통계 카드 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/reviewer/stats") {
+    var rvStats = db.get("sa_reviewer_stats").value();
+    if (!rvStats) {
+      rvStats = { monthlyNewCount: 0, totalCount: 0, monthlyActiveCount: 0, dormantCount: 0 };
+    }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      ...rvStats,
+    });
+  }
+
+  // ============ GET /api/admin-sa/reviewer ============
+  // SA-07: SA 리뷰어 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/reviewer") {
+    var rvItems = db.get("sa_reviewers").value() || [];
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: rvItems.length,
+      reviewers: rvItems,
+    });
+  }
+
+  // ============ POST /api/admin-sa/reviewer/restrict ============
+  // SA-07: SA 리뷰어 이용 제한 처리
+  if (req.method === "POST" && req.path === "/api/admin-sa/reviewer/restrict") {
+    var rvRestrictIds = (req.body || {}).reviewerIds || [];
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      processedCount: rvRestrictIds.length,
+    });
+  }
+
+  // ============ GET /api/admin-sa/partners/stats ============
+  // SA-08: SA 파트너 통계 카드 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/partners/stats") {
+    var ptStats = db.get("sa_partner_stats").value();
+    if (!ptStats) {
+      ptStats = { monthlyNewCount: 0, totalCount: 0, monthlyActiveCount: 0, dormantCount: 0 };
+    }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      partnerStats: ptStats,
+    });
+  }
+
+  // ============ GET /api/admin-sa/partners ============
+  // SA-08: SA 파트너 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/partners") {
+    var ptItems = db.get("sa_partners").value() || [];
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: ptItems.length,
+      partners: ptItems,
+    });
+  }
+
+  // ============ GET /admin/partner/:id ============
+  // SA-09 / GA-09: 파트너 상세 조회 (db.json partners 컬렉션에서 조회)
+  if (req.method === "GET" && (req.path.match(/^\/api\/admin\/partners\/\d+$/) || req.path.match(/^\/admin\/partner\/\d+$/))) {
+    var ptId = Number(req.path.split("/").pop());
+    var ptItem = db.get("partners").find({ id: ptId }).value();
+    if (ptItem) {
+      return res.status(200).json(ptItem);
+    }
+    return res.status(200).json({
+      id: ptId, number: String(ptId).padStart(6, "0"),
+      business_name: "테스트파트너" + ptId, business_number: "000-00-00000",
+      representative_name: "대표" + ptId, division: "개인",
+      email: "partner" + ptId + "@test.com", phone: "010-0000-0000",
+      address: "서울시 강남구", contact_name: "담당자" + ptId, contact_phone: "010-0000-0000",
+      campaign_in_progress: 0, campaign_completed: 0, current_points: 0, used_points: 0,
+      status_type: "일반 회원", status: "정상", penalty_count: 0,
+      last_access_date: "2026-03-20 14:30", join_date: "2025-06-01 09:00"
+    });
+  }
+
+  // ============ GET /api/admin-sa/admins ============
+  // SA-10: SA 관리자 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/admins") {
+    var adminItems = db.get("sa_admins").value() || [];
+    // 필터링
+    var statusFilter = req.query.status;
+    var keywordFilter = req.query.keyword;
+    if (statusFilter) {
+      adminItems = adminItems.filter(function(a) { return a.status === statusFilter; });
+    }
+    if (keywordFilter) {
+      var kw = keywordFilter.toLowerCase();
+      adminItems = adminItems.filter(function(a) { return a.name.toLowerCase().includes(kw) || a.email.toLowerCase().includes(kw); });
+    }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: adminItems.length,
+      admins: adminItems,
+    });
+  }
+
+  // ============ POST /api/admin-sa/admins ============
+  // SA-11: SA 관리자 등록
+  if (req.method === "POST" && req.path === "/api/admin-sa/admins") {
+    var saAdmins = db.get("sa_admins").value() || [];
+    var maxId = saAdmins.reduce(function(max, a) { return Math.max(max, a.id); }, 0);
+    var newAdmin = {
+      id: maxId + 1,
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone || "",
+      adminLevel: "GENERAL_ADMIN",
+      reportCount: 0,
+      suspendCount: 0,
+      lastLoginAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      status: "ACTIVE",
+    };
+    db.get("sa_admins").push(newAdmin).write();
+    return res.status(201).json({ result: "OK", admin: newAdmin });
+  }
+
+  // ============ PATCH /api/admin-sa/admins/:id ============
+  // SA-12: SA 관리자 수정
+  if (req.method === "PATCH" && /^\/api\/admin-sa\/admins\/\d+$/.test(req.path)) {
+    var adminId = Number(req.path.split("/").pop());
+    var target = db.get("sa_admins").find({ id: adminId }).value();
+    if (!target) {
+      return res.status(404).json({ result: "FAIL", message: "관리자를 찾을 수 없습니다." });
+    }
+    var updateData = {};
+    if (req.body.name) updateData.name = req.body.name;
+    if (req.body.phone) updateData.phone = req.body.phone;
+    db.get("sa_admins").find({ id: adminId }).assign(updateData).write();
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // ============ DELETE /api/admin-sa/admins/:id ============
+  // SA-10: SA 관리자 삭제
+  if (req.method === "DELETE" && /^\/api\/admin-sa\/admins\/\d+$/.test(req.path)) {
+    var delAdminId = Number(req.path.split("/").pop());
+    db.get("sa_admins").remove({ id: delAdminId }).write();
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // ============ GET /api/admin-sa/member/blacklist ============
+  // SA-13: SA 이용 제한 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/member/blacklist") {
+    var blItems = db.get("sa_blacklist").value() || [];
+    // 필터링
+    var blDivision = req.query.division;
+    var blBlockCode = req.query.blockCode;
+    var blKeyword = req.query.keyword;
+    var blStartDate = req.query.startDate;
+    var blEndDate = req.query.endDate;
+    if (blDivision) {
+      var divs = blDivision.split(",");
+      blItems = blItems.filter(function(b) { return divs.includes(b.division); });
+    }
+    if (blBlockCode) {
+      var codes = blBlockCode.split(",");
+      blItems = blItems.filter(function(b) { return codes.includes(b.blockCode); });
+    }
+    if (blKeyword) {
+      var kw = blKeyword.toLowerCase();
+      blItems = blItems.filter(function(b) {
+        return b.name.toLowerCase().includes(kw) || b.userId.toLowerCase().includes(kw) || (b.ipAddress || "").toLowerCase().includes(kw);
+      });
+    }
+    if (blStartDate) {
+      blItems = blItems.filter(function(b) { return b.registeredDate >= blStartDate; });
+    }
+    if (blEndDate) {
+      blItems = blItems.filter(function(b) { return b.registeredDate <= blEndDate + "T23:59:59"; });
+    }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: blItems.length,
+      blacklist: blItems,
+    });
+  }
+
+  // ============ DELETE /api/admin-sa/member/blacklist/:id ============
+  // SA-13: SA 이용 제한 해제
+  if (req.method === "DELETE" && /^\/api\/admin-sa\/member\/blacklist\//.test(req.path)) {
+    var blId = req.path.split("/").pop();
+    db.get("sa_blacklist").remove({ id: blId }).write();
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString() });
   }
 
   // ============ GET /api/admin/campaigns/summary ============
@@ -426,34 +830,31 @@ module.exports = function createMiddleware(db) {
     });
   }
 
-  // ============ GET /api/admin/reviewers/:id ============
-  // GA-07: 리뷰어 상세 조회
-  if (req.method === "GET" && req.path.match(/^\/api\/admin\/reviewers\/\d+$/)) {
+  // ============ GET /api/admin/reviewers/:id OR /admin/reviewer/:id ============
+  // GA-07 / SA-07: 리뷰어 상세 조회 (db.json reviewers 컬렉션에서 조회)
+  if (req.method === "GET" && (req.path.match(/^\/api\/admin\/reviewers\/\d+$/) || req.path.match(/^\/admin\/reviewer\/\d+$/))) {
     var rvId = Number(req.path.split("/").pop());
+    var rvItem = db.get("reviewers").find({ id: rvId }).value();
+    if (rvItem) {
+      return res.status(200).json(rvItem);
+    }
+    // db.json에 없으면 기본 더미 데이터 반환
     return res.status(200).json({
-      result: "OK", generatedAt: new Date().toISOString(),
-      data: {
-        basicInfo: {
-          userId: rvId, reviewerId: rvId, status: "ACTIVE",
-          profileImageUrl: null, nickname: "리뷰어" + rvId, name: "테스트" + rvId,
-          gender: "M", age: 28, email: "reviewer" + rvId + "@test.com",
-          phoneNum: "010-1234-" + String(rvId).padStart(4, "0"),
-          address: "서울시 강남구 테헤란로 " + rvId,
-        },
-        activityInfo: {
-          campaignInProgress: 3, campaignCompleted: 25, penaltyCount: 2,
-          lastLoginAt: "2026-03-20T14:30:00+09:00", createdAt: "2025-06-01T09:00:00+09:00",
-          pointBalance: 85000, pointWithdrawn: 200000,
-        },
-        channelInfo: [
-          { channelId: 1, channelName: "Instagram", externalId: "@reviewer" + rvId, channelUrl: "https://instagram.com/reviewer" + rvId, followers: 12000, dailyVisitors: null },
-          { channelId: 2, channelName: "Blog", externalId: "reviewer" + rvId, channelUrl: "https://blog.naver.com/reviewer" + rvId, followers: null, dailyVisitors: 800 },
-        ],
-        bankAccountInfo: {
-          bankName: "국민은행", accountNumber: "123-456-789012",
-          accountHolder: "테스트" + rvId, ssnMasked: "900101-1******",
-        },
-      },
+      id: rvId, number: String(rvId).padStart(6, "0"),
+      name: "테스트" + rvId, nickname: "리뷰어" + rvId,
+      gender: "남성", age: 28,
+      email: "reviewer" + rvId + "@test.com",
+      phone: "010-1234-" + String(rvId).padStart(4, "0"),
+      address: "서울시 강남구 테헤란로 " + rvId,
+      channels: ["Blog", "Instagram"],
+      type: "일반",
+      campaign_participated: 3, campaign_completed: 2,
+      current_points: 50000, withdrawn_points: 30000,
+      status_type: "일반 회원", status: "정상",
+      penalty_count: 0, bank: "국민은행",
+      account_holder: "테스트" + rvId,
+      last_access_date: "2026-03-20 14:30",
+      join_date: "2025-06-01 09:00"
     });
   }
 
@@ -784,6 +1185,7 @@ module.exports = function createMiddleware(db) {
     // 관리자 세션 업데이트
     adminSession = { id: account.id, email, name: account.name, role: account.role };
     adminNotificationsDeleted = false; // 세션 변경 시 삭제 상태 초기화
+    saAdminNotificationsDeleted = false;
 
     return res.status(200).json({
       result: "OK",
@@ -907,6 +1309,7 @@ module.exports = function createMiddleware(db) {
       email: email,
       name: account.name,
       businessName: account.businessName,
+      status: account.status || "ACTIVE",
     };
 
     // 성공 (200) — BLOCKED도 200 반환 (프론트에서 status로 분기)
@@ -981,7 +1384,7 @@ module.exports = function createMiddleware(db) {
         address: acct.address,
         addressDetail: acct.addressDetail,
         postNumber: acct.postNumber,
-        status: "ACTIVE",
+        status: currentSession.status || "ACTIVE",
       },
       partner: {
         partnerId: currentSession.partnerId,
@@ -1052,6 +1455,21 @@ module.exports = function createMiddleware(db) {
       result: "ERROR",
       error: { code: "NOT_FOUND", message: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다." },
     });
+  }
+
+  // ============ POST /partner/auth/reset-password ============
+  // 비밀번호 찾기 후 새 비밀번호 설정 (현재 비밀번호 불필요)
+  if (req.method === "POST" && req.path === "/partner/auth/reset-password") {
+    const { email, newPassword } = req.body || {};
+    const profiles = db ? db.get("partner_mypage").value() : [];
+    const found = profiles.find((p) => p.email === email);
+    if (!found) {
+      return res.status(404).json({
+        result: "ERROR",
+        error: { code: "NOT_FOUND", message: "계정을 찾을 수 없습니다." },
+      });
+    }
+    return res.status(200).json({ result: "OK" });
   }
 
   // ============ GET /partner/signup ============
@@ -1223,6 +1641,30 @@ module.exports = function createMiddleware(db) {
     });
   }
 
+  // ============ GET /partner/{TYPE} (유형별 캠페인 조회 — API 08) ============
+  const typeFilterMatch = req.method === "GET" && req.path.match(/^\/partner\/(DELIVERY|VISIT|PURCHASE|REPORTER|MISSION)$/);
+  if (typeFilterMatch) {
+    const type = typeFilterMatch[1];
+    const campaigns = getCampaigns();
+    let filtered = campaigns.filter((c) => {
+      const cType = (c.type || "").toUpperCase();
+      return cType === type || (type === "PURCHASE" && cType === "PURCHASE_REVIEW");
+    });
+
+    const { categoryId, channelId, status } = req.query;
+    if (categoryId) filtered = filtered.filter((c) => String(c.category?.categoryId) === categoryId);
+    if (channelId) filtered = filtered.filter((c) => String(c.requiredPlatform?.channelId) === channelId);
+    if (status) filtered = filtered.filter((c) => c.status === status);
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      type,
+      totalCount: filtered.length,
+      campaigns: filtered,
+    });
+  }
+
   // ============ GET /partner/account/penalty ============
   // 23번 API: 파트너 패널티 내역 조회
   if (req.method === "GET" && req.path === "/partner/account/penalty") {
@@ -1285,7 +1727,10 @@ module.exports = function createMiddleware(db) {
       else startIdx += 1; // 커서 다음부터
     }
 
-    const sliced = allItems.slice(startIdx, startIdx + size);
+    const sliced = allItems.slice(startIdx, startIdx + size).map((item) => ({
+      ...item,
+      sentAt: item.sentAt || item.createdAt,
+    }));
     const nextItem = allItems[startIdx + size];
     const nextCursor = nextItem ? String(nextItem.notificationHistoryId) : null;
 
@@ -1583,6 +2028,355 @@ module.exports = function createMiddleware(db) {
     if (!board) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
     if (db) try { db.get("community_posts").remove((b) => (b.boardId || b.id) === boardId).write(); } catch (_e) { /* */ }
     return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString(), data: null });
+  }
+
+  // ============================================================
+  // SA 게시글 (Boards) CRUD — /api/admin-sa/board
+  // ============================================================
+
+  // SA도 GA와 동일한 community_posts 데이터를 공유합니다
+
+  // category enum → label 매핑
+  var DIVISION_LABELS = { NOTICE: "공지사항", QUESTIONS: "자주 묻는 질문" };
+  var TARGET_LABELS = { ALL: "전체", REVIEWER: "리뷰어", PARTNER: "파트너", ADMIN: "관리자" };
+
+  // GET /api/admin-sa/board — SA 게시글 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/board") {
+    var saBoards = getBoards();
+    var saDivision = req.query.division;
+    var saTarget = req.query.target;
+    var saKeyword = req.query.keyword;
+    var saStartDate = req.query.startDate;
+    var saEndDate = req.query.endDate;
+    var saFiltered = saBoards.slice();
+    if (saDivision) saFiltered = saFiltered.filter(function(b) { return b.division === saDivision; });
+    if (saTarget) saFiltered = saFiltered.filter(function(b) { return b.target === saTarget; });
+    if (saKeyword) {
+      var skw = saKeyword.toLowerCase();
+      saFiltered = saFiltered.filter(function(b) { return b.title.toLowerCase().includes(skw); });
+    }
+    if (saStartDate) saFiltered = saFiltered.filter(function(b) { return b.createdAt >= saStartDate; });
+    if (saEndDate) saFiltered = saFiltered.filter(function(b) { return b.createdAt <= saEndDate + " 23:59"; });
+    saFiltered.sort(function(a, b) { return (b.createdAt || "").localeCompare(a.createdAt || ""); });
+    // SA 응답 형식 (data wrapper 없음, isPinned/registrantName 사용)
+    var saBoardItems = saFiltered.map(function(b) {
+      return {
+        boardId: b.boardId || b.id,
+        boardNumber: String(b.boardId || b.id).padStart(7, "0"),
+        division: b.division,
+        category: b.boardCategory,
+        target: b.target,
+        title: b.title,
+        viewCount: b.viewCount || 0,
+        isPinned: b.isFixed || b.isPinned || false,
+        registrantName: b.createdBy || "관리자",
+        createdAt: b.createdAt
+      };
+    });
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: saBoardItems.length,
+      boards: saBoardItems
+    });
+  }
+
+  // GET /api/admin-sa/board/write — SA 폼 옵션 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/board/write") {
+    var saCategories = [];
+    if (db) try { saCategories = db.get("community_categories").value() || []; } catch (_e) { /* */ }
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      divisions: [
+        { code: "NOTICE", label: "공지사항" },
+        { code: "QUESTIONS", label: "자주 묻는 질문" }
+      ],
+      categories: saCategories.map(function(c) {
+        return { code: c.categoryName, label: c.categoryName, division: c.division };
+      }),
+      targets: [
+        { code: "ALL", label: "전체" },
+        { code: "REVIEWER", label: "리뷰어" },
+        { code: "PARTNER", label: "파트너" },
+        { code: "ADMIN", label: "관리자" }
+      ]
+    });
+  }
+
+  // GET /api/admin-sa/board/:id — SA 게시글 상세 조회
+  if (req.method === "GET" && /^\/api\/admin-sa\/board\/\d+$/.test(req.path)) {
+    var saBoardId = parseInt(req.path.split("/").pop(), 10);
+    var saBoardsList = getBoards();
+    var saBoard = saBoardsList.find(function(b) { return (b.boardId || b.id) === saBoardId; });
+    if (!saBoard) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      board: {
+        boardId: saBoard.boardId || saBoard.id,
+        boardNumber: String(saBoard.boardId || saBoard.id).padStart(7, "0"),
+        division: saBoard.division,
+        category: saBoard.boardCategory,
+        target: saBoard.target,
+        title: saBoard.title,
+        content: saBoard.content || "<p>내용이 없습니다.</p>",
+        viewCount: saBoard.viewCount || 0,
+        isPinned: saBoard.isFixed || saBoard.isPinned || false,
+        registrantName: saBoard.createdBy || "관리자",
+        createdAt: saBoard.createdAt,
+        updatedAt: saBoard.updatedAt || null
+      }
+    });
+  }
+
+  // POST /api/admin-sa/board — SA 게시글 등록
+  if (req.method === "POST" && req.path === "/api/admin-sa/board") {
+    var saPostBody = req.body;
+    var saPostBoards = getBoards();
+    var saPostMaxId = saPostBoards.reduce(function(m, b) { return Math.max(m, b.boardId || b.id || 0); }, 0);
+    var saPostNow = new Date().toISOString().slice(0, 16).replace("T", " ");
+    var saNewBoard = {
+      id: saPostMaxId + 1,
+      boardId: saPostMaxId + 1,
+      division: saPostBody.division,
+      boardCategory: saPostBody.category,
+      target: saPostBody.target,
+      title: saPostBody.title,
+      content: saPostBody.content,
+      viewCount: 0,
+      isFixed: false,
+      isPinned: false,
+      createdAt: saPostNow,
+      createdBy: "관리자 SA"
+    };
+    if (db) try { db.get("community_posts").push(saNewBoard).write(); } catch (_e) { /* */ }
+    return res.status(201).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      boardId: saNewBoard.boardId,
+      boardNumber: String(saNewBoard.boardId).padStart(7, "0"),
+      createdAt: saPostNow
+    });
+  }
+
+  // PUT /api/admin-sa/board/:id — SA 게시글 수정
+  if (req.method === "PUT" && /^\/api\/admin-sa\/board\/\d+$/.test(req.path)) {
+    var saPutBoardId = parseInt(req.path.split("/").pop(), 10);
+    var saPutBoards = getBoards();
+    var saPutBoard = saPutBoards.find(function(b) { return (b.boardId || b.id) === saPutBoardId; });
+    if (!saPutBoard) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
+    var saPutBody = req.body;
+    var saPutNow = new Date().toISOString().slice(0, 16).replace("T", " ");
+    if (db) try {
+      db.get("community_posts").find(function(b) { return (b.boardId || b.id) === saPutBoardId; })
+        .assign({
+          division: saPutBody.division,
+          boardCategory: saPutBody.boardCategory,
+          target: saPutBody.target,
+          title: saPutBody.title,
+          content: saPutBody.content,
+          updatedAt: saPutNow
+        }).write();
+    } catch (_e) { /* */ }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString() });
+  }
+
+  // DELETE /api/admin-sa/board — SA 게시글 삭제 (복수)
+  if (req.method === "DELETE" && req.path === "/api/admin-sa/board") {
+    var saDeleteIds = (req.body && req.body.boardIds) || [];
+    var saDeleteCount = 0;
+    if (db && saDeleteIds.length > 0) {
+      try {
+        saDeleteIds.forEach(function(delId) {
+          var found = db.get("community_posts").find(function(b) { return (b.boardId || b.id) === delId; }).value();
+          if (found) {
+            db.get("community_posts").remove(function(b) { return (b.boardId || b.id) === delId; }).write();
+            saDeleteCount++;
+          }
+        });
+      } catch (_e) { /* */ }
+    }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString(), deletedCount: saDeleteCount });
+  }
+
+  // PATCH /api/admin-sa/board/:id/pin — SA 게시글 고정
+  if (req.method === "PATCH" && /^\/api\/admin-sa\/board\/\d+\/pin$/.test(req.path)) {
+    var saPinParts = req.path.split("/");
+    var saPinBoardId = parseInt(saPinParts[saPinParts.length - 2], 10);
+    var saPinBoards = getBoards();
+    var saPinBoard = saPinBoards.find(function(b) { return (b.boardId || b.id) === saPinBoardId; });
+    if (!saPinBoard) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
+    if (db) try {
+      db.get("community_posts").find(function(b) { return (b.boardId || b.id) === saPinBoardId; }).assign({ isFixed: true, isPinned: true }).write();
+    } catch (_e) { /* */ }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString() });
+  }
+
+  // PATCH /api/admin-sa/board/:id/unpin — SA 게시글 고정 해제
+  if (req.method === "PATCH" && /^\/api\/admin-sa\/board\/\d+\/unpin$/.test(req.path)) {
+    var saUnpinParts = req.path.split("/");
+    var saUnpinBoardId = parseInt(saUnpinParts[saUnpinParts.length - 2], 10);
+    var saUnpinBoards = getBoards();
+    var saUnpinBoard = saUnpinBoards.find(function(b) { return (b.boardId || b.id) === saUnpinBoardId; });
+    if (!saUnpinBoard) return res.status(404).json({ result: "ERROR", error: { code: "BOARD_NOT_FOUND", message: "게시글을 찾을 수 없습니다." } });
+    if (db) try {
+      db.get("community_posts").find(function(b) { return (b.boardId || b.id) === saUnpinBoardId; }).assign({ isFixed: false, isPinned: false }).write();
+    } catch (_e) { /* */ }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString() });
+  }
+
+  // ============================================================
+  // SA 카테고리 (Categories) CRUD — /api/admin-sa/categories
+  // ============================================================
+
+  // GET /api/admin-sa/categories/register — SA 카테고리 등록 폼 옵션 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/categories/register") {
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      divisions: [
+        { code: "NOTICE", label: "공지사항" },
+        { code: "FAQ", label: "자주 묻는 질문" },
+        { code: "EVENT", label: "이벤트" },
+      ],
+    });
+  }
+
+  // GET /api/admin-sa/categories/:id — SA 카테고리 상세 조회
+  if (req.method === "GET" && /^\/api\/admin-sa\/categories\/\d+$/.test(req.path)) {
+    const catId = parseInt(req.path.split("/").pop(), 10);
+    const categories = getCategories();
+    const cat = categories.find((c) => (c.categoryId || c.id) === catId);
+    if (!cat) return res.status(404).json({ result: "ERROR", error: { code: "CATEGORY_NOT_FOUND", message: "카테고리를 찾을 수 없습니다" } });
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      category: { categoryId: cat.categoryId || cat.id, division: cat.division, categoryName: cat.categoryName },
+    });
+  }
+
+  // GET /api/admin-sa/categories — SA 카테고리 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/categories") {
+    let categories = getCategories();
+    const { division, keyword } = req.query;
+    if (division) categories = categories.filter((c) => c.division === division);
+    if (keyword) categories = categories.filter((c) => c.categoryName && c.categoryName.includes(keyword));
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: categories.length,
+      categories: categories.map((c) => ({ categoryId: c.categoryId || c.id, division: c.division, categoryName: c.categoryName })),
+    });
+  }
+
+  // POST /api/admin-sa/categories — SA 카테고리 등록
+  if (req.method === "POST" && req.path === "/api/admin-sa/categories") {
+    const { division, categoryName } = req.body || {};
+    if (!categoryName || categoryName.length < 2 || categoryName.length > 10) {
+      return res.status(400).json({ result: "ERROR", error: { code: "INVALID_INPUT", message: "카테고리명은 2~10자 이내로 입력해 주세요." } });
+    }
+    const categories = getCategories();
+    const dup = categories.find((c) => c.division === division && c.categoryName === categoryName);
+    if (dup) return res.status(400).json({ result: "ERROR", error: { code: "CATEGORY_DUPLICATE", message: "이미 존재하는 카테고리명입니다." } });
+    const maxId = categories.reduce((m, c) => Math.max(m, c.categoryId || c.id || 0), 0);
+    const now = new Date().toISOString();
+    const newCat = { id: maxId + 1, categoryId: maxId + 1, division, categoryName, boardCount: 0, createdAt: now, updatedAt: now };
+    if (db) { try { db.get("community_categories").push(newCat).write(); } catch (_e) { /* */ } }
+    return res.status(200).json({ result: "OK", generatedAt: now, category: { categoryId: newCat.categoryId, division, categoryName } });
+  }
+
+  // PATCH /api/admin-sa/categories/:id — SA 카테고리 수정
+  if (req.method === "PATCH" && /^\/api\/admin-sa\/categories\/\d+$/.test(req.path)) {
+    const catId = parseInt(req.path.split("/").pop(), 10);
+    const { division, categoryName } = req.body || {};
+    if (!categoryName || categoryName.length < 2 || categoryName.length > 10) {
+      return res.status(400).json({ result: "ERROR", error: { code: "INVALID_INPUT", message: "카테고리명은 2~10자 이내로 입력해 주세요." } });
+    }
+    const categories = getCategories();
+    const cat = categories.find((c) => (c.categoryId || c.id) === catId);
+    if (!cat) return res.status(404).json({ result: "ERROR", error: { code: "CATEGORY_NOT_FOUND", message: "카테고리를 찾을 수 없습니다." } });
+    const checkDiv = division || cat.division;
+    const dup = categories.find((c) => c.division === checkDiv && c.categoryName === categoryName && (c.categoryId || c.id) !== catId);
+    if (dup) return res.status(400).json({ result: "ERROR", error: { code: "CATEGORY_DUPLICATE", message: "이미 존재하는 카테고리명입니다." } });
+    if (division) cat.division = division;
+    cat.categoryName = categoryName;
+    cat.updatedAt = new Date().toISOString();
+    if (db) { try { db.write(); } catch (_e) { /* */ } }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString(), category: { categoryId: catId, division: cat.division, categoryName } });
+  }
+
+  // DELETE /api/admin-sa/categories/:id — SA 카테고리 삭제
+  if (req.method === "DELETE" && /^\/api\/admin-sa\/categories\/\d+$/.test(req.path)) {
+    const catId = parseInt(req.path.split("/").pop(), 10);
+    const categories = getCategories();
+    const cat = categories.find((c) => (c.categoryId || c.id) === catId);
+    if (!cat) return res.status(404).json({ result: "ERROR", error: { code: "CATEGORY_NOT_FOUND", message: "존재하지 않는 카테고리입니다." } });
+    if (cat.boardCount > 0) return res.status(400).json({ result: "ERROR", error: { code: "CATEGORY_HAS_BOARDS", message: "게시글이 등록된 상태에서는 삭제할 수 없습니다. 게시글을 삭제한 후 진행해 주세요." } });
+    if (db) { try { db.get("community_categories").remove((c) => (c.categoryId || c.id) === catId).write(); } catch (_e) { /* */ } }
+    return res.status(200).json({ result: "OK", generatedAt: new Date().toISOString() });
+  }
+
+  // SA 알림 (Notifications) — /api/admin-sa/notifications
+  // ──────────────────────────────────────────────────────
+
+  // GET /api/admin-sa/notifications — SA 알림 목록 조회
+  if (req.method === "GET" && req.path === "/api/admin-sa/notifications") {
+    if (saAdminNotificationsDeleted) {
+      return res.status(200).json({
+        result: "OK",
+        generatedAt: new Date().toISOString(),
+        data: { totalCount: 0, unreadCount: 0, totalPages: 0, currentPage: 1, size: 20, notifications: [] },
+      });
+    }
+
+    const dbData = require("./db.json");
+    let items = (dbData.admin_notifications || []).filter(
+      (n) => n.userId === adminSession.id
+    );
+
+    if (req.query.category) {
+      items = items.filter((n) => n.category === req.query.category);
+    }
+    if (req.query.isRead !== undefined) {
+      const isRead = req.query.isRead === "true";
+      items = items.filter((n) => n.isRead === isRead);
+    }
+
+    const page = Number(req.query.page) || 1;
+    const size = Number(req.query.size) || 20;
+    const totalCount = items.length;
+    const unreadCount = items.filter((n) => !n.isRead).length;
+    const totalPages = Math.ceil(totalCount / size);
+    const start = (page - 1) * size;
+    const sliced = items.slice(start, start + size);
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: { totalCount, unreadCount, totalPages, currentPage: page, size, notifications: sliced.map(({ userId, ...rest }) => rest) },
+    });
+  }
+
+  // DELETE /api/admin-sa/notifications/all — SA 전체 알림 삭제
+  if (req.method === "DELETE" && req.path === "/api/admin-sa/notifications/all") {
+    saAdminNotificationsDeleted = true;
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // DELETE /api/admin-sa/notifications/:id — SA 개별 알림 삭제
+  if (req.method === "DELETE" && /^\/api\/admin-sa\/notifications\/\d+$/.test(req.path)) {
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // PATCH /api/admin-sa/notifications/:id/read — SA 알림 읽음 처리
+  if (req.method === "PATCH" && /^\/api\/admin-sa\/notifications\/\d+\/read$/.test(req.path)) {
+    return res.status(200).json({ result: "OK" });
+  }
+
+  // PATCH /api/admin-sa/notifications/read-all — SA 전체 읽음 처리
+  if (req.method === "PATCH" && req.path === "/api/admin-sa/notifications/read-all") {
+    return res.status(200).json({ result: "OK" });
   }
 
   // ============ GET /partner/point/history (기존 mock API — 하위 호환) ============
@@ -1893,6 +2687,9 @@ module.exports = function createMiddleware(db) {
         recruitLimit: Number(body.recruitLimit) || 0,
         recruitStartAt: body.recruitStartAt || "",
         recruitEndAt: body.recruitEndAt || "",
+        selectedAt: body.selectedAt || undefined,
+        contentStartAt: body.contentStartAt || undefined,
+        contentEndAt: body.contentEndAt || undefined,
       } : undefined,
       reward: (body.extraRewardPoint != null || body.paymentRewardPoint != null) ? {
         extraRewardPoint: Number(body.extraRewardPoint) || 0,
@@ -1974,7 +2771,7 @@ module.exports = function createMiddleware(db) {
           contentEndAt: campaign.recruit?.contentEndAt || campaign.content?.contentEndAt || new Date().toISOString(),
         },
         reward: campaign.reward || { extraRewardPoint: campaign.additionalPoint || 0, paymentRewardPoint: 0 },
-        promotionUrl: campaign.promotionLink || campaign.promotionUrl || "",
+        promotionUrl: campaign.promotionLink || campaign.promotionUrl || campaign.purchaseLink || "",
         keyword: campaign.keywordPolicy?.keyword || "",
         notification: campaign.notification || "",
         visitAddress: campaign.visitAddress || campaign.visitBaseAddress || "",
@@ -1991,7 +2788,7 @@ module.exports = function createMiddleware(db) {
         requireContentLink: campaign.requireContentLink || false,
         requireContentImage: campaign.requireContentImage || false,
         // 구매평 전용
-        purchaseInfo: campaign.purchaseInfo || null,
+        purchaseInfo: campaign.purchaseInfo || (campaign.purchaseLink ? { purchaseLink: campaign.purchaseLink, purchasePoint: campaign.reward?.paymentRewardPoint || 0 } : null),
         purchasePeriod: campaign.purchasePeriod || "",
         regAt: campaign.regAt || campaign.created_at || new Date().toISOString(),
         updatedAt: campaign.updatedAt || campaign.updated_at || new Date().toISOString(),
@@ -2375,11 +3172,20 @@ module.exports = function createMiddleware(db) {
     const sort = req.query.sort || "LATEST";
     const sorted = sortCampaigns(filtered, sort);
 
+    // 페이지네이션
+    const page = parseInt(req.query.page || "0", 10);
+    const size = parseInt(req.query.size || "20", 10);
+    const total = sorted.length;
+    const hasNext = (page + 1) * size < total;
+    const paginated = sorted.slice(page * size, (page + 1) * size);
+
     return res.status(200).json({
       result: "success",
       generatedAt: new Date().toISOString(),
       data: {
-        campaigns: sorted,
+        campaigns: paginated,
+        hasNext,
+        currentPage: page,
       },
     });
   }

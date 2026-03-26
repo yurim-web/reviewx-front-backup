@@ -181,11 +181,25 @@ export function useCampaignFormStorage({
         기자단: "REPORTER",
         미션형: "MISSION",
       };
+      const parseDateRange = (period: string) => {
+        const parts = period?.split(" ~ ");
+        return parts?.length === 2
+          ? { start: parts[0].trim(), end: parts[1].trim() }
+          : { start: "", end: "" };
+      };
+      const recruitRange = parseDateRange(formData.recruitmentPeriod);
+      const contentRange = parseDateRange(formData.registrationPeriod);
+
       const draftPayload: Parameters<typeof postCampaignDraft>[0] = {
         type: CAMPAIGN_TYPE_MAP[campaignType] as Parameters<typeof postCampaignDraft>[0]["type"],
         title: formData.title || undefined,
         description: formData.providedItems || undefined,
         recruitLimit: Number(formData.recruitmentCount) || undefined,
+        recruitStartAt: recruitRange.start || undefined,
+        recruitEndAt: recruitRange.end || undefined,
+        selectedAt: formData.announcementDate || undefined,
+        contentStartAt: contentRange.start || undefined,
+        contentEndAt: contentRange.end || undefined,
         promotionUrl: formData.promotionLink || undefined,
         keyword: formData.keywords || undefined,
         notification: formData.guidelines || undefined,
@@ -250,10 +264,21 @@ export function useCampaignFormStorage({
             : "",
           providedItems: draft.description || "",
           recruitmentCount: String(draft.recruit?.recruitLimit || ""),
-          recruitmentPeriod: toDateRange(
-            draft.recruit?.recruitStartAt,
-            draft.recruit?.recruitEndAt
-          ),
+          ...(toDateRange(draft.recruit?.recruitStartAt, draft.recruit?.recruitEndAt) && {
+            recruitmentPeriod: toDateRange(
+              draft.recruit?.recruitStartAt,
+              draft.recruit?.recruitEndAt
+            ),
+          }),
+          ...(draft.recruit?.selectedAt && {
+            announcementDate: draft.recruit.selectedAt.slice(0, 10),
+          }),
+          ...(toDateRange(draft.recruit?.contentStartAt, draft.recruit?.contentEndAt) && {
+            registrationPeriod: toDateRange(
+              draft.recruit?.contentStartAt,
+              draft.recruit?.contentEndAt
+            ),
+          }),
           additionalPoints: String(draft.reward?.extraRewardPoint || ""),
           purchasePoints: String(draft.reward?.paymentRewardPoint || ""),
           promotionLink: draft.promotionUrl || "",

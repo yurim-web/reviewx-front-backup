@@ -67,6 +67,35 @@ import type {
   PartnerDetailResponse,
   PartnerCampaignsResponse,
   PartnerPenaltiesResponse,
+  SACampaignProgressParams,
+  SACampaignStatsResponse,
+  SACampaignListResponse,
+  SACampaignItem,
+  SAWithdrawalRequestParams,
+  SAWithdrawalRequestListResponse,
+  SAWithdrawalApproveRequest,
+  SAWithdrawalApproveResponse,
+  SAWithdrawalRejectRequest,
+  SAWithdrawalRejectResponse,
+  SAWithdrawalStatusParams,
+  SAWithdrawalStatsResponse,
+  SAWithdrawalStatusListResponse,
+  SAPaymentHistoryParams,
+  SAPaymentListResponse,
+  SAReviewerListParams,
+  SAReviewerStatsResponse,
+  SAReviewerListResponse,
+  SAReviewerRestrictRequest,
+  SAReviewerRestrictResponse,
+  SAPartnerListParams,
+  SAPartnerStatsResponse,
+  SAPartnerListResponse,
+  SAAdminListParams,
+  SAAdminListResponse,
+  SAAdminCreateParams,
+  SAAdminUpdateParams,
+  SABlacklistParams,
+  SABlacklistResponse,
 } from "@/types/api/admin";
 import type { UnifiedAccount, AccountType } from "@/data/login/unifiedAccountData";
 
@@ -319,6 +348,160 @@ export const reportAdminCampaign = async (
   await apiClient.post(`/api/admin/campaigns/${campaignId}/report`, body);
 };
 
+// ── SA 캠페인 진행현황 (SA-02) ──
+
+/** SA 캠페인 상태별 통계 카드 조회 */
+export const fetchSACampaignStats = async (
+  params?: Pick<SACampaignProgressParams, "startDate" | "endDate">
+): Promise<SACampaignStatsResponse["stats"]> => {
+  const { data } = await apiClient.get<SACampaignStatsResponse>(
+    "/api/admin-sa/campaign/progress/stats",
+    { params }
+  );
+  return (
+    data?.stats ?? {
+      total: 0,
+      openScheduled: 0,
+      applying: 0,
+      inProgress: 0,
+      ended: 0,
+      cancelled: 0,
+      urgent: 0,
+    }
+  );
+};
+
+/** SA 캠페인 목록 조회 */
+export const fetchSACampaignList = async (
+  params?: SACampaignProgressParams
+): Promise<SACampaignItem[]> => {
+  const { data } = await apiClient.get<SACampaignListResponse>("/api/admin-sa/campaign/progress", {
+    params,
+  });
+  const campaigns = data?.campaigns;
+  if (Array.isArray(campaigns)) return campaigns;
+  if (Array.isArray(data)) return data as unknown as SACampaignItem[];
+  return [];
+};
+
+/** SA 캠페인 신고 */
+export const reportSACampaign = async (
+  campaignId: number,
+  body: ReportCampaignRequest
+): Promise<void> => {
+  await apiClient.post(`/api/admin-sa/campaigns/${campaignId}/report`, body);
+};
+
+// ── SA 출금 요청 (SA-05) ──
+
+/** SA 출금 요청 목록 조회 */
+export const fetchSAWithdrawalRequests = async (
+  params?: SAWithdrawalRequestParams
+): Promise<SAWithdrawalRequestListResponse> => {
+  const { data } = await apiClient.get<SAWithdrawalRequestListResponse>(
+    "/api/admin-sa/settlement/withdrawal/requests",
+    { params }
+  );
+  return data;
+};
+
+/** SA 출금 승인 (일괄) */
+export const approveSAWithdrawalRequests = async (
+  body: SAWithdrawalApproveRequest
+): Promise<SAWithdrawalApproveResponse> => {
+  const { data } = await apiClient.post<SAWithdrawalApproveResponse>(
+    "/api/admin-sa/withdrawal/requests/approve",
+    body
+  );
+  return data;
+};
+
+/** SA 출금 반려 (일괄) */
+export const rejectSAWithdrawalRequests = async (
+  body: SAWithdrawalRejectRequest
+): Promise<SAWithdrawalRejectResponse> => {
+  const { data } = await apiClient.post<SAWithdrawalRejectResponse>(
+    "/api/admin-sa/withdrawal/requests/reject",
+    body
+  );
+  return data;
+};
+
+// ── SA 출금 현황 (SA-04) ──
+
+/** SA 출금 현황 통계 카드 조회 */
+export const fetchSAWithdrawalStats = async (
+  params?: SAWithdrawalStatusParams
+): Promise<SAWithdrawalStatsResponse["stats"]> => {
+  const { data } = await apiClient.get<SAWithdrawalStatsResponse>(
+    "/api/admin-sa/settlement/withdrawal/stats",
+    { params }
+  );
+  return (
+    data?.stats ?? {
+      urgentAmount: 0,
+      urgentCount: 0,
+      weekScheduledAmount: 0,
+      weekScheduledCount: 0,
+      monthTotalAmount: 0,
+      monthTotalCount: 0,
+      totalDepositAmount: 0,
+    }
+  );
+};
+
+/** SA 출금 현황 목록 조회 */
+export const fetchSAWithdrawalList = async (
+  params?: SAWithdrawalStatusParams
+): Promise<SAWithdrawalStatusListResponse> => {
+  const { data } = await apiClient.get<SAWithdrawalStatusListResponse>(
+    "/api/admin-sa/settlement/withdrawal",
+    { params }
+  );
+  return data;
+};
+
+// ── SA 결제 내역 (SA-06) ──
+
+/** SA 결제 내역 목록 조회 */
+export const fetchSAPaymentList = async (
+  params?: SAPaymentHistoryParams
+): Promise<SAPaymentListResponse> => {
+  const { data } = await apiClient.get<SAPaymentListResponse>("/api/admin-sa/settlement/payment", {
+    params,
+  });
+  return data;
+};
+
+// ── SA 리뷰어 목록 (SA-07) ──
+
+/** SA 리뷰어 통계 카드 조회 */
+export const fetchSAReviewerStats = async (): Promise<SAReviewerStatsResponse> => {
+  const { data } = await apiClient.get<SAReviewerStatsResponse>("/api/admin-sa/reviewer/stats");
+  return data;
+};
+
+/** SA 리뷰어 목록 조회 */
+export const fetchSAReviewerList = async (
+  params?: SAReviewerListParams
+): Promise<SAReviewerListResponse> => {
+  const { data } = await apiClient.get<SAReviewerListResponse>("/api/admin-sa/reviewer", {
+    params,
+  });
+  return data;
+};
+
+/** SA 리뷰어 이용 제한 처리 */
+export const restrictSAReviewers = async (
+  body: SAReviewerRestrictRequest
+): Promise<SAReviewerRestrictResponse> => {
+  const { data } = await apiClient.post<SAReviewerRestrictResponse>(
+    "/api/admin-sa/reviewer/restrict",
+    body
+  );
+  return data;
+};
+
 /** 캠페인 상세 조회  GET /admin/campaign/:id → /campaigns/:id */
 export const fetchAdminCampaignDetail = (id: string): Promise<AdminCampaignApiItem> =>
   apiClient.get<AdminCampaignApiItem>(`/admin/campaign/${id}`).then((res) => res.data);
@@ -485,4 +668,73 @@ export const fetchAccountByPhone = async (
   return matched.sort(
     (a, b) => (ACCOUNT_TYPE_PRIORITY[b.userType] ?? 0) - (ACCOUNT_TYPE_PRIORITY[a.userType] ?? 0)
   )[0];
+};
+
+// ============================================================
+// SA-08: 파트너 목록 (최고관리자)
+// ============================================================
+
+/** SA 파트너 통계 조회  GET /api/admin-sa/partners/stats */
+export const fetchSAPartnerStats = async (): Promise<SAPartnerStatsResponse> => {
+  const { data } = await apiClient.get<SAPartnerStatsResponse>("/api/admin-sa/partners/stats");
+  return data;
+};
+
+/** SA 파트너 목록 조회  GET /api/admin-sa/partners */
+export const fetchSAPartnerList = async (
+  params?: SAPartnerListParams
+): Promise<SAPartnerListResponse> => {
+  const { data } = await apiClient.get<SAPartnerListResponse>("/api/admin-sa/partners", { params });
+  return data;
+};
+
+// ----------------------------------------
+// SA 관리자 목록/등록/수정/삭제 API
+// ----------------------------------------
+
+/** SA 관리자 목록 조회  GET /api/admin-sa/admins */
+export const fetchSAAdminList = async (
+  params?: SAAdminListParams
+): Promise<SAAdminListResponse> => {
+  const { data } = await apiClient.get<SAAdminListResponse>("/api/admin-sa/admins", { params });
+  return data;
+};
+
+/** SA 관리자 등록  POST /api/admin-sa/admins */
+export const createSAAdmin = async (body: SAAdminCreateParams): Promise<{ result: string }> => {
+  const { data } = await apiClient.post("/api/admin-sa/admins", body);
+  return data;
+};
+
+/** SA 관리자 수정  PATCH /api/admin-sa/admins/:id */
+export const updateSAAdmin = async (
+  id: number,
+  body: SAAdminUpdateParams
+): Promise<{ result: string }> => {
+  const { data } = await apiClient.patch(`/api/admin-sa/admins/${id}`, body);
+  return data;
+};
+
+/** SA 관리자 삭제  DELETE /api/admin-sa/admins/:id */
+export const deleteSAAdmin = async (id: number): Promise<void> => {
+  await apiClient.delete(`/api/admin-sa/admins/${id}`);
+};
+
+// ----------------------------------------
+// SA 이용 제한 내역 API
+// ----------------------------------------
+
+/** SA 이용 제한 목록 조회  GET /api/admin-sa/member/blacklist */
+export const fetchSABlacklist = async (
+  params?: SABlacklistParams
+): Promise<SABlacklistResponse> => {
+  const { data } = await apiClient.get<SABlacklistResponse>("/api/admin-sa/member/blacklist", {
+    params,
+  });
+  return data;
+};
+
+/** SA 이용 제한 해제  DELETE /api/admin-sa/member/blacklist/:id */
+export const deleteSABlacklistItem = async (id: string): Promise<void> => {
+  await apiClient.delete(`/api/admin-sa/member/blacklist/${id}`);
 };

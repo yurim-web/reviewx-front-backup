@@ -13,13 +13,27 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BlockedBasePage from "@/components/common/blocked/BlockedBasePage";
 import BaseModal from "@/components/common/modal/BaseModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { withdrawPartner } from "@/lib/api/partnerMypage";
+import Loading from "@/app/loading";
 
 export default function PartnerBlockedPage() {
   const router = useRouter();
+  const { user, isLoading, logout } = useAuth();
+
+  // auth guard: BLOCKED 계정만 접근 허용
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) {
+      router.replace("/partner/login");
+    } else if (user.status !== "BLOCKED") {
+      router.replace("/partner");
+    }
+  }, [user, isLoading, router]);
 
   // A_M16: 탈퇴 확인 모달
   const [is_withdraw_confirm_modal_open, set_is_withdraw_confirm_modal_open] = useState(false);
@@ -33,17 +47,26 @@ export default function PartnerBlockedPage() {
     set_is_withdraw_confirm_modal_open(true);
   };
 
-  // A_M16 확인 → C_M15 완료 모달 열기
-  const handle_withdraw_confirm = () => {
+  // A_M16 확인 → DELETE /partner/mypage 호출 → C_M15 완료 모달 열기
+  const handle_withdraw_confirm = async () => {
     set_is_withdraw_confirm_modal_open(false);
+    try {
+      await withdrawPartner();
+    } catch {
+      // 탈퇴 실패 시에도 완료 처리 (이미 차단된 계정)
+    }
     set_is_withdraw_complete_modal_open(true);
   };
 
-  // C_M15 닫기 → /partner/login 이동
-  const handle_withdraw_complete = () => {
+  // C_M15 닫기 → 세션 정리 후 /partner/login 이동
+  const handle_withdraw_complete = async () => {
     set_is_withdraw_complete_modal_open(false);
-    router.push("/partner/login");
+    await logout();
   };
+
+  if (isLoading || !user || user.status !== "BLOCKED") {
+    return <Loading />;
+  }
 
   return (
     <>

@@ -13,7 +13,7 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React from "react";
 import { useCampaignContents } from "@/hooks/partner/campaign_contents/useCampaignContents";
 import CampaignContentsLayout from "@/components/partner/campaign_contents/CampaignContentsLayout";
 import { createExperienceCardRenderer } from "@/components/partner/campaign_contents/card_renderers/renderExperienceCard";
@@ -24,11 +24,17 @@ export default function VisitContentsDetailPage() {
     campaignInfo,
     activeTab,
     setActiveTab,
+    waitingCount,
+    reviewCount,
+    completedCount,
     sortOrder,
     setSortOrder,
     sortOptions,
     contents,
+    rejectReasons,
     handleApprove,
+    handleReject,
+    handleExtend,
     handleReport,
     handleComplete,
     reportedDates,
@@ -37,41 +43,6 @@ export default function VisitContentsDetailPage() {
 
   const deadlineDate = extractDeadlineDate(campaignInfo?.registrationPeriod);
 
-  const [rejectReasons, setRejectReasons] = useState<Map<string, string>>(new Map());
-
-  const handleReject = (contentId: string, rejectReason: string) => {
-    setRejectReasons((prev) => {
-      const newMap = new Map(prev);
-      newMap.set(contentId, rejectReason);
-      return newMap;
-    });
-
-    setActiveTab("대기");
-  };
-
-  const filteredContents = useMemo(() => {
-    const reviewing = contents.reviewing || [];
-    const waiting = contents.waiting || [];
-
-    const rejectedIds = Array.from(rejectReasons.keys());
-
-    const rejectedItems = reviewing.filter((item) => rejectedIds.includes(item.id));
-    const remainingReviewing = reviewing.filter((item) => !rejectedIds.includes(item.id));
-
-    const existingWaitingIds = new Set(waiting.map((item) => item.id));
-    const newWaitingItems = rejectedItems.filter((item) => !existingWaitingIds.has(item.id));
-
-    return {
-      waiting: [...waiting, ...newWaitingItems],
-      reviewing: remainingReviewing,
-      completed: contents.completed || [],
-    };
-  }, [contents, rejectReasons]);
-
-  const filteredWaitingCount = filteredContents.waiting?.length || 0;
-  const filteredReviewCount = filteredContents.reviewing?.length || 0;
-  const filteredCompletedCount = filteredContents.completed?.length || 0;
-
   const renderCardComponent = createExperienceCardRenderer({
     activeTab,
     rejectReasons,
@@ -79,6 +50,7 @@ export default function VisitContentsDetailPage() {
     formatDateTime,
     handleApprove,
     handleReject,
+    handleExtend,
     handleReport,
     handleComplete,
     deadlineDate,
@@ -94,13 +66,13 @@ export default function VisitContentsDetailPage() {
       campaignInfo={campaignInfo}
       activeTab={activeTab}
       setActiveTab={setActiveTab}
-      waitingCount={filteredWaitingCount}
-      reviewCount={filteredReviewCount}
-      completedCount={filteredCompletedCount}
+      waitingCount={waitingCount}
+      reviewCount={reviewCount}
+      completedCount={completedCount}
       sortOrder={sortOrder}
       setSortOrder={setSortOrder}
       sortOptions={sortOptions}
-      contents={filteredContents}
+      contents={contents}
       renderCard={renderCardComponent}
       onBatchExtension={handleBatchExtension}
     />

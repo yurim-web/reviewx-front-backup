@@ -640,7 +640,41 @@ export interface BlockedListResponse {
 }
 
 // ----------------------------------------
-// 관리자 목록 (SA 전용)
+// 이용제한(차단) 목록 — SA 백엔드 API
+// ----------------------------------------
+
+export interface SABlacklistParams {
+  startDate?: string;
+  endDate?: string;
+  division?: string;
+  blockCode?: string;
+  keyword?: string;
+  sortBy?: string;
+  sortDirection?: string;
+}
+
+export interface SABlacklistItem {
+  id: string;
+  name: string;
+  userId: string;
+  division: string;
+  currentPoints: number;
+  ipAddress: string;
+  blockCode: string;
+  blockReason: string;
+  registeredDate: string;
+  registeredBy: string;
+}
+
+export interface SABlacklistResponse {
+  result: string;
+  generatedAt: string;
+  totalCount: number;
+  blacklist: SABlacklistItem[];
+}
+
+// ----------------------------------------
+// 관리자 목록 (SA 전용 - 레거시 json-server용)
 // ----------------------------------------
 export interface AdminMemberApiItem {
   id: string;
@@ -652,6 +686,51 @@ export interface AdminMemberApiItem {
   last_access_date: string;
   join_date: string;
   status: string;
+}
+
+// ----------------------------------------
+// 관리자 목록 (SA 전용 - 백엔드 API 연동)
+// ----------------------------------------
+export interface SAAdminListParams {
+  status?: string;
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface SAAdminListResponse {
+  result: string;
+  generatedAt: string;
+  totalCount: number;
+  admins: SAAdminItem[];
+}
+
+export interface SAAdminItem {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  adminLevel: string;
+  reportCount: number;
+  suspendCount: number;
+  lastLoginAt: string;
+  createdAt: string;
+  status: string;
+}
+
+export interface SAAdminCreateParams {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  name: string;
+  phone: string;
+}
+
+export interface SAAdminUpdateParams {
+  name?: string;
+  phone?: string;
+  password?: string;
+  passwordConfirm?: string;
 }
 
 // ----------------------------------------
@@ -744,6 +823,12 @@ export interface AdminDashboardResponse {
     closed: number;
     cancelled: number;
     byType: Array<{ type: string; label: string; count: number }>;
+    byCategory: Array<{
+      category: string;
+      recruitmentRate: number;
+      achievementRate: number;
+      averageDuration: number;
+    }>;
   };
   rejectReportStats: {
     totalRejects: number;
@@ -753,9 +838,13 @@ export interface AdminDashboardResponse {
   };
   accessStats: {
     totalAccess: number;
+    totalAccessChange: number;
+    inflowCount: number;
+    inflowChange: number;
     pcRate: number;
     mobileRate: number;
     tabletRate: number;
+    appRate: number;
   };
   memberStats: {
     total: number;
@@ -823,4 +912,361 @@ export interface RejectedListResponse {
       limit: number;
     };
   };
+}
+
+// ----------------------------------------
+// SA 캠페인 진행현황 (SA-02)
+// ----------------------------------------
+
+/** SA 캠페인 진행현황 조회 파라미터 */
+export interface SACampaignProgressParams {
+  startDate?: string;
+  endDate?: string;
+  status?: string; // OPEN_SCHEDULED | APPLYING | IN_PROGRESS | ENDED | CANCELLED | URGENT (다중: 쉼표 구분)
+  type?: string; // DELIVERY | VISIT | REVIEW | REPORTER | MISSION (다중: 쉼표 구분)
+  channel?: string; // BLOG | INSTAGRAM | CLIP | YOUTUBE | REELS | SHORTS | MISSION | REVIEW (다중: 쉼표 구분)
+  keyword?: string;
+  sortBy?: string; // campaignNumber | applyCount | recruitCount | point
+  sortDir?: string; // asc | desc
+  page?: number;
+  size?: number;
+}
+
+/** SA 캠페인 통계 응답 */
+export interface SACampaignStatsResponse {
+  result: string;
+  generatedAt: string;
+  stats: {
+    total: number;
+    openScheduled: number;
+    applying: number;
+    inProgress: number;
+    ended: number;
+    cancelled: number;
+    urgent?: number;
+  };
+}
+
+/** SA 캠페인 목록 응답 */
+export interface SACampaignListResponse {
+  result: string;
+  generatedAt: string;
+  totalCount: number;
+  campaigns: SACampaignItem[];
+}
+
+/** SA 캠페인 목록 항목 */
+export interface SACampaignItem {
+  campaignNumber: string; // 6자리 패딩 (예: 004015)
+  partnerName: string;
+  campaignName: string;
+  status: string; // OPEN_SCHEDULED | APPLYING | IN_PROGRESS | ENDED | CANCELLED | URGENT
+  type: string; // DELIVERY | VISIT | REVIEW | REPORTER | MISSION
+  channel: string; // BLOG | INSTAGRAM | CLIP | YOUTUBE | REELS | SHORTS | MISSION | REVIEW
+  applyCount: number;
+  recruitCount: number;
+  point: number;
+}
+
+// ----------------------------------------
+// SA 출금 요청 (SA-05)
+// ----------------------------------------
+
+/** SA 출금 요청 목록 조회 파라미터 */
+export interface SAWithdrawalRequestParams {
+  tab?: "URGENT" | "ROUND";
+  page?: number;
+  size?: number;
+  sort?: string;
+  direction?: "asc" | "desc";
+}
+
+/** SA 출금 요청 목록 응답 */
+export interface SAWithdrawalRequestListResponse {
+  result: string;
+  generatedAt: string;
+  totalCount: number;
+  totalAmount: number;
+  withdrawalRequests: SAWithdrawalRequestItem[];
+}
+
+/** SA 출금 요청 항목 */
+export interface SAWithdrawalRequestItem {
+  id: number;
+  seq: number;
+  reviewerId: number;
+  name: string;
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+  ssn: string;
+  withdrawalPoints: number;
+  remainingPoints: number;
+  requestedAt: string; // ZonedDateTime → ISO string
+  memberType: string; // GENERAL | VIP 등
+  status: string; // NORMAL | WARNED | BLOCKED 등
+  round: string; // "-" = 긴급, "1차", "2차" 등
+}
+
+/** SA 출금 승인 요청 body */
+export interface SAWithdrawalApproveRequest {
+  withdrawalRequestIds: number[];
+}
+
+/** SA 출금 승인 응답 */
+export interface SAWithdrawalApproveResponse {
+  result: string;
+  generatedAt: string;
+  approvedCount: number;
+  approvedIds: number[];
+}
+
+/** SA 출금 반려 요청 body */
+export interface SAWithdrawalRejectRequest {
+  withdrawalRequestIds: number[];
+  reason?: string;
+}
+
+/** SA 출금 반려 응답 */
+export interface SAWithdrawalRejectResponse {
+  result: string;
+  generatedAt: string;
+  rejectedCount: number;
+  rejectedIds: number[];
+}
+
+// ----------------------------------------
+// SA 출금 현황 (SA-04)
+// ----------------------------------------
+
+/** SA 출금 현황 목록 조회 파라미터 */
+export interface SAWithdrawalStatusParams {
+  startDate?: string;
+  endDate?: string;
+  paymentStatus?: string; // urgent | request | completed | rejected (쉼표 구분)
+  memberType?: string; // 일반 회원 | 주의 회원 | 이용 제한 회원 (쉼표 구분)
+  status?: string; // 정상 | 일시 정지 | 영구 정지 | 탈퇴 (쉼표 구분)
+  keyword?: string;
+  sortBy?: string; // number | name | amount | requestDate | paymentDate
+  sortDirection?: string; // asc | desc
+}
+
+/** SA 출금 현황 통계 응답 */
+export interface SAWithdrawalStatsResponse {
+  result: string;
+  generatedAt: string;
+  stats: {
+    urgentAmount: number;
+    urgentCount: number;
+    weekScheduledAmount: number;
+    weekScheduledCount: number;
+    monthTotalAmount: number;
+    monthTotalCount: number;
+    totalDepositAmount: number;
+  };
+}
+
+/** SA 출금 현황 목록 응답 */
+export interface SAWithdrawalStatusListResponse {
+  result: string;
+  generatedAt: string;
+  totalCount: number;
+  withdrawals: SAWithdrawalStatusItem[];
+}
+
+/** SA 출금 현황 항목 (백엔드 원본) */
+export interface SAWithdrawalStatusItem {
+  id: string;
+  number: string; // 7자리 순번
+  round: string; // 회차 (없으면 "-")
+  name: string;
+  account: string; // 은행명 + 계좌번호 + 예금주 조합
+  ssn: string; // 마스킹 처리됨
+  amount: number; // 출금 포인트 (원)
+  remaining: number; // 잔여 포인트 (원)
+  paymentStatus: string; // URGENT | REQUEST | COMPLETED | REJECTED
+  requestDate: string; // ISO 8601 ZonedDateTime
+  paymentDate: string | null; // ISO 8601 or null
+  memberType: string; // NORMAL | CAUTION | RESTRICTED
+  status: string; // ACTIVE | PAUSED | BANNED | WITHDRAWN
+}
+
+// ----------------------------------------
+// SA 결제 내역 (SA-06)
+// ----------------------------------------
+
+/** SA 결제 내역 목록 조회 파라미터 */
+export interface SAPaymentHistoryParams {
+  startDate?: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
+  entityType?: string; // CORPORATE | INDIVIDUAL
+  paymentMethod?: string; // CARD | BANK_TRANSFER | POINT
+  receiptType?: string; // TAX_INVOICE | CASH_RECEIPT_INCOME | CASH_RECEIPT_EXPENSE | NONE
+  paymentStatus?: string; // COMPLETED | PENDING | CANCELLED (쉼표 구분 다중)
+  memberGrade?: string; // EXCELLENT,NORMAL | CAUTION,WARNING | RESTRICTED (쉼표 구분 다중)
+  memberStatus?: string; // ACTIVE | PAUSED | BLOCKED | WITHDRAW (다중)
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
+/** SA 결제 통계 응답 */
+export interface SAPaymentStatsResponse {
+  result: string;
+  generatedAt: string;
+  weekBankCount: number;
+  weekBankAmount: number;
+  weekCardCount: number;
+  weekCardAmount: number;
+  monthTotalCount: number;
+  monthTotalAmount: number;
+}
+
+/** SA 결제 내역 목록 응답 */
+export interface SAPaymentListResponse {
+  result: string;
+  generatedAt: string;
+  totalCount: number;
+  payments: SAPaymentItem[];
+}
+
+/** SA 결제 내역 항목 (백엔드 원본) */
+export interface SAPaymentItem {
+  paymentId: number;
+  businessName: string;
+  businessNumber: string;
+  managers: string[];
+  depositorName: string;
+  entityType: string; // CORPORATE | INDIVIDUAL
+  paymentMethod: string; // CARD | BANK_TRANSFER | POINT
+  receiptType: string; // TAX_INVOICE | CASH_RECEIPT_INCOME | CASH_RECEIPT_EXPENSE | NONE
+  chargePoint: number;
+  retainedPoint: number;
+  paymentStatus: string; // PENDING | COMPLETED | CANCELLED
+  requestedAt: string; // ISO 8601
+  approvedAt: string | null; // ISO 8601 or null (PENDING 시 null)
+  memberGrade: string; // EXCELLENT | NORMAL | CAUTION | WARNING | RESTRICTED
+  memberStatus: string; // ACTIVE | PAUSED | BLOCKED | WITHDRAW
+}
+
+// ----------------------------------------
+// SA 리뷰어 목록 (SA-07)
+// ----------------------------------------
+
+/** SA 리뷰어 목록 조회 파라미터 */
+export interface SAReviewerListParams {
+  channel?: string; // NAVER_BLOG | NAVER_CLIP | INSTAGRAM | YOUTUBE
+  reviewerType?: string; // NORMAL | SUPPORTER | INFLUENCER
+  memberGrade?: string; // EXCELLENT,NORMAL | CAUTION,WARNING | RESTRICTED
+  memberStatus?: string; // ACTIVE | PAUSED | BLOCKED | WITHDRAW
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
+/** SA 리뷰어 통계 응답 */
+export interface SAReviewerStatsResponse {
+  result: string;
+  generatedAt: string;
+  monthlyNewCount: number;
+  totalCount: number;
+  monthlyActiveCount: number;
+  dormantCount: number;
+}
+
+/** SA 리뷰어 목록 응답 */
+export interface SAReviewerListResponse {
+  result: string;
+  generatedAt: string;
+  totalCount: number;
+  reviewers: SAReviewerItem[];
+}
+
+/** SA 리뷰어 목록 항목 (백엔드 원본) */
+export interface SAReviewerItem {
+  reviewerId?: number; // 리뷰어 고유 ID (상세 조회용)
+  reviewerNumber: string;
+  name: string;
+  channels: {
+    channelType: string; // NAVER_BLOG | NAVER_CLIP | INSTAGRAM | YOUTUBE
+    accountUrl: string;
+  }[];
+  reviewerType: string; // NORMAL | SUPPORTER | INFLUENCER
+  lastAccessedAt: string; // ISO 8601
+  joinedAt: string; // ISO 8601
+  campaignParticipationCount: number;
+  campaignCompletionCount: number;
+  retainedPoint: number;
+  withdrawalPoint: number;
+  memberGrade: string; // EXCELLENT | NORMAL | CAUTION | WARNING | RESTRICTED
+  memberStatus: string; // ACTIVE | PAUSED | BLOCKED | WITHDRAW
+}
+
+/** SA 리뷰어 이용 제한 요청 */
+export interface SAReviewerRestrictRequest {
+  reviewerIds: number[];
+  blockCode: string; // B001~B010
+  blockReason?: string; // 최대 500자
+}
+
+/** SA 리뷰어 이용 제한 응답 */
+export interface SAReviewerRestrictResponse {
+  result: string;
+  generatedAt: string;
+  processedCount: number;
+}
+
+// ----------------------------------------
+// SA 파트너 목록 (SA-08)
+// ----------------------------------------
+
+/** SA 파트너 목록 조회 파라미터 */
+export interface SAPartnerListParams {
+  channel?: string;
+  entityType?: string;
+  partnerType?: string;
+  memberStatus?: string;
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
+/** SA 파트너 통계 응답 */
+export interface SAPartnerStatsResponse {
+  result: string;
+  generatedAt: string;
+  partnerStats: {
+    monthlyNewCount: number;
+    totalCount: number;
+    monthlyActiveCount: number;
+    dormantCount: number;
+  };
+}
+
+/** SA 파트너 목록 응답 */
+export interface SAPartnerListResponse {
+  result: string;
+  generatedAt: string;
+  totalCount: number;
+  partners: SAPartnerItem[];
+}
+
+/** SA 파트너 목록 단건 아이템 */
+export interface SAPartnerItem {
+  id: number;
+  number: string;
+  channel: string; // NAVER_BLOG | NAVER_CLIP | INSTAGRAM | YOUTUBE
+  entityType: string; // CORPORATE | INDIVIDUAL
+  partnerType: string; // NORMAL | CAUTION | RESTRICTED
+  memberStatus: string; // ACTIVE | SUSPENDED | PENDING | WITHDRAWN
+  companyName: string;
+  representativeName: string;
+  email: string;
+  phone: string;
+  businessRegistrationNumber: string;
+  campaignCount: number;
+  campaignCompleted?: number;
+  pointBalance?: number;
+  createdAt: string; // ISO 8601
+  lastLoginAt: string; // ISO 8601
 }

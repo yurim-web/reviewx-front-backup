@@ -23,11 +23,16 @@ import PageTitle from "@/components/fragments/PageTitle";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { useChangePasswordMutation } from "@/hooks/partner/mypage/usePartnerMypage";
+import { resetPartnerPassword } from "@/lib/api/partnerFindAccount";
 import styles from "@/styles/partner/reset_password/reset_password.module.css";
 
 function PartnerResetPasswordPage() {
   const router = useRouter();
   const changePasswordMutation = useChangePasswordMutation();
+
+  // 비밀번호 찾기 플로우 여부 (localStorage.partner_email 존재 시 forgot 모드)
+  const [isForgotMode, setIsForgotMode] = useState<boolean>(false);
+  const [forgotEmail, setForgotEmail] = useState<string>("");
 
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -45,6 +50,13 @@ function PartnerResetPasswordPage() {
   useEffect(() => {
     const header = document.querySelector("header");
     if (header) header.style.display = "none";
+
+    // 비밀번호 찾기 플로우 감지
+    const storedEmail = localStorage.getItem("partner_email");
+    if (storedEmail) {
+      setIsForgotMode(true);
+      setForgotEmail(storedEmail);
+    }
 
     return () => {
       if (header) header.style.display = "block";
@@ -71,7 +83,7 @@ function PartnerResetPasswordPage() {
     setPasswordError(undefined);
     setPasswordConfirmError(undefined);
 
-    if (currentPassword.length === 0) {
+    if (!isForgotMode && currentPassword.length === 0) {
       setCurrentPasswordError("현재 비밀번호를 입력해 주세요.");
       return;
     }
@@ -87,7 +99,7 @@ function PartnerResetPasswordPage() {
       return;
     }
 
-    if (currentPassword === password) {
+    if (!isForgotMode && currentPassword === password) {
       setPasswordError("기존 비밀번호는 사용할 수 없습니다.");
       return;
     }
@@ -98,10 +110,17 @@ function PartnerResetPasswordPage() {
     }
 
     try {
-      await changePasswordMutation.mutateAsync({
-        currentPassword,
-        newPassword: password,
-      });
+      if (isForgotMode) {
+        // 비밀번호 찾기 플로우: 현재 비밀번호 없이 재설정
+        await resetPartnerPassword({ email: forgotEmail, newPassword: password });
+        localStorage.removeItem("partner_email");
+      } else {
+        // 마이페이지 비밀번호 변경 플로우
+        await changePasswordMutation.mutateAsync({
+          currentPassword,
+          newPassword: password,
+        });
+      }
 
       // C_M12: 비밀번호 변경이 완료되었습니다.
       setIsSuccessModalOpen(true);
@@ -120,7 +139,8 @@ function PartnerResetPasswordPage() {
     }
   };
 
-  const isCurrentPasswordValid = currentPassword.length > 0 && !currentPasswordError;
+  const isCurrentPasswordValid =
+    isForgotMode || (currentPassword.length > 0 && !currentPasswordError);
   const isPasswordValid = password.length > 0 && !validatePassword(password) && !passwordError;
   const isPasswordConfirmValid =
     passwordConfirm.length > 0 && passwordConfirm === password && !passwordConfirmError;
@@ -128,7 +148,11 @@ function PartnerResetPasswordPage() {
 
   const handleSuccessClose = () => {
     setIsSuccessModalOpen(false);
-    router.back();
+    if (isForgotMode) {
+      router.push("/partner/login");
+    } else {
+      router.back();
+    }
   };
 
   return (
@@ -149,47 +173,49 @@ function PartnerResetPasswordPage() {
             className={styles.reset_password_form}
             onSubmit={handleSubmit}
           >
-            {/* 현재 비밀번호 입력 필드 */}
-            <div className={styles.form_field}>
-              <label className={styles.field_label} htmlFor="current-password">
-                현재 비밀번호
-              </label>
-              <div className={styles.password_input_wrapper}>
-                <input
-                  id="current-password"
-                  type={showCurrentPassword ? "text" : "password"}
-                  className={styles.input_field}
-                  placeholder="현재 비밀번호 입력"
-                  value={currentPassword}
-                  onChange={(e) => {
-                    const newCurrentPassword = e.target.value;
-                    setCurrentPassword(newCurrentPassword);
+            {/* 현재 비밀번호 입력 필드 — 마이페이지 비밀번호 변경 시에만 표시 */}
+            {!isForgotMode && (
+              <div className={styles.form_field}>
+                <label className={styles.field_label} htmlFor="current-password">
+                  현재 비밀번호
+                </label>
+                <div className={styles.password_input_wrapper}>
+                  <input
+                    id="current-password"
+                    type={showCurrentPassword ? "text" : "password"}
+                    className={styles.input_field}
+                    placeholder="현재 비밀번호 입력"
+                    value={currentPassword}
+                    onChange={(e) => {
+                      const newCurrentPassword = e.target.value;
+                      setCurrentPassword(newCurrentPassword);
 
-                    if (newCurrentPassword.length > 0) {
-                      setCurrentPasswordError(undefined);
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  className={styles.eye_toggle_button}
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  aria-label={showCurrentPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-                >
-                  <Image
-                    src={
-                      showCurrentPassword
-                        ? "/images/icons/signup/sign_show.svg"
-                        : "/images/icons/signup/sign_none.svg"
-                    }
-                    alt={showCurrentPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-                    width={16}
-                    height={16}
+                      if (newCurrentPassword.length > 0) {
+                        setCurrentPasswordError(undefined);
+                      }
+                    }}
                   />
-                </button>
+                  <button
+                    type="button"
+                    className={styles.eye_toggle_button}
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    aria-label={showCurrentPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                  >
+                    <Image
+                      src={
+                        showCurrentPassword
+                          ? "/images/icons/signup/sign_show.svg"
+                          : "/images/icons/signup/sign_none.svg"
+                      }
+                      alt={showCurrentPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                      width={16}
+                      height={16}
+                    />
+                  </button>
+                </div>
+                <ErrorText message={currentPasswordError} />
               </div>
-              <ErrorText message={currentPasswordError} />
-            </div>
+            )}
 
             {/* 새 비밀번호 입력 필드 */}
             <div className={styles.form_field}>

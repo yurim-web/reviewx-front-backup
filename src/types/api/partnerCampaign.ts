@@ -302,6 +302,9 @@ export interface CampaignDraftLoadResponse {
       recruitLimit: number;
       recruitStartAt: string;
       recruitEndAt: string;
+      selectedAt?: string;
+      contentStartAt?: string;
+      contentEndAt?: string;
     };
     reward?: {
       extraRewardPoint: number;

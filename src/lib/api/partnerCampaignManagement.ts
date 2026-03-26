@@ -49,6 +49,8 @@ export const getCampaignsByStatus = async (
   if (keyword) queryParams.keyword = keyword;
   if (type && type.length > 0) queryParams.type = type.join(",");
   if (channel && channel.length > 0) queryParams.channel = channel.join(",");
+  if (params.page !== undefined) queryParams.page = String(params.page);
+  if (params.size !== undefined) queryParams.size = String(params.size);
 
   const { data } = await partnerApiClient.get<CampaignStatusResponse>(
     `/partner/campaign_management/${status}`,

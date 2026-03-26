@@ -25,24 +25,39 @@ export default function AccessStatsSection({ dashboardData }: AccessStatsSection
   const accessStats = useMemo(() => {
     if (dashboardData?.accessStats) {
       const a = dashboardData.accessStats;
+      const visitChangeVal = Number(a.totalAccessChange) || 0;
+      const inflowChangeVal = Number(a.inflowChange) || 0;
       return {
         visits: {
           label: "방문 수",
           value: `${a.totalAccess.toLocaleString("ko-KR")}회`,
-          change: defaultAccessStats.visits.change,
-          changeType: defaultAccessStats.visits.changeType,
+          change: `${visitChangeVal >= 0 ? "+" : ""}${visitChangeVal}%`,
+          changeType: (visitChangeVal > 0
+            ? "positive"
+            : visitChangeVal < 0
+              ? "negative"
+              : "neutral") as "positive" | "negative" | "neutral",
         },
-        referrals: defaultAccessStats.referrals,
+        referrals: {
+          label: "유입 수",
+          value: `${(a.inflowCount ?? 0).toLocaleString("ko-KR")}회`,
+          change: `${inflowChangeVal >= 0 ? "+" : ""}${inflowChangeVal}%`,
+          changeType: (inflowChangeVal > 0
+            ? "positive"
+            : inflowChangeVal < 0
+              ? "negative"
+              : "neutral") as "positive" | "negative" | "neutral",
+        },
       };
     }
     return defaultAccessStats;
   }, [dashboardData]);
 
-  // API pcRate/mobileRate/tabletRate를 디바이스 차트 데이터로 변환
+  // API pcRate/mobileRate/tabletRate/appRate를 디바이스 차트 데이터로 변환
   const deviceData = useMemo(() => {
     if (dashboardData?.accessStats) {
       const a = dashboardData.accessStats;
-      const appRate = Math.max(0, 100 - a.pcRate - a.mobileRate - a.tabletRate);
+      const appRate = a.appRate ?? Math.max(0, 100 - a.pcRate - a.mobileRate - a.tabletRate);
       return [
         {
           label: "PC",

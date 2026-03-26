@@ -41,12 +41,7 @@ export const deliveryChannelOptions = [
 ];
 
 // 배송형 정렬 옵션
-export const deliverySortOptions = [
-  "최신순",
-  "인기순",
-  "마감임박순",
-  "포인트순",
-];
+export const deliverySortOptions = ["최신순", "인기순", "마감임박순", "포인트순"];
 
 /* ========================================
    🚶 방문형 캠페인 필터 옵션
@@ -111,12 +106,7 @@ export const missionCategoryOptions = [
 ];
 
 // 미션형 정렬 옵션
-export const missionSortOptions = [
-  "최신순",
-  "인기순",
-  "마감임박순",
-  "포인트순",
-];
+export const missionSortOptions = ["최신순", "인기순", "마감임박순", "포인트순"];
 
 /* ========================================
    ⭐ 구매평 캠페인 필터 옵션
@@ -178,9 +168,32 @@ export const reporterChannelOptions = [
 ];
 
 // 기자단 정렬 옵션
-export const reporterSortOptions = [
-  "최신순",
-  "인기순",
-  "마감임박순",
-  "포인트순",
-];
+export const reporterSortOptions = ["최신순", "인기순", "마감임박순", "포인트순"];
+
+/* ========================================
+   필터 레이블 → API ID 매핑 테이블
+   ======================================== */
+
+/** 카테고리 한글명 → categoryId (백엔드 API 08 기준) */
+export const CATEGORY_ID_MAP: Record<string, number> = {
+  식품: 1,
+  뷰티: 2,
+  생활: 3,
+  패션: 4,
+  디지털: 5,
+  유아동: 6,
+  여가: 7,
+  반려동물: 7,
+  문화: 9,
+  기타: 9,
+};
+
+/** 채널 한글명 → channelId (백엔드 API 08 기준) */
+export const CHANNEL_ID_MAP: Record<string, number> = {
+  "네이버 블로그": 1,
+  인스타그램: 2,
+  유튜브: 3,
+  클립: 4,
+  릴스: 5,
+  쇼츠: 6,
+};

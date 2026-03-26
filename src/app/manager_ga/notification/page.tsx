@@ -44,7 +44,7 @@ export default function ManagerGANotificationPage() {
   }, [apiData]);
 
   const handle_notification_click = () => {
-    // TODO: 알림 상세 페이지로 이동 또는 모달 열기
+    // 알림 클릭 핸들러
   };
 
   const handle_delete_all_click = async () => {

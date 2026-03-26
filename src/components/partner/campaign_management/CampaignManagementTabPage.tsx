@@ -18,7 +18,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
@@ -40,7 +40,32 @@ export default function CampaignManagementTabPage({ statTab }: CampaignManagemen
   const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { campaigns, stats, isLoading: isApiLoading } = usePartnerCampaigns(activeStatTab);
+  const {
+    campaigns,
+    stats,
+    isLoading: isApiLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = usePartnerCampaigns(activeStatTab);
+
+  // 무한 스크롤 sentinel
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const handleFilteredCampaignsChange = (filtered: PartnerCampaign[]) => {
     setFilteredCampaigns(filtered);
@@ -82,6 +107,12 @@ export default function CampaignManagementTabPage({ statTab }: CampaignManagemen
         />
 
         <CampaignList campaigns={filteredCampaigns} activeStatTab={activeStatTab} />
+
+        {/* 무한 스크롤 sentinel */}
+        <div ref={sentinelRef} style={{ height: 1 }} />
+
+        {/* 추가 로딩 스피너 */}
+        {isFetchingNextPage && <Loading />}
       </div>
     </div>
   );

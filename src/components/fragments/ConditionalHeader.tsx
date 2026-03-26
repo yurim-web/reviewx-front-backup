@@ -149,9 +149,12 @@ export default function ConditionalHeader() {
    */
   const isPartnerPath = pathname.startsWith("/partner");
   const isCampaignPath = pathname.startsWith("/campaign");
+  const isManagerPath =
+    pathname.startsWith("/manager_ga") ||
+    pathname.startsWith("/manager_sa") ||
+    pathname.startsWith("/manager/");
   const isUserSignupPath = pathname === "/user/signup";
-  const shouldShowPartnerHeader =
-    isPartnerPath || (isCampaignPath && isPartnerContext);
+  const shouldShowPartnerHeader = isPartnerPath || (isCampaignPath && isPartnerContext);
 
   /**
    * 조건부 렌더링: 파트너 경로 또는 파트너 컨텍스트가 있는 캠페인 경로에서 파트너 헤더 표시
@@ -170,10 +173,22 @@ export default function ConditionalHeader() {
    */
   if (!is_mounted) {
     // Hydration 에러 방지: 마운트 전까지는 경로 기반으로만 결정
+    if (
+      pathname.startsWith("/manager_ga") ||
+      pathname.startsWith("/manager_sa") ||
+      pathname.startsWith("/manager/")
+    ) {
+      return null;
+    }
     if (pathname.startsWith("/partner")) {
       return <ConditionalPartnerHeader />;
     }
     return <Header />;
+  }
+
+  // 관리자 경로에서는 자체 헤더(ManagerGAHeader)를 사용하므로 ConditionalHeader 숨김
+  if (isManagerPath) {
+    return null;
   }
 
   // 모바일에서 유저 회원가입 페이지(/user/signup)일 때는 헤더를 숨김

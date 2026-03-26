@@ -84,7 +84,11 @@ export default function PartnerSearchPage() {
       <div className={styles.header_spacer}></div>
 
       <article className={styles.container}>
-        <SearchResultsSection campaigns={campaigns} />
+        <SearchResultsSection
+          campaigns={campaigns}
+          keyword={data?.keyword ?? keyword}
+          totalCount={data?.totalCount}
+        />
       </article>
     </>
   );

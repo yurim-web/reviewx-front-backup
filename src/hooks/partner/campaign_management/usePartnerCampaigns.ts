@@ -9,14 +9,14 @@
  *
  * API:
  * - 13번: GET /partner/campaign_management → stats + 전체 캠페인
- * - 14번: GET /partner/campaign_management/{status} → 탭별 캠페인
+ * - 14번: GET /partner/campaign_management/{status} → 탭별 캠페인 (무한 스크롤)
  *
  * 사용 페이지:
  * - /partner/campaign_management (파트너 캠페인 관리)
  */
 
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
   getCampaignManagementPage,
   getCampaignsByStatus,
@@ -35,12 +35,13 @@ import {
 } from "@/types/api/partnerCampaignManagement";
 import type { PartnerCampaign } from "@/types/domain/partner";
 
+const PAGE_SIZE = 20;
+
 // ----------------------------------------
 // 날짜 포맷 유틸
 // ----------------------------------------
 function formatDate(dateStr: string): string {
   if (!dateStr) return "";
-  // "2026-02-20 00:00:00" → "2026-02-20"
   return dateStr.slice(0, 10);
 }
 
@@ -67,8 +68,6 @@ function computeSubStatus(status: string, tab: string, selectedCount: number = 0
     case "신청":
       return "campaign_edit,applicant_management";
     case "진행":
-      // SELECTING(선정 중): 당첨자 선정 전 → "당첨자 선정" 버튼
-      // PURCHASING(진행 중): 당첨자 선정 후 → "콘텐츠 확인" 버튼
       if (status === "PURCHASING" || selectedCount > 0) {
         return "content_review,content_approval";
       }
@@ -80,7 +79,6 @@ function computeSubStatus(status: string, tab: string, selectedCount: number = 0
     case "연장 요청":
       return "extension_request";
     default:
-      // 전체 탭: status에 따라 결정
       switch (status) {
         case "REGISTERING":
           return "campaign_edit,campaign_delete";
@@ -123,7 +121,6 @@ function statusToTab(status: string): string {
 
 // ----------------------------------------
 // API 13 아이템 → PartnerCampaign 어댑터
-// (API 13: `id` 필드 사용)
 // ----------------------------------------
 function adaptManagementItem(item: CampaignManagementItem, tab: string): PartnerCampaign {
   const campaignType = (CAMPAIGN_TYPE_LABEL[item.campaignType] ??
@@ -161,7 +158,6 @@ function adaptManagementItem(item: CampaignManagementItem, tab: string): Partner
 
 // ----------------------------------------
 // API 14 아이템 → PartnerCampaign 어댑터
-// (API 14: `campaignId` 필드 사용)
 // ----------------------------------------
 function adaptStatusItem(item: CampaignStatusItem, tab: string): PartnerCampaign {
   const campaignType = (CAMPAIGN_TYPE_LABEL[item.campaignType] ??
@@ -218,6 +214,7 @@ function adaptStats(stats: CampaignManagementStats): Record<string, number> {
 // ========================================
 export function usePartnerCampaigns(tab: string) {
   const apiStatus = TAB_TO_API_STATUS[tab] ?? "all";
+  const isAllTab = tab === "전체";
 
   // API 13: stats 조회 (한 번만, 모든 탭에서 공유)
   const { data: pageData, isLoading: isStatsLoading } = useQuery({
@@ -226,12 +223,23 @@ export function usePartnerCampaigns(tab: string) {
     staleTime: 30_000,
   });
 
-  // API 14: 탭별 캠페인 조회
+  // API 14: 탭별 캠페인 무한 스크롤 조회
   // 전체 탭(all)은 API 13 응답을 사용하므로 API 14는 비전체 탭에서만 호출
-  const isAllTab = tab === "전체";
-  const { data: statusData, isLoading: isCampaignsLoading } = useQuery({
+  const {
+    data: statusData,
+    isLoading: isCampaignsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["partnerCampaignsByStatus", apiStatus],
-    queryFn: () => getCampaignsByStatus({ status: apiStatus }),
+    queryFn: ({ pageParam }) =>
+      getCampaignsByStatus({ status: apiStatus, page: pageParam as number, size: PAGE_SIZE }),
+    getNextPageParam: (lastPage) => {
+      if (lastPage.data.hasNext) return lastPage.data.currentPage + 1;
+      return undefined;
+    },
+    initialPageParam: 0,
     enabled: !isAllTab,
     staleTime: 30_000,
   });
@@ -239,15 +247,13 @@ export function usePartnerCampaigns(tab: string) {
   // 캠페인 리스트 변환
   const campaigns = useMemo<PartnerCampaign[]>(() => {
     if (isAllTab) {
-      // 전체 탭: API 13 응답 사용
       const items = pageData?.data?.campaigns;
       if (!items) return [];
       return items.map((item) => adaptManagementItem(item, tab));
     }
-    // 개별 탭: API 14 응답 사용
-    const items = statusData?.data?.campaigns;
-    if (!items) return [];
-    return items.map((item) => adaptStatusItem(item, tab));
+    // 개별 탭: 모든 페이지 캠페인 누적
+    const allItems = statusData?.pages.flatMap((page) => page.data?.campaigns ?? []) ?? [];
+    return allItems.map((item) => adaptStatusItem(item, tab));
   }, [isAllTab, pageData, statusData, tab]);
 
   // stats 변환
@@ -261,5 +267,12 @@ export function usePartnerCampaigns(tab: string) {
 
   const isLoading = isStatsLoading || (!isAllTab && isCampaignsLoading);
 
-  return { campaigns, stats, isLoading };
+  return {
+    campaigns,
+    stats,
+    isLoading,
+    fetchNextPage,
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+  };
 }

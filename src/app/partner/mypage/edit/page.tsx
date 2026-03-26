@@ -29,7 +29,6 @@ import Toast from "@/components/common/toast/Toast";
 import BusinessNumberInput from "@/components/common/signup/BusinessNumberInput";
 import ContactPhoneInput from "@/components/common/signup/ContactPhoneInput";
 import Loading from "@/app/loading";
-import BaseModal from "@/components/common/modal/BaseModal";
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
@@ -443,16 +442,6 @@ function PartnerEditProfilePage() {
           router.back();
         }}
         duration={2000}
-      />
-
-      {/* B_M6: 진행 중인 캠페인 있음 → 탈퇴 불가 모달 */}
-      <BaseModal
-        is_open={isWithdrawBlockedModalOpen}
-        on_close={() => setIsWithdrawBlockedModalOpen(false)}
-        message="진행 중인 캠페인이 있을 경우 탈퇴가 불가합니다.<br>먼저 캠페인을 완료해 주세요."
-        buttons={["닫기"]}
-        on_confirm={() => setIsWithdrawBlockedModalOpen(false)}
-        type="center"
       />
     </div>
   );

@@ -26,8 +26,8 @@ import { getCampaignTypePath, convertToCampaignDataId } from "./utils/campaign_c
 import { useCampaignCard } from "@/hooks/partner/campaign_management/useCampaignCard";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { deleteCampaign, cancelCampaign } from "@/data/partner/sharedCampaigns";
-import { deleteCampaignApi } from "@/lib/api/partner";
+import { deleteCampaign as localDeleteCampaign } from "@/data/partner/sharedCampaigns";
+import { deleteCampaign as deleteRemoteCampaign } from "@/lib/api/partnerCampaignManagement";
 import { getPartnerTabByDates } from "@/data/partner/utils/campaignHelpers";
 
 interface CampaignCardProps {
@@ -368,49 +368,19 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
         message="캠페인을 삭제하시겠습니까?<br>이 작업은 되돌릴 수 없습니다."
         buttons={["취소", "확인"]}
         button_variant="red"
-        on_confirm={() => {
-          /**
-           * 캠페인 삭제/취소 확인 핸들러
-           *
-           * 설명:
-           * - 예정 탭에서 삭제할 때: 취소 탭으로 이동 (cancelCampaign 호출)
-           * - 그 외 탭에서 삭제할 때: 완전 삭제 (deleteCampaign 호출)
-           * - 실제 프로덕션에서는 API를 통해 서버에서 캠페인을 삭제/취소해야 합니다
-           * - 현재는 프론트엔드 개발을 위해 localStorage에서 처리합니다
-           * - 삭제/취소 후 페이지를 새로고침하여 목록을 업데이트합니다
-           */
-          // console.log(
-          //   `[CampaignCard] 캠페인 ${
-          //     activeTab === "예정" ? "취소" : "삭제"
-          //   } 확인: ID=${campaign.id}, 제목=${campaign.title}, 탭=${activeTab}`
-          // );
-
-          // 모달 닫기
+        on_confirm={async () => {
           closeDeleteModal();
 
-          // 예정 탭이면 취소 처리, 그 외는 삭제 처리
-          if (activeTab === "예정") {
-            // 예정 탭: 취소 탭으로 이동
-            const result = cancelCampaign(String(campaign.id), campaign.campaignType);
-
-            if (result.success) {
-              queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
-            } else if (result.error === "ALREADY_CANCELLED") {
-              alert("이미 취소된 캠페인입니다.");
-            } else {
-              alert("캠페인 취소에 실패했습니다. 다시 시도해주세요.");
-            }
-          } else {
-            // 그 외 탭: 완전 삭제 (API + localStorage)
-            try {
-              deleteCampaignApi(String(campaign.id));
-            } catch {
-              // mock 서버 미실행 시 무시
-            }
-            deleteCampaign(String(campaign.id), campaign.campaignType);
-            alert("캠페인이 삭제되었습니다.");
-            queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
+          // 모든 탭에서 DELETE API 호출
+          try {
+            await deleteRemoteCampaign(Number(campaign.id));
+          } catch {
+            // mock 서버 미실행 시 무시
           }
+          localDeleteCampaign(String(campaign.id), campaign.campaignType);
+          alert("캠페인이 삭제되었습니다.");
+          queryClient.invalidateQueries({ queryKey: ["partnerCampaignManagement"] });
+          queryClient.invalidateQueries({ queryKey: ["partnerCampaignsByStatus"] });
         }}
       />
     </div>

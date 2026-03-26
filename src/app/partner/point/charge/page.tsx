@@ -33,6 +33,7 @@ import chargeTabsStyles from "@/styles/partner/point/charge_tabs.module.css";
 import chargeAccountStyles from "@/styles/partner/point/charge_account.module.css";
 import chargeSubmitStyles from "@/styles/partner/point/charge_submit.module.css";
 import chargeTermsStyles from "@/styles/partner/point/charge_terms.module.css";
+import Loading from "@/app/loading";
 import { useAuth } from "@/hooks/useAuth";
 import { usePartnerPointList } from "@/hooks/partner/point/usePartnerPoints";
 import { usePartnerCharge } from "@/hooks/partner/point/usePartnerCharge";
@@ -53,7 +54,7 @@ const styles = {
 export default function PartnerPointChargePage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { summary } = usePartnerPointList("ALL");
+  const { summary, isLoading: isPointLoading } = usePartnerPointList("ALL");
   const chargeMutation = usePartnerCharge();
   const [chargeAmount, setChargeAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -365,6 +366,8 @@ export default function PartnerPointChargePage() {
   useOutsideClick([refundBankDropdownRef], () => {
     setIsRefundBankDropdownOpen(false);
   });
+
+  if (isPointLoading) return <Loading />;
 
   return (
     <div className={styles.charge_page}>

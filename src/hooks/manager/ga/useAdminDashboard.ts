@@ -13,7 +13,7 @@
  * - /manager_ga (대시보드)
  */
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { getAdminDashboardStats } from "@/lib/api/admin";
 import type { AdminDashboardResponse, DashboardPeriod } from "@/types/api/admin";
 
@@ -28,6 +28,7 @@ export function useAdminDashboard(params?: UseAdminDashboardParams) {
     queryKey: ["adminDashboard", params?.period, params?.startDate, params?.endDate],
     queryFn: () => getAdminDashboardStats(params),
     staleTime: 30_000,
+    placeholderData: keepPreviousData,
   });
 
   return { dashboard: data ?? null, isLoading, isError };

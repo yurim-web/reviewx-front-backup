@@ -51,6 +51,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
   const MAX_REQUEST_COUNT = 5; // 최대 요청 가능 횟수
   const [phoneError, setPhoneError] = useState<string | undefined>();
   const [verificationCodeError, setVerificationCodeError] = useState<string | undefined>();
+  const [verificationId, setVerificationId] = useState<string>("");
 
   // 타이머 ID를 저장하기 위한 ref
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -121,7 +122,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     }
   };
 
-  /** 인증 요청 핸들러 - POST /api/admin/auth/phone/request 호출 */
+  /** 인증 요청 핸들러 - POST /api/v1/auth/phone/verify/request 호출 */
   const handleVerificationRequest = async () => {
     // 인증번호 요청 횟수 제한 체크
     if (requestCount >= MAX_REQUEST_COUNT) {
@@ -137,7 +138,12 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
 
     try {
       const normalizedPhone = phone.replace(/-/g, "");
-      await apiClient.post("/api/admin/auth/phone/request", { phone: normalizedPhone });
+      const { data } = await apiClient.post("/api/v1/auth/phone/verify/request", {
+        phoneNum: normalizedPhone,
+      });
+
+      // verificationId 저장 (확인 요청 시 사용)
+      setVerificationId(data.verificationId || "");
 
       // 인증번호 요청 상태로 변경
       setIsVerificationRequested(true);
@@ -152,7 +158,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     }
   };
 
-  /** 인증번호 확인 핸들러 - POST /api/admin/auth/phone/verify 호출 */
+  /** 인증번호 확인 핸들러 - POST /api/v1/auth/phone/verify/confirm 호출 */
   const handleVerifyCode = async () => {
     // 인증번호 형식 검증 (6자리 숫자)
     if (!verificationCode || !validateVerificationCode(verificationCode)) {
@@ -161,16 +167,16 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     }
 
     try {
-      const normalizedPhone = phone.replace(/-/g, "");
-      const { data } = await apiClient.post("/api/admin/auth/phone/verify", {
-        phone: normalizedPhone,
+      const { data } = await apiClient.post("/api/v1/auth/phone/verify/confirm", {
+        verificationId,
         code: verificationCode,
       });
 
-      if (data.result === "OK") {
+      if (data.result === "VERIFIED") {
         setIsVerified(true);
         setIsVerificationRequested(false);
         setVerificationCode("");
+        setVerificationId("");
         setTimer(0);
         setVerificationCodeError(undefined);
       } else {
@@ -186,6 +192,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     setIsVerified(false); // 인증 완료 상태 초기화
     setIsVerificationRequested(false); // 인증번호 요청 상태 초기화
     setVerificationCode(""); // 인증번호 초기화
+    setVerificationId(""); // verificationId 초기화
     setTimer(0); // 타이머 초기화
     setRequestCount(0); // 요청 횟수도 초기화
     setPhoneError(undefined);

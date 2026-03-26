@@ -52,3 +52,14 @@ export interface PartnerVerifyCodeResponse {
   result: "VERIFIED";
   verifiedPhoneToken: string;
 }
+
+/** POST /partner/auth/reset-password 요청 */
+export interface ResetPartnerPasswordRequest {
+  email: string;
+  newPassword: string;
+}
+
+/** POST /partner/auth/reset-password 응답 */
+export interface ResetPartnerPasswordResponse {
+  result: "OK";
+}

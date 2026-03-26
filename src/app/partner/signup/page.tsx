@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
 import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
@@ -34,7 +34,7 @@ import {
 } from "@/utils/validation/partnerSignup";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getAccountsByType } from "@/data/login/unifiedAccountData";
-import { partnerSignup } from "@/lib/api/partnerSignup";
+import { getPartnerSignupPage, partnerSignup } from "@/lib/api/partnerSignup";
 import type { PartnerSignupRequest } from "@/types/api/partnerSignup";
 import axios from "axios";
 import commonStyles from "@/styles/common/signup/signup.module.css";
@@ -145,7 +145,12 @@ export default function PartnerSignupPage() {
   // 에러 메시지
   const [errors, setErrors] = useState<PartnerSignupFormErrors>({});
 
-  // 파일 업로드 얼럿
+  // 페이지 진입 시 GET /partner/signup 호출 (약관 목록·은행 목록 조회)
+  useEffect(() => {
+    getPartnerSignupPage().catch(() => {
+      // 초기 데이터 로드 실패 시 무시 (약관은 컴포넌트에 내장)
+    });
+  }, []);
 
   // 커스텀 훅 사용
   const {

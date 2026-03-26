@@ -16,13 +16,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import {
-  fetchDeliveryCampaigns,
-  fetchVisitCampaigns,
-  fetchReviewCampaigns,
-  fetchReporterCampaigns,
-  fetchMissionCampaigns,
-} from "@/lib/api/campaign";
+import { getPartnerCampaignsByType } from "@/lib/api/dashboard";
+import type { PartnerCampaignCard } from "@/types/api/dashboard";
 import type { CampaignListApiItem } from "@/types/api/campaign";
 
 // 정적 fallback 데이터
@@ -112,6 +107,32 @@ function calcSchedule(recruitStartAt: string): string {
   return "";
 }
 
+/** 파트너 API 캠페인 카드 → CampaignListAdapted */
+function adaptPartnerCard(item: PartnerCampaignCard): CampaignListAdapted {
+  const recruitStartAt = item.recruit?.recruitStartAt ?? "";
+  const recruitEndAt = item.recruit?.recruitEndAt ?? "";
+  return {
+    id: String(item.campaignId ?? (item as unknown as { id?: number }).id ?? ""),
+    title: item.title,
+    category: TYPE_LABEL[item.type] ?? item.type,
+    subcategory: item.category?.categoryName ?? "기타",
+    channel: item.requiredPlatform?.channelName
+      ? (CHANNEL_LABEL[item.requiredPlatform.channelName] ?? item.requiredPlatform.channelName)
+      : "",
+    image: item.thumbnail?.url ?? (item as unknown as { thumbnailUrl?: string }).thumbnailUrl ?? "",
+    recruitment: {
+      current: item.metrics?.appliedCount ?? 0,
+      total: item.recruit?.recruitLimit ?? 0,
+    },
+    dayCount: calcDayCount(recruitEndAt),
+    schedule: calcSchedule(recruitStartAt),
+    detailedSchedule: { applicationStart: recruitStartAt, applicationEnd: recruitEndAt },
+    region: item.region?.name,
+    isUrgent: item.status === "EMERGENCY",
+    registeredAt: recruitStartAt,
+  };
+}
+
 /** 백엔드 API 응답 → CampaignListAdapted */
 function adaptApiCampaign(item: CampaignListApiItem): CampaignListAdapted {
   const recruitStartAt = item.recruitStartAt ?? item.recruit?.recruitStartAt ?? "";
@@ -185,13 +206,18 @@ function adaptStaticCampaign(item: {
    API 응답이 있으면 우선 사용, 없으면 정적 데이터 fallback
    ======================================== */
 
-export function useDeliveryCampaignList() {
+interface CampaignListFilterParams {
+  categoryId?: number;
+  channelId?: number;
+}
+
+export function useDeliveryCampaignList(filters?: CampaignListFilterParams) {
   return useQuery({
-    queryKey: ["campaigns", "delivery"],
+    queryKey: ["campaigns", "delivery", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const list = await fetchDeliveryCampaigns();
-        if (list.length > 0) return list.map(adaptApiCampaign);
+        const res = await getPartnerCampaignsByType({ type: "DELIVERY", ...filters });
+        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
       } catch (_e) {}
       return deliveryCampaigns.map(adaptStaticCampaign);
     },
@@ -200,13 +226,13 @@ export function useDeliveryCampaignList() {
   });
 }
 
-export function useVisitCampaignList() {
+export function useVisitCampaignList(filters?: CampaignListFilterParams) {
   return useQuery({
-    queryKey: ["campaigns", "visit"],
+    queryKey: ["campaigns", "visit", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const list = await fetchVisitCampaigns();
-        if (list.length > 0) return list.map(adaptApiCampaign);
+        const res = await getPartnerCampaignsByType({ type: "VISIT", ...filters });
+        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
       } catch (_e) {}
       return visitCampaigns.map(adaptStaticCampaign);
     },
@@ -215,13 +241,13 @@ export function useVisitCampaignList() {
   });
 }
 
-export function useReviewCampaignList() {
+export function useReviewCampaignList(filters?: CampaignListFilterParams) {
   return useQuery({
-    queryKey: ["campaigns", "purchase-review"],
+    queryKey: ["campaigns", "purchase-review", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const list = await fetchReviewCampaigns();
-        if (list.length > 0) return list.map(adaptApiCampaign);
+        const res = await getPartnerCampaignsByType({ type: "PURCHASE", ...filters });
+        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
       } catch (_e) {}
       return reviewCampaigns.map(adaptStaticCampaign);
     },
@@ -230,13 +256,13 @@ export function useReviewCampaignList() {
   });
 }
 
-export function useReporterCampaignList() {
+export function useReporterCampaignList(filters?: CampaignListFilterParams) {
   return useQuery({
-    queryKey: ["campaigns", "reporter"],
+    queryKey: ["campaigns", "reporter", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const list = await fetchReporterCampaigns();
-        if (list.length > 0) return list.map(adaptApiCampaign);
+        const res = await getPartnerCampaignsByType({ type: "REPORTER", ...filters });
+        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
       } catch (_e) {}
       return reporterCampaigns.map(adaptStaticCampaign);
     },
@@ -245,13 +271,13 @@ export function useReporterCampaignList() {
   });
 }
 
-export function useMissionCampaignList() {
+export function useMissionCampaignList(filters?: CampaignListFilterParams) {
   return useQuery({
-    queryKey: ["campaigns", "mission"],
+    queryKey: ["campaigns", "mission", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const list = await fetchMissionCampaigns();
-        if (list.length > 0) return list.map(adaptApiCampaign);
+        const res = await getPartnerCampaignsByType({ type: "MISSION", ...filters });
+        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
       } catch (_e) {}
       return missionCampaigns.map(adaptStaticCampaign);
     },

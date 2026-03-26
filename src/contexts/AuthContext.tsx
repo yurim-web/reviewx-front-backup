@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // 자동 로그인 체크 (초기 로드 시 및 경로 변경 시)
   useEffect(() => {
     let cancelled = false;
+    setIsLoading(true); // 경로 변경 시 로딩 상태 리셋
 
     const checkAuth = async () => {
       // 파트너 경로: GET /partner/session으로 세션 확인
@@ -94,19 +95,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           const { user: loginUser, partner } = response.data;
 
-          // 이용 제한 상태 → 차단 페이지
-          if (loginUser.status === "BLOCKED") {
-            router.push("/partner/blocked");
-            return;
-          }
-
           // AuthUser로 변환 & 상태 업데이트
           const authUser: AuthUser = {
             id: String(loginUser.userId),
             email: loginUser.email,
             name: loginUser.name,
             role: "partner",
-            status: "ACTIVE",
+            status: loginUser.status === "BLOCKED" ? "BLOCKED" : "ACTIVE",
             phone: loginUser.phoneNum,
             business_name: partner.businessName,
             business_number: partner.businessNumber,
@@ -114,6 +109,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           };
 
           setUser(authUser);
+
+          // 이용 제한 상태 → 차단 페이지
+          if (loginUser.status === "BLOCKED") {
+            router.push("/partner/blocked");
+            return;
+          }
           router.push(response.data.next.redirectPath || "/partner");
           return;
         }

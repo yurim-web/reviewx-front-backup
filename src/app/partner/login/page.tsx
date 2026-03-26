@@ -28,10 +28,14 @@ export default function PartnerLoginPage() {
   const { login, isLoading, user } = useAuth();
   const router = useRouter();
 
-  // 세션 유효 시 대시보드로 자동 리다이렉트
+  // 세션 유효 시 자동 리다이렉트
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace("/partner");
+      if (user.status === "BLOCKED") {
+        router.replace("/partner/blocked");
+      } else {
+        router.replace("/partner");
+      }
     }
   }, [user, isLoading, router]);
 

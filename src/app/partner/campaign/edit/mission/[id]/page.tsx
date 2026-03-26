@@ -42,7 +42,6 @@ export default function MissionCampaignEditPage() {
   const [initialData, setInitialData] = useState<CampaignFormData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [formKey, setFormKey] = useState(0);
 
   // 토스트 메시지 상태
   const [toast, setToast] = useState({
@@ -105,23 +104,13 @@ export default function MissionCampaignEditPage() {
         editBody as Parameters<typeof postCampaignEdit>[2]
       );
 
-      // 저장 후 폼 데이터 갱신 (15번 API)
-      const updatedResponse = await getCampaignEditPage("MISSION", Number(campaignId));
-      if (updatedResponse?.campaign) {
-        const newFormData = editApiResponseToFormData(updatedResponse);
-        setInitialData(newFormData);
-        setIsUrgent(newFormData.isUrgent ?? false);
-      }
-
-      // 캠페인 목록 및 상세 캐시 강제 재조회
-      await queryClient.refetchQueries({ queryKey: ["partnerCampaignManagement"] });
-      await queryClient.refetchQueries({ queryKey: ["partnerCampaignsByStatus"] });
+      // 캠페인 목록 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ["partnerCampaigns"] });
+      queryClient.invalidateQueries({ queryKey: ["partnerCampaignManagement"] });
       queryClient.invalidateQueries({ queryKey: ["campaign", "detail"] });
-      router.refresh();
-      setFormKey((k) => k + 1);
 
       setToast({ is_open: true, message: "저장되었습니다." });
+      router.push("/partner/campaign_management");
     } catch (_error) {
       alert("캠페인 수정에 실패했습니다. 다시 시도해주세요.");
     } finally {
@@ -185,7 +174,6 @@ export default function MissionCampaignEditPage() {
 
       <div className={layoutStyles.main_content}>
         <MissionCampaignForm
-          key={formKey}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           initialData={initialData}

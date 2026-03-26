@@ -37,6 +37,7 @@ interface RenderExperienceCardParams {
   handleReject: (id: string, reason: string) => void;
   handleReport: (id: string, reportOption?: string, otherReason?: string) => void;
   handleComplete: (id: string) => void;
+  handleExtend?: (id: string) => void;
   deadlineDate?: string;
   enableExtensionRequest?: boolean; // visit에서만 true
 }
@@ -106,6 +107,7 @@ export function createExperienceCardRenderer(params: RenderExperienceCardParams)
           reject_reason={params.rejectReasons.get(item.id) || ""}
           reportedDate={formattedReportedDate}
           onReport={params.handleReport}
+          onExtend={params.handleExtend}
           onContentCheck={() => openChannelUrl(applicant.channel, applicant.channelId)}
           dateLabel={dateLabel}
         />

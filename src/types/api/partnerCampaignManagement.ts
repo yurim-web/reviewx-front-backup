@@ -129,11 +129,15 @@ export interface CampaignStatusParams {
   type?: string[]; // DELIVERY, VISIT, PURCHASE, REPORT (복수 선택)
   channel?: string[]; // BLOG, INSTAGRAM, YOUTUBE, REELS (복수 선택)
   keyword?: string;
+  page?: number; // 0-based 페이지 번호
+  size?: number; // 페이지당 아이템 수 (기본값 20)
 }
 
 /** API 14 응답 data */
 export interface CampaignStatusData {
   campaigns: CampaignStatusItem[];
+  hasNext: boolean;
+  currentPage: number;
 }
 
 /** API 14 전체 응답 */

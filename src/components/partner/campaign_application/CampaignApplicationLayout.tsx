@@ -357,9 +357,6 @@ export default function CampaignApplicationLayout({
       />
 
       {/* 이미 선택된 리뷰어 모달 */}
-      {/* 📌 조건부 렌더링:
-          - 이미 선택된 리뷰어를 다시 선택하려 할 때 표시되는 모달
-      */}
       <BaseModal
         is_open={is_already_selected_modal_open}
         on_close={handle_close_already_selected_modal}

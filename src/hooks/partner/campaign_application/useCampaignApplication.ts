@@ -109,7 +109,7 @@ function adaptApplicant(item: ApplicationItem): AllApplicant {
   // 공통 필드
   const base = {
     id: String(item.applicationId),
-    Id: String(item.reviewerId),
+    Id: item.channelInfo?.channelUrl || String(item.reviewerId),
     nickname: item.reviewerName,
     profileImage: item.profileImage || "/images/mypage/profile.svg",
     userType: (USER_TYPE_LABEL[item.userType || "REVIEWER"] || "리뷰어") as "리뷰어" | "인플루언서",
