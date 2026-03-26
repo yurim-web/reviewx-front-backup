@@ -16,8 +16,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { AdminItem } from "@/data/manager_sa/member/admins";
-import { createAdminMember, updateAdminMember } from "@/lib/api/admin";
-import { useAdminMembers } from "@/hooks/manager/ga/useAdminMembers";
+import { createSAAdmin, updateSAAdmin } from "@/lib/api/admin";
+import { useSAAdminList } from "@/hooks/manager/sa/member/useSAAdminList";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
 
 // 폼 입력값 타입
@@ -98,8 +98,8 @@ export default function useAdminForm({ mode, initial_data, admin_id }: UseAdminF
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  // API 훅으로 관리자 목록 조회 (중복 검증용)
-  const { adminMembers } = useAdminMembers();
+  // SA API 훅으로 관리자 목록 조회 (중복 검증용)
+  const { adminMembers } = useSAAdminList();
 
   // 폼 상태
   const [form_data, set_form_data] = useState<AdminFormData>({
@@ -276,27 +276,33 @@ export default function useAdminForm({ mode, initial_data, admin_id }: UseAdminF
 
     try {
       if (mode === "create") {
-        // 새 번호 생성
-        const max_number = Math.max(...adminMembers.map((a) => parseInt(a.number) || 0), 0);
-        const new_number = String(max_number + 1).padStart(6, "0");
-
-        await createAdminMember({
-          id: form_data.id.trim(),
-          number: new_number,
+        await createSAAdmin({
+          email: form_data.id.trim(),
+          password: form_data.password,
+          passwordConfirm: form_data.password_confirm,
           name: form_data.name,
           phone: form_data.phone,
-          status: "정상",
         });
       } else {
         if (!admin_id) return;
-        await updateAdminMember(admin_id, {
+        const updateBody: {
+          name: string;
+          phone: string;
+          password?: string;
+          passwordConfirm?: string;
+        } = {
           name: form_data.name,
           phone: form_data.phone,
-        });
+        };
+        if (form_data.password.trim()) {
+          updateBody.password = form_data.password;
+          updateBody.passwordConfirm = form_data.password_confirm;
+        }
+        await updateSAAdmin(Number(admin_id), updateBody);
       }
 
       // React Query 캐시 무효화 → 목록 페이지에서 최신 데이터 반영
-      await queryClient.invalidateQueries({ queryKey: ["adminMembers"] });
+      await queryClient.invalidateQueries({ queryKey: ["saAdminList"] });
 
       set_show_toast(true);
       setTimeout(() => {

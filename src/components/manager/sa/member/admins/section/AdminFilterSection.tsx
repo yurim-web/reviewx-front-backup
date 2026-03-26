@@ -38,7 +38,7 @@ import {
 import type { BlockCode } from "@/data/manager_ga/common/filterOptions";
 import type { AdminTableRef } from "./AdminTable";
 import { update_admin_status } from "@/data/manager_sa/member/admins";
-import { deleteAdminMember, updateAdminMember } from "@/lib/api/admin";
+import { deleteSAAdmin, updateSAAdmin } from "@/lib/api/admin";
 
 interface AdminFilterSectionProps {
   search_query: string;
@@ -128,7 +128,7 @@ export default function AdminFilterSection({
     const selected_ids = admin_table_ref.current.get_selected_admin_ids();
     if (selected_ids.length === 0) return;
 
-    const results = await Promise.allSettled(selected_ids.map((id) => deleteAdminMember(id)));
+    const results = await Promise.allSettled(selected_ids.map((id) => deleteSAAdmin(Number(id))));
 
     const failedCount = results.filter((r) => r.status === "rejected").length;
     if (failedCount > 0) {
@@ -136,7 +136,7 @@ export default function AdminFilterSection({
     }
 
     set_delete_confirm_modal_open(false);
-    queryClient.invalidateQueries({ queryKey: ["adminMembers"] });
+    queryClient.invalidateQueries({ queryKey: ["saAdminList"] });
   };
 
   // 이용제한 버튼 핸들러
@@ -235,13 +235,13 @@ export default function AdminFilterSection({
     // localStorage 동기 업데이트 (레거시 호환)
     update_admin_status(selected_admin.id, new_status);
 
-    // API로 관리자 상태 업데이트
-    updateAdminMember(selected_admin.id, { status: new_status }).catch(() => {
+    // SA API로 관리자 상태 업데이트
+    updateSAAdmin(Number(selected_admin.id), { name: selected_admin.name }).catch(() => {
       console.warn("관리자 상태 API 업데이트 실패 (localStorage 처리 완료)");
     });
 
     set_restriction_modal_open(false);
-    queryClient.invalidateQueries({ queryKey: ["adminMembers"] });
+    queryClient.invalidateQueries({ queryKey: ["saAdminList"] });
   };
 
   // 다운로드 버튼 핸들러

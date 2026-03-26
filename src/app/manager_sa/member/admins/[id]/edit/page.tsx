@@ -19,7 +19,7 @@ import Loading from "@/app/loading";
 import styles from "@/styles/manager_sa/member/admins/admin_create_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import AdminForm from "@/components/manager/sa/member/admins/section/AdminForm";
-import { useAdminMembers } from "@/hooks/manager/ga/useAdminMembers";
+import { useSAAdminList } from "@/hooks/manager/sa/member/useSAAdminList";
 import type { AdminMemberApiItem } from "@/types/api/admin";
 import type { AdminItem } from "@/data/manager_sa/member/admins";
 
@@ -42,8 +42,8 @@ export default function AdminEditPage() {
   const params = useParams();
   const admin_id = params?.id as string;
 
-  // API 훅으로 관리자 목록 조회
-  const { adminMembers, isLoading } = useAdminMembers();
+  // SA API 훅으로 관리자 목록 조회
+  const { adminMembers, isLoading } = useSAAdminList();
 
   // API 데이터에서 해당 관리자 찾기
   const admin_data = useMemo(() => {

@@ -25,7 +25,7 @@ import CommonTableWithTooltip, {
 import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import styles from "@/styles/manager_sa/member/admins/admin_table.module.css";
 import { type AdminItem, type AdminStatus } from "@/data/manager_sa/member/admins";
-import { useAdminMembers } from "@/hooks/manager/ga/useAdminMembers";
+import { useSAAdminList } from "@/hooks/manager/sa/member/useSAAdminList";
 import type { AdminMemberApiItem } from "@/types/api/admin";
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 
@@ -126,8 +126,8 @@ const AdminTable = forwardRef<AdminTableRef, AdminTableProps>(function AdminTabl
   // 선택된 관리자 ID 목록 상태 관리
   const [selected_admin_ids, set_selected_admin_ids] = useState<string[]>([]);
 
-  // API 훅으로 관리자 목록 조회
-  const { adminMembers } = useAdminMembers();
+  // SA API 훅으로 관리자 목록 조회
+  const { adminMembers } = useSAAdminList();
 
   // AdminMemberApiItem → AdminItem 안전 변환 (status 매핑 포함)
   const admin_list_data: AdminItem[] = adminMembers.map(adaptAdminMember);

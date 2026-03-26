@@ -20,9 +20,12 @@ import AdminFilterSection from "@/components/manager/sa/member/admins/section/Ad
 import AdminTable, {
   type AdminTableRef,
 } from "@/components/manager/sa/member/admins/section/AdminTable";
+import Loading from "@/app/loading";
+import { useSAAdminList } from "@/hooks/manager/sa/member/useSAAdminList";
 import type { AdminStatus } from "@/data/manager_sa/member/admins";
 
 export default function AdminsPage() {
+  const { isLoading } = useSAAdminList();
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
@@ -35,6 +38,8 @@ export default function AdminsPage() {
   // useRef: React Hook으로 DOM 요소나 컴포넌트 인스턴스에 접근할 수 있게 해줍니다
   // <AdminTableRef>: ref가 가리킬 컴포넌트의 타입을 지정합니다
   const admin_table_ref = useRef<AdminTableRef>(null);
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles.container}>
