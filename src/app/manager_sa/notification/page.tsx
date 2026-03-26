@@ -11,8 +11,8 @@
  * - /manager_sa/notification
  *
  * API:
- * - GET /api/admin/notifications → 알림 목록 조회
- * - DELETE /api/admin/notifications/all → 전체 삭제
+ * - GET /api/admin-sa/notifications → 알림 목록 조회
+ * - DELETE /api/admin-sa/notifications/all → 전체 삭제
  */
 
 "use client";
@@ -26,7 +26,7 @@ import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
 import Loading from "@/app/loading";
 import "@/styles/manager_ga/layout.css";
-import { fetchAdminNotifications, deleteAllAdminNotifications } from "@/lib/api/notification";
+import { fetchSAAdminNotifications, deleteAllSAAdminNotifications } from "@/lib/api/notification";
 import { mapAdminNotificationToItem } from "@/data/notification/notificationData";
 
 export default function ManagerSANotificationPage() {
@@ -34,8 +34,8 @@ export default function ManagerSANotificationPage() {
   const queryClient = useQueryClient();
 
   const { data: apiData, isLoading } = useQuery({
-    queryKey: ["adminNotifications"],
-    queryFn: fetchAdminNotifications,
+    queryKey: ["saAdminNotifications"],
+    queryFn: fetchSAAdminNotifications,
     retry: false,
     staleTime: 30_000,
   });
@@ -47,15 +47,15 @@ export default function ManagerSANotificationPage() {
   }, [apiData]);
 
   const handle_notification_click = () => {
-    // TODO: 알림 상세 페이지로 이동 또는 모달 열기
+    // 알림 클릭 핸들러
   };
 
   const handle_delete_all_click = async () => {
     try {
-      await deleteAllAdminNotifications();
-      queryClient.setQueryData(["adminNotifications"], null);
+      await deleteAllSAAdminNotifications();
+      queryClient.setQueryData(["saAdminNotifications"], null);
     } catch {
-      queryClient.setQueryData(["adminNotifications"], null);
+      queryClient.setQueryData(["saAdminNotifications"], null);
     }
     set_is_delete_toast_open(true);
   };

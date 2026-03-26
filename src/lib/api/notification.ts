@@ -26,18 +26,34 @@ export const patchNotificationRead = (id: number | string): Promise<void> =>
   apiClient.patch(`/notifications/${id}`, { is_read: true }).then(() => undefined);
 
 /**
- * 관리자(GA/SA) 알림 목록 조회
+ * GA 관리자 알림 목록 조회
  * GET /api/admin/notifications
  */
 export const fetchAdminNotifications = (): Promise<AdminNotificationListResponse> =>
   apiClient.get<AdminNotificationListResponse>("/api/admin/notifications").then((res) => res.data);
 
 /**
- * 관리자(GA/SA) 전체 알림 삭제
+ * GA 관리자 전체 알림 삭제
  * DELETE /api/admin/notifications/all
  */
 export const deleteAllAdminNotifications = (): Promise<void> =>
   apiClient.delete("/api/admin/notifications/all").then(() => undefined);
+
+/**
+ * SA 관리자 알림 목록 조회
+ * GET /api/admin-sa/notifications
+ */
+export const fetchSAAdminNotifications = (): Promise<AdminNotificationListResponse> =>
+  apiClient
+    .get<AdminNotificationListResponse>("/api/admin-sa/notifications")
+    .then((res) => res.data);
+
+/**
+ * SA 관리자 전체 알림 삭제
+ * DELETE /api/admin-sa/notifications/all
+ */
+export const deleteAllSAAdminNotifications = (): Promise<void> =>
+  apiClient.delete("/api/admin-sa/notifications/all").then(() => undefined);
 
 /**
  * 파트너 알림 목록 조회
