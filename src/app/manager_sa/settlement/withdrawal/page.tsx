@@ -24,7 +24,7 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
 import type { WithdrawalPaymentStatus } from "@/data/manager_sa/common/filterOptions";
 import type { NormalStatus } from "@/components/manager/sa/settlement/withdrawal/filter/NormalStatusFilterDropdown";
 import type { WithdrawalMemberType } from "@/components/manager/sa/settlement/withdrawal/filter/MemberTypeFilterDropdown";
-import { useAdminWithdrawal } from "@/hooks/manager/ga/useAdminWithdrawal";
+import { useSAWithdrawalStatus } from "@/hooks/manager/sa/settlement/useSAWithdrawalStatus";
 
 /**
  * 이번 달의 시작일과 종료일을 계산하는 함수
@@ -58,7 +58,7 @@ const get_current_month_range = (): DateRange => {
 };
 
 export default function WithdrawalPage() {
-  const { isLoading } = useAdminWithdrawal();
+  const { isLoading } = useSAWithdrawalStatus();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");

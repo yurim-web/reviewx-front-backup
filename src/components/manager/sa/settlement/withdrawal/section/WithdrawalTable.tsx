@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
@@ -23,7 +23,7 @@ import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_sa/settlement/withdrawal/withdrawal_table.module.css";
 import { type WithdrawalItem } from "@/data/manager_sa/settlement/withdrawalData";
-import { useAdminWithdrawal } from "@/hooks/manager/ga/useAdminWithdrawal";
+import { useSAWithdrawalStatus } from "@/hooks/manager/sa/settlement/useSAWithdrawalStatus";
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 import type { MemberStatus } from "@/components/manager/common/tags/MemberStatusTag";
 import PayoutStatusTag from "@/components/manager/common/tags/PayoutStatusTag";
@@ -54,25 +54,8 @@ export default function WithdrawalTable({
   // 선택된 항목 ID 배열 관리
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  // API 또는 static fallback 데이터
-  const { withdrawals: api_withdrawals } = useAdminWithdrawal();
-
-  // localStorage에서 출금 완료 내역 로드
-  const [withdrawal_history, set_withdrawal_history] = useState<WithdrawalItem[]>([]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const storedHistory = localStorage.getItem("withdrawal_history");
-        if (storedHistory) {
-          const history = JSON.parse(storedHistory);
-          set_withdrawal_history(history);
-        }
-      } catch (_error) {
-        // 로컬 스토리지 로드 실패 시 무시
-      }
-    }
-  }, []);
+  // SA 전용 출금 현황 데이터
+  const { withdrawals: api_withdrawals } = useSAWithdrawalStatus();
 
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000")
@@ -86,11 +69,8 @@ export default function WithdrawalTable({
     paymentDate: "date",
   };
 
-  // API 데이터(또는 static fallback)와 localStorage 내역 합치기
-  const all_withdrawal_list = [...api_withdrawals, ...withdrawal_history];
-
   // 검색어 및 필터로 필터링된 출금 현황 목록
-  const filtered_withdrawal_list = all_withdrawal_list.filter((item) => {
+  const filtered_withdrawal_list = api_withdrawals.filter((item) => {
     // 검색어 필터 (이름, 계좌번호, 주민등록번호)
     if (search_query) {
       const q = search_query.toLowerCase();

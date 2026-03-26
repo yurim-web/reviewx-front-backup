@@ -13,10 +13,9 @@
 
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import styles from "@/styles/manager/common/settlement/stat_cards_section.module.css";
-import { type WithdrawalItem } from "@/data/manager_sa/settlement/withdrawalData";
-import { useAdminWithdrawal } from "@/hooks/manager/ga/useAdminWithdrawal";
+import { useSAWithdrawalStatus } from "@/hooks/manager/sa/settlement/useSAWithdrawalStatus";
 import { parseFormattedAmount, formatCurrency } from "@/utils/formatting/amount";
 import { isDateInRange, getCurrentWeekRange, getCurrentMonthRange } from "@/utils/formatting/date";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -39,25 +38,8 @@ export default function WithdrawalStatCardsSection({
   selected_member_types = [],
   selected_normal_statuses = [],
 }: WithdrawalStatCardsSectionProps) {
-  // API 또는 static fallback 데이터
-  const { withdrawals: api_withdrawals } = useAdminWithdrawal();
-
-  // localStorage에서 출금 완료 내역 로드
-  const [withdrawal_history, set_withdrawal_history] = useState<WithdrawalItem[]>([]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const storedHistory = localStorage.getItem("withdrawal_history");
-        if (storedHistory) {
-          const history = JSON.parse(storedHistory);
-          set_withdrawal_history(history);
-        }
-      } catch (_error) {
-        // 출금 내역 로드 실패 시 빈 배열 유지
-      }
-    }
-  }, []);
+  // SA 전용 출금 현황 데이터
+  const { withdrawals: api_withdrawals } = useSAWithdrawalStatus();
 
   // useMemo: 계산 비용이 큰 연산을 메모이제이션합니다.
   // 필터가 변경될 때마다 재계산됩니다.
@@ -65,11 +47,8 @@ export default function WithdrawalStatCardsSection({
   // - useMemo: 계산 결과를 캐싱하여 불필요한 재계산을 방지합니다.
   // - 의존성 배열: 필터 값들이 변경될 때마다 재계산됩니다.
   const stats = useMemo(() => {
-    // API 데이터(또는 static fallback)와 localStorage 내역 합치기
-    const all_withdrawal_list = [...api_withdrawals, ...withdrawal_history];
-
-    // 검색어 및 필터로 필터링된 출금 현황 목록 (WithdrawalTable과 동일한 로직)
-    const filtered_withdrawal_list = all_withdrawal_list.filter((item) => {
+    // 클라이언트 계산 — 필터 반영 (명세서: 별도 stats API 없음, useMemo로 집계)
+    const filtered_withdrawal_list = api_withdrawals.filter((item) => {
       // 검색어 필터 (이름, 계좌번호, 주민등록번호)
       if (search_query) {
         const q = search_query.toLowerCase();
@@ -175,7 +154,6 @@ export default function WithdrawalStatCardsSection({
     selected_payment_statuses,
     selected_member_types,
     selected_normal_statuses,
-    withdrawal_history,
   ]); // 필터 값들이 변경될 때마다 재계산
   return (
     <div className={styles.stat_cards_section_four}>
