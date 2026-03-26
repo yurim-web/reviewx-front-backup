@@ -37,6 +37,12 @@ import {
   useCreateCategory,
   useUpdateCategory,
 } from "@/hooks/manager/ga/useAdminCategories";
+import {
+  useSACategoryDetail,
+  useSACategoryFormOptions,
+  useSACreateCategory,
+  useSAUpdateCategory,
+} from "@/hooks/manager/sa/community/useSAAdminCategories";
 
 interface CategoryFormProps {
   mode: "create" | "edit";
@@ -47,23 +53,37 @@ interface CategoryFormProps {
 export default function CategoryForm({ mode, manager_type, category_id }: CategoryFormProps) {
   const router = useRouter();
 
+  const is_sa = manager_type === "sa";
+
   const [division, set_division] = useState<CategoryDivision>("NOTICE");
   const [category_name, set_category_name] = useState<string>("");
   const [error_message, set_error_message] = useState<string>("");
   const [show_toast, set_show_toast] = useState<boolean>(false);
 
-  // 구분 옵션 조회 (GET /api/admin/board-categories/form)
-  const { data: formOptionsResponse } = useCategoryFormOptions();
-  const divisionOptions: DivisionOption[] = formOptionsResponse?.data?.divisions ?? [
-    { value: "NOTICE", label: "공지사항" },
-    { value: "QUESTIONS", label: "자주 묻는 질문" },
-  ];
+  // 구분 옵션 조회 — GA/SA 훅 모두 무조건 호출 (React hooks 규칙)
+  const gaFormOptions = useCategoryFormOptions();
+  const saFormOptions = useSACategoryFormOptions();
+  const formOptionsResponse = is_sa ? saFormOptions.data : gaFormOptions.data;
 
-  // 수정 모드: API로 카테고리 상세 조회
+  const defaultDivisions: DivisionOption[] = is_sa
+    ? [
+        { value: "NOTICE", label: "공지사항" },
+        { value: "FAQ", label: "자주 묻는 질문" },
+        { value: "EVENT", label: "이벤트" },
+      ]
+    : [
+        { value: "NOTICE", label: "공지사항" },
+        { value: "QUESTIONS", label: "자주 묻는 질문" },
+      ];
+  const divisionOptions: DivisionOption[] =
+    formOptionsResponse?.data?.divisions ?? defaultDivisions;
+
+  // 수정 모드: API로 카테고리 상세 조회 — GA/SA 훅 모두 무조건 호출
   const numericCategoryId = category_id ? Number(category_id) : 0;
-  const { data: detailResponse, isLoading: isDetailLoading } = useCategoryDetail(
-    mode === "edit" ? numericCategoryId : 0
-  );
+  const gaDetail = useCategoryDetail(mode === "edit" && !is_sa ? numericCategoryId : 0);
+  const saDetail = useSACategoryDetail(mode === "edit" && is_sa ? numericCategoryId : 0);
+  const detailResponse = is_sa ? saDetail.data : gaDetail.data;
+  const isDetailLoading = is_sa ? saDetail.isLoading : gaDetail.isLoading;
 
   // 수정 모드: 상세 데이터 로드 완료 시 폼에 반영
   useEffect(() => {
@@ -73,11 +93,14 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
     }
   }, [mode, detailResponse]);
 
-  // 카테고리 등록 mutation
-  const createMutation = useCreateCategory();
+  // 카테고리 등록 mutation — GA/SA 모두 호출
+  const gaCreateMutation = useCreateCategory();
+  const saCreateMutation = useSACreateCategory();
+  const createMutation = is_sa ? saCreateMutation : gaCreateMutation;
 
-  // 카테고리 수정 mutation
-  const updateMutation = useUpdateCategory();
+  // 카테고리 수정 mutation — GA/SA 모두 호출
+  const gaUpdateMutation = useUpdateCategory();
+  const saUpdateMutation = useSAUpdateCategory();
 
   // 카테고리명 유효성 검사 (길이 2~10자)
   const validate_category_name = (): boolean => {
@@ -112,15 +135,41 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
     if (!validate_category_name()) return;
 
     if (mode === "create") {
-      createMutation.mutate(
-        { division, categoryName: category_name.trim() },
+      if (is_sa) {
+        saCreateMutation.mutate(
+          { division: division as "NOTICE" | "FAQ" | "EVENT", categoryName: category_name.trim() },
+          {
+            onSuccess: () => set_show_toast(true),
+            onError: handleApiError,
+          }
+        );
+      } else {
+        gaCreateMutation.mutate(
+          { division, categoryName: category_name.trim() },
+          {
+            onSuccess: () => set_show_toast(true),
+            onError: handleApiError,
+          }
+        );
+      }
+    } else if (is_sa) {
+      // SA: PATCH — division + categoryName 모두 전송
+      saUpdateMutation.mutate(
+        {
+          categoryId: numericCategoryId,
+          body: {
+            division: division as "NOTICE" | "FAQ" | "EVENT",
+            categoryName: category_name.trim(),
+          },
+        },
         {
           onSuccess: () => set_show_toast(true),
           onError: handleApiError,
         }
       );
     } else {
-      updateMutation.mutate(
+      // GA: PUT — categoryName만 전송
+      gaUpdateMutation.mutate(
         { categoryId: numericCategoryId, body: { categoryName: category_name.trim() } },
         {
           onSuccess: () => set_show_toast(true),
@@ -134,6 +183,8 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
     set_show_toast(false);
     router.push(`/manager_${manager_type}/community/categories`);
   }, [router, manager_type]);
+
+  const updateMutation = is_sa ? saUpdateMutation : gaUpdateMutation;
 
   const is_button_disabled = useMemo(() => {
     if (createMutation.isPending || updateMutation.isPending) return true;
@@ -174,8 +225,8 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
             <label className={styles.input_label} htmlFor="division">
               구분
             </label>
-            {mode === "edit" ? (
-              // 수정 모드: 구분 변경 불가 (읽기 전용)
+            {mode === "edit" && !is_sa ? (
+              // GA 수정 모드: 구분 변경 불가 (읽기 전용)
               <input
                 type="text"
                 className={styles.input_box}

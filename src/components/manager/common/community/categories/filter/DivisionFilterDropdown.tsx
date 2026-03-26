@@ -24,12 +24,20 @@ interface DivisionFilterDropdownProps {
   selected_divisions: CategoryDivision[];
   on_apply: (divisions: CategoryDivision[]) => void;
   container_ref?: React.RefObject<HTMLDivElement | null>;
+  manager_type?: "ga" | "sa";
 }
 
-// 구분 필터 옵션 (백엔드 enum 기준: NOTICE, QUESTIONS)
-const filter_options: FilterOption<CategoryDivision>[] = [
+// GA 구분 필터 옵션 (백엔드 enum 기준: NOTICE, QUESTIONS)
+const ga_filter_options: FilterOption<CategoryDivision>[] = [
   { value: "NOTICE", label: "공지사항" },
   { value: "QUESTIONS", label: "자주 묻는 질문" },
+];
+
+// SA 구분 필터 옵션 (백엔드 enum 기준: NOTICE, FAQ, EVENT)
+const sa_filter_options: FilterOption<CategoryDivision>[] = [
+  { value: "NOTICE", label: "공지사항" },
+  { value: "FAQ", label: "자주 묻는 질문" },
+  { value: "EVENT", label: "이벤트" },
 ];
 
 export default function DivisionFilterDropdown({
@@ -38,7 +46,10 @@ export default function DivisionFilterDropdown({
   selected_divisions,
   on_apply,
   container_ref,
+  manager_type = "ga",
 }: DivisionFilterDropdownProps) {
+  const filter_options = manager_type === "sa" ? sa_filter_options : ga_filter_options;
+
   return (
     <BaseFilterDropdown<CategoryDivision>
       is_open={is_open}

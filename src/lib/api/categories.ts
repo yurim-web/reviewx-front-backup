@@ -6,19 +6,22 @@ import { apiClient } from "@/lib/api/client";
 
 // ── Division 타입 ──
 
-/** 백엔드 구분 enum (NOTICE / QUESTIONS) */
-export type CategoryDivision = "NOTICE" | "QUESTIONS";
+/** 백엔드 구분 enum (GA: NOTICE/QUESTIONS, SA: NOTICE/FAQ/EVENT) */
+export type CategoryDivision = "NOTICE" | "QUESTIONS" | "FAQ" | "EVENT";
 
 /** Division enum → 한글 표시명 매핑 */
 export const DIVISION_LABEL_MAP: Record<CategoryDivision, string> = {
   NOTICE: "공지사항",
   QUESTIONS: "자주 묻는 질문",
+  FAQ: "자주 묻는 질문",
+  EVENT: "이벤트",
 };
 
-/** 한글 표시명 → Division enum 역매핑 */
+/** 한글 표시명 → Division enum 역매핑 (GA 기준) */
 export const DIVISION_VALUE_MAP: Record<string, CategoryDivision> = {
   공지사항: "NOTICE",
   "자주 묻는 질문": "QUESTIONS",
+  이벤트: "EVENT",
 };
 
 // ── 카테고리 목록 API 타입 ──

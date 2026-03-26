@@ -33,6 +33,8 @@ import {
   DIVISION_LABEL_MAP,
 } from "@/lib/api/categories";
 import { useAdminCategories } from "@/hooks/manager/ga/useAdminCategories";
+import { useSAAdminCategories } from "@/hooks/manager/sa/community/useSAAdminCategories";
+import type { SACategoryListParams } from "@/lib/api/sa-categories";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
@@ -92,11 +94,16 @@ export default function CategoryTable({
   const router = useRouter();
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
+  const is_sa = manager_type === "sa";
+
   // API 파라미터 구성 (구분 필터가 1개일 때만 서버에 전달, 복수는 클라이언트 필터)
   const apiParams = selected_divisions.length === 1 ? { division: selected_divisions[0] } : {};
-  const { data: response, isLoading } = useAdminCategories(
-    search_query ? { ...apiParams, keyword: search_query } : apiParams
-  );
+  const queryParams = search_query ? { ...apiParams, keyword: search_query } : apiParams;
+
+  // GA/SA 훅 모두 무조건 호출 (React hooks 규칙)
+  const gaResult = useAdminCategories(queryParams);
+  const saResult = useSAAdminCategories(queryParams as SACategoryListParams);
+  const { data: response, isLoading } = is_sa ? saResult : gaResult;
 
   const categories = response?.data?.categories ?? [];
 

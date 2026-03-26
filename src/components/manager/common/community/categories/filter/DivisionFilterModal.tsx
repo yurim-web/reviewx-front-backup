@@ -22,10 +22,16 @@ interface DivisionFilterModalProps {
   on_close: () => void;
   selected_divisions: CategoryDivision[];
   on_apply: (divisions: CategoryDivision[]) => void;
+  manager_type?: "ga" | "sa";
 }
 
-const DivisionFilterModalComponent = createFilterModal<CategoryDivision>({
+const GADivisionFilterModalComponent = createFilterModal<CategoryDivision>({
   options: ["NOTICE", "QUESTIONS"],
+  section_title: "구분",
+});
+
+const SADivisionFilterModalComponent = createFilterModal<CategoryDivision>({
+  options: ["NOTICE", "FAQ", "EVENT"],
   section_title: "구분",
 });
 
@@ -34,9 +40,13 @@ export default function DivisionFilterModal({
   on_close,
   selected_divisions,
   on_apply,
+  manager_type = "ga",
 }: DivisionFilterModalProps) {
+  const ModalComponent =
+    manager_type === "sa" ? SADivisionFilterModalComponent : GADivisionFilterModalComponent;
+
   return (
-    <DivisionFilterModalComponent
+    <ModalComponent
       is_open={is_open}
       on_close={on_close}
       selected_values={selected_divisions}

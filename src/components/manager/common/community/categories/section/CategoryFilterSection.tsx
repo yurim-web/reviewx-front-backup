@@ -31,6 +31,7 @@ import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { CategoryDivision } from "@/lib/api/categories";
 import { DIVISION_LABEL_MAP } from "@/lib/api/categories";
 import { useDeleteCategory } from "@/hooks/manager/ga/useAdminCategories";
+import { useSADeleteCategory } from "@/hooks/manager/sa/community/useSAAdminCategories";
 import DivisionFilterDropdown from "@/components/manager/common/community/categories/filter/DivisionFilterDropdown";
 import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
@@ -55,7 +56,12 @@ export default function CategoryFilterSection({
   on_delete_complete,
 }: CategoryFilterSectionProps) {
   const router = useRouter();
-  const deleteMutation = useDeleteCategory();
+  const is_sa = manager_type === "sa";
+
+  // GA/SA 훅 모두 무조건 호출 (React hooks 규칙)
+  const gaDeleteMutation = useDeleteCategory();
+  const saDeleteMutation = useSADeleteCategory();
+  const deleteMutation = is_sa ? saDeleteMutation : gaDeleteMutation;
 
   const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
   const division_filter_button_ref = useRef<HTMLDivElement>(null);
@@ -140,6 +146,7 @@ export default function CategoryFilterSection({
               selected_divisions={selected_divisions}
               on_apply={handle_division_apply}
               container_ref={division_filter_button_ref}
+              manager_type={manager_type}
             />
           </div>
         }
