@@ -19,13 +19,15 @@ import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageT
 import PartnerStatsSection from "@/components/manager/common/member/partners/PartnerStatsSection";
 import PartnerFilterSection from "@/components/manager/common/member/partners/PartnerFilterSection";
 import PartnerTable from "@/components/manager/common/member/partners/PartnerTable";
-import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
+import Loading from "@/app/loading";
+import { useSAPartnerList, useSAPartnerStats } from "@/hooks/manager/sa/member/useSAPartnerList";
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type { PartnerDivision, PartnerStatus } from "@/data/manager_ga/common/filterOptions";
 import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 
 export default function PartnersPage() {
-  const { partners } = useAdminPartners();
+  const { partners, isLoading } = useSAPartnerList();
+  const { stats: sa_stats } = useSAPartnerStats();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -49,6 +51,8 @@ export default function PartnersPage() {
     table_ref.current?.open_restriction_modal();
   };
 
+  if (isLoading) return <Loading />;
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -56,7 +60,7 @@ export default function PartnersPage() {
         <ManagerPageTitle title="파트너 목록" />
 
         {/* 파트너 통계 섹션 */}
-        <PartnerStatsSection partners={partners} />
+        <PartnerStatsSection sa_stats={sa_stats} />
 
         {/* 필터 섹션 */}
         <PartnerFilterSection

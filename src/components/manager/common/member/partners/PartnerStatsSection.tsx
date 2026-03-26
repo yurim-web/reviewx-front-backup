@@ -24,10 +24,12 @@ import { subMonths, isWithinInterval } from "date-fns";
 
 interface PartnerStatsSectionProps {
   partners?: PartnerItem[];
+  sa_stats?: MemberStats;
 }
 
 export default function PartnerStatsSection({
   partners: partnersProp,
+  sa_stats,
 }: PartnerStatsSectionProps = {}) {
   // 클라이언트 마운트 상태 관리 (SSR Hydration 오류 방지)
   const [is_mounted, set_is_mounted] = useState(false);
@@ -40,6 +42,9 @@ export default function PartnerStatsSection({
   // 실제 파트너 목록 데이터에서 통계 계산
   // SSR Hydration 오류 방지를 위해 클라이언트에서만 localStorage 데이터를 반영합니다
   const stats: MemberStats = useMemo(() => {
+    // SA stats API가 있으면 직접 사용
+    if (sa_stats) return sa_stats;
+
     // API 데이터 없고 SSR이면 빈 통계 반환
     if (!partnersProp && !is_mounted) {
       return {
@@ -94,7 +99,7 @@ export default function PartnerStatsSection({
       monthly_new,
       dormant,
     };
-  }, [partnersProp, is_mounted]);
+  }, [partnersProp, is_mounted, sa_stats]);
 
   return (
     <MemberStatsSectionCommon
