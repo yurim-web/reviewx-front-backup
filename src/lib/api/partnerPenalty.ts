@@ -12,7 +12,7 @@
  * - src/hooks/partner/usePartnerPenalty.ts
  */
 
-import { apiClient } from "@/lib/api/client";
+import { partnerApiClient } from "@/lib/api/partnerClient";
 import type { PartnerPenaltyResponse, PenaltyTab } from "@/types/api/partnerPenalty";
 
 /**
@@ -22,7 +22,7 @@ import type { PartnerPenaltyResponse, PenaltyTab } from "@/types/api/partnerPena
 export const getPartnerPenalty = async (
   tab: PenaltyTab = "warning"
 ): Promise<PartnerPenaltyResponse> => {
-  const { data } = await apiClient.get<PartnerPenaltyResponse>("/partner/account/penalty", {
+  const { data } = await partnerApiClient.get<PartnerPenaltyResponse>("/partner/account/penalty", {
     params: { tab },
   });
   return data;

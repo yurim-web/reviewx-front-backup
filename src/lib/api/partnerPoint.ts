@@ -16,7 +16,7 @@
  * - hooks/partner/point/usePartnerPoints.ts
  */
 
-import { apiClient } from "@/lib/api/client";
+import { partnerApiClient } from "@/lib/api/partnerClient";
 import type { PartnerPointHistory } from "@/types/domain/partner";
 import type {
   PartnerPointsResponse,
@@ -35,7 +35,7 @@ export async function getPartnerPoints(
   page: number = 0,
   size: number = 15
 ): Promise<PartnerPointsResponse> {
-  const { data } = await apiClient.get<PartnerPointsResponse>("/partner/points", {
+  const { data } = await partnerApiClient.get<PartnerPointsResponse>("/partner/points", {
     params: { type, page, size },
   });
   return data;
@@ -46,7 +46,7 @@ export async function getPartnerPoints(
  * GET /partner/points/charge/{chargeId}/receipt
  */
 export async function getChargeReceipt(chargeId: number): Promise<ReceiptResponse> {
-  const { data } = await apiClient.get<ReceiptResponse>(
+  const { data } = await partnerApiClient.get<ReceiptResponse>(
     `/partner/points/charge/${chargeId}/receipt`
   );
   return data;
@@ -59,7 +59,7 @@ export async function getChargeReceipt(chargeId: number): Promise<ReceiptRespons
  * ⚠️ 백엔드 엔드포인트: /partner/point/charge (배포 시 URL 변경 필요)
  */
 export async function requestPointCharge(body: ChargeRequest): Promise<ChargeResponse> {
-  const { data } = await apiClient.post<ChargeResponse>("/partner/points/charge", body);
+  const { data } = await partnerApiClient.post<ChargeResponse>("/partner/points/charge", body);
   return data;
 }
 
@@ -68,7 +68,7 @@ export async function requestPointCharge(body: ChargeRequest): Promise<ChargeRes
  * @deprecated getPartnerPoints 사용
  */
 export const fetchPartnerPointHistory = (partnerId: number): Promise<PartnerPointHistory[]> =>
-  apiClient
+  partnerApiClient
     .get<PartnerPointHistory[]>("/partner/point/history", {
       params: { partner_id: partnerId },
     })
