@@ -15,10 +15,12 @@
 
 import ProgressPageCommon from "@/components/manager/common/campaign/progress/ProgressPageCommon";
 import Loading from "@/app/loading";
-import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
+import { useSACampaignProgress } from "@/hooks/manager/sa/campaign/useSACampaignProgress";
 
 export default function ProgressPage() {
-  const { campaigns, isLoading } = useAdminCampaigns();
+  const { campaigns, isLoading, reportCampaign } = useSACampaignProgress();
   if (isLoading) return <Loading />;
-  return <ProgressPageCommon manager_type="sa" campaigns={campaigns} />;
+  return (
+    <ProgressPageCommon manager_type="sa" campaigns={campaigns} onReportCampaign={reportCampaign} />
+  );
 }
