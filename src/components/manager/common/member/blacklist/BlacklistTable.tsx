@@ -21,6 +21,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/manager/common/member/blacklist/blacklist_table.module.css";
 import { remove_blacklist_item } from "@/data/manager_ga/member/blacklist";
 import { useAdminBlacklist } from "@/hooks/manager/ga/useAdminBlacklist";
+import { useSABlacklist, useSAUnblockUser } from "@/hooks/manager/sa/member/useSABlacklist";
 import type { AdminBlacklistApiItem } from "@/types/api/admin";
 import CommonTableWithTooltip from "@/components/manager/common/table/CommonTableWithTooltip";
 import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
@@ -125,8 +126,16 @@ export default function BlacklistTable({
   // 블랙리스트 데이터 업데이트를 위한 상태 (리렌더링 트리거)
   const [blacklist_update_key, set_blacklist_update_key] = useState<number>(0);
 
-  // API 훅으로 차단 목록 조회
-  const { blacklist, isLoading } = useAdminBlacklist();
+  // 현재 SA/GA 판단
+  const is_sa = pathname?.includes("/manager_sa");
+
+  // API 훅으로 차단 목록 조회 (SA/GA 분기)
+  const gaResult = useAdminBlacklist();
+  const saResult = useSABlacklist();
+  const { blacklist, isLoading } = is_sa ? saResult : gaResult;
+
+  // SA 이용 제한 해제 뮤테이션
+  const saUnblockMutation = useSAUnblockUser();
 
   // 검색어 및 필터로 필터링된 차단 내역 목록
   const filtered_blacklist = useMemo(() => {
@@ -235,19 +244,21 @@ export default function BlacklistTable({
   // 차단 해제 확인 핸들러
   const handle_unblock_confirm = () => {
     if (unblock_modal_state.row_id) {
-      // 블랙리스트에서 항목 제거
-      remove_blacklist_item(unblock_modal_state.row_id);
-
-      // 확인 모달 닫기
-      handle_unblock_modal_close();
-
-      // 해제 완료 모달 표시
-      set_unblock_complete_modal_state(true);
-
-      // 목록 업데이트를 위한 리렌더링 트리거
-      set_blacklist_update_key((prev) => prev + 1);
-
-      // TODO: 실제 차단 해제 API 호출
+      if (is_sa) {
+        // SA: API로 이용 제한 해제
+        saUnblockMutation.mutate(unblock_modal_state.row_id, {
+          onSuccess: () => {
+            handle_unblock_modal_close();
+            set_unblock_complete_modal_state(true);
+          },
+        });
+      } else {
+        // GA: 기존 localStorage 방식
+        remove_blacklist_item(unblock_modal_state.row_id);
+        handle_unblock_modal_close();
+        set_unblock_complete_modal_state(true);
+        set_blacklist_update_key((prev) => prev + 1);
+      }
     }
   };
 
