@@ -16,7 +16,7 @@
 import { useMemo } from "react";
 import styles from "@/styles/manager/common/settlement/stat_cards_section.module.css";
 import { type PaymentHistoryItem } from "@/data/manager_sa/settlement/paymentHistoryData";
-import { useAdminPayments } from "@/hooks/manager/ga/useAdminPayments";
+import { useSAPaymentHistory } from "@/hooks/manager/sa/settlement/useSAPaymentHistory";
 import { parseFormattedAmount, formatCurrency } from "@/utils/formatting/amount";
 import { isDateInRange, getCurrentWeekRange, getCurrentMonthRange } from "@/utils/formatting/date";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -47,7 +47,7 @@ export default function StatCardsSection({
   selected_account_statuses = [],
 }: StatCardsSectionProps) {
   // API 또는 static fallback 데이터
-  const { payments: api_payments } = useAdminPayments();
+  const { payments: api_payments } = useSAPaymentHistory();
 
   // 필터링된 데이터를 계산하는 useMemo
   const filtered_data = useMemo(() => {

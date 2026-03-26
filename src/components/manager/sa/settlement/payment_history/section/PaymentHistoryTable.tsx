@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import usePortalDropdownMenu from "@/hooks/manager/common/usePortalDropdownMenu";
@@ -26,7 +26,7 @@ import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_sa/settlement/payment_history/payment_history_table.module.css";
 import { type PaymentHistoryItem } from "@/data/manager_sa/settlement/paymentHistoryData";
-import { useAdminPayments } from "@/hooks/manager/ga/useAdminPayments";
+import { useSAPaymentHistory } from "@/hooks/manager/sa/settlement/useSAPaymentHistory";
 import PaymentMethodTag from "@/components/manager/common/tags/PaymentMethodTag";
 import type { PaymentMethod } from "@/components/manager/common/tags/PaymentMethodTag";
 import BusinessTypeTag from "@/components/manager/common/tags/BusinessTypeTag";
@@ -88,14 +88,7 @@ export default function PaymentHistoryTable({
   });
 
   // API 또는 static fallback 데이터
-  const { payments: api_payments } = useAdminPayments();
-
-  // 결제 내역 데이터 상태 (API 데이터 또는 localStorage 병합)
-  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItem[]>(api_payments);
-
-  useEffect(() => {
-    setPaymentHistory(api_payments);
-  }, [api_payments]);
+  const { payments: api_payments } = useSAPaymentHistory();
 
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000", "999999")
@@ -112,7 +105,7 @@ export default function PaymentHistoryTable({
   };
 
   // 검색어 및 필터로 필터링된 결제 내역 목록
-  const filtered_payment_history_list = paymentHistory.filter((item) => {
+  const filtered_payment_history_list = api_payments.filter((item) => {
     // 검색어 필터
     // 학습 포인트:
     // - includes() 메서드: 문자열에 특정 문자열이 포함되어 있는지 확인합니다

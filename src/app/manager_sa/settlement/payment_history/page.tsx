@@ -27,7 +27,7 @@ import type { PaymentStatus } from "@/components/manager/sa/settlement/payment_h
 import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterDropdown";
 import type { TaxInvoiceType } from "@/components/manager/sa/settlement/payment_history/filter/TaxInvoiceTypeFilterDropdown";
 import type { MemberType } from "@/components/manager/sa/settlement/payment_history/filter/MemberTypeFilterDropdown";
-import { useAdminPayments } from "@/hooks/manager/ga/useAdminPayments";
+import { useSAPaymentHistory } from "@/hooks/manager/sa/settlement/useSAPaymentHistory";
 
 /**
  * 이번 달의 시작일과 종료일을 계산하는 함수
@@ -65,7 +65,7 @@ function get_current_month_range(): DateRange {
 }
 
 export default function PaymentHistoryPage() {
-  const { isLoading } = useAdminPayments();
+  const { isLoading } = useSAPaymentHistory();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
