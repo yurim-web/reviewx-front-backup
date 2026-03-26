@@ -119,7 +119,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
       <article className={styles.container}>
         {/* 상단 배너는 생략하고, 바로 검색 결과 리스트 + 정렬 필터만 노출 */}
-        <SearchResultsSection campaigns={filtered_campaigns} />
+        <SearchResultsSection campaigns={filtered_campaigns} keyword={keyword} />
       </article>
 
       {/* 푸터 */}
