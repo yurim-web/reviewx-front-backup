@@ -24,14 +24,20 @@ import type { MemberStats } from "@/components/manager/common/member/stats/Membe
 
 interface ReviewerStatsSectionProps {
   reviewers?: ReviewerItem[];
+  sa_stats?: MemberStats;
 }
 
-export default function ReviewerStatsSection({ reviewers }: ReviewerStatsSectionProps = {}) {
+export default function ReviewerStatsSection({
+  reviewers,
+  sa_stats,
+}: ReviewerStatsSectionProps = {}) {
   // API 데이터 또는 정적 데이터 사용
   const source = reviewers ?? reviewer_list;
 
-  // 실제 리뷰어 목록 데이터에서 통계 계산
+  // SA stats API가 있으면 직접 사용, 없으면 클라이언트 계산
   const stats: MemberStats = useMemo(() => {
+    if (sa_stats) return sa_stats;
+
     const now = new Date();
     const oneMonthAgo = new Date(now);
     oneMonthAgo.setMonth(now.getMonth() - 1);
@@ -65,7 +71,7 @@ export default function ReviewerStatsSection({ reviewers }: ReviewerStatsSection
       monthly_new,
       dormant,
     };
-  }, [source]);
+  }, [source, sa_stats]);
 
   return (
     <MemberStatsSectionCommon

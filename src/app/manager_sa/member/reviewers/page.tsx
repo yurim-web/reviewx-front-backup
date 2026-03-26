@@ -15,17 +15,19 @@
 
 import { useState, useRef } from "react";
 import styles from "@/styles/manager/common/manager_common_page.module.css";
+import Loading from "@/app/loading";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import ReviewerStatsSection from "@/components/manager/common/member/reviewers/ReviewerStatsSection";
 import ReviewerFilterSection from "@/components/manager/common/member/reviewers/ReviewerFilterSection";
 import ReviewerTable from "@/components/manager/common/member/reviewers/ReviewerTable";
-import { useAdminReviewers } from "@/hooks/manager/ga/useAdminReviewers";
+import { useSAReviewerList, useSAReviewerStats } from "@/hooks/manager/sa/member/useSAReviewerList";
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type { ReviewerStatus, ReviewerStatusType } from "@/data/manager_ga/common/filterOptions";
 import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 
 export default function ReviewersPage() {
-  const { reviewers } = useAdminReviewers();
+  const { reviewers, isLoading } = useSAReviewerList();
+  const { stats: sa_stats } = useSAReviewerStats();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -49,6 +51,8 @@ export default function ReviewersPage() {
     table_ref.current?.open_restriction_modal();
   };
 
+  if (isLoading) return <Loading />;
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -56,7 +60,7 @@ export default function ReviewersPage() {
         <ManagerPageTitle title="리뷰어 목록" />
 
         {/* 리뷰어 통계 섹션 */}
-        <ReviewerStatsSection reviewers={reviewers} />
+        <ReviewerStatsSection sa_stats={sa_stats} />
 
         {/* 필터 섹션 */}
         <ReviewerFilterSection
