@@ -20,6 +20,11 @@ import {
   useCreateBoard,
   useUpdateBoard,
 } from "@/hooks/manager/ga/useAdminPosts";
+import {
+  useSABoardFormOptions,
+  useSACreateBoard,
+  useSAUpdateBoard,
+} from "@/hooks/manager/sa/community/useSAAdminPosts";
 import type { BoardDivision, BoardTarget, BoardCategoryOption } from "@/lib/api/posts";
 import { BOARD_DIVISION_LABEL_MAP, BOARD_TARGET_LABEL_MAP } from "@/lib/api/posts";
 
@@ -74,13 +79,20 @@ export default function usePostForm({
   const button_text = mode === "create" ? "등록" : "저장";
   const form_aria_label = mode === "create" ? "게시글 등록 폼" : "게시글 수정 폼";
 
-  // 폼 옵션 API 조회
-  const { data: formOptionsRes } = useBoardFormOptions();
-  const formOptions = formOptionsRes?.data;
+  const is_sa = manager_type === "sa";
 
-  // 뮤테이션
-  const createBoard = useCreateBoard();
-  const updateBoard = useUpdateBoard();
+  // 폼 옵션 API 조회 (GA/SA 모두 호출 — React 규칙)
+  const gaFormOptions = useBoardFormOptions();
+  const saFormOptions = useSABoardFormOptions();
+  const formOptions = is_sa ? saFormOptions.data?.data : gaFormOptions.data?.data;
+
+  // GA 뮤테이션
+  const gaCreateBoard = useCreateBoard();
+  const gaUpdateBoard = useUpdateBoard();
+
+  // SA 뮤테이션
+  const saCreateBoard = useSACreateBoard();
+  const saUpdateBoard = useSAUpdateBoard();
 
   // initial_data의 division/target은 enum 값으로 올 수 있음 → 한글 레이블로 변환
   const toLabel = (val: string, map: Record<string, string>) => map[val] || val;
@@ -137,7 +149,7 @@ export default function usePostForm({
       .sort((a: string, b: string) => a.localeCompare(b, "ko-KR"));
   }, [category_type, formOptions]);
 
-  // boardCategoryId 가져오기
+  // boardCategoryId 가져오기 (GA용)
   const getBoardCategoryId = (catName: string, divLabel: string): number => {
     if (!formOptions?.boardCategories) return 0;
     const divEnum = divisionLabelToEnum[divLabel];
@@ -145,6 +157,17 @@ export default function usePostForm({
       (c: BoardCategoryOption) => c.categoryName === catName && c.division === divEnum
     );
     return found?.boardCategoryId || 0;
+  };
+
+  // SA: 카테고리명 → 카테고리 코드 변환
+  const getCategoryCode = (catName: string, divLabel: string): string => {
+    if (!formOptions?.boardCategories) return "";
+    const divEnum = divisionLabelToEnum[divLabel];
+    const found = formOptions.boardCategories.find(
+      (c: BoardCategoryOption) => c.categoryName === catName && c.division === divEnum
+    );
+    // SA 훅에서 categoryCode를 추가 (useSABoardFormOptions)
+    return (found as BoardCategoryOption & { categoryCode?: string })?.categoryCode || "";
   };
 
   // 작성 모드: 카테고리 기본 선택
@@ -212,32 +235,62 @@ export default function usePostForm({
 
     const divisionEnum = divisionLabelToEnum[category_type] || "NOTICE";
     const targetEnum = targetLabelToEnum[target] || "ALL";
-    const boardCategoryId = getBoardCategoryId(category, category_type);
 
     try {
-      if (mode === "create") {
-        await createBoard.mutateAsync({
-          division: divisionEnum,
-          boardCategoryId,
-          target: targetEnum,
-          title: title.trim(),
-          content,
-        });
-      } else {
-        if (!post_id) {
-          alert("게시글 ID가 없습니다.");
-          return;
+      if (is_sa) {
+        // SA: category code 기반 등록/수정
+        const categoryCode = getCategoryCode(category, category_type);
+        if (mode === "create") {
+          await saCreateBoard.mutateAsync({
+            division: divisionEnum,
+            category: categoryCode,
+            target: targetEnum,
+            title: title.trim(),
+            content,
+          });
+        } else {
+          if (!post_id) {
+            alert("게시글 ID가 없습니다.");
+            return;
+          }
+          await saUpdateBoard.mutateAsync({
+            boardId: Number(post_id),
+            body: {
+              division: divisionEnum,
+              boardCategory: categoryCode,
+              target: targetEnum,
+              title: title.trim(),
+              content,
+            },
+          });
         }
-        await updateBoard.mutateAsync({
-          boardId: Number(post_id),
-          body: {
+      } else {
+        // GA: boardCategoryId 기반 등록/수정
+        const boardCategoryId = getBoardCategoryId(category, category_type);
+        if (mode === "create") {
+          await gaCreateBoard.mutateAsync({
             division: divisionEnum,
             boardCategoryId,
             target: targetEnum,
             title: title.trim(),
             content,
-          },
-        });
+          });
+        } else {
+          if (!post_id) {
+            alert("게시글 ID가 없습니다.");
+            return;
+          }
+          await gaUpdateBoard.mutateAsync({
+            boardId: Number(post_id),
+            body: {
+              division: divisionEnum,
+              boardCategoryId,
+              target: targetEnum,
+              title: title.trim(),
+              content,
+            },
+          });
+        }
       }
 
       set_show_toast(true);

@@ -145,6 +145,7 @@ export interface BoardCategoryOption {
   boardCategoryId: number;
   categoryName: string;
   division: BoardDivision;
+  categoryCode?: string; // SA에서 카테고리 코드로 등록/수정 시 사용
 }
 
 /** 폼 옵션 응답 data (GET /api/admin/boards/form) */

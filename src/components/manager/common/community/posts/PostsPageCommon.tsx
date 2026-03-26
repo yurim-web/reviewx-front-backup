@@ -25,6 +25,12 @@ import type { PostDivision } from "@/data/manager_ga/common/filterOptions";
 import type { PostTarget } from "@/data/manager_ga/community/postsData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import { useAdminPosts, useDeleteBoard, useToggleBoardFix } from "@/hooks/manager/ga/useAdminPosts";
+import {
+  useSAAdminPosts,
+  useSADeleteBoards,
+  useSAPinBoard,
+  useSAUnpinBoard,
+} from "@/hooks/manager/sa/community/useSAAdminPosts";
 import Loading from "@/app/loading";
 import BaseModal from "@/components/common/modal/BaseModal";
 import Toast from "@/components/common/toast/Toast";
@@ -84,10 +90,21 @@ export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) 
     ...(selected_date_range?.to ? { endDate: format(selected_date_range.to, "yyyy-MM-dd") } : {}),
   };
 
-  // API 훅
-  const { data: listResponse, isLoading } = useAdminPosts(api_params);
-  const deleteBoard = useDeleteBoard();
-  const toggleFix = useToggleBoardFix();
+  const is_sa = manager_type === "sa";
+
+  // API 훅 (GA/SA 모두 호출 — React 규칙, 사용할 결과만 선택)
+  const gaListResult = useAdminPosts(api_params);
+  const saListResult = useSAAdminPosts(api_params);
+  const { data: listResponse, isLoading } = is_sa ? saListResult : gaListResult;
+
+  // GA 뮤테이션
+  const gaDeleteBoard = useDeleteBoard();
+  const gaToggleFix = useToggleBoardFix();
+
+  // SA 뮤테이션
+  const saDeleteBoards = useSADeleteBoards();
+  const saPinBoard = useSAPinBoard();
+  const saUnpinBoard = useSAUnpinBoard();
 
   // API 데이터 → 테이블 행 변환
   const boards = listResponse?.data?.boards || [];
@@ -95,16 +112,28 @@ export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) 
   // 고정 토글 핸들러
   const handle_pin_selected_posts = async () => {
     if (selected_post_ids.length === 0) return;
-    for (const id of selected_post_ids) {
-      await toggleFix.mutateAsync({ boardId: Number(id), body: { isFixed: true } });
+    if (is_sa) {
+      for (const id of selected_post_ids) {
+        await saPinBoard.mutateAsync(Number(id));
+      }
+    } else {
+      for (const id of selected_post_ids) {
+        await gaToggleFix.mutateAsync({ boardId: Number(id), body: { isFixed: true } });
+      }
     }
     set_toast({ is_open: true, message: "저장되었습니다." });
   };
 
   const handle_unpin_selected_posts = async () => {
     if (selected_post_ids.length === 0) return;
-    for (const id of selected_post_ids) {
-      await toggleFix.mutateAsync({ boardId: Number(id), body: { isFixed: false } });
+    if (is_sa) {
+      for (const id of selected_post_ids) {
+        await saUnpinBoard.mutateAsync(Number(id));
+      }
+    } else {
+      for (const id of selected_post_ids) {
+        await gaToggleFix.mutateAsync({ boardId: Number(id), body: { isFixed: false } });
+      }
     }
     set_toast({ is_open: true, message: "저장되었습니다." });
   };
@@ -116,8 +145,14 @@ export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) 
   };
 
   const handle_delete_confirm = async () => {
-    for (const id of selected_post_ids) {
-      await deleteBoard.mutateAsync(Number(id));
+    if (is_sa) {
+      // SA: 복수 삭제 (단일 API 호출)
+      await saDeleteBoards.mutateAsync(selected_post_ids.map(Number));
+    } else {
+      // GA: 개별 삭제
+      for (const id of selected_post_ids) {
+        await gaDeleteBoard.mutateAsync(Number(id));
+      }
     }
     set_selected_post_ids([]);
     set_is_delete_modal_open(false);

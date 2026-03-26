@@ -16,6 +16,7 @@
 
 import { useParams } from "next/navigation";
 import { useBoardDetail } from "@/hooks/manager/ga/useAdminPosts";
+import { useSABoardDetail } from "@/hooks/manager/sa/community/useSAAdminPosts";
 import { BOARD_DIVISION_LABEL_MAP } from "@/lib/api/posts";
 import PostDetailPageCommon, {
   type PostDetailData,
@@ -53,7 +54,10 @@ export default function PostDetailPageClient({ manager_type }: PostDetailPageCli
   const base_path =
     manager_type === "ga" ? "/manager_ga/community/posts" : "/manager_sa/community/posts";
 
-  const { data: detailRes, isLoading } = useBoardDetail(Number(post_id));
+  const is_sa = manager_type === "sa";
+  const gaDetail = useBoardDetail(Number(post_id));
+  const saDetail = useSABoardDetail(Number(post_id));
+  const { data: detailRes, isLoading } = is_sa ? saDetail : gaDetail;
   const board = detailRes?.data;
 
   const post_detail_data: PostDetailData | null = board

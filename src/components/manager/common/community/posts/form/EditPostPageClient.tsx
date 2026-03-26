@@ -17,6 +17,7 @@
 import Loading from "@/app/loading";
 import PostFormPageClient from "./PostFormPageClient";
 import { useBoardDetail } from "@/hooks/manager/ga/useAdminPosts";
+import { useSABoardDetail } from "@/hooks/manager/sa/community/useSAAdminPosts";
 
 interface EditPostPageClientProps {
   post_id: string;
@@ -24,7 +25,10 @@ interface EditPostPageClientProps {
 }
 
 export default function EditPostPageClient({ post_id, manager_type }: EditPostPageClientProps) {
-  const { data: detailRes, isLoading } = useBoardDetail(Number(post_id));
+  const is_sa = manager_type === "sa";
+  const gaDetail = useBoardDetail(Number(post_id));
+  const saDetail = useSABoardDetail(Number(post_id));
+  const { data: detailRes, isLoading } = is_sa ? saDetail : gaDetail;
   const board = detailRes?.data;
 
   if (isLoading) {
