@@ -321,6 +321,7 @@ export function editApiResponseToFormData(response: CampaignEditPageResponse): C
   }
 
   // 구매평 구매 링크/포인트
+  const isPurchase = c.type === "PURCHASE";
   const purchaseLink = ext.purchaseInfo?.purchaseLink ?? c.promotionUrl ?? "";
   const purchasePoints = ext.purchaseInfo?.purchasePoint ?? c.reward?.paymentRewardPoint ?? 0;
 
@@ -359,7 +360,7 @@ export function editApiResponseToFormData(response: CampaignEditPageResponse): C
     contactPhone: ext.contact_phone ?? "",
     isUrgent: ext.isEmergency ?? false,
     fairTradeAgreement: true,
-    promotionLink: c.type === "PURCHASE" ? purchaseLink : (c.promotionUrl ?? ""),
+    promotionLink: isPurchase ? purchaseLink : (c.promotionUrl ?? ""),
     // 방문형
     visitLink: c.type === "VISIT" ? (c.promotionUrl ?? "") : "",
     region,
