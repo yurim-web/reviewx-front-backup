@@ -54,6 +54,14 @@ interface RejectedCampaignTableProps {
   search_query: string;
   selected_reject_codes: RejectCode[];
   selected_date_range?: DateRange | undefined;
+  on_update_code?: (
+    rejectId: number,
+    body: { rejectCode?: string; adminMemo?: string }
+  ) => Promise<void>;
+  on_report_submit?: (
+    rejectId: number,
+    body: { reportCode: string; reportReason?: string }
+  ) => Promise<void>;
 }
 
 // RejectedCampaignItem이 TableRowData를 확장하도록 확장
@@ -120,6 +128,8 @@ export default function RejectedCampaignTable({
   search_query,
   selected_reject_codes,
   selected_date_range,
+  on_update_code,
+  on_report_submit,
 }: RejectedCampaignTableProps) {
   const [hovered_report_row_id, set_hovered_report_row_id] = useState<string | null>(null);
 
@@ -216,11 +226,21 @@ export default function RejectedCampaignTable({
       report_count: 1,
     };
 
-    // 신고 내역에 추가
+    // 신고 내역에 추가 (로컬 상태)
     add_reported_campaign(new_reported_item);
 
     // 반려 내역에서 제거 (localStorage에 저장)
     remove_rejected_campaign(rejected_item.id);
+
+    // 실제 API 호출
+    if (on_report_submit) {
+      on_report_submit(parseInt(rejected_item.id), {
+        reportCode: report_code,
+        reportReason: report_reason,
+      }).catch(() => {
+        /* 실패해도 로컬 처리는 완료 */
+      });
+    }
 
     // 목록 업데이트를 위한 리렌더링 트리거
     trigger_update();
@@ -391,6 +411,11 @@ export default function RejectedCampaignTable({
           on_confirm={(reason_text) => {
             if (modal_state.item) {
               modal_state.item.reject_reason = reason_text;
+              if (on_update_code) {
+                on_update_code(parseInt(modal_state.item.id), { adminMemo: reason_text }).catch(
+                  () => {}
+                );
+              }
               trigger_update();
             }
           }}

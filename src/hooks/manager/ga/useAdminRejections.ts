@@ -16,8 +16,8 @@
  */
 
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getRejectedCampaigns } from "@/lib/api/admin";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRejectedCampaigns, updateRejectCode, reportRejectedItem } from "@/lib/api/admin";
 import { rejected_campaign_list } from "@/data/manager_ga/rejected";
 import type { RejectedCampaignApiItem, RejectedListParams } from "@/types/api/admin";
 import type { RejectedCampaignItem, RejectCode } from "@/data/manager_ga/rejected";
@@ -48,10 +48,38 @@ function adaptRejection(item: RejectedCampaignApiItem): RejectedCampaignItem {
 }
 
 export function useAdminRejections(params?: RejectedListParams) {
-  const { data: apiResponse, isLoading } = useQuery({
+  const queryClient = useQueryClient();
+
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["adminRejections", params],
     queryFn: () => getRejectedCampaigns(params),
     staleTime: 30_000,
+  });
+
+  const updateCodeMutation = useMutation({
+    mutationFn: ({
+      rejectId,
+      body,
+    }: {
+      rejectId: number;
+      body: { rejectCode?: string; adminMemo?: string };
+    }) => updateRejectCode(rejectId, body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["adminRejections"] }),
+  });
+
+  const reportMutation = useMutation({
+    mutationFn: ({
+      rejectId,
+      body,
+    }: {
+      rejectId: number;
+      body: { reportCode: string; reportReason?: string };
+    }) => reportRejectedItem(rejectId, body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["adminRejections"] }),
   });
 
   const rejections = useMemo<RejectedCampaignItem[]>(() => {
@@ -70,5 +98,11 @@ export function useAdminRejections(params?: RejectedListParams) {
     return apiResponse?.data?.pagination ?? null;
   }, [apiResponse]);
 
-  return { rejections, stats, pagination, isLoading };
+  const updateCode = (rejectId: number, body: { rejectCode?: string; adminMemo?: string }) =>
+    updateCodeMutation.mutateAsync({ rejectId, body });
+
+  const report = (rejectId: number, body: { reportCode: string; reportReason?: string }) =>
+    reportMutation.mutateAsync({ rejectId, body });
+
+  return { rejections, stats, pagination, isLoading, isError, updateCode, report };
 }

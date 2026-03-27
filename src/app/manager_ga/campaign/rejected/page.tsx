@@ -29,6 +29,7 @@ import RejectStatsSection from "@/components/manager/ga/campaign/rejected/sectio
 import CampaignRejectedFilterSection from "@/components/manager/ga/campaign/rejected/section/CampaignRejectedFilterSection";
 import RejectedCampaignTable from "@/components/manager/ga/campaign/rejected/section/RejectedCampaignTable";
 import Loading from "@/app/loading";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { useAdminRejections } from "@/hooks/manager/ga/useAdminRejections";
 import type { RejectCode } from "@/data/manager_ga/rejected";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -57,7 +58,7 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
  * @returns 전체 반려 내역 페이지 JSX
  */
 export default function RejectedPage() {
-  const { rejections, isLoading } = useAdminRejections();
+  const { rejections, isLoading, isError, updateCode, report } = useAdminRejections();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -78,6 +79,17 @@ export default function RejectedPage() {
   });
 
   if (isLoading) return <Loading />;
+
+  if (isError)
+    return (
+      <BaseModal
+        is_open={true}
+        on_close={() => {}}
+        message={"오류가 발생했습니다.\n잠시 후 다시 시도해주세요."}
+        buttons={["확인"]}
+        type="center"
+      />
+    );
 
   return (
     <div className={styles.page_container}>
@@ -116,6 +128,8 @@ export default function RejectedPage() {
           search_query={search_query}
           selected_reject_codes={selected_reject_codes}
           selected_date_range={selected_date_range}
+          on_update_code={updateCode}
+          on_report_submit={report}
         />
       </div>
     </div>

@@ -58,3 +58,21 @@ export const WithFilters: Story = {
     selected_reject_codes: ["RJ001", "RJ002"] as unknown as RejectCode[],
   },
 };
+
+// 빈 상태 — 검색 결과 없음
+export const Empty: Story = {
+  render: (args) => React.createElement(RejectedCampaignTable, args),
+  args: {
+    search_query: "존재하지않는캠페인명검색어xyz",
+    selected_reject_codes: [],
+  },
+};
+
+// 반려 코드 필터 선택
+export const WithRejectCodeFilter: Story = {
+  render: (args) => React.createElement(RejectedCampaignTable, args),
+  args: {
+    search_query: "",
+    selected_reject_codes: ["R001", "R002"] as unknown as RejectCode[],
+  },
+};
