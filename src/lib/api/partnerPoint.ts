@@ -17,6 +17,7 @@
  */
 
 import { partnerApiClient } from "@/lib/api/partnerClient";
+import { apiClient } from "@/lib/api/client";
 import type { PartnerPointHistory } from "@/types/domain/partner";
 import type {
   PartnerPointsResponse,
@@ -28,14 +29,14 @@ import type {
 
 /**
  * 파트너 포인트 내역 조회 (신규 API)
- * GET /partner/points?type=ALL|CHARGE|USE
+ * GET /partner/point/all?type=ALL|CHARGE|USE
  */
 export async function getPartnerPoints(
   type: PointFilterType = "ALL",
   page: number = 0,
   size: number = 15
 ): Promise<PartnerPointsResponse> {
-  const { data } = await partnerApiClient.get<PartnerPointsResponse>("/partner/points", {
+  const { data } = await partnerApiClient.get<PartnerPointsResponse>("/partner/point/all", {
     params: { type, page, size },
   });
   return data;
@@ -44,6 +45,8 @@ export async function getPartnerPoints(
 /**
  * 거래명세서 조회 (충전 항목 전용)
  * GET /partner/points/charge/{chargeId}/receipt
+ *
+ * TODO: 백엔드 미구현 — 실제 엔드포인트 확정 후 URL 수정 필요
  */
 export async function getChargeReceipt(chargeId: number): Promise<ReceiptResponse> {
   const { data } = await partnerApiClient.get<ReceiptResponse>(
@@ -54,12 +57,12 @@ export async function getChargeReceipt(chargeId: number): Promise<ReceiptRespons
 
 /**
  * 포인트 충전 요청
- * POST /partner/points/charge
+ * POST /api/points/charge (PointTransactionController — JWT Bearer 인증)
  *
- * ⚠️ 백엔드 엔드포인트: /partner/point/charge (배포 시 URL 변경 필요)
+ * ⚠️ partnerApiClient(세션) 대신 apiClient(JWT Bearer)를 사용해야 함
  */
 export async function requestPointCharge(body: ChargeRequest): Promise<ChargeResponse> {
-  const { data } = await partnerApiClient.post<ChargeResponse>("/partner/points/charge", body);
+  const { data } = await apiClient.post<ChargeResponse>("/api/points/charge", body);
   return data;
 }
 

@@ -75,9 +75,9 @@ export interface BankChargeRequest {
   agreeToTerms: boolean;
   depositorName: string;
   receiptType: ReceiptType;
-  /** 이름 — 백엔드에서는 항상 필수(Y), 프론트에서는 receiptType이 CASH_RECEIPT_INCOME일 때만 입력 */
+  /** 이름 — receiptType별 조건부 (NONE: 빈값 허용, TAX_INVOICE: user.name 자동전송) */
   name: string;
-  /** 휴대폰 번호 — 백엔드에서는 항상 필수(Y), 프론트에서는 receiptType이 CASH_RECEIPT_INCOME일 때만 입력 */
+  /** 휴대폰 번호 — receiptType별 조건부 (NONE: 빈값 허용, TAX_INVOICE: user.contact_phone 자동전송) */
   phoneNumber: string;
   refundBank: string;
   refundAccountNumber: string;

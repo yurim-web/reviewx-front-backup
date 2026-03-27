@@ -279,8 +279,7 @@ export default function PartnerPointChargePage() {
       return;
     }
 
-    // name/phoneNumber: 백엔드에서 항상 필수(Y)이므로
-    // receiptType에 따라 적절한 값을 전송
+    // name/phoneNumber: receiptType별 조건부 전송
     let name = "";
     let phoneNumber = "";
     if (invoiceType === "cash_income") {
@@ -291,7 +290,8 @@ export default function PartnerPointChargePage() {
       phoneNumber = cashReceiptExpense.business_number.replace(/-/g, "");
     } else if (invoiceType === "tax_invoice") {
       name = user?.name || "";
-      phoneNumber = "";
+      phoneNumber =
+        (user as unknown as { contact_phone?: string })?.contact_phone?.replace(/-/g, "") || "";
     }
 
     chargeMutation.mutate(
