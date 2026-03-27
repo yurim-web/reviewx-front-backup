@@ -5,7 +5,7 @@
 /**
  * useAppliedCampaigns
  *
- * 목적: 신청 탭의 캠페인 데이터를 mock 서버에서 조회·필터링·통계 계산합니다.
+ * 목적: 신청 탭의 캠페인 데이터를 실제 API(R-27)에서 조회·매핑·통계 계산합니다.
  *
  * 사용 페이지:
  * - /user/campaign_management/applied (신청 탭)
@@ -13,62 +13,69 @@
 
 import { useState, useEffect, useMemo, Dispatch, SetStateAction } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { fetchReviewerCampaigns } from "@/lib/api/reviewer";
-import { getReviewerIdNum } from "@/hooks/user/mypage/useReviewerProfile";
+import { fetchMyCampaigns, type MyCampaignItem } from "@/lib/api/userCampaignManagement";
 import type { CampaignApplication } from "@/types/domain/user";
 
-// db.json status → CampaignApplication.status 매핑
-function mapStatus(dbStatus: string): CampaignApplication["status"] {
-  switch (dbStatus) {
-    case "신청완료":
-      return "신청";
-    case "선정완료":
-    case "콘텐츠등록":
-      return "선정";
-    case "완료":
-      return "완료";
-    default:
-      return "취소/반려";
-  }
+const statusMap: Record<string, CampaignApplication["status"]> = {
+  APPLIED: "신청",
+  SELECTED: "선정",
+  COMPLETE: "완료",
+  CANCELED: "취소/반려",
+  REJECT: "취소/반려",
+};
+
+const typeLabel: Record<string, string> = {
+  DELIVERY: "배송형",
+  VISIT: "방문형",
+  PURCHASE: "구매평",
+  REPORTER: "기자단",
+  MISSION: "미션형",
+};
+
+function calcRemainingDays(recruitEndAt: string): number {
+  if (!recruitEndAt) return 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(recruitEndAt);
+  if (isNaN(end.getTime())) return 0;
+  end.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+}
+
+function mapItem(item: MyCampaignItem): CampaignApplication {
+  return {
+    id: String(item.campaignId),
+    title: item.title || "",
+    category: "",
+    image: item.thumbnailUrl || "",
+    status: statusMap[item.status] || "취소/반려",
+    remainingDays: calcRemainingDays(item.recruitEndAt),
+    statusMessage: "",
+    type: (typeLabel[item.campaignType] || "배송형") as CampaignApplication["type"],
+    isUrgent: item.isUrgent || false,
+    hasContent: !!item.content,
+    isPenalty: false,
+    extensionCount: 0,
+    contentType: undefined,
+  };
 }
 
 export function useAppliedCampaigns() {
-  const { user } = useAuth();
-  const reviewerIdNum = getReviewerIdNum(user?.id);
-
-  const { data: allCampaigns = [], isLoading } = useQuery({
-    queryKey: ["reviewerCampaigns", reviewerIdNum],
-    queryFn: () => fetchReviewerCampaigns(reviewerIdNum!),
-    enabled: !!reviewerIdNum,
+  const { data: appliedData, isLoading } = useQuery({
+    queryKey: ["myCampaigns", "APPLIED"],
+    queryFn: () => fetchMyCampaigns({ status: "APPLIED" }),
     staleTime: 1000 * 30,
     retry: false,
   });
 
-  // mock: 클라이언트 reviewer_id 필터링
-  const rawCampaigns = useMemo(
-    () => allCampaigns.filter((c) => !c.reviewer_id || c.reviewer_id === reviewerIdNum),
-    [allCampaigns, reviewerIdNum]
-  );
+  const allQuery = useQuery({
+    queryKey: ["myCampaigns"],
+    queryFn: () => fetchMyCampaigns(),
+    staleTime: 1000 * 30,
+    retry: false,
+  });
 
-  // 신청완료 상태만 필터링 → CampaignApplication 형태로 매핑
-  const serverCampaigns: CampaignApplication[] = rawCampaigns
-    .filter((c) => c.status === "신청완료")
-    .map((c) => ({
-      id: c.id,
-      title: c.title,
-      category: c.category,
-      image: c.image,
-      status: mapStatus(c.status),
-      remainingDays: c.remainingDays,
-      statusMessage: c.statusMessage,
-      type: c.type,
-      isUrgent: c.isUrgent,
-      hasContent: c.hasContent,
-      isPenalty: c.isPenalty,
-      extensionCount: c.extensionCount,
-      contentType: c.contentType,
-    }));
+  const serverCampaigns: CampaignApplication[] = (appliedData?.items || []).map(mapItem);
 
   // 취소 낙관적 업데이트를 위한 로컬 state
   const [campaigns, setCampaigns] = useState<CampaignApplication[]>([]);
@@ -78,17 +85,19 @@ export function useAppliedCampaigns() {
       setCampaigns(serverCampaigns);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rawCampaigns, isLoading]);
+  }, [appliedData, isLoading]);
 
-  // 전체 탭별 통계 계산
+  const allItems = allQuery.data?.items || [];
+
   const displayStats = useMemo(() => {
-    const 선정 = rawCampaigns.filter(
-      (c) => c.status === "선정완료" || c.status === "콘텐츠등록"
+    const 신청 = allItems.filter((i) => i.status === "APPLIED").length;
+    const 선정 = allItems.filter((i) => i.status === "SELECTED").length;
+    const 완료 = allItems.filter((i) => i.status === "COMPLETE").length;
+    const 취소반려 = allItems.filter(
+      (i) => i.status === "CANCELED" || i.status === "REJECT"
     ).length;
-    const 완료 = rawCampaigns.filter((c) => c.status === "완료").length;
-    const 취소반려 = rawCampaigns.filter((c) => c.status === "취소/반려").length;
-    const 패널티 = rawCampaigns.filter((c) => c.isPenalty).length;
-    const 신청 = rawCampaigns.filter((c) => c.status === "신청완료").length;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const 패널티 = allItems.filter((i) => (i as any).isPenalty).length;
     return {
       신청,
       선정,
@@ -97,13 +106,13 @@ export function useAppliedCampaigns() {
       전체: 신청 + 선정 + 완료 + 취소반려,
       패널티,
     };
-  }, [rawCampaigns]);
+  }, [allItems]);
 
   return {
     campaigns,
     setCampaigns: setCampaigns as Dispatch<SetStateAction<CampaignApplication[]>>,
     displayStats,
-    statsReady: !isLoading,
+    statsReady: !allQuery.isLoading,
     isLoading,
   };
 }

@@ -5,33 +5,24 @@
 /**
  * useUserPenalty
  *
- * 목적: 유저(리뷰어)의 패널티 내역과 상태를 API에서 조회합니다.
- *      실패 시 정적 목업 데이터로 fallback 합니다.
+ * 목적: 리뷰어 패널티 현황/내역을 R-36 API로 조회하고
+ *       기존 UI 타입(PenaltyItem[], PenaltyStatusData)으로 매핑
  *
  * 사용 페이지:
  * - /user/campaign_management/penalty (유저 패널티 페이지)
+ *
+ * 호출 API:
+ * - GET /user/campaign_management/penalty (R-36)
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { fetchUserPenalties, fetchUserPenaltyStatus } from "@/lib/api/penalty";
-import { userPenaltyData, userPenaltyStatus } from "@/data/user/penaltyData";
-import type { PenaltyItem, PenaltyStatusData } from "@/data/campaign_management/penaltyTypes";
-
-// ========================================
-// 유틸: 사용자 ID → 리뷰어 ID (mock 전용)
-// 실제 백엔드 전환 시 JWT 기반으로 교체
-// ========================================
-
-function getReviewerId(userId: string): number {
-  if (userId.includes("kakao")) return 1;
-  if (userId.includes("naver")) return 2;
-  return 1;
-}
-
-// ========================================
-// 반환 타입
-// ========================================
+import { fetchReviewerPenalty } from "@/lib/api/penalty";
+import type {
+  PenaltyItem,
+  PenaltyStatusData,
+  PenaltyStatus,
+  PenaltyType,
+} from "@/data/campaign_management/penaltyTypes";
 
 export interface UseUserPenaltyReturn {
   penaltyData: PenaltyItem[];
@@ -39,33 +30,60 @@ export interface UseUserPenaltyReturn {
   isLoading: boolean;
 }
 
-// ========================================
-// 훅
-// ========================================
+/** R-36 currentLevel → UI PenaltyStatus 매핑 */
+function mapLevelToStatus(
+  level: string,
+  isSuspended: boolean,
+  remainDays: number | null,
+  isPermanentlyBanned: boolean
+): PenaltyStatus {
+  if (isPermanentlyBanned) return "영구 정지";
+  if (isSuspended && remainDays) {
+    if (remainDays <= 7) return "이용 정지 7일";
+    if (remainDays <= 15) return "이용 정지 15일";
+    return "이용 정지 30일";
+  }
+  if (level === "CAUTION") return "경고 조치";
+  return "활동 가능";
+}
+
+/** R-36 penaltyScore → UI PenaltyType 매핑 */
+function mapScoreToType(score: number): PenaltyType {
+  if (score <= 10) return "경고";
+  if (score <= 30) return "주의";
+  if (score <= 50) return "정지";
+  return "제재";
+}
 
 export function useUserPenalty(): UseUserPenaltyReturn {
-  const { user } = useAuth();
-  const reviewerId = user ? getReviewerId(user.id) : 1;
-
-  const { data: penalties, isLoading: penaltiesLoading } = useQuery({
-    queryKey: ["userPenalties", reviewerId],
-    queryFn: () => fetchUserPenalties(reviewerId),
-    enabled: reviewerId > 0,
+  const { data, isLoading } = useQuery({
+    queryKey: ["userPenalties"],
+    queryFn: fetchReviewerPenalty,
     staleTime: 30_000,
     refetchOnWindowFocus: true,
   });
 
-  const { data: status, isLoading: statusLoading } = useQuery({
-    queryKey: ["userPenaltyStatus", reviewerId],
-    queryFn: () => fetchUserPenaltyStatus(reviewerId),
-    enabled: reviewerId > 0,
-    staleTime: 30_000,
-    refetchOnWindowFocus: true,
-  });
+  // R-36 items → 기존 PenaltyItem[] 매핑
+  const penaltyData: PenaltyItem[] = (data?.items ?? []).map((item) => ({
+    id: String(item.userPenaltyHistoryId),
+    type: mapScoreToType(item.penaltyScore),
+    title: item.penaltyReason,
+    campaignTitle: item.campaignTitle,
+    date: item.createdAt.split("T")[0],
+  }));
 
-  return {
-    penaltyData: penalties ?? userPenaltyData,
-    penaltyStatus: status ?? userPenaltyStatus,
-    isLoading: penaltiesLoading || statusLoading,
-  };
+  // R-36 summary → 기존 PenaltyStatusData 매핑
+  const penaltyStatus: PenaltyStatusData = data?.summary
+    ? {
+        currentStatus: mapLevelToStatus(
+          data.summary.currentLevel,
+          data.summary.isSuspended,
+          data.summary.suspendedRemainingDays,
+          data.summary.isPermanentlyBanned
+        ),
+        penaltyCount: data.summary.currentTotalScore,
+      }
+    : { currentStatus: "활동 가능", penaltyCount: 0 };
+
+  return { penaltyData, penaltyStatus, isLoading };
 }

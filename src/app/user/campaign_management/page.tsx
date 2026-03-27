@@ -16,6 +16,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BaseModal from "@/components/common/modal/BaseModal";
+import Loading from "@/app/loading";
 
 /**
  * 로그인 상태 확인 결과 타입
@@ -50,14 +51,9 @@ const checkLoginStatus = (): LoginStatus => {
   // }
   // return "valid";
 
-  const isExpired = sessionStorage.getItem("isExpired");
+  const token = localStorage.getItem("reviewx_auth_token");
+  if (!token) return "not_logged_in";
 
-  // 테스트용: sessionStorage에 "isExpired" = "true"로 설정하면 만료 상태로 처리됨
-  if (isExpired === "true") {
-    return "expired";
-  }
-
-  // 임시: 항상 로그인 상태로 처리 (테스트용)
   return "valid";
 };
 
@@ -102,8 +98,6 @@ const checkServerStatus = async (): Promise<void> => {
  */
 export default function CampaignManagementPage() {
   const router = useRouter();
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isLoginExpiredModalOpen, setIsLoginExpiredModalOpen] = useState(false);
   const [isServerErrorModalOpen, setIsServerErrorModalOpen] = useState(false);
 
   useEffect(() => {
@@ -121,15 +115,9 @@ export default function CampaignManagementPage() {
         // 로그인 상태 확인
         const loginStatus = checkLoginStatus();
 
-        if (loginStatus === "not_logged_in") {
-          // 로그인하지 않은 경우 로그인 필요 모달 표시
-          setIsLoginModalOpen(true);
-          return;
-        }
-
-        if (loginStatus === "expired") {
-          // 로그인 만료된 경우 로그인 만료 모달 표시
-          setIsLoginExpiredModalOpen(true);
+        if (loginStatus === "not_logged_in" || loginStatus === "expired") {
+          // 비로그인/만료 → 로그인 페이지로 바로 이동
+          router.replace("/user/login");
           return;
         }
 
@@ -148,28 +136,6 @@ export default function CampaignManagementPage() {
   }, [router]);
 
   /**
-   * 로그인 필요 모달 닫기 핸들러
-   *
-   * 설명:
-   * - 확인 버튼 클릭 시 로그인 페이지로 이동합니다.
-   */
-  const handleLoginModalClose = () => {
-    setIsLoginModalOpen(false);
-    router.push("/user/login");
-  };
-
-  /**
-   * 로그인 만료 모달 닫기 핸들러
-   *
-   * 설명:
-   * - 확인 버튼 클릭 시 로그인 페이지로 이동합니다.
-   */
-  const handleLoginExpiredModalClose = () => {
-    setIsLoginExpiredModalOpen(false);
-    router.push("/user/login");
-  };
-
-  /**
    * 서버 오류 모달 닫기 핸들러
    *
    * 설명:
@@ -183,21 +149,8 @@ export default function CampaignManagementPage() {
 
   return (
     <>
-      {/* 로그아웃 상태에서 탭 진입 시 로그인 필요 모달 */}
-      <BaseModal
-        is_open={isLoginModalOpen}
-        on_close={handleLoginModalClose}
-        message="로그인이 필요합니다."
-        buttons={["확인"]}
-      />
-
-      {/* 로그인 만료 모달 */}
-      <BaseModal
-        is_open={isLoginExpiredModalOpen}
-        on_close={handleLoginExpiredModalClose}
-        message="로그인이 만료되었습니다.<br>다시 로그인해주세요."
-        buttons={["확인"]}
-      />
+      {/* 리다이렉트 중 로딩 표시 */}
+      <Loading />
 
       {/* 서버 오류 모달 */}
       <BaseModal

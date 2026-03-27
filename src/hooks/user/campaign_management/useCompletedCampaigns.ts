@@ -5,7 +5,7 @@
 /**
  * useCompletedCampaigns
  *
- * 목적: 완료 탭의 캠페인 데이터를 mock 서버에서 조회·필터링·통계 계산합니다.
+ * 목적: 완료 탭의 캠페인 데이터를 실제 API(R-27)에서 조회·매핑·통계 계산합니다.
  *
  * 사용 페이지:
  * - /user/campaign_management/completed (완료 탭)
@@ -13,68 +13,75 @@
 
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { fetchReviewerCampaigns } from "@/lib/api/reviewer";
-import { getReviewerIdNum } from "@/hooks/user/mypage/useReviewerProfile";
+import { fetchMyCampaigns, type MyCampaignItem } from "@/lib/api/userCampaignManagement";
 import type { CampaignApplication } from "@/types/domain/user";
 
-export function useCompletedCampaigns() {
-  const { user } = useAuth();
-  const reviewerIdNum = getReviewerIdNum(user?.id);
+const typeLabel: Record<string, string> = {
+  DELIVERY: "배송형",
+  VISIT: "방문형",
+  PURCHASE: "구매평",
+  REPORTER: "기자단",
+  MISSION: "미션형",
+};
 
-  const { data: allCampaigns = [], isLoading } = useQuery({
-    queryKey: ["reviewerCampaigns", reviewerIdNum],
-    queryFn: () => fetchReviewerCampaigns(reviewerIdNum!),
-    enabled: !!reviewerIdNum,
+function mapItem(item: MyCampaignItem): CampaignApplication {
+  return {
+    id: String(item.campaignId),
+    title: item.title || "",
+    category: "",
+    image: item.thumbnailUrl || "",
+    status: "완료" as const,
+    remainingDays: 0,
+    statusMessage: "",
+    type: (typeLabel[item.campaignType] || "배송형") as CampaignApplication["type"],
+    isUrgent: item.isUrgent || false,
+    hasContent: !!item.content,
+    isPenalty: false,
+    extensionCount: 0,
+    contentType: undefined,
+  };
+}
+
+export function useCompletedCampaigns() {
+  const { data: completedData, isLoading } = useQuery({
+    queryKey: ["myCampaigns", "COMPLETE"],
+    queryFn: () => fetchMyCampaigns({ status: "COMPLETE" }),
     staleTime: 1000 * 30,
     retry: false,
   });
 
-  // mock: 클라이언트 reviewer_id 필터링
-  const rawCampaigns = useMemo(
-    () => allCampaigns.filter((c) => !c.reviewer_id || c.reviewer_id === reviewerIdNum),
-    [allCampaigns, reviewerIdNum]
-  );
+  const allQuery = useQuery({
+    queryKey: ["myCampaigns"],
+    queryFn: () => fetchMyCampaigns(),
+    staleTime: 1000 * 30,
+    retry: false,
+  });
 
   const campaigns: CampaignApplication[] = useMemo(
-    () =>
-      rawCampaigns
-        .filter((c) => c.status === "완료")
-        .map((c) => ({
-          id: c.id,
-          title: c.title,
-          category: c.category,
-          image: c.image,
-          status: "완료" as const,
-          remainingDays: c.remainingDays,
-          statusMessage: c.statusMessage,
-          type: c.type,
-          isUrgent: c.isUrgent,
-          hasContent: c.hasContent,
-          isPenalty: c.isPenalty,
-          extensionCount: c.extensionCount,
-          contentType: c.contentType,
-        })),
-    [rawCampaigns]
+    () => (completedData?.items || []).map(mapItem),
+    [completedData]
   );
 
+  const allItems = allQuery.data?.items || [];
+
   const stats = useMemo(() => {
-    const applied = rawCampaigns.filter((c) => c.status === "신청완료").length;
-    const selected = rawCampaigns.filter(
-      (c) => c.status === "선정완료" || c.status === "콘텐츠등록"
+    const 신청 = allItems.filter((i) => i.status === "APPLIED").length;
+    const 선정 = allItems.filter((i) => i.status === "SELECTED").length;
+    const 완료 = allItems.filter((i) => i.status === "COMPLETE").length;
+    const 취소반려 = allItems.filter(
+      (i) => i.status === "CANCELED" || i.status === "REJECT"
     ).length;
-    const completed = rawCampaigns.filter((c) => c.status === "완료").length;
-    const cancelled = rawCampaigns.filter((c) => c.status === "취소/반려").length;
-    const penalty = rawCampaigns.filter((c) => c.isPenalty).length;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const 패널티 = allItems.filter((i) => (i as any).isPenalty).length;
     return {
-      신청: applied,
-      선정: selected,
-      완료: completed,
-      "취소/반려": cancelled,
-      전체: applied + selected + completed + cancelled,
-      패널티: penalty,
+      신청,
+      선정,
+      완료,
+      "취소/반려": 취소반려,
+      전체: 신청 + 선정 + 완료 + 취소반려,
+      패널티,
     };
-  }, [rawCampaigns]);
+  }, [allItems]);
 
   return { campaigns, stats, isLoading };
 }

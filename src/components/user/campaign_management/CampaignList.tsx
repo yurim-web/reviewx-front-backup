@@ -100,9 +100,7 @@ export default function CampaignList({
     <div className={cardStyles.campaign_list}>
       {filteredCampaigns.map((campaign, index) => (
         <CampaignCard
-          key={
-            activeStatTab === "전체" ? `${campaign.id}-${campaign.status}-${index}` : campaign.id
-          }
+          key={`${campaign.id}-${campaign.status}-${index}`}
           campaign={campaign}
           activeTab={resolvedActiveTab ?? campaign.status}
           onTabChange={onTabChange}
