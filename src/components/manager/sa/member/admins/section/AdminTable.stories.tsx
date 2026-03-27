@@ -20,3 +20,15 @@ export const Default: Story = {
     search_query: "",
   },
 };
+
+export const WithSearch: Story = {
+  args: {
+    search_query: "김관리",
+  },
+};
+
+export const WithLongQuery: Story = {
+  args: {
+    search_query: "010",
+  },
+};
