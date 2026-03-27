@@ -25,3 +25,25 @@ export const Default: Story = {
     />
   ),
 };
+
+export const ReviewerHeavy: Story = {
+  render: () => (
+    <MemberTypeBarChart
+      totalPartnerPercentage={12}
+      totalReviewerPercentage={88}
+      activePartnerPercentage={18}
+      activeReviewerPercentage={82}
+    />
+  ),
+};
+
+export const PartnerHeavy: Story = {
+  render: () => (
+    <MemberTypeBarChart
+      totalPartnerPercentage={55}
+      totalReviewerPercentage={45}
+      activePartnerPercentage={62}
+      activeReviewerPercentage={38}
+    />
+  ),
+};

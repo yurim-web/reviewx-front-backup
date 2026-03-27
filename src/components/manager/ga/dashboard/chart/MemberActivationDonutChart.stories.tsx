@@ -18,3 +18,15 @@ type Story = StoryObj<typeof MemberActivationDonutChart>;
 export const Default: Story = {
   render: () => <MemberActivationDonutChart activePercentage={75} />,
 };
+
+export const HighActivity: Story = {
+  render: () => <MemberActivationDonutChart activePercentage={92} />,
+};
+
+export const LowActivity: Story = {
+  render: () => <MemberActivationDonutChart activePercentage={28} />,
+};
+
+export const HalfActive: Story = {
+  render: () => <MemberActivationDonutChart activePercentage={50} />,
+};

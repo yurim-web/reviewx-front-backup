@@ -51,10 +51,16 @@ interface ChannelMemberStats {
  * - title: 섹션 제목
  * - chart: 파이 차트 컴포넌트 (channelData를 props로 받음)
  */
+/** 채널별 통계 직접 전달용 (SA 대시보드) */
+interface ChannelStatsData {
+  channels: Array<{ channelName: string; memberCount: number; percentage: number }>;
+}
+
 interface ChannelMemberSectionProps {
   title: string;
   chart: (channelData: { name: string; value: number; count: number }[]) => React.ReactNode;
   dashboardData?: AdminDashboardResponse | null;
+  channelStatsData?: ChannelStatsData | null;
 }
 
 /* ========================================
@@ -70,6 +76,7 @@ export default function ChannelMemberSection({
   title,
   chart,
   dashboardData,
+  channelStatsData,
 }: ChannelMemberSectionProps) {
   // 리뷰어 목록 데이터 로드
   const [reviewer_list, set_reviewer_list] = useState<ReturnType<typeof get_reviewer_list>>([]);
@@ -85,9 +92,10 @@ export default function ChannelMemberSection({
 
   // 전체 리뷰어의 채널별 통계 계산 (날짜 필터 적용 안 함)
   const channel_member_stats = useMemo<ChannelMemberStats>(() => {
-    // GA-01 API 데이터가 있으면 우선 사용
-    if (dashboardData?.channelStats?.channels) {
-      const channels = dashboardData.channelStats.channels;
+    // SA/GA API 데이터가 있으면 우선 사용
+    const apiChannels = channelStatsData?.channels ?? dashboardData?.channelStats?.channels;
+    if (apiChannels) {
+      const channels = apiChannels;
       const channelMap: Record<string, { count: number; pct: number }> = {};
       channels.forEach((ch) => {
         channelMap[ch.channelName.toLowerCase()] = {
@@ -164,7 +172,7 @@ export default function ChannelMemberSection({
         percentage: `${youtube_percentage}%`,
       },
     };
-  }, [reviewer_list, dashboardData]);
+  }, [reviewer_list, dashboardData, channelStatsData]);
 
   // 구조 분해 할당으로 props 사용
   const { blog, instagram, clip, youtube } = channel_member_stats;

@@ -42,6 +42,7 @@ import CampaignSummarySection from "@/components/manager/ga/dashboard/section/Ca
 import ChartsSection from "@/components/manager/ga/dashboard/ChartsSection";
 import MemberStatsSection from "@/components/manager/ga/dashboard/MemberStatsSection";
 import { useAdminDashboard } from "@/hooks/manager/ga/useAdminDashboard";
+import BaseModal from "@/components/common/modal/BaseModal";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { DashboardPeriod } from "@/types/api/admin";
 
@@ -54,6 +55,7 @@ export default function ManagerGAPage() {
   // 커스텀 날짜 범위 상태 관리
   // 사용자가 날짜 선택기에서 직접 날짜 범위를 선택한 경우 사용
   const [custom_date_range, setCustomDateRange] = useState<DateRange | undefined>(undefined);
+  const [is_error_dismissed, setIsErrorDismissed] = useState(false);
 
   // 날짜 필터 변경 핸들러
   // 이벤트 핸들러 함수로, 사용자가 필터를 변경할 때 호출됩니다
@@ -104,14 +106,24 @@ export default function ManagerGAPage() {
   const dashboardPeriod: DashboardPeriod = custom_date_range
     ? "custom"
     : (dateFilter as DashboardPeriod);
-  const { dashboard: dashboardData } = useAdminDashboard({
+  const { dashboard: dashboardData, isError } = useAdminDashboard({
     period: dashboardPeriod,
     startDate: dateRange.from ? format(dateRange.from, "yyyy-MM-dd") : undefined,
     endDate: dateRange.to ? format(dateRange.to, "yyyy-MM-dd") : undefined,
   });
 
+  // 에러 상태가 바뀌면 dismissed 초기화 (재시도 등에 대비)
+  const showErrorModal = isError && !is_error_dismissed;
+
   return (
     <div className={layoutStyles.container}>
+      <BaseModal
+        is_open={showErrorModal}
+        on_close={() => setIsErrorDismissed(true)}
+        message={"오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."}
+        buttons={["확인"]}
+        type="center"
+      />
       <div className={layoutStyles.main_content}>
         <div className={layoutStyles.page_header}>
           {/* 페이지 제목 */}

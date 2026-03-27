@@ -33,3 +33,23 @@ export const Default: Story = {
     dateRange: mockDateRange,
   },
 };
+
+export const LongPeriod: Story = {
+  render: (args) => React.createElement(CampaignSummarySection, args),
+  args: {
+    dateRange: {
+      from: new Date("2026-01-01"),
+      to: new Date("2026-03-27"),
+    },
+  },
+};
+
+export const SingleDay: Story = {
+  render: (args) => React.createElement(CampaignSummarySection, args),
+  args: {
+    dateRange: {
+      from: new Date("2026-03-27"),
+      to: new Date("2026-03-27"),
+    },
+  },
+};

@@ -22,3 +22,24 @@ export const Default: Story = {
     return <DateFilterSection dateFilter={dateFilter} onFilterChange={setDateFilter} />;
   },
 };
+
+export const Weekly: Story = {
+  render: () => {
+    const [dateFilter, setDateFilter] = useState<DateFilter>("week");
+    return <DateFilterSection dateFilter={dateFilter} onFilterChange={setDateFilter} />;
+  },
+};
+
+export const Monthly: Story = {
+  render: () => {
+    const [dateFilter, setDateFilter] = useState<DateFilter>("month");
+    return <DateFilterSection dateFilter={dateFilter} onFilterChange={setDateFilter} />;
+  },
+};
+
+export const AllOptions: Story = {
+  render: () => {
+    const [dateFilter, setDateFilter] = useState<DateFilter>("today");
+    return <DateFilterSection dateFilter={dateFilter} onFilterChange={setDateFilter} />;
+  },
+};

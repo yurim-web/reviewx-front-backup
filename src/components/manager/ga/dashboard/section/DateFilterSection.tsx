@@ -103,10 +103,7 @@ export default function DateFilterSection({
     }
 
     setSelectedDateRange(new_range);
-    // 부모 컴포넌트로 날짜 범위 변경 알림
-    onDateRangeChange?.(new_range);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateFilter]); // onDateRangeChange는 의존성 배열에서 제외 (무한 루프 방지)
+  }, [dateFilter]);
 
   // 외부 클릭 감지: 드롭다운 외부를 클릭하면 닫기
   // useEffect는 컴포넌트가 렌더링된 후에 실행됩니다
