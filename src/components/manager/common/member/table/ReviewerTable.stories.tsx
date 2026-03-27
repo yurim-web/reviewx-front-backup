@@ -24,3 +24,21 @@ export const Default: Story = {
     detail_path: "/manager_ga/member/reviewers",
   },
 };
+
+// 검색어 있는 상태
+export const WithSearchQuery: Story = {
+  args: {
+    search_query: "홍길동",
+    styles: styles as any,
+    detail_path: "/manager_ga/member/reviewers",
+  },
+};
+
+// SA 관리자 경로
+export const SAAdmin: Story = {
+  args: {
+    search_query: "",
+    styles: styles as any,
+    detail_path: "/manager_sa/member/reviewers",
+  },
+};

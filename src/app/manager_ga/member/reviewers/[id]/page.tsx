@@ -16,8 +16,8 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { type Channel } from "@/data/manager_ga/member/reviewers";
 import { useReviewerDetailData } from "@/hooks/manager/ga/member/useReviewerDetailData";
+import { CHANNEL_ICON_MAP } from "@/constants/channelIcons";
 import CampaignHistoryModal from "@/components/manager/common/member/reviewers/CampaignHistoryModal";
 import PenaltyHistoryModal from "@/components/manager/common/member/reviewers/PenaltyHistoryModal";
 import MemberDetailLayout from "@/components/manager/common/member/member_detail/MemberDetailLayout";
@@ -30,19 +30,6 @@ import AccountInfoSection from "@/components/manager/common/member/reviewers/sec
 import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/manager/common/member/member_detail/member_detail_page.module.css";
 import infoCardStyles from "@/styles/manager/common/member/member_detail/info_card.module.css";
-
-// 채널 아이콘 경로 매핑
-const CHANNEL_ICON_MAP: Record<Channel, string> = {
-  Blog: "/images/brand_logo/naverblog.svg",
-  Clip: "/images/brand_logo/naverclip.svg",
-  Instagram: "/images/brand_logo/insta.svg",
-  Youtube: "/images/brand_logo/youtube.svg",
-  Store: "/images/brand_logo/navershop.svg",
-  Mission: "/images/brand_logo/misssion.svg",
-  Reels: "/images/brand_logo/reels.svg",
-  Shorts: "/images/brand_logo/shots.svg",
-  Review: "/images/brand_logo/navershop.svg",
-};
 
 export default function ReviewerDetailPage() {
   const params = useParams();

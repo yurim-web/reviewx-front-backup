@@ -53,3 +53,21 @@ export const SAAdmin: Story = {
     detail_path: "/manager_sa/member/partners",
   },
 };
+
+// 채널 필터 적용
+export const WithChannelFilter: Story = {
+  args: {
+    search_query: "",
+    selected_channels: ["네이버블로그"] as never,
+    detail_path: "/manager_ga/member/partners",
+  },
+};
+
+// 사업 구분 필터 적용
+export const WithDivisionFilter: Story = {
+  args: {
+    search_query: "",
+    selected_divisions: ["법인"] as never,
+    detail_path: "/manager_ga/member/partners",
+  },
+};

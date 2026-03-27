@@ -53,3 +53,21 @@ export const SAAdmin: Story = {
     detail_path: "/manager_sa/member/reviewers",
   },
 };
+
+// 채널 필터 적용
+export const WithChannelFilter: Story = {
+  args: {
+    search_query: "",
+    selected_channels: ["네이버블로그"] as never,
+    detail_path: "/manager_ga/member/reviewers",
+  },
+};
+
+// 등급 필터 적용
+export const WithGradeFilter: Story = {
+  args: {
+    search_query: "",
+    selected_grades: ["모범 회원"] as never,
+    detail_path: "/manager_ga/member/reviewers",
+  },
+};
