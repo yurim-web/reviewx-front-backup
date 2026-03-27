@@ -1,31 +1,34 @@
 /* ========================================
-   ✅ 유저 회원가입 완료 페이지
+   유저 회원가입 완료 페이지
    ======================================== */
 
 /**
- * 유저 회원가입 완료 페이지
+ * UserSignupCompletePage
  *
- * 목적: 회원가입이 성공적으로 완료되었음을 알리는 페이지입니다.
+ * 목적: 회원가입이 성공적으로 완료되었음을 알리는 페이지
  *
  * 사용 페이지:
  * - /user/signup/complete (회원가입 완료 페이지)
+ *
+ * 호출 API:
+ * - GET /api/v1/reviewer/sign-up/finish (완료 상태 확인)
  */
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/fragments/Header";
+import { useSignupFinish } from "@/hooks/user/signup/useReviewerSignup";
+import Loading from "@/app/loading";
 import styles from "@/styles/user/signup/complete.module.css";
 
-/**
- * 유저 회원가입 완료 페이지 컴포넌트
- *
- * @returns JSX.Element - 유저 회원가입 완료 페이지 UI
- */
-export default function UserSignupCompletePage() {
+function SignupCompleteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // 회원가입 완료 상태 확인 (비정상 접근 방지)
+  const { isError } = useSignupFinish();
 
   // 이 페이지에서만 헤더 보더 색상 흰색으로 설정
   useEffect(() => {
@@ -35,43 +38,35 @@ export default function UserSignupCompletePage() {
     };
   }, []);
 
-  // URL 파라미터에서 닉네임 가져오기 (없으면 기본값 사용)
-  const nickname = searchParams.get("nickname") || "회원";
+  // 비정상 접근 시 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (isError) {
+      router.replace("/user/login");
+    }
+  }, [isError, router]);
 
-  // 닉네임이 비어있거나 공백만 있으면 기본값 사용
+  // URL 파라미터에서 닉네임 가져오기 (SNS 닉네임 → 이름 → "회원")
+  const nickname = searchParams.get("nickname") || "회원";
   const displayNickname = nickname.trim() || "회원";
 
-  /**
-   * 캠페인 보러 가기 버튼 클릭 핸들러
-   * 홈 페이지로 이동
-   */
   const handleGoToCampaigns = () => {
     router.push("/");
   };
 
-  /**
-   * 로그인하기 버튼 클릭 핸들러
-   * 로그인 페이지로 이동
-   */
   const handleGoToLogin = () => {
     router.push("/user/login");
   };
 
   return (
     <div className={styles.complete_page_container}>
-      {/* 메인 헤더 */}
       <Header />
 
-      {/* 메인 콘텐츠 영역 */}
       <main className={styles.complete_main}>
-        {/* 글 부분 (로고 + 메시지) - 화면 상하 중앙 배치 */}
         <div className={styles.content_section}>
-          {/* 로고 섹션 */}
           <div className={styles.logo_section}>
             <h2 className={styles.logo_text}>VX.</h2>
           </div>
 
-          {/* 완료 메시지 섹션 */}
           <div className={styles.message_section}>
             <h1 className={styles.welcome_title}>
               {displayNickname !== "회원" ? (
@@ -96,7 +91,6 @@ export default function UserSignupCompletePage() {
           </div>
         </div>
 
-        {/* 버튼 섹션 */}
         <div className={styles.button_section}>
           <button type="button" className={styles.campaign_button} onClick={handleGoToCampaigns}>
             캠페인 신청하러 가기
@@ -107,5 +101,13 @@ export default function UserSignupCompletePage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function UserSignupCompletePage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <SignupCompleteContent />
+    </Suspense>
   );
 }

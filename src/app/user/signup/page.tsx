@@ -9,31 +9,44 @@
  *
  * 사용 페이지:
  * - /user/signup (리뷰어 회원가입)
+ *
+ * 호출 API:
+ * - GET /reviewer/sign-up?signupToken={token} (prefill 데이터 로드)
+ * - POST /api/v1/auth/phone/verify/request (인증번호 요청)
+ * - POST /api/v1/auth/phone/verify/confirm (인증번호 확인)
+ * - POST /api/v1/reviewer/sign-up (회원가입 완료)
  */
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import TermsAgreement from "@/components/user/signup/TermsAgreement";
 import SNSLoginModal from "@/components/common/find_account/modal/SNSLoginModal";
 import { useTermsAgreement } from "@/hooks/user/signup/useTermsAgreement";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
+import { useSignupPage, useReviewerSignup } from "@/hooks/user/signup/useReviewerSignup";
+import { startSocialLogin } from "@/lib/api/userAuth";
 import {
   validateSignupForm,
   type SignupFormErrors,
 } from "@/components/user/signup/utils/formValidation";
 import PageTitle from "@/components/fragments/PageTitle";
-import { checkTestPhoneNumber } from "@/data/signup/testVerificationData";
+import Loading from "@/app/loading";
 import commonStyles from "@/styles/common/signup/signup.module.css";
 import styles from "@/styles/user/signup/user_signup.module.css";
 
 type SocialLoginType = "kakao" | "naver";
 
-export default function UserSignupPage() {
+function SignupContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // URL 파라미터에서 signupToken, provider 추출
+  const signupToken = searchParams.get("signupToken") ?? "";
+  const providerParam = searchParams.get("provider") ?? "";
 
   const [isMobile, setIsMobile] = useState(false);
   const [hasScroll, setHasScroll] = useState(false);
@@ -60,7 +73,19 @@ export default function UserSignupPage() {
     };
   }, [isMobile]);
 
-  const [email] = useState<string>("");
+  // signupToken 검증 + prefill 데이터
+  const { data: signupData, isError: isSignupTokenError } = useSignupPage(signupToken);
+
+  // signupToken 없거나 유효하지 않으면 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!signupToken || isSignupTokenError) {
+      router.replace("/user/login");
+    }
+  }, [signupToken, isSignupTokenError, router]);
+
+  // prefill 이메일 (API 응답 또는 빈 값)
+  const email = signupData?.email ?? "";
+
   const [name, setName] = useState<string>("");
   const [errors, setErrors] = useState<SignupFormErrors>({});
   const [showExistingAccountModal, setShowExistingAccountModal] = useState<boolean>(false);
@@ -93,18 +118,36 @@ export default function UserSignupPage() {
     resetVerification,
   } = usePhoneVerification();
 
+  // 회원가입 완료 mutation
+  const signupMutation = useReviewerSignup();
+
+  // phoneError에서 ALREADY_REGISTERED 감지 → A_M1 모달
+  useEffect(() => {
+    if (phoneError === "ALREADY_REGISTERED") {
+      resetVerification();
+      // provider에 따라 기존 SNS 타입 설정
+      const socialType = providerParam === "KAKAO" ? "naver" : "kakao";
+      setExistingAccountSocialType(socialType);
+      setShowExistingAccountModal(true);
+    }
+  }, [phoneError, providerParam, resetVerification]);
+
   const handlePhoneChange = (newPhone: string) => {
     handlePhoneChangeHook(newPhone);
     if (newPhone === "" || isPhoneVerified || isVerificationRequested) {
       resetVerification();
-      setErrors((prev) => ({ ...prev, phone: undefined, verificationCode: undefined }));
+      setErrors((prev) => ({
+        ...prev,
+        phone: undefined,
+        verificationCode: undefined,
+      }));
     }
   };
 
   const handleVerificationRequestClick = async () => {
     setErrors((prev) => ({ ...prev, verificationCode: undefined }));
     await handleVerificationRequest();
-    if (phoneError) {
+    if (phoneError && phoneError !== "ALREADY_REGISTERED") {
       setErrors((prev) => ({ ...prev, phone: phoneError }));
     } else {
       setErrors((prev) => ({ ...prev, phone: undefined }));
@@ -114,20 +157,12 @@ export default function UserSignupPage() {
   const handleVerifyClick = () => {
     handleVerifyCode();
     if (verificationCodeError) {
-      setErrors((prev) => ({ ...prev, verificationCode: verificationCodeError }));
+      setErrors((prev) => ({
+        ...prev,
+        verificationCode: verificationCodeError,
+      }));
     } else {
       setErrors((prev) => ({ ...prev, verificationCode: undefined }));
-
-      const testPhoneInfo = checkTestPhoneNumber(phone);
-      if (testPhoneInfo?.type === "existing_kakao") {
-        resetVerification();
-        setExistingAccountSocialType("kakao");
-        setShowExistingAccountModal(true);
-      } else if (testPhoneInfo?.type === "existing_naver") {
-        resetVerification();
-        setExistingAccountSocialType("naver");
-        setShowExistingAccountModal(true);
-      }
     }
   };
 
@@ -146,29 +181,37 @@ export default function UserSignupPage() {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    const testPhoneInfo = checkTestPhoneNumber(phone);
-
-    if (testPhoneInfo?.type === "normal") {
-      resetVerification();
-      setExistingAccountSocialType("kakao");
-      setShowExistingAccountModal(true);
-      return;
-    }
-
-    if (testPhoneInfo?.type === "duplicate") {
-      setErrors((prev) => ({ ...prev, phone: "이미 사용 중인 휴대폰 번호입니다." }));
-      return;
-    }
-
-    if (testPhoneInfo?.type === "blocked") {
-      setErrors((prev) => ({ ...prev, phone: "정지되었거나 탈퇴된 계정입니다." }));
-      return;
-    }
-
-    // TODO: 실제 API 호출
-    const displayName = name.trim() || "회원";
-    router.push(`/user/signup/complete?nickname=${encodeURIComponent(displayName)}`);
+    // 실제 회원가입 API 호출
+    signupMutation.mutate({
+      signupToken,
+      email,
+      name: name.trim(),
+      phoneNum: phone.replace(/-/g, ""),
+      agreements: {
+        termsServicePrivacyAgreed: termsAgreed,
+        privacyThirdPartyAgreed: privacyAgreed,
+        marketingPrivacyAgreed: marketingAgreed,
+      },
+    });
   };
+
+  // 회원가입 에러 처리
+  useEffect(() => {
+    if (!signupMutation.error) return;
+    const axiosErr = signupMutation.error as {
+      response?: { data?: { errorCode?: string } };
+    };
+    const errCode = axiosErr?.response?.data?.errorCode;
+
+    if (errCode === "INVALID_SIGNUP_TOKEN") {
+      alert("회원가입 토큰이 만료되었습니다. 다시 로그인해 주세요.");
+      router.replace("/user/login");
+    } else if (errCode === "ALREADY_REGISTERED") {
+      setShowExistingAccountModal(true);
+    } else {
+      alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  }, [signupMutation.error, router]);
 
   return (
     <div
@@ -218,7 +261,7 @@ export default function UserSignupPage() {
             isVerificationRequested={isVerificationRequested}
             isPhoneVerified={isPhoneVerified}
             timer={timer}
-            error={phoneError || errors.phone}
+            error={phoneError && phoneError !== "ALREADY_REGISTERED" ? phoneError : errors.phone}
             verificationCodeError={verificationCodeError || errors.verificationCode}
             onPhoneChange={handlePhoneChange}
             onVerificationRequest={handleVerificationRequestClick}
@@ -249,26 +292,41 @@ export default function UserSignupPage() {
                 ? ""
                 : commonStyles.submit_button_disabled
             }`}
-            disabled={!name.trim() || !isPhoneVerified || !termsAgreed || !privacyAgreed}
+            disabled={
+              !name.trim() ||
+              !isPhoneVerified ||
+              !termsAgreed ||
+              !privacyAgreed ||
+              signupMutation.isPending
+            }
           >
-            회원가입
+            {signupMutation.isPending ? "처리 중..." : "회원가입"}
           </button>
         </form>
       </main>
 
+      {/* A_M1: 이미 가입된 번호 → 기존 SNS 로그인 유도 모달 */}
       <SNSLoginModal
         isOpen={showExistingAccountModal}
         onClose={() => setShowExistingAccountModal(false)}
         socialType={existingAccountSocialType}
         onKakaoLogin={() => {
-          // TODO: 카카오 로그인 처리
           setShowExistingAccountModal(false);
+          startSocialLogin("kakao");
         }}
         onNaverLogin={() => {
-          // TODO: 네이버 로그인 처리
           setShowExistingAccountModal(false);
+          startSocialLogin("naver");
         }}
       />
     </div>
+  );
+}
+
+export default function UserSignupPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <SignupContent />
+    </Suspense>
   );
 }
