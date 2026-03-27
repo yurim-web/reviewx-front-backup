@@ -85,7 +85,9 @@ function adaptSACampaign(item: SACampaignItem): CampaignProgressItem {
     recruit_count: item.recruitCount,
     apply_count: item.applyCount,
     point: item.point,
-    detail_campaign_id: item.campaignNumber,
+    detail_campaign_id: item.campaignId
+      ? String(item.campaignId)
+      : String(parseInt(item.campaignNumber, 10)),
   };
 }
 
