@@ -19,8 +19,10 @@ import Header from "@/components/fragments/Header";
 import pageStyles from "@/styles/login/login/login_page.module.css";
 import formStyles from "@/styles/login/login/form.module.css";
 import optionsStyles from "@/styles/login/login/options.module.css";
-import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api/client";
+import { setStoredToken, setStoredUser } from "@/lib/auth/storage";
+import type { UserRole } from "@/types/auth";
 
 /**
  * 관리자 로그인 페이지 컴포넌트
@@ -28,7 +30,7 @@ import { apiClient } from "@/lib/api/client";
  * @returns JSX.Element - 사용자 로그인 페이지 UI
  */
 export default function AdminLoginPage() {
-  const { login } = useAuth();
+  const router = useRouter();
 
   // ========================================
   // 상태 관리 (State Management)
@@ -90,8 +92,8 @@ export default function AdminLoginPage() {
     setIsSubmitting(true);
 
     try {
-      // POST /api/admin/login API 호출
-      const { data } = await apiClient.post("/api/admin/login", {
+      // POST /api/manager/login API 호출
+      const { data } = await apiClient.post("/api/manager/login", {
         email: username,
         password,
       });
@@ -114,8 +116,16 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // 인증 시스템을 통한 로그인 (토큰 저장 + 리다이렉트)
-      await login({ email: username, password }, role);
+      // API 응답 토큰 직접 저장 (실제 백엔드 토큰 사용)
+      setStoredToken(data.token, role as UserRole);
+      setStoredUser({
+        id: String(data.user.id),
+        email: data.user.email,
+        name: data.user.name,
+        role: role as UserRole,
+        status: "ACTIVE",
+      });
+      router.push(role === "manager_sa" ? "/manager_sa" : "/manager_ga");
     } catch (error) {
       // API 에러 응답 처리
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
