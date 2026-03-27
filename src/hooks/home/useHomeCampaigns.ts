@@ -5,15 +5,20 @@
 /**
  * useHomeCampaigns
  *
- * 목적: 대시보드 API(20번)에서 홈페이지 섹션별 캠페인 데이터 조회
+ * 목적: 경로 기반으로 적절한 대시보드 API를 호출하여 홈페이지 섹션별 캠페인 데이터 조회
+ *       - /user → 리뷰어 대시보드 API (20번: GET /user)
+ *       - /partner → 파트너 대시보드 API (06번: GET /partner/dashboard)
  *       API가 비어있거나 실패하면 → 정적 mock 데이터 기반 계산으로 fallback
  *
  * 사용 페이지:
- * - /user (메인 홈페이지)
+ * - /user (리뷰어 메인 홈페이지)
+ * - /partner (파트너 메인 홈페이지)
  */
 
 import { useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { usePartnerDashboard } from "@/hooks/user/useDashboard";
+import { useUserDashboard } from "@/hooks/user/useUserDashboard";
 import type { DashboardCampaign } from "@/hooks/user/useDashboard";
 import type { PartnerBanner } from "@/types/api/dashboard";
 import { shuffle_array } from "@/utils/home/campaignUtils";
@@ -58,14 +63,31 @@ function adaptStatic(item: {
 }
 
 export function useHomeCampaigns() {
-  const { data: apiData, isError, isLoading } = usePartnerDashboard();
+  const pathname = usePathname();
+  const isPartnerPage = pathname.startsWith("/partner");
 
-  // API 데이터가 있으면 즉시 반환
-  const hasApiData =
-    apiData &&
-    (apiData.highProbability.length > 0 ||
-      apiData.popularNow.length > 0 ||
-      apiData.ongoing.length > 0);
+  // 경로에 따라 적절한 API 훅 호출
+  // 파트너 API는 항상 호출 (리뷰어 페이지에서도 배너 데이터 필요 — 백엔드에 배너 추가 시 제거)
+  const partnerResult = usePartnerDashboard(true);
+  const userResult = useUserDashboard(!isPartnerPage);
+
+  const activeResult = isPartnerPage ? partnerResult : userResult;
+  const { isError, isLoading } = activeResult;
+
+  // 파트너 API 데이터 처리
+  const partnerData = isPartnerPage ? partnerResult.data : null;
+  // 리뷰어 API 데이터 처리
+  const userData = !isPartnerPage ? userResult.data : null;
+
+  const hasApiData = isPartnerPage
+    ? partnerData &&
+      (partnerData.highProbability.length > 0 ||
+        partnerData.popularNow.length > 0 ||
+        partnerData.ongoing.length > 0)
+    : userData &&
+      (userData.highProbability.length > 0 ||
+        userData.popularNow.length > 0 ||
+        userData.ongoing.length > 0);
 
   // 정적 데이터 기반 fallback 계산 (API 없을 때만 사용)
   const staticResult = useMemo(() => {
@@ -143,27 +165,46 @@ export function useHomeCampaigns() {
     return { high_probability_campaigns, popular_campaigns, ongoing_campaigns, similar_campaigns };
   }, [hasApiData]);
 
-  if (hasApiData && apiData) {
+  // 파트너 API 데이터 반환
+  if (isPartnerPage && hasApiData && partnerData) {
     return {
-      banners: apiData.banners ?? ([] as PartnerBanner[]),
-      high_probability_campaigns: apiData.highProbability,
-      popular_campaigns: apiData.popularNow,
-      ongoing_campaigns: apiData.ongoing,
-      similar_campaigns: apiData.similarCampaigns ?? [],
+      banners: partnerData.banners ?? ([] as PartnerBanner[]),
+      high_probability_campaigns: partnerData.highProbability,
+      popular_campaigns: partnerData.popularNow,
+      ongoing_campaigns: partnerData.ongoing,
+      similar_campaigns: partnerData.similarCampaigns ?? [],
       isError: false,
       isLoading: false,
     };
   }
 
+  // 리뷰어 API 데이터 반환
+  if (!isPartnerPage && hasApiData && userData) {
+    return {
+      // 임시: 리뷰어 백엔드에 banners 추가 전까지 파트너 API에서 배너 가져옴
+      banners: partnerResult.data?.banners ?? ([] as PartnerBanner[]),
+      high_probability_campaigns: userData.highProbability,
+      popular_campaigns: userData.popularNow,
+      ongoing_campaigns: userData.ongoing,
+      similar_campaigns: userData.similar ?? [],
+      isError: false,
+      isLoading: false,
+    };
+  }
+
+  // 정적 fallback 데이터가 있으면 에러 모달 표시 불필요
+  const hasFallback = staticResult !== null;
+
   return {
-    banners: [] as PartnerBanner[],
+    // 임시: 리뷰어 백엔드에 banners 추가 전까지 파트너 API에서 배너 가져옴
+    banners: partnerResult.data?.banners ?? ([] as PartnerBanner[]),
     ...(staticResult ?? {
       high_probability_campaigns: [] as HomeCampaign[],
       popular_campaigns: [] as HomeCampaign[],
       ongoing_campaigns: [] as HomeCampaign[],
       similar_campaigns: [] as HomeCampaign[],
     }),
-    isError,
+    isError: hasFallback ? false : isError,
     isLoading,
   };
 }
