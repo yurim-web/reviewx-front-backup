@@ -17,6 +17,7 @@ import type { AccountInfo, AccountStatus } from "@/components/common/find_accoun
 import type { UnifiedAccount, AccountType } from "@/data/login/unifiedAccountData";
 import { fetchAccountByPhone } from "@/lib/api/admin";
 import { findPartnerId, findPartnerPassword } from "@/lib/api/partnerFindAccount";
+import { findAccount as findAccountApi } from "@/lib/api/userAuth";
 import axios from "axios";
 
 // ================================================================================================
@@ -302,17 +303,50 @@ export function useFindAccount(options: UseFindAccountOptions = {}): UseFindAcco
     }
 
     // ========================================
+    // 리뷰어(user): 실제 API 호출
+    // ========================================
+    const isUser = options.allowedAccountTypes?.includes("user");
+
+    if (isUser) {
+      try {
+        const response = await findAccountApi({
+          phoneNum: normalizePhone(phone),
+          verifiedPhoneToken: "", // 서버 세션에서 검증 (프론트 전달 불필요할 수 있음)
+          accountType: "user",
+        });
+
+        if (response.result === "FOUND") {
+          // A_M1: SNS 로그인 유도 모달
+          setSocialType(response.provider.toLowerCase() as "kakao" | "naver");
+          setIsPhoneAccountModalOpen(true);
+          return false;
+        } else {
+          // I_E12: 계정 없음
+          setAccountNotFoundError("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
+          return false;
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const errCode = (error.response.data as { errorCode?: string })?.errorCode;
+          if (errCode === "ACCOUNT_BLOCKED") {
+            // I_E11: 정지/탈퇴 계정
+            setBlockedAccountError("정지되었거나 탈퇴된 계정입니다.");
+          } else if (errCode === "USER_NOT_FOUND" || error.response.status === 404) {
+            setAccountNotFoundError("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
+          } else {
+            setAccountNotFoundError("오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+          }
+        } else {
+          setAccountNotFoundError("오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+        return false;
+      }
+    }
+
+    // ========================================
     // 관리자 등: 기존 mock 로직 유지
     // ========================================
-    const normalized_input_phone = normalizePhone(phone);
-    const normalized_whitelist = (options.snsOnlyPhoneWhitelist || []).map(normalizePhone);
-
-    const is_phone_whitelisted =
-      normalized_whitelist.length === 0 || normalized_whitelist.includes(normalized_input_phone);
-
-    const foundAccount = is_phone_whitelisted
-      ? await fetchAccountByPhone(phone, options.allowedAccountTypes)
-      : undefined;
+    const foundAccount = await fetchAccountByPhone(phone, options.allowedAccountTypes);
 
     const success = processAccountStatus(foundAccount, activeTab);
 

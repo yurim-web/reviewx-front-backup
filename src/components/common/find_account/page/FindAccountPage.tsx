@@ -142,6 +142,8 @@ export default function FindAccountPage() {
         onLogin={() => {
           if (pathname.startsWith("/partner")) {
             router.push("/partner/login");
+          } else if (pathname.startsWith("/find-account")) {
+            router.push("/manager/login");
           } else {
             router.push("/login");
           }

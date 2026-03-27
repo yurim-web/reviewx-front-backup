@@ -9,31 +9,29 @@
  *
  * 사용 페이지:
  * - /user/find-account (계정 찾기)
+ *
+ * 호출 API:
+ * - POST /api/v1/auth/phone/verify/request (인증번호 요청)
+ * - POST /api/v1/auth/phone/verify/confirm (인증번호 확인)
+ * - POST /api/v1/auth/find-account (계정 조회)
  */
 
 "use client";
 
-import { useRouter } from "next/navigation";
 import Header from "@/components/fragments/Header";
 import PageTitle from "@/components/fragments/PageTitle";
 import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import FindAccountModals from "@/components/common/find_account/modal/FindAccountModals";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 import { useFindAccount } from "@/hooks/find_account/useFindAccount";
-import { TEST_PHONE_NUMBERS } from "@/data/signup/testVerificationData";
+import { startSocialLogin } from "@/lib/api/userAuth";
 import styles from "@/styles/common/find_account/find_account.module.css";
 
 export default function UserFindAccountPage() {
-  const router = useRouter();
-
   const phoneVerification = usePhoneVerification();
 
   const findAccount = useFindAccount({
     allowedAccountTypes: ["user"],
-    snsOnlyPhoneWhitelist: [
-      TEST_PHONE_NUMBERS.EXISTING_KAKAO,
-      TEST_PHONE_NUMBERS.EXISTING_NAVER,
-    ],
   });
 
   const handlePhoneChange = (phone: string) => {
@@ -106,10 +104,10 @@ export default function UserFindAccountPage() {
         foundAccountInfo={findAccount.foundAccountInfo}
         onCloseResultModal={() => findAccount.setIsResultModalOpen(false)}
         onClosePhoneAccountModal={() => findAccount.setIsPhoneAccountModalOpen(false)}
-        onLogin={() => router.push("/user/login")}
-        onSwitchToPasswordTab={() => router.push("/find-account")}
-        onKakaoLogin={() => router.push("/user/login")}
-        onNaverLogin={() => router.push("/user/login")}
+        onLogin={() => startSocialLogin("naver")}
+        onSwitchToPasswordTab={() => {}}
+        onKakaoLogin={() => startSocialLogin("kakao")}
+        onNaverLogin={() => startSocialLogin("naver")}
         socialType={findAccount.socialType}
       />
     </div>
