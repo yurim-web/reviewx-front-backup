@@ -53,3 +53,33 @@ export const Default: Story = {
     applicant: mockRestrictedApplicant,
   },
 };
+
+/**
+ * 경고 회원 이용제한
+ *
+ * 경고 회원 상태로 이용 제한된 네이버블로그 신청자 카드입니다.
+ */
+export const WarningMember: Story = {
+  args: {
+    applicant: {
+      ...mockRestrictedApplicant,
+      memberType: "경고 회원",
+      nickname: "경고_네이버블로거",
+    },
+  },
+};
+
+/**
+ * 주의 회원 이용제한
+ *
+ * 주의 회원 상태로 이용 제한된 네이버블로그 신청자 카드입니다.
+ */
+export const CautionMember: Story = {
+  args: {
+    applicant: {
+      ...mockRestrictedApplicant,
+      memberType: "주의 회원",
+      nickname: "주의_네이버블로거",
+    },
+  },
+};

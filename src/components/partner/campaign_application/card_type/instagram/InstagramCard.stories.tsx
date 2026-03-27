@@ -139,3 +139,20 @@ export const Reviewer: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
+
+/**
+ * 경고 회원
+ *
+ * 경고 회원 상태의 인스타그램 신청자 카드입니다.
+ */
+export const WarningMember: Story = {
+  render: (args) => renderInstagramCard(args),
+  args: {
+    applicant: {
+      ...mockInstagramApplicant,
+      memberType: "경고 회원",
+      nickname: "경고_인스타그래머",
+    },
+    onSelect: (id) => console.log("Selected applicant:", id),
+  },
+};

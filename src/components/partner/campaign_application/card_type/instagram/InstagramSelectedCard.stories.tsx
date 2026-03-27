@@ -87,3 +87,36 @@ export const HighFollowers: Story = {
     onCancel: (id) => console.log("Cancelled selection:", id),
   },
 };
+
+/**
+ * 리뷰어 선정자
+ *
+ * 리뷰어 타입의 선정된 인스타그램 신청자 카드입니다.
+ */
+export const Reviewer: Story = {
+  render: (args) => renderInstagramSelectedCard(args),
+  args: {
+    applicant: {
+      ...mockSelectedApplicant,
+      userType: "리뷰어",
+      nickname: "리뷰어_인스타그래머",
+    },
+    onCancel: (id) => console.log("Cancelled selection:", id),
+  },
+};
+
+/**
+ * 메모 없는 선정자
+ *
+ * 메모가 없는 선정된 인스타그램 신청자 카드입니다.
+ */
+export const WithoutMemo: Story = {
+  render: (args) => renderInstagramSelectedCard(args),
+  args: {
+    applicant: {
+      ...mockSelectedApplicant,
+      memo: "",
+    },
+    onCancel: (id) => console.log("Cancelled selection:", id),
+  },
+};

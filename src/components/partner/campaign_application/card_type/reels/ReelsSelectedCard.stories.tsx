@@ -63,3 +63,34 @@ export const Default: Story = {
     onCancel: (id) => console.log("Cancelled selection:", id),
   },
 };
+
+/**
+ * 인플루언서 선정자
+ *
+ * 인플루언서 타입의 선정된 릴스 신청자 카드입니다.
+ */
+export const Influencer: Story = {
+  args: {
+    applicant: {
+      ...mockInstagramApplicant,
+      userType: "인플루언서",
+      nickname: "인플루언서_릴스러",
+    },
+    onCancel: (id) => console.log("Cancelled selection:", id),
+  },
+};
+
+/**
+ * 메모 없는 선정자
+ *
+ * 메모가 없는 선정된 릴스 신청자 카드입니다.
+ */
+export const WithoutMemo: Story = {
+  args: {
+    applicant: {
+      ...mockInstagramApplicant,
+      memo: "",
+    },
+    onCancel: (id) => console.log("Cancelled selection:", id),
+  },
+};

@@ -60,3 +60,35 @@ export const Default: Story = {
     onConfirm: (id) => console.log("Confirmed applicant:", id),
   },
 };
+
+/**
+ * 인플루언서 완료 카드
+ *
+ * 인플루언서 타입의 완료 카드입니다.
+ */
+export const Influencer: Story = {
+  args: {
+    applicant: {
+      ...mockCompletedApplicant,
+      userType: "인플루언서",
+      nickname: "인플루언서_블로거",
+    },
+    onConfirm: (id) => console.log("Confirmed applicant:", id),
+  },
+};
+
+/**
+ * 최근 완료 카드
+ *
+ * 최근 완료된 네이버블로그 신청자 카드입니다.
+ */
+export const RecentCompletion: Story = {
+  args: {
+    applicant: {
+      ...mockCompletedApplicant,
+      completionDate: "2026-03-26",
+      nickname: "최근_완료_블로거",
+    },
+    onConfirm: (id) => console.log("Confirmed applicant:", id),
+  },
+};

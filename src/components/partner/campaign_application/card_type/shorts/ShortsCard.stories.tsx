@@ -87,3 +87,37 @@ export const HighSubscribers: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
+
+/**
+ * 이용 제한 계정
+ *
+ * 이용 제한 상태인 숏츠 신청자 카드입니다.
+ */
+export const Restricted: Story = {
+  render: (args) => renderShortsCard(args),
+  args: {
+    applicant: {
+      ...mockShortsApplicant,
+      selectionStatus: "이용제한 계정",
+      memberType: "이용 제한",
+    },
+    onSelect: (id) => console.log("Selected applicant:", id),
+  },
+};
+
+/**
+ * 리뷰어 타입
+ *
+ * 리뷰어 타입의 숏츠 신청자 카드입니다.
+ */
+export const Reviewer: Story = {
+  render: (args) => renderShortsCard(args),
+  args: {
+    applicant: {
+      ...mockShortsApplicant,
+      userType: "리뷰어",
+      nickname: "리뷰어_숏츠러",
+    },
+    onSelect: (id) => console.log("Selected applicant:", id),
+  },
+};

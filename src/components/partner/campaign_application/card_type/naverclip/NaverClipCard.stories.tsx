@@ -104,3 +104,20 @@ export const Restricted: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
+
+/**
+ * 리뷰어 타입
+ *
+ * 리뷰어 타입의 네이버 클립 신청자 카드입니다.
+ */
+export const Reviewer: Story = {
+  render: (args) => renderNaverClipCard(args),
+  args: {
+    applicant: {
+      ...mockNaverClipApplicant,
+      userType: "리뷰어",
+      nickname: "리뷰어_네이버클리퍼",
+    },
+    onSelect: (id) => console.log("Selected applicant:", id),
+  },
+};

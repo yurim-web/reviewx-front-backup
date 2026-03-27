@@ -87,3 +87,37 @@ export const HighFollowers: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
+
+/**
+ * 이용 제한 계정
+ *
+ * 이용 제한 상태인 릴스 신청자 카드입니다.
+ */
+export const Restricted: Story = {
+  render: (args) => renderReelsCard(args),
+  args: {
+    applicant: {
+      ...mockReelsApplicant,
+      selectionStatus: "이용제한 계정",
+      memberType: "이용 제한",
+    },
+    onSelect: (id) => console.log("Selected applicant:", id),
+  },
+};
+
+/**
+ * 리뷰어 타입
+ *
+ * 리뷰어 타입의 릴스 신청자 카드입니다.
+ */
+export const Reviewer: Story = {
+  render: (args) => renderReelsCard(args),
+  args: {
+    applicant: {
+      ...mockReelsApplicant,
+      userType: "리뷰어",
+      nickname: "리뷰어_릴스러",
+    },
+    onSelect: (id) => console.log("Selected applicant:", id),
+  },
+};

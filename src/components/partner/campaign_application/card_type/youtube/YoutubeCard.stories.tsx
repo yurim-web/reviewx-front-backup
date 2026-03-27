@@ -104,3 +104,37 @@ export const Restricted: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
+
+/**
+ * 리뷰어 타입
+ *
+ * 리뷰어 타입의 유튜브 신청자 카드입니다.
+ */
+export const Reviewer: Story = {
+  render: (args) => renderYoutubeCard(args),
+  args: {
+    applicant: {
+      ...mockYoutubeApplicant,
+      userType: "리뷰어",
+      nickname: "리뷰어_유튜버",
+    },
+    onSelect: (id) => console.log("Selected applicant:", id),
+  },
+};
+
+/**
+ * 경고 회원
+ *
+ * 경고 회원 상태의 유튜브 신청자 카드입니다.
+ */
+export const WarningMember: Story = {
+  render: (args) => renderYoutubeCard(args),
+  args: {
+    applicant: {
+      ...mockYoutubeApplicant,
+      memberType: "경고 회원",
+      nickname: "경고_유튜버",
+    },
+    onSelect: (id) => console.log("Selected applicant:", id),
+  },
+};

@@ -69,3 +69,36 @@ export const Default: Story = {
     onCancel: (id) => console.log("Cancelled selection:", id),
   },
 };
+
+/**
+ * 리뷰어 선정자
+ *
+ * 리뷰어 타입의 선정된 유튜브 신청자 카드입니다.
+ */
+export const Reviewer: Story = {
+  render: (args) => renderYoutubeSelectedCard(args),
+  args: {
+    applicant: {
+      ...mockSelectedApplicant,
+      userType: "리뷰어",
+      nickname: "리뷰어_유튜버",
+    },
+    onCancel: (id) => console.log("Cancelled selection:", id),
+  },
+};
+
+/**
+ * 메모 없는 선정자
+ *
+ * 메모가 없는 선정된 유튜브 신청자 카드입니다.
+ */
+export const WithoutMemo: Story = {
+  render: (args) => renderYoutubeSelectedCard(args),
+  args: {
+    applicant: {
+      ...mockSelectedApplicant,
+      memo: "",
+    },
+    onCancel: (id) => console.log("Cancelled selection:", id),
+  },
+};

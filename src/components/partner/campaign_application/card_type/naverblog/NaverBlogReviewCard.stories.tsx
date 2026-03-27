@@ -70,3 +70,39 @@ export const Default: Story = {
     onReject: (id) => console.log("Rejected applicant:", id),
   },
 };
+
+/**
+ * 인플루언서 검수 카드
+ *
+ * 인플루언서 타입의 콘텐츠 검수 카드입니다.
+ */
+export const Influencer: Story = {
+  args: {
+    applicant: {
+      ...mockReviewApplicant,
+      userType: "인플루언서",
+      nickname: "인플루언서_블로거",
+    },
+    onContentCheck: (id) => console.log("Content checked:", id),
+    onApprove: (id) => console.log("Approved applicant:", id),
+    onReject: (id) => console.log("Rejected applicant:", id),
+  },
+};
+
+/**
+ * 늦은 등록 검수 카드
+ *
+ * 등록일이 오래된 검수 대기 카드입니다.
+ */
+export const LateRegistration: Story = {
+  args: {
+    applicant: {
+      ...mockReviewApplicant,
+      registrationDate: "2024-01-05",
+      nickname: "늦은_등록_블로거",
+    },
+    onContentCheck: (id) => console.log("Content checked:", id),
+    onApprove: (id) => console.log("Approved applicant:", id),
+    onReject: (id) => console.log("Rejected applicant:", id),
+  },
+};
