@@ -100,7 +100,10 @@ export const getSACategoryList = async (
   return data;
 };
 
-/** 카테고리 상세 조회  GET /api/admin-sa/categories/{categoryId} */
+/**
+ * 카테고리 상세 조회  GET /api/admin-sa/categories/{categoryId}
+ * TODO: 백엔드에 이 엔드포인트가 아직 구현되어 있지 않음 — 백엔드 구현 후 연동 필요
+ */
 export const getSACategoryDetail = async (
   categoryId: number
 ): Promise<SACategoryDetailResponse> => {
@@ -118,12 +121,12 @@ export const createSACategory = async (
   return data;
 };
 
-/** 카테고리 수정  PATCH /api/admin-sa/categories/{categoryId} */
+/** 카테고리 수정  PUT /api/admin-sa/categories/{categoryId} */
 export const updateSACategory = async (
   categoryId: number,
   body: SAUpdateCategoryRequest
 ): Promise<SAUpdateCategoryResponse> => {
-  const { data } = await apiClient.patch<SAUpdateCategoryResponse>(
+  const { data } = await apiClient.put<SAUpdateCategoryResponse>(
     `/api/admin-sa/categories/${categoryId}`,
     body
   );

@@ -159,7 +159,7 @@ export const deleteSABoards = async (
   const { data } = await apiClient.delete<{ result: string; deletedCount: number }>(
     "/api/admin-sa/board",
     {
-      data: { boardIds },
+      params: { boardIds },
     }
   );
   return data;

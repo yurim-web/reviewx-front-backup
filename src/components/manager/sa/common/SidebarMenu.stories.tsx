@@ -27,8 +27,27 @@ export default meta;
 
 type Story = StoryObj<typeof SidebarMenu>;
 
-// 기본 사이드바
+// 기본 사이드바 (대시보드)
 export const Default: Story = {
   render: () => React.createElement(SidebarMenu),
 };
 
+export const SettlementPage: Story = {
+  parameters: {
+    nextjs: {
+      appDirectory: false,
+      navigation: { pathname: "/manager_sa/settlement/withdrawal" },
+    },
+  },
+  render: () => React.createElement(SidebarMenu),
+};
+
+export const MemberPage: Story = {
+  parameters: {
+    nextjs: {
+      appDirectory: false,
+      navigation: { pathname: "/manager_sa/member/reviewers" },
+    },
+  },
+  render: () => React.createElement(SidebarMenu),
+};
