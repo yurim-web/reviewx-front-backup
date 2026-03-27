@@ -21,12 +21,14 @@ import Loading from "@/app/loading";
 import { useAdminReviewers } from "@/hooks/manager/ga/useAdminReviewers";
 import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import type { SAMemberType } from "@/types/api/admin";
 
 interface MemberTypeSectionProps {
   dateRange: DateRange;
+  apiData?: SAMemberType | null;
 }
 
-export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps) {
+export default function MemberTypeSection({ dateRange, apiData }: MemberTypeSectionProps) {
   // 클라이언트에서만 데이터 로드 (Hydration 오류 방지)
   const [isClient, setIsClient] = useState(false);
 
@@ -40,6 +42,23 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
 
   // 날짜 범위에 따라 회원 유형 통계 계산
   const stats = useMemo(() => {
+    // API 데이터가 있으면 우선 사용
+    if (apiData) {
+      return {
+        totalMembers: apiData.totalPartners + apiData.totalReviewers,
+        totalPartners: apiData.totalPartners,
+        activePartners: apiData.activePartners,
+        totalReviewers: apiData.totalReviewers,
+        activeReviewers: apiData.activeReviewers,
+        partnerPercentage: apiData.partnerPercentage,
+        reviewerPercentage: apiData.reviewerPercentage,
+        activePartnerPercentage: apiData.activePartnerPercentage,
+        activeReviewerPercentage: apiData.activeReviewerPercentage,
+        totalPartnersChange: apiData.totalPartnersChange,
+        totalReviewersChange: apiData.totalReviewersChange,
+      };
+    }
+
     if (!dateRange.from || !dateRange.to) {
       return {
         totalMembers: 0,
@@ -205,14 +224,15 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
       totalPartnersChange: total_partners_change,
       totalReviewersChange: total_reviewers_change,
     };
-  }, [dateRange, isClient, reviewers, partners]);
+  }, [dateRange, isClient, reviewers, partners, apiData]);
 
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString("ko-KR");
   };
 
-  if (reviewersLoading || partnersLoading) {
+  // API 데이터가 없을 때만 GA fallback 로딩 표시
+  if (!apiData && (reviewersLoading || partnersLoading)) {
     return <Loading />;
   }
 

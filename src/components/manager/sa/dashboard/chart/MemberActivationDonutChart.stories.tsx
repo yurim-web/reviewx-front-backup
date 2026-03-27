@@ -16,4 +16,20 @@ export default meta;
 
 type Story = StoryObj<typeof MemberActivationDonutChart>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    activePercentage: 72,
+  },
+};
+
+export const HighActivity: Story = {
+  args: {
+    activePercentage: 91,
+  },
+};
+
+export const LowActivity: Story = {
+  args: {
+    activePercentage: 25,
+  },
+};

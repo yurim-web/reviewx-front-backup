@@ -21,10 +21,16 @@ import MemberActivationSection from "@/components/manager/sa/dashboard/section/M
 import MemberTypeSection from "@/components/manager/sa/dashboard/section/MemberTypeSection";
 import ChannelMemberSection from "@/components/manager/sa/dashboard/section/ChannelMemberSection";
 import { useDashboardDateFilter } from "@/hooks/manager/useDashboardDateFilter";
+import { useSADashboard } from "@/hooks/manager/sa/useSADashboard";
+import Loading from "@/app/loading";
 
 export default function ManagerSAPage() {
   const { dateFilter, dateRange, handleDateFilterChange, handleDateRangeChange } =
     useDashboardDateFilter("month");
+
+  const { dashboardData, isLoading } = useSADashboard(dateRange);
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={layoutStyles.container}>
@@ -40,14 +46,20 @@ export default function ManagerSAPage() {
         </div>
 
         <div className={layoutStyles.summary_row}>
-          <SettlementSummarySection dateRange={dateRange} />
-          <PaymentSummarySection dateRange={dateRange} />
+          <SettlementSummarySection
+            dateRange={dateRange}
+            apiData={dashboardData?.settlementSummary}
+          />
+          <PaymentSummarySection dateRange={dateRange} apiData={dashboardData?.paymentSummary} />
         </div>
 
         <div className={layoutStyles.member_stats_row}>
-          <MemberActivationSection dateRange={dateRange} />
-          <MemberTypeSection dateRange={dateRange} />
-          <ChannelMemberSection />
+          <MemberActivationSection
+            dateRange={dateRange}
+            apiData={dashboardData?.memberActivation}
+          />
+          <MemberTypeSection dateRange={dateRange} apiData={dashboardData?.memberType} />
+          <ChannelMemberSection apiData={dashboardData?.channelMember} />
         </div>
       </div>
     </div>

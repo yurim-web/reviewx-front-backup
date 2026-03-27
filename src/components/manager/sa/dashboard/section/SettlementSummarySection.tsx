@@ -21,6 +21,7 @@ import { withdrawalList, type WithdrawalItem } from "@/data/manager_sa/settlemen
 import { parseFormattedAmount, formatCurrency } from "@/utils/formatting/amount";
 import { isDateInRange } from "@/utils/formatting/date";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import type { SASettlementSummary } from "@/types/api/admin";
 import {
   format,
   parse,
@@ -33,6 +34,7 @@ import {
 
 interface SettlementSummarySectionProps {
   dateRange: DateRange;
+  apiData?: SASettlementSummary | null;
 }
 
 const SETTLEMENT_STAT_TITLES: readonly string[] = [
@@ -41,7 +43,10 @@ const SETTLEMENT_STAT_TITLES: readonly string[] = [
   "총 예치금 잔액",
 ] as const;
 
-export default function SettlementSummarySection({ dateRange }: SettlementSummarySectionProps) {
+export default function SettlementSummarySection({
+  dateRange,
+  apiData,
+}: SettlementSummarySectionProps) {
   // localStorage에서 출금 완료 내역 로드
   const [withdrawal_history, set_withdrawal_history] = useState<WithdrawalItem[]>([]);
 
@@ -82,8 +87,34 @@ export default function SettlementSummarySection({ dateRange }: SettlementSummar
     }
   };
 
-  // 날짜 범위에 따라 통계 계산
+  // API 데이터가 있으면 우선 사용
+  const apiStats = useMemo(() => {
+    if (!apiData) return null;
+    return {
+      request_amount: formatCurrency(apiData.withdrawalRequestAmount),
+      completed_amount: formatCurrency(apiData.withdrawalCompleteAmount),
+      total_deposit: formatCurrency(apiData.totalDepositBalance),
+      request_amount_change: "- 0%",
+      completed_amount_change: "- 0%",
+      total_deposit_change: "- 0%",
+      request_amount_changeType: "neutral" as const,
+      completed_amount_changeType: "neutral" as const,
+      total_deposit_changeType: "neutral" as const,
+    };
+  }, [apiData]);
+
+  // API 차트 데이터 변환
+  const apiChartData = useMemo(() => {
+    if (!apiData?.settlementChart) return null;
+    return apiData.settlementChart.map((item) => ({
+      date: item.month,
+      value: item.amount,
+    }));
+  }, [apiData]);
+
+  // Fallback: 날짜 범위에 따라 통계 계산
   const stats = useMemo(() => {
+    if (apiStats) return apiStats;
     if (!dateRange.from || !dateRange.to) {
       return {
         request_amount: "0원",
@@ -189,8 +220,9 @@ export default function SettlementSummarySection({ dateRange }: SettlementSummar
     };
   }, [dateRange, withdrawal_history]);
 
-  // 차트 데이터 생성 (날짜 범위에 따라)
+  // 차트 데이터 생성 (날짜 범위에 따라) — API 데이터 우선
   const chart_data = useMemo(() => {
+    if (apiChartData) return apiChartData;
     if (!dateRange.from || !dateRange.to) {
       return [];
     }

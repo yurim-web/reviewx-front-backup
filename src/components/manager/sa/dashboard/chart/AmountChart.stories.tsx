@@ -63,6 +63,39 @@ export const Default: Story = {
       { date: "11/11", value: 30000000 },
     ],
     gradientId: "testGradient",
-    chartAreaClass: "chart_area_settlement", // CSS 모듈 클래스 이름 전체를 사용
+    chartAreaClass: "chart_area_settlement",
+  },
+};
+
+export const EmptyData: Story = {
+  render: (args) => (
+    <div style={{ width: "100%", height: "400px", padding: "20px" }}>
+      <AmountChart {...args} />
+    </div>
+  ),
+  args: {
+    data: [],
+    gradientId: "emptyGradient",
+    chartAreaClass: "chart_area_settlement",
+  },
+};
+
+export const SpikeData: Story = {
+  render: (args) => (
+    <div style={{ width: "100%", height: "400px", padding: "20px" }}>
+      <AmountChart {...args} />
+    </div>
+  ),
+  args: {
+    data: [
+      { date: "3/1", value: 5000000 },
+      { date: "3/2", value: 8000000 },
+      { date: "3/3", value: 250000000 },
+      { date: "3/4", value: 6000000 },
+      { date: "3/5", value: 12000000 },
+      { date: "3/6", value: 9000000 },
+    ],
+    gradientId: "spikeGradient",
+    chartAreaClass: "chart_area_payment",
   },
 };

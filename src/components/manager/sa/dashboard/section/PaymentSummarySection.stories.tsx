@@ -27,9 +27,40 @@ type Story = StoryObj<typeof PaymentSummarySection>;
 
 export const Default: Story = {
   args: {
-    dateRange: {
-      from: new Date("2024-01-01"),
-      to: new Date("2024-12-31"),
+    dateRange: { from: new Date("2026-03-01"), to: new Date("2026-03-27") },
+    apiData: null,
+  },
+};
+
+/** API 데이터 있는 상태 — 6개월 차트 + 결제 통계 */
+export const WithData: Story = {
+  args: {
+    dateRange: { from: new Date("2026-03-01"), to: new Date("2026-03-27") },
+    apiData: {
+      totalPaymentAmount: 48500000,
+      completedPaymentAmount: 32100000,
+      pendingPaymentAmount: 16400000,
+      paymentChart: [
+        { month: "2025-10", amount: 38200000 },
+        { month: "2025-11", amount: 41500000 },
+        { month: "2025-12", amount: 45800000 },
+        { month: "2026-01", amount: 39600000 },
+        { month: "2026-02", amount: 43200000 },
+        { month: "2026-03", amount: 48500000 },
+      ],
+    },
+  },
+};
+
+/** 데이터 없음 */
+export const EmptyChart: Story = {
+  args: {
+    dateRange: { from: new Date("2026-03-01"), to: new Date("2026-03-27") },
+    apiData: {
+      totalPaymentAmount: 0,
+      completedPaymentAmount: 0,
+      pendingPaymentAmount: 0,
+      paymentChart: [],
     },
   },
 };

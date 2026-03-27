@@ -21,12 +21,17 @@ import Loading from "@/app/loading";
 import { useAdminReviewers } from "@/hooks/manager/ga/useAdminReviewers";
 import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import type { SAMemberActivation } from "@/types/api/admin";
 
 interface MemberActivationSectionProps {
   dateRange: DateRange;
+  apiData?: SAMemberActivation | null;
 }
 
-export default function MemberActivationSection({ dateRange }: MemberActivationSectionProps) {
+export default function MemberActivationSection({
+  dateRange,
+  apiData,
+}: MemberActivationSectionProps) {
   // 클라이언트에서만 데이터 로드 (Hydration 오류 방지)
   const [isClient, setIsClient] = useState(false);
 
@@ -40,6 +45,17 @@ export default function MemberActivationSection({ dateRange }: MemberActivationS
 
   // 날짜 범위에 따라 회원 통계 계산
   const stats = useMemo(() => {
+    // API 데이터가 있으면 우선 사용
+    if (apiData) {
+      return {
+        totalMembers: apiData.totalMembers,
+        activeMembers: apiData.activeMembers,
+        inactiveMembers: apiData.inactiveMembers,
+        activePercentage: apiData.activePercentage,
+        totalMembersChange: apiData.totalMembersChange,
+      };
+    }
+
     if (!dateRange.from || !dateRange.to) {
       return {
         totalMembers: 0,
@@ -171,14 +187,15 @@ export default function MemberActivationSection({ dateRange }: MemberActivationS
       activePercentage: active_percentage,
       totalMembersChange: total_members_change,
     };
-  }, [dateRange, isClient, reviewers, partners]);
+  }, [dateRange, isClient, reviewers, partners, apiData]);
 
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString("ko-KR");
   };
 
-  if (reviewersLoading || partnersLoading) {
+  // API 데이터가 없을 때만 GA fallback 로딩 표시
+  if (!apiData && (reviewersLoading || partnersLoading)) {
     return <Loading />;
   }
 

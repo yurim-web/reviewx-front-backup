@@ -22,6 +22,9 @@ import {
   type PaymentHistoryItem,
 } from "@/data/manager_sa/settlement/paymentHistoryData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import type { SAPaymentSummary } from "@/types/api/admin";
+import { parseFormattedAmount, formatCurrency } from "@/utils/formatting/amount";
+import { isDateInRange } from "@/utils/formatting/date";
 import {
   format,
   parse,
@@ -36,6 +39,7 @@ import {
 interface PaymentSummarySectionProps {
   // 날짜 범위 (필터에 따라 변경됨)
   dateRange: DateRange;
+  apiData?: SAPaymentSummary | null;
 }
 
 // 통계 카드 title 고정값
@@ -46,25 +50,7 @@ const PAYMENT_STAT_TITLES: readonly string[] = [
   "예상 수수료",
 ] as const;
 
-// 금액 문자열을 숫자로 변환하는 함수
-const parse_amount = (amount_str: string): number => {
-  return parseInt(amount_str.replace(/,/g, ""), 10) || 0;
-};
-
-// 숫자를 금액 형식 문자열로 변환하는 함수
-const format_amount = (amount: number): string => {
-  return `${(amount || 0).toLocaleString("ko-KR")}원`;
-};
-
-// 날짜 문자열이 특정 날짜 범위 내에 있는지 확인하는 함수
-const is_date_in_range = (date_str: string, start_date: Date, end_date: Date): boolean => {
-  const item_date_str = date_str.split(" ")[0];
-  const item_date = parse(item_date_str, "yyyy-MM-dd", new Date());
-  item_date.setHours(0, 0, 0, 0);
-  return item_date >= start_date && item_date <= end_date;
-};
-
-export default function PaymentSummarySection({ dateRange }: PaymentSummarySectionProps) {
+export default function PaymentSummarySection({ dateRange, apiData }: PaymentSummarySectionProps) {
   // 결제 내역 데이터 로드
   const [payment_history, set_payment_history] = useState<PaymentHistoryItem[]>([]);
 
@@ -100,8 +86,37 @@ export default function PaymentSummarySection({ dateRange }: PaymentSummarySecti
     }
   };
 
-  // 날짜 범위에 따라 통계 계산
+  // API 데이터가 있으면 우선 사용
+  const apiStats = useMemo(() => {
+    if (!apiData) return null;
+    return {
+      total_payment: formatCurrency(apiData.totalPaymentAmount),
+      deposit_increase: formatCurrency(apiData.completedPaymentAmount),
+      card_payment: formatCurrency(apiData.pendingPaymentAmount),
+      expected_fee: formatCurrency(Math.floor(apiData.totalPaymentAmount * 0.03)),
+      total_payment_change: "- 0%",
+      deposit_increase_change: "- 0%",
+      card_payment_change: "- 0%",
+      expected_fee_change: "- 0%",
+      total_payment_changeType: "neutral" as const,
+      deposit_increase_changeType: "neutral" as const,
+      card_payment_changeType: "neutral" as const,
+      expected_fee_changeType: "neutral" as const,
+    };
+  }, [apiData]);
+
+  // API 차트 데이터 변환
+  const apiChartData = useMemo(() => {
+    if (!apiData?.paymentChart) return null;
+    return apiData.paymentChart.map((item) => ({
+      date: item.month,
+      value: item.amount,
+    }));
+  }, [apiData]);
+
+  // Fallback: 날짜 범위에 따라 통계 계산
   const stats = useMemo(() => {
+    if (apiStats) return apiStats;
     if (!dateRange.from || !dateRange.to) {
       return {
         total_payment: "0원",
@@ -135,23 +150,23 @@ export default function PaymentSummarySection({ dateRange }: PaymentSummarySecti
     // 현재 기간의 완료된 결제만 필터링
     const completed_items = payment_history.filter(
       (item) =>
-        item.paymentStatus === "완료" && is_date_in_range(item.approvalDate, start_date, end_date)
+        item.paymentStatus === "완료" && isDateInRange(item.approvalDate, start_date, end_date)
     );
 
     // 이전 기간의 완료된 결제만 필터링
     const previous_completed_items = payment_history.filter(
       (item) =>
         item.paymentStatus === "완료" &&
-        is_date_in_range(item.approvalDate, previous_start_date, previous_end_date)
+        isDateInRange(item.approvalDate, previous_start_date, previous_end_date)
     );
 
     // 1. 총결제 금액: 완료된 모든 결제의 chargedPoints 합계
     const total_payment = completed_items.reduce(
-      (sum, item) => sum + parse_amount(item.chargedPoints),
+      (sum, item) => sum + parseFormattedAmount(item.chargedPoints),
       0
     );
     const previous_total_payment = previous_completed_items.reduce(
-      (sum, item) => sum + parse_amount(item.chargedPoints),
+      (sum, item) => sum + parseFormattedAmount(item.chargedPoints),
       0
     );
     const total_payment_change = calculate_change_percentage(total_payment, previous_total_payment);
@@ -159,14 +174,14 @@ export default function PaymentSummarySection({ dateRange }: PaymentSummarySecti
     // 2. 입금 총액: 무통장 입금이고 완료된 항목들의 chargedPoints 합계
     const deposit_items = completed_items.filter((item) => item.paymentMethod === "무통장 입금");
     const deposit_increase = deposit_items.reduce(
-      (sum, item) => sum + parse_amount(item.chargedPoints),
+      (sum, item) => sum + parseFormattedAmount(item.chargedPoints),
       0
     );
     const previous_deposit_items = previous_completed_items.filter(
       (item) => item.paymentMethod === "무통장 입금"
     );
     const previous_deposit_increase = previous_deposit_items.reduce(
-      (sum, item) => sum + parse_amount(item.chargedPoints),
+      (sum, item) => sum + parseFormattedAmount(item.chargedPoints),
       0
     );
     const deposit_increase_change = calculate_change_percentage(
@@ -179,14 +194,14 @@ export default function PaymentSummarySection({ dateRange }: PaymentSummarySecti
       (item) => item.paymentMethod === "카드 결제" || item.paymentMethod === "포인트 충전"
     );
     const card_payment = card_items.reduce(
-      (sum, item) => sum + parse_amount(item.chargedPoints),
+      (sum, item) => sum + parseFormattedAmount(item.chargedPoints),
       0
     );
     const previous_card_items = previous_completed_items.filter(
       (item) => item.paymentMethod === "카드 결제" || item.paymentMethod === "포인트 충전"
     );
     const previous_card_payment = previous_card_items.reduce(
-      (sum, item) => sum + parse_amount(item.chargedPoints),
+      (sum, item) => sum + parseFormattedAmount(item.chargedPoints),
       0
     );
     const card_payment_change = calculate_change_percentage(card_payment, previous_card_payment);
@@ -197,10 +212,10 @@ export default function PaymentSummarySection({ dateRange }: PaymentSummarySecti
     const expected_fee_change = calculate_change_percentage(expected_fee, previous_expected_fee);
 
     return {
-      total_payment: format_amount(total_payment),
-      deposit_increase: format_amount(deposit_increase),
-      card_payment: format_amount(card_payment),
-      expected_fee: format_amount(expected_fee),
+      total_payment: formatCurrency(total_payment),
+      deposit_increase: formatCurrency(deposit_increase),
+      card_payment: formatCurrency(card_payment),
+      expected_fee: formatCurrency(expected_fee),
       total_payment_change: total_payment_change.change,
       deposit_increase_change: deposit_increase_change.change,
       card_payment_change: card_payment_change.change,
@@ -212,8 +227,9 @@ export default function PaymentSummarySection({ dateRange }: PaymentSummarySecti
     };
   }, [dateRange, payment_history]);
 
-  // 차트 데이터 생성 (날짜 범위에 따라)
+  // 차트 데이터 생성 (날짜 범위에 따라) — API 데이터 우선
   const chart_data = useMemo(() => {
+    if (apiChartData) return apiChartData;
     if (!dateRange.from || !dateRange.to) {
       return [];
     }
@@ -254,7 +270,7 @@ export default function PaymentSummarySection({ dateRange }: PaymentSummarySecti
         if (approval_date >= chart_start_date && approval_date <= chart_end_date) {
           const date_key = format(approval_date, "M/d");
           const current = date_map.get(date_key) || 0;
-          date_map.set(date_key, current + parse_amount(item.chargedPoints));
+          date_map.set(date_key, current + parseFormattedAmount(item.chargedPoints));
         }
       }
     });
