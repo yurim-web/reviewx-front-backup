@@ -49,3 +49,33 @@ export const Default: Story = {
     styles: styles as any,
   },
 };
+
+export const HighActivity: Story = {
+  render: (args) => React.createElement(StatCardsSection, args),
+  args: {
+    stat_card_values: {
+      open_scheduled: "32",
+      in_progress: "98",
+      applying: "45",
+      total: "350",
+      ended: "165",
+      cancelled: "10",
+    },
+    styles: styles as any,
+  },
+};
+
+export const LowActivity: Story = {
+  render: (args) => React.createElement(StatCardsSection, args),
+  args: {
+    stat_card_values: {
+      open_scheduled: "2",
+      in_progress: "5",
+      applying: "1",
+      total: "20",
+      ended: "11",
+      cancelled: "1",
+    },
+    styles: styles as any,
+  },
+};

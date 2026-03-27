@@ -187,3 +187,66 @@ export const Empty: Story = {
   },
 };
 
+// 다양한 상태가 포함된 테이블
+export const MixedStatuses: Story = {
+  render: (args) =>
+    React.createElement(CampaignProgressTable, {
+      ...args,
+      ReportModal: ReportModalWrapper,
+      tagStyles: tagStyles,
+      channelIconStyles: channelIconStyles,
+    }),
+  args: {
+    campaign_list: [
+      ...mockCampaigns,
+      {
+        id: "3",
+        campaign_number: "CP-2024-003",
+        partner_name: "파트너 C",
+        campaign_name: "예정 캠페인",
+        type: "방문형",
+        channel: "Youtube" as const,
+        status: "예정" as const,
+        recruit_count: 20,
+        apply_count: 0,
+        point: 2000,
+        detail_campaign_id: "3",
+      },
+      {
+        id: "4",
+        campaign_number: "CP-2024-004",
+        partner_name: "파트너 D",
+        campaign_name: "종료된 캠페인",
+        type: "미션형",
+        channel: "Instagram" as const,
+        status: "종료" as const,
+        recruit_count: 40,
+        apply_count: 40,
+        point: 4000,
+        detail_campaign_id: "4",
+      },
+    ],
+    base_path: "/manager_ga/campaign/progress",
+    styles: tableStyles,
+    tagStyles: tagStyles,
+    channelIconStyles: channelIconStyles,
+  },
+};
+
+// SA 관리자 경로
+export const SAAdmin: Story = {
+  render: (args) =>
+    React.createElement(CampaignProgressTable, {
+      ...args,
+      ReportModal: ReportModalWrapper,
+      tagStyles: tagStyles,
+      channelIconStyles: channelIconStyles,
+    }),
+  args: {
+    campaign_list: mockCampaigns,
+    base_path: "/manager_sa/campaign/progress",
+    styles: tableStyles,
+    tagStyles: tagStyles,
+    channelIconStyles: channelIconStyles,
+  },
+};
