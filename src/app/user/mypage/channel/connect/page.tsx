@@ -21,12 +21,8 @@ import PageTitle from "@/components/fragments/PageTitle";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import ChannelSection from "@/components/user/mypage/ChannelSection";
 import { useAuth } from "@/hooks/useAuth";
-import { patchReviewerProfile } from "@/lib/api/reviewer";
-import {
-  useReviewerProfile,
-  useInvalidateReviewerProfile,
-  getReviewerIdNum,
-} from "@/hooks/user/mypage/useReviewerProfile";
+import { fetchReviewerChannels, updateReviewerChannel } from "@/lib/api/reviewer";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import headerStyles from "@/styles/user/mypage/edit_profile/header.module.css";
 
@@ -45,27 +41,32 @@ const defaultChannels: ChannelInfo[] = [
 
 export default function ChannelConnectPage() {
   const { user } = useAuth();
-  const { data: profile } = useReviewerProfile(user?.id);
-  const invalidateProfile = useInvalidateReviewerProfile();
+  const queryClient = useQueryClient();
+  const { data: channelData } = useQuery({
+    queryKey: ["reviewerChannels"],
+    queryFn: fetchReviewerChannels,
+    enabled: !!user,
+    staleTime: 30_000,
+  });
   const [channels, setChannels] = useState<ChannelInfo[]>(defaultChannels);
 
-  // 서버 프로필에서 채널 정보 로드
+  // R-29: reviewerProfile.channel[] 배열에서 채널 목록 로드
   useEffect(() => {
-    if (!user || !profile?.channel_details) return;
+    if (!user || !channelData?.reviewerProfile?.channel) return;
 
-    const loadedChannels = defaultChannels.map((channel) => {
-      const detail = profile.channel_details!.find((d) => d.name === channel.name);
-      if (detail) {
-        return {
-          name: channel.name,
-          url: detail.url || "",
-          status: detail.status || ("disconnected" as const),
-        };
+    const serverChannels = channelData.reviewerProfile.channel;
+    const loadedChannels = defaultChannels.map((ch) => {
+      const found = serverChannels.find(
+        (sc: { channelName: string; isConnected: boolean; channelUrl: string | null }) =>
+          sc.channelName === ch.name
+      );
+      if (found && found.isConnected) {
+        return { name: ch.name, url: found.channelUrl || "", status: "connected" as const };
       }
-      return channel;
+      return ch;
     });
     setChannels(loadedChannels);
-  }, [user, profile]);
+  }, [user, channelData]);
 
   // 채널 연결/수정 핸들러
   const handleChannelUpdate = (channelName: string, channelInfo: { url: string }) => {
@@ -74,21 +75,23 @@ export default function ChannelConnectPage() {
     );
     setChannels(updatedChannels);
 
-    // 서버에 채널 정보 저장
-    const reviewerIdNum = getReviewerIdNum(user?.id);
-    if (reviewerIdNum) {
-      patchReviewerProfile(reviewerIdNum, {
-        channel_details: updatedChannels.map((ch) => ({
-          name: ch.name,
-          url: ch.url ?? "",
-          status: ch.status,
-        })),
-      })
-        .then(() => invalidateProfile(user?.id))
-        .catch((_apiError) => {
-          console.error("채널 연결 API 호출 실패:", _apiError);
-        });
-    }
+    // R-30: POST /user/mypage/channel 으로 채널 정보 저장
+    const serverChannels = channelData?.reviewerProfile?.channel || [];
+    const targetChannel = serverChannels.find(
+      (sc: { channelName: string }) => sc.channelName === channelName
+    );
+    const channelId =
+      targetChannel?.channelId || defaultChannels.findIndex((c) => c.name === channelName) + 1;
+
+    updateReviewerChannel({
+      channelId,
+      externalId: channelInfo.url.split("/").pop() || "",
+      channelUrl: channelInfo.url,
+    })
+      .then(() => queryClient.invalidateQueries({ queryKey: ["reviewerChannels"] }))
+      .catch((err: Error) => {
+        console.error("채널 연결 API 호출 실패:", err);
+      });
 
     // 캠페인 신청 모달에서 온 경우 sessionStorage에 저장
     const shouldOpenModal = sessionStorage.getItem("shouldOpenApplicationModal");

@@ -24,12 +24,8 @@ import type { MainTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/mypage/mypage_layout.module.css";
 import Loading from "@/app/loading";
 import { useAuth } from "@/hooks/useAuth";
-import { patchReviewerProfile } from "@/lib/api/reviewer";
-import {
-  useReviewerProfile,
-  useInvalidateReviewerProfile,
-  getReviewerIdNum,
-} from "@/hooks/user/mypage/useReviewerProfile";
+import { fetchReviewerChannels, updateReviewerChannel } from "@/lib/api/reviewer";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const DEFAULT_CHANNELS = [
   { name: "네이버 블로그", url: "", status: "disconnected" as const },
@@ -41,8 +37,17 @@ const DEFAULT_CHANNELS = [
 export default function ChannelPage() {
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
-  const { data: profile, isLoading, error } = useReviewerProfile(user?.id);
-  const invalidateProfile = useInvalidateReviewerProfile();
+  const queryClient = useQueryClient();
+  const {
+    data: channelData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["reviewerChannels"],
+    queryFn: fetchReviewerChannels,
+    enabled: !!user,
+    staleTime: 30_000,
+  });
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
   const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">("channel");
 
@@ -78,23 +83,20 @@ export default function ChannelPage() {
       DEFAULT_CHANNELS
     );
 
-  // 서버 프로필에서 채널 정보 로드
+  // R-29: reviewerProfile.channel[] 배열에서 채널 목록 로드
   useEffect(() => {
-    if (!user || !profile?.channel_details) return;
+    if (!user || !channelData?.reviewerProfile?.channel) return;
 
-    const loadedChannels = DEFAULT_CHANNELS.map((channel) => {
-      const detail = profile.channel_details!.find((d) => d.name === channel.name);
-      if (detail) {
-        return {
-          name: channel.name,
-          url: detail.url || "",
-          status: detail.status || ("disconnected" as const),
-        };
+    const serverChannels = channelData.reviewerProfile.channel;
+    const loadedChannels = DEFAULT_CHANNELS.map((ch) => {
+      const found = serverChannels.find((sc) => sc.channelName === ch.name);
+      if (found && found.isConnected) {
+        return { name: ch.name, url: found.channelUrl || "", status: "connected" as const };
       }
-      return channel;
+      return ch;
     });
     setChannels(loadedChannels);
-  }, [user, profile]);
+  }, [user, channelData]);
 
   const handleSubTabChange = (tab: "profile" | "channel") => {
     switch (tab) {
@@ -121,39 +123,39 @@ export default function ChannelPage() {
     setChannels(updatedChannels);
     setChannelError("");
 
-    // 서버에 채널 정보 저장
-    const reviewerIdNum = getReviewerIdNum(user?.id);
-    if (reviewerIdNum) {
-      patchReviewerProfile(reviewerIdNum, {
-        channel_details: updatedChannels.map((ch) => ({
-          name: ch.name,
-          url: ch.url ?? "",
-          status: ch.status,
-        })),
+    // R-30: 서버에 채널 정보 저장
+    const serverChannels = channelData?.reviewerProfile?.channel || [];
+    const targetChannel = serverChannels.find((sc) => sc.channelName === channelName);
+    const channelId =
+      targetChannel?.channelId || DEFAULT_CHANNELS.findIndex((c) => c.name === channelName) + 1;
+
+    updateReviewerChannel({
+      channelId,
+      externalId: channelInfo.url.split("/").pop() || "",
+      channelUrl: channelInfo.url,
+    })
+      .then(() => {
+        queryClient.invalidateQueries({ queryKey: ["reviewerChannels"] });
+        // C_M6: 채널 연결 완료 모달
+        setShowChannelCompleteModal(true);
       })
-        .then(() => {
-          invalidateProfile(user?.id);
-          // C_M6: 채널 연결 완료 모달
-          setShowChannelCompleteModal(true);
-        })
-        .catch((apiError) => {
-          // 에러 처리
-          if (apiError?.response?.status === 400) {
-            const errorCode = apiError?.response?.data?.error;
-            if (errorCode === "INVALID_CHANNEL") {
-              setChannelError("유효하지 않은 채널입니다.");
-            } else if (errorCode === "MISSING_REQUIRED_FIELD") {
-              setChannelError("필수 항목이 입력되지 않았습니다.");
-            } else {
-              setChannelError("채널 정보를 저장할 수 없습니다.");
-            }
-          } else if (apiError?.response?.status === 500) {
-            setShowServerErrorModal(true);
+      .catch((apiError) => {
+        // 에러 처리
+        if (apiError?.response?.status === 400) {
+          const errorCode = apiError?.response?.data?.error;
+          if (errorCode === "INVALID_CHANNEL") {
+            setChannelError("유효하지 않은 채널입니다.");
+          } else if (errorCode === "MISSING_REQUIRED_FIELD") {
+            setChannelError("필수 항목이 입력되지 않았습니다.");
           } else {
-            setChannelError("채널 정보를 저장하는 중 오류가 발생했습니다.");
+            setChannelError("채널 정보를 저장할 수 없습니다.");
           }
-        });
-    }
+        } else if (apiError?.response?.status === 500) {
+          setShowServerErrorModal(true);
+        } else {
+          setChannelError("채널 정보를 저장하는 중 오류가 발생했습니다.");
+        }
+      });
   };
 
   if (isLoading) return <Loading />;

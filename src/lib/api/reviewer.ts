@@ -17,7 +17,12 @@
  */
 
 import { apiClient } from "@/lib/api/client";
-import type { ReviewerProfileResponse, ReviewerProfilePatchBody } from "@/types/api/reviewer";
+import type {
+  ReviewerProfileResponse,
+  ReviewerProfilePatchBody,
+  ReviewerEditResponse,
+  ReviewerChannelResponse,
+} from "@/types/api/reviewer";
 
 // ────────────────────────────────────────────────────────────────────────────────
 // 캠페인 관리 타입
@@ -50,27 +55,50 @@ export interface ReviewerCampaignItem {
  * (리뷰어 ID는 Bearer 토큰으로 식별 — query param 불필요)
  */
 export const fetchReviewerCampaigns = (_reviewerId: number): Promise<ReviewerCampaignItem[]> =>
-  apiClient.get<ReviewerCampaignItem[]>("/reviewer/mypage/campaigns").then((r) => r.data);
+  apiClient.get<ReviewerCampaignItem[]>("/api/v1/reviewer/campaigns").then((r) => r.data);
 
 // ────────────────────────────────────────────────────────────────────────────────
 // 프로필 API
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * 리뷰어 프로필 조회
- * GET /reviewer/mypage/profile/:id → /reviewers/:id
+ * 리뷰어 프로필 조회 (R-28)
+ * GET /user/mypage/profile (Bearer 토큰으로 식별)
+ * ⚠️ reviewerId 파라미터는 하위 호환용 — 실제로는 사용하지 않음
  */
-export const fetchReviewerProfile = (reviewerId: number): Promise<ReviewerProfileResponse> =>
-  apiClient
-    .get<ReviewerProfileResponse>(`/reviewer/mypage/profile/${reviewerId}`)
-    .then((r) => r.data);
+export const fetchReviewerProfile = (_reviewerId?: number): Promise<ReviewerProfileResponse> =>
+  apiClient.get<ReviewerProfileResponse>("/api/v1/reviewer/mypage/profile").then((r) => r.data);
 
 /**
- * 리뷰어 프로필 수정
- * PATCH /reviewer/mypage/profile/:id → /reviewers/:id
+ * 리뷰어 내 정보 수정 페이지 데이터 조회 (R-31)
+ * GET /user/mypage/edit (Bearer 토큰으로 식별)
+ */
+export const fetchReviewerEdit = (): Promise<ReviewerEditResponse> =>
+  apiClient.get<ReviewerEditResponse>("/api/v1/reviewer/mypage/edit").then((r) => r.data);
+
+/**
+ * 리뷰어 채널 목록 조회 (R-29)
+ * GET /user/mypage/channel (Bearer 토큰으로 식별)
+ */
+export const fetchReviewerChannels = (): Promise<ReviewerChannelResponse> =>
+  apiClient.get<ReviewerChannelResponse>("/api/v1/reviewer/mypage/channels").then((r) => r.data);
+
+/**
+ * 리뷰어 채널 등록/수정 (R-30)
+ * POST /user/mypage/channel
+ */
+export const updateReviewerChannel = (body: {
+  channelId: number;
+  externalId?: string;
+  channelUrl?: string;
+}): Promise<void> => apiClient.put("/api/v1/reviewer/mypage/channels", body).then(() => undefined);
+
+/**
+ * 리뷰어 프로필 수정 (R-32)
+ * POST /user/mypage/edit (Bearer 토큰으로 식별)
+ * ⚠️ reviewerId 파라미터는 하위 호환용 — 실제로는 사용하지 않음
  */
 export const patchReviewerProfile = (
-  reviewerId: number,
+  _reviewerId: number,
   body: ReviewerProfilePatchBody
-): Promise<void> =>
-  apiClient.patch(`/reviewer/mypage/profile/${reviewerId}`, body).then(() => undefined);
+): Promise<void> => apiClient.put("/api/v1/reviewer/mypage/edit", body).then(() => undefined);

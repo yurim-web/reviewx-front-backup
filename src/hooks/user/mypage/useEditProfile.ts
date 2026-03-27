@@ -12,11 +12,11 @@
  */
 
 import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
-import { patchReviewerProfile } from "@/lib/api/reviewer";
+import { patchReviewerProfile, fetchReviewerEdit } from "@/lib/api/reviewer";
 import {
-  useReviewerProfile,
   useInvalidateReviewerProfile,
   getReviewerIdNum,
 } from "@/hooks/user/mypage/useReviewerProfile";
@@ -40,7 +40,12 @@ export interface EditProfileFormData {
 
 export function useEditProfile() {
   const { user } = useAuth();
-  const { data: profile } = useReviewerProfile(user?.id);
+  const { data: editData } = useQuery({
+    queryKey: ["reviewerEdit"],
+    queryFn: fetchReviewerEdit,
+    enabled: !!user,
+    staleTime: 30_000,
+  });
   const invalidateProfile = useInvalidateReviewerProfile();
 
   const [formData, setFormData] = useState<EditProfileFormData>({
@@ -86,30 +91,30 @@ export function useEditProfile() {
   useEffect(() => {
     if (!user) return;
 
-    const accountHolderValue = profile?.account_holder ?? "";
-    const bankValue = profile?.bank ?? "";
-    const accountNumberValue = profile?.account_number ?? "";
+    const accountHolderValue = editData?.bankAccount?.accountHolder ?? "";
+    const bankValue = editData?.bankAccount?.bankName ?? "";
+    const accountNumberValue = editData?.bankAccount?.accountNumber ?? "";
 
     setFormData((prev) => ({
       ...prev,
-      nickname: profile?.nickname ?? user.nickname ?? user.name ?? "",
-      name: profile?.name ?? user.name ?? "",
-      email: profile?.email ?? user.email ?? "",
-      postalCode: profile?.postal_code ?? user.postal_code ?? "",
-      address: profile?.address ?? user.address ?? "",
-      detailAddress: profile?.detail_address ?? user.detail_address ?? "",
+      nickname: user.nickname ?? user.name ?? "",
+      name: editData?.user.name ?? user.name ?? "",
+      email: editData?.user.email ?? user.email ?? "",
+      postalCode: editData?.address?.zipCode ?? user.postal_code ?? "",
+      address: editData?.address?.address ?? user.address ?? "",
+      detailAddress: editData?.address?.addressDetail ?? user.detail_address ?? "",
       accountHolder: accountHolderValue,
       bank: bankValue,
       accountNumber: accountNumberValue,
-      ssnFront: profile?.ssn_front ?? "",
-      ssnBack: profile?.ssn_back ?? "",
+      ssnFront: "",
+      ssnBack: "",
     }));
 
     if (accountHolderValue.trim() && bankValue.trim() && String(accountNumberValue).trim()) {
       setIsAccountHolderVerified(true);
     }
 
-    const phoneNumber = profile?.phone ?? user.phone;
+    const phoneNumber = editData?.user.phoneNum ?? user.phone;
     if (phoneNumber) {
       handlePhoneChangeHook(phoneNumber);
       setIsVerified(true);
@@ -117,13 +122,13 @@ export function useEditProfile() {
     }
 
     const DEFAULT_PROFILE = "/images/mypage/profile.svg";
-    const profileImg = profile?.profile_image ?? user.profile_image;
+    const profileImg = editData?.user.profileImageUrl ?? user.profile_image;
     if (profileImg && profileImg !== DEFAULT_PROFILE) {
       setProfileImage(profileImg);
     }
 
-    // 서버 프로필이 없으면 로컬 계좌 인증 데이터 폴백
-    if (!profile) {
+    // 서버 데이터가 없으면 로컬 계좌 인증 데이터 폴백
+    if (!editData) {
       try {
         const stored = localStorage.getItem(ACCOUNT_STORAGE_KEY);
         if (stored) {
@@ -140,11 +145,11 @@ export function useEditProfile() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, profile]);
+  }, [user, editData]);
 
   // 계좌 정보 변경 시 인증 상태 동기화
   useEffect(() => {
-    if (!profile) return;
+    if (!editData) return;
 
     const accountHolderValue = formData.accountHolder?.trim() ?? "";
     const bankValue = formData.bank?.trim() ?? "";
@@ -153,13 +158,13 @@ export function useEditProfile() {
     if (!accountHolderValue || !bankValue || !accountNumberValue) return;
 
     if (
-      profile.account_holder === accountHolderValue &&
-      profile.bank === bankValue &&
-      profile.account_number === accountNumberValue
+      editData.bankAccount?.accountHolder === accountHolderValue &&
+      editData.bankAccount?.bankName === bankValue &&
+      editData.bankAccount?.accountNumber === accountNumberValue
     ) {
       setIsAccountHolderVerified(true);
     }
-  }, [formData.accountHolder, formData.bank, formData.accountNumber, profile]);
+  }, [formData.accountHolder, formData.bank, formData.accountNumber, editData]);
 
   // 전화번호 인증 완료 시 뱃지 표시
   useEffect(() => {
@@ -243,21 +248,23 @@ export function useEditProfile() {
         );
       }
 
-      // 서버에 프로필 저장
+      // 서버에 프로필 저장 (R-32: POST /user/mypage/edit — camelCase)
       const reviewerIdNum = getReviewerIdNum(user?.id);
       if (reviewerIdNum) {
         await patchReviewerProfile(reviewerIdNum, {
           name: formData.name,
           nickname: formData.nickname,
           phone,
-          postal_code: formData.postalCode,
+          postNumber: formData.postalCode,
           address: formData.address,
-          detail_address: formData.detailAddress,
-          bank: formData.bank,
-          account_number: formData.accountNumber,
-          account_holder: formData.accountHolder,
-          ssn_front: formData.ssnFront,
-          ssn_back: formData.ssnBack,
+          addressDetail: formData.detailAddress,
+          bankName: formData.bank,
+          accountNumber: formData.accountNumber,
+          accountHolder: formData.accountHolder,
+          residentRegNo:
+            formData.ssnFront && formData.ssnBack
+              ? `${formData.ssnFront}-${formData.ssnBack}`
+              : undefined,
         });
         invalidateProfile(user?.id);
       }

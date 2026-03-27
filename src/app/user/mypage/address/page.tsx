@@ -19,10 +19,10 @@ import { useRouter, usePathname } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import AddressInput from "@/components/common/mypage/AddressInput";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { patchReviewerProfile } from "@/lib/api/reviewer";
+import { patchReviewerProfile, fetchReviewerEdit } from "@/lib/api/reviewer";
 import {
-  useReviewerProfile,
   useInvalidateReviewerProfile,
   getReviewerIdNum,
 } from "@/hooks/user/mypage/useReviewerProfile";
@@ -33,7 +33,12 @@ export default function AddressPage() {
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuth();
-  const { data: profile } = useReviewerProfile(user?.id);
+  const { data: editData } = useQuery({
+    queryKey: ["reviewerEdit"],
+    queryFn: fetchReviewerEdit,
+    enabled: !!user,
+    staleTime: 30_000,
+  });
   const invalidateProfile = useInvalidateReviewerProfile();
 
   // 주소 정보 상태 관리
@@ -59,15 +64,13 @@ export default function AddressPage() {
   useEffect(() => {
     if (!user) return;
 
-    if (profile) {
-      if (profile.postal_code || profile.address || profile.detail_address) {
-        setAddressData({
-          postalCode: profile.postal_code || "",
-          address: profile.address || "",
-          detailAddress: profile.detail_address || "",
-        });
-        return;
-      }
+    if (editData?.address) {
+      setAddressData({
+        postalCode: editData.address.zipCode || "",
+        address: editData.address.address || "",
+        detailAddress: editData.address.addressDetail || "",
+      });
+      return;
     }
 
     // 서버에 없으면 sessionStorage 폴백
@@ -84,7 +87,7 @@ export default function AddressPage() {
     } catch (error) {
       console.error("Failed to load address data:", error);
     }
-  }, [user, profile]);
+  }, [user, editData]);
 
   // 뒤로가기 시 모달 상태 복원
   useEffect(() => {
@@ -123,9 +126,9 @@ export default function AddressPage() {
     if (reviewerIdNum) {
       try {
         await patchReviewerProfile(reviewerIdNum, {
-          postal_code: addressData.postalCode,
+          postNumber: addressData.postalCode,
           address: addressData.address,
-          detail_address: addressData.detailAddress,
+          addressDetail: addressData.detailAddress,
         });
         invalidateProfile(user?.id);
       } catch (_apiError) {

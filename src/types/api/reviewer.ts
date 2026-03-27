@@ -14,49 +14,134 @@
  */
 
 /**
- * GET /reviewer/mypage/profile/:id 응답 타입
+ * GET /user/mypage/profile 응답 타입 (R-28)
  */
 export interface ReviewerProfileResponse {
-  id: number;
-  name?: string;
-  nickname?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  postal_code?: string;
-  detail_address?: string;
-  bank?: string;
-  account_holder?: string;
-  account_number?: string;
-  ssn_front?: string;
-  ssn_back?: string;
-  profile_image?: string;
-  channel_details?: Array<{
+  result: string;
+  generatedAt: string;
+  user: {
+    userId: number;
+    role: string;
     name: string;
-    url: string;
-    status: "connected" | "disconnected";
-  }>;
-  channels?: string[];
-  current_points?: number;
-  withdrawn_points?: number;
-  daily_visits?: number;
-  total_visits?: number;
-  neighbors?: number;
-  join_date?: string;
-  last_access_date?: string;
+    email: string;
+    phoneNum: string;
+    address: string;
+    postNumber: number;
+    status: string;
+    profileImage: {
+      attachmentId: number;
+      fileId: number;
+      originalName: string;
+      storedName: string;
+      filePath: string;
+      fileType: string;
+    } | null;
+    lastLoginAt: string;
+  };
+  reviewerProfile: {
+    reviewerId: number;
+    grade: string;
+    sex: string;
+    birthDate: string;
+    channel: {
+      channelId: number;
+      channelName: string;
+      userChannelId: number;
+      externalId: string;
+      channelUrl: string;
+    } | null;
+  };
 }
+
+/**
+ * GET /user/mypage/edit 응답 타입 (R-31)
+ */
+export interface ReviewerEditResponse {
+  result: string;
+  generatedAt: string;
+  user: {
+    userId: number;
+    name: string;
+    email: string;
+    phoneNum: string;
+    status: string;
+    createdAt: string;
+    lastLoginAt: string;
+    profileImageUrl: string | null;
+  };
+  address: {
+    zipCode: string;
+    address: string;
+    addressDetail: string;
+  } | null;
+  bankAccount: {
+    bankName: string;
+    accountNumber: string;
+    accountHolder: string;
+  } | null;
+  reviewerProfile: {
+    reviewerId: number;
+    grade: string;
+    sex: string;
+    birthDate: string;
+  };
+  social: {
+    kakaoId: string | null;
+    naverAccountId: string | null;
+  };
+}
+
+/**
+ * GET /user/mypage/channel 응답 내 채널 아이템 (R-29)
+ */
+export interface ReviewerChannelItem {
+  userChannelId: number;
+  channelId: number;
+  channelName: string;
+  isConnected: boolean;
+  externalId: string | null;
+  channelUrl: string | null;
+  connectedAt: string | null;
+}
+
+/**
+ * GET /user/mypage/channel 응답 타입 (R-29)
+ */
+export interface ReviewerChannelResponse {
+  result: string;
+  generatedAt: string;
+  user: {
+    userId: number;
+    role: string;
+    name: string;
+    email: string;
+    phoneNum: string;
+    address: string;
+    postNumber: string;
+    status: string;
+    profileImage: string | null;
+  };
+  reviewerProfile: {
+    reviewerId: number;
+    grade: string;
+    sex: string;
+    birthDay: string;
+    channel: ReviewerChannelItem[];
+  };
+}
+
 export interface ReviewerProfilePatchBody {
   name?: string;
   nickname?: string;
   phone?: string;
-  bank?: string;
-  account_number?: string;
-  account_holder?: string;
-  ssn_front?: string;
-  ssn_back?: string;
-  postal_code?: string;
+  postNumber?: string;
   address?: string;
-  detail_address?: string;
+  addressDetail?: string;
+  bankName?: string;
+  accountNumber?: string;
+  accountHolder?: string;
+  residentRegNo?: string;
+  profile_image?: string;
   channel_details?: Array<{
     name: string;
     url: string;

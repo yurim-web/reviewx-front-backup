@@ -64,15 +64,14 @@ export default function ProfilePage() {
         user_naver_001: "은지블로그",
       };
 
-      let nickname = profile.nickname || "";
-      if (!nickname || nickname === profile.name) {
-        nickname = defaultNicknameMap[user.id] || "";
-      }
+      const profileName = profile.user?.name || "";
+      const nickname = defaultNicknameMap[user.id] || profileName;
 
       setUserNickname(nickname);
 
-      if (profile.profile_image) {
-        setProfileImage(profile.profile_image);
+      const filePath = profile.user?.profileImage?.filePath;
+      if (filePath) {
+        setProfileImage(filePath);
       }
     }
   }, [user, profile]);

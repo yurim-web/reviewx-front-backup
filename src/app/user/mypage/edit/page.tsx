@@ -15,8 +15,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
+import { fetchReviewerEdit } from "@/lib/api/reviewer";
 import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import inputStyles from "../../../../styles/user/mypage/edit_profile/inputs.module.css";
 import buttonStyles from "../../../../styles/user/mypage/edit_profile/profile_buttons.module.css";
@@ -38,7 +39,12 @@ import Loading from "@/app/loading";
 export default function EditProfilePage() {
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
-  const { isLoading, error } = useReviewerProfile(user?.id);
+  const { isLoading, error } = useQuery({
+    queryKey: ["reviewerEdit"],
+    queryFn: fetchReviewerEdit,
+    enabled: !!user,
+    staleTime: 30_000,
+  });
 
   const [showServerErrorModal, setShowServerErrorModal] = useState(false);
   const [ssnError, setSsnError] = useState("");
