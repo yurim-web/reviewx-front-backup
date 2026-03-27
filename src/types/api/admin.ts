@@ -957,6 +957,7 @@ export interface SACampaignListResponse {
 
 /** SA 캠페인 목록 항목 */
 export interface SACampaignItem {
+  campaignId?: number; // 실제 DB 캠페인 ID (상세 페이지 이동용)
   campaignNumber: string; // 6자리 패딩 (예: 004015)
   partnerName: string;
   campaignName: string;
@@ -1269,4 +1270,91 @@ export interface SAPartnerItem {
   pointBalance?: number;
   createdAt: string; // ISO 8601
   lastLoginAt: string; // ISO 8601
+}
+
+// ========================================
+// SA 대시보드 통합 API (SA-01)
+// ========================================
+
+/** SA 대시보드 Request 파라미터 */
+export interface SADashboardParams {
+  startDate?: string; // yyyy-MM-dd, 미입력 시 당월 1일
+  endDate?: string; // yyyy-MM-dd, 미입력 시 오늘
+}
+
+/** SA 대시보드 통합 응답 */
+export interface SADashboardResponse {
+  result: string;
+  generatedAt: string;
+  dashboardData: {
+    settlementSummary: SASettlementSummary;
+    paymentSummary: SAPaymentSummary;
+    memberActivation: SAMemberActivation;
+    memberType: SAMemberType;
+    channelMember: SAChannelMember;
+  };
+}
+
+/** 정산 요약 */
+export interface SASettlementSummary {
+  withdrawalRequestAmount: number;
+  withdrawalCompleteAmount: number;
+  totalDepositBalance: number;
+  settlementChart: SAChartDataItem[];
+}
+
+/** 결제 요약 */
+export interface SAPaymentSummary {
+  totalPaymentAmount: number;
+  completedPaymentAmount: number;
+  pendingPaymentAmount: number;
+  paymentChart: SAChartDataItem[];
+}
+
+/** 차트 데이터 아이템 */
+export interface SAChartDataItem {
+  month: string; // yyyy-MM
+  amount: number;
+}
+
+/** 전체 회원 통계 */
+export interface SAMemberActivation {
+  totalMembers: number;
+  activeMembers: number;
+  inactiveMembers: number;
+  activePercentage: number;
+  totalMembersChange: SAChangeInfo;
+}
+
+/** 회원 유형별 통계 */
+export interface SAMemberType {
+  totalPartners: number;
+  activePartners: number;
+  totalReviewers: number;
+  activeReviewers: number;
+  partnerPercentage: number;
+  reviewerPercentage: number;
+  activePartnerPercentage: number;
+  activeReviewerPercentage: number;
+  totalPartnersChange: SAChangeInfo;
+  totalReviewersChange: SAChangeInfo;
+}
+
+/** 채널별 회원 통계 */
+export interface SAChannelMember {
+  blog: SAChannelStat;
+  instagram: SAChannelStat;
+  clip: SAChannelStat;
+  youtube: SAChannelStat;
+}
+
+export interface SAChannelStat {
+  count: number;
+  percentage: number;
+}
+
+/** 증감 정보 */
+export interface SAChangeInfo {
+  percentage: number;
+  type: "positive" | "negative" | "neutral";
 }

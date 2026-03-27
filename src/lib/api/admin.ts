@@ -96,6 +96,8 @@ import type {
   SAAdminUpdateParams,
   SABlacklistParams,
   SABlacklistResponse,
+  SADashboardParams,
+  SADashboardResponse,
 } from "@/types/api/admin";
 import type { UnifiedAccount, AccountType } from "@/data/login/unifiedAccountData";
 
@@ -384,7 +386,10 @@ export const fetchSACampaignList = async (
   return [];
 };
 
-/** SA 캠페인 신고 */
+/**
+ * SA 캠페인 신고
+ * TODO: 백엔드 SA 컨트롤러에 이 엔드포인트가 존재하지 않음 — 백엔드 구현 후 URL 확정 필요
+ */
 export const reportSACampaign = async (
   campaignId: number,
   body: ReportCampaignRequest
@@ -410,7 +415,7 @@ export const approveSAWithdrawalRequests = async (
   body: SAWithdrawalApproveRequest
 ): Promise<SAWithdrawalApproveResponse> => {
   const { data } = await apiClient.post<SAWithdrawalApproveResponse>(
-    "/api/admin-sa/withdrawal/requests/approve",
+    "/api/admin-sa/settlement/withdrawal/requests/approve",
     body
   );
   return data;
@@ -421,7 +426,7 @@ export const rejectSAWithdrawalRequests = async (
   body: SAWithdrawalRejectRequest
 ): Promise<SAWithdrawalRejectResponse> => {
   const { data } = await apiClient.post<SAWithdrawalRejectResponse>(
-    "/api/admin-sa/withdrawal/requests/reject",
+    "/api/admin-sa/settlement/withdrawal/requests/reject",
     body
   );
   return data;
@@ -706,18 +711,18 @@ export const createSAAdmin = async (body: SAAdminCreateParams): Promise<{ result
   return data;
 };
 
-/** SA 관리자 수정  PATCH /api/admin-sa/admins/:id */
+/** SA 관리자 수정  PUT /api/admin-sa/admins/:id */
 export const updateSAAdmin = async (
   id: number,
   body: SAAdminUpdateParams
 ): Promise<{ result: string }> => {
-  const { data } = await apiClient.patch(`/api/admin-sa/admins/${id}`, body);
+  const { data } = await apiClient.put(`/api/admin-sa/admins/${id}`, body);
   return data;
 };
 
-/** SA 관리자 삭제  DELETE /api/admin-sa/admins/:id */
+/** SA 관리자 삭제 (일괄)  DELETE /api/admin-sa/admins (request body: { adminIds }) */
 export const deleteSAAdmin = async (id: number): Promise<void> => {
-  await apiClient.delete(`/api/admin-sa/admins/${id}`);
+  await apiClient.delete("/api/admin-sa/admins", { data: { adminIds: [id] } });
 };
 
 // ----------------------------------------
@@ -737,4 +742,14 @@ export const fetchSABlacklist = async (
 /** SA 이용 제한 해제  DELETE /api/admin-sa/member/blacklist/:id */
 export const deleteSABlacklistItem = async (id: string): Promise<void> => {
   await apiClient.delete(`/api/admin-sa/member/blacklist/${id}`);
+};
+
+// ── SA 대시보드 (SA-01) ──
+
+/** SA 대시보드 통합 조회  GET /api/admin-sa/dashboard */
+export const fetchSADashboard = async (
+  params?: SADashboardParams
+): Promise<SADashboardResponse> => {
+  const { data } = await apiClient.get<SADashboardResponse>("/api/admin-sa/dashboard", { params });
+  return data;
 };
