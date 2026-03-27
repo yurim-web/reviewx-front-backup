@@ -15,4 +15,40 @@ export default meta;
 
 type Story = StoryObj<typeof ReportStatsSection>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    search_query: "",
+    selected_report_codes: [],
+    selected_date_range: undefined,
+  },
+};
+
+export const WithCodeFilter: Story = {
+  args: {
+    search_query: "",
+    selected_report_codes: ["W001", "W002"],
+    selected_date_range: undefined,
+  },
+};
+
+export const WithDateRange: Story = {
+  args: {
+    search_query: "",
+    selected_report_codes: [],
+    selected_date_range: {
+      from: new Date("2026-03-01"),
+      to: new Date("2026-03-27"),
+    },
+  },
+};
+
+export const WithSearchAndFilter: Story = {
+  args: {
+    search_query: "허위광고",
+    selected_report_codes: ["W003"],
+    selected_date_range: {
+      from: new Date("2026-03-01"),
+      to: new Date("2026-03-27"),
+    },
+  },
+};

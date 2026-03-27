@@ -29,6 +29,7 @@ import ReportStatsSection from "@/components/manager/ga/campaign/reported/sectio
 import CampaignReportedFilterSection from "@/components/manager/ga/campaign/reported/section/CampaignReportedFilterSection";
 import ReportedCampaignTable from "@/components/manager/ga/campaign/reported/section/ReportedCampaignTable";
 import Loading from "@/app/loading";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { useAdminReports } from "@/hooks/manager/ga/useAdminReports";
 import { blockUser, unblockUser } from "@/lib/api/admin";
 import type { ReportCode } from "@/data/manager_ga/reported";
@@ -58,7 +59,7 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
  * @returns 신고 이력 페이지 JSX
  */
 export default function ReportedPage() {
-  const { reports, reportCodes, reportStats, isLoading } = useAdminReports();
+  const { reports, reportCodes, reportStats, isLoading, isError } = useAdminReports();
 
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
@@ -92,6 +93,17 @@ export default function ReportedPage() {
   }, []);
 
   if (isLoading) return <Loading />;
+
+  if (isError)
+    return (
+      <BaseModal
+        is_open={true}
+        on_close={() => {}}
+        message={"오류가 발생했습니다.\n잠시 후 다시 시도해주세요."}
+        buttons={["확인"]}
+        type="center"
+      />
+    );
 
   return (
     <div className={styles.page_container}>
