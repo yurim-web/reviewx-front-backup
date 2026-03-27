@@ -80,6 +80,53 @@ export const Submitting: Story = {
 };
 
 /**
+ * 수정 모드
+ *
+ * 기존 방문형 캠페인을 수정하는 모드입니다.
+ */
+export const EditMode: Story = {
+  render: renderVisitCampaignForm,
+  args: {
+    onSubmit: (data) => console.log("Form submitted:", data),
+    isSubmitting: false,
+    mode: "edit",
+    initialData: {
+      campaignType: "방문형",
+      platform: "네이버 블로그",
+      title: "수정할 방문형 캠페인",
+      category: "음식",
+      brandName: "테스트 식당",
+      providedItems: "식사 1인분",
+      promotionLink: "https://example.com",
+      currentPoints: "58,000",
+      additionalPoints: "0",
+      recruitmentCount: "5",
+      recruitmentPeriod: "2024-01-01 ~ 2024-01-31",
+      announcementDate: "2024-02-01",
+      registrationPeriod: "2024-02-01 ~ 2024-02-15",
+      region: "서울",
+      subRegion: "강남구",
+      visitZipCode: "06000",
+      visitBaseAddress: "서울 강남구 테헤란로 123",
+      visitDetailAddress: "1층",
+      visitLink: "https://map.naver.com/example",
+      keywords: "방문형 키워드",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "1000",
+      minImageCount: "5",
+      videoCount: "",
+      videoDuration: "",
+      requireLinkAttachment: false,
+      requireKeywordAttachment: true,
+      guidelines: "",
+      isUrgent: false,
+    },
+  },
+};
+
+/**
  * 학습 포인트:
  *
  * 1. 방문형 캠페인 생성 폼 컴포넌트

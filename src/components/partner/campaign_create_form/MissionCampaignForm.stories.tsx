@@ -81,6 +81,49 @@ export const Submitting: Story = {
 };
 
 /**
+ * 수정 모드
+ *
+ * 기존 미션형 캠페인을 수정하는 모드입니다.
+ */
+export const EditMode: Story = {
+  render: renderMissionCampaignForm,
+  args: {
+    onSubmit: (data) => console.log("Form submitted:", data),
+    isSubmitting: false,
+    mode: "edit",
+    initialData: {
+      campaignType: "미션형",
+      platform: "인스타그램",
+      title: "수정할 미션형 캠페인",
+      category: "패션",
+      brandName: "테스트 패션",
+      providedItems: "의류 1벌",
+      promotionLink: "https://example.com",
+      currentPoints: "58,000",
+      additionalPoints: "0",
+      recruitmentCount: "15",
+      recruitmentPeriod: "2024-01-01 ~ 2024-01-31",
+      announcementDate: "2024-02-01",
+      registrationPeriod: "2024-02-01 ~ 2024-02-15",
+      keywords: "미션형 키워드",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: true,
+      minTextLength: "500",
+      minImageCount: "5",
+      videoCount: "",
+      videoDuration: "",
+      requireContentLink: true,
+      requireContentImage: false,
+      requireLinkAttachment: false,
+      requireKeywordAttachment: true,
+      guidelines: "",
+      isUrgent: false,
+    },
+  },
+};
+
+/**
  * 학습 포인트:
  *
  * 1. 미션형 캠페인 생성 폼 컴포넌트
@@ -91,4 +134,3 @@ export const Submitting: Story = {
  *    - requireContentLink, requireContentImage 옵션이 있습니다
  *    - 이미지 확인, 링크 확인 기능을 설정할 수 있습니다
  */
-

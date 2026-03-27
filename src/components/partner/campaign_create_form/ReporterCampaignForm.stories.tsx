@@ -81,6 +81,47 @@ export const Submitting: Story = {
 };
 
 /**
+ * 수정 모드
+ *
+ * 기존 기자단 캠페인을 수정하는 모드입니다.
+ */
+export const EditMode: Story = {
+  render: renderReporterCampaignForm,
+  args: {
+    onSubmit: (data) => console.log("Form submitted:", data),
+    isSubmitting: false,
+    mode: "edit",
+    initialData: {
+      campaignType: "기자단",
+      platform: "네이버 블로그",
+      title: "수정할 기자단 캠페인",
+      category: "여행",
+      brandName: "테스트 여행사",
+      providedItems: "여행 패키지",
+      promotionLink: "https://example.com",
+      currentPoints: "58,000",
+      additionalPoints: "0",
+      recruitmentCount: "10",
+      recruitmentPeriod: "2024-01-01 ~ 2024-01-31",
+      announcementDate: "2024-02-01",
+      registrationPeriod: "2024-02-01 ~ 2024-02-15",
+      keywords: "기자단 키워드",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "2000",
+      minImageCount: "10",
+      videoCount: "",
+      videoDuration: "",
+      requireLinkAttachment: true,
+      requireKeywordAttachment: true,
+      guidelines: "전문적인 리포팅 작성 필수",
+      isUrgent: false,
+    },
+  },
+};
+
+/**
  * 학습 포인트:
  *
  * 1. 기자단 캠페인 생성 폼 컴포넌트
@@ -91,4 +132,3 @@ export const Submitting: Story = {
  *    - platform 필드가 선택사항입니다
  *    - 전문적인 리포팅을 위한 옵션들이 있습니다
  */
-

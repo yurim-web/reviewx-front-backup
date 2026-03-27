@@ -81,6 +81,49 @@ export const Submitting: Story = {
 };
 
 /**
+ * 수정 모드
+ *
+ * 기존 구매평 캠페인을 수정하는 모드입니다.
+ */
+export const EditMode: Story = {
+  render: renderReviewCampaignForm,
+  args: {
+    onSubmit: (data) => console.log("Form submitted:", data),
+    isSubmitting: false,
+    mode: "edit",
+    initialData: {
+      campaignType: "구매평",
+      platform: "네이버 블로그",
+      title: "수정할 구매평 캠페인",
+      category: "뷰티",
+      brandName: "테스트 브랜드",
+      providedItems: "제품 1개",
+      promotionLink: "https://smartstore.naver.com/example",
+      currentPoints: "58,000",
+      additionalPoints: "3,000",
+      recruitmentCount: "20",
+      recruitmentPeriod: "2024-01-01 ~ 2024-01-31",
+      announcementDate: "2024-02-01",
+      registrationPeriod: "2024-02-01 ~ 2024-02-15",
+      purchasePeriod: "2024-02-01 ~ 2024-02-10",
+      purchasePoints: "15,000",
+      keywords: "구매평 키워드",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "200",
+      minImageCount: "3",
+      videoCount: "",
+      videoDuration: "",
+      requireLinkAttachment: true,
+      requireKeywordAttachment: true,
+      guidelines: "",
+      isUrgent: false,
+    },
+  },
+};
+
+/**
  * 학습 포인트:
  *
  * 1. 구매평 캠페인 생성 폼 컴포넌트
@@ -91,4 +134,3 @@ export const Submitting: Story = {
  *    - purchasePoints, purchasePeriod 필드가 있습니다
  *    - 구매 링크를 설정할 수 있습니다
  */
-
