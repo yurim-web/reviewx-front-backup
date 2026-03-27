@@ -64,7 +64,7 @@ export default function ReporterDetailPage({ params }: ReporterDetailPageProps) 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  const { data: apiCampaign, isLoading: isApiLoading } = useCampaignDetail(id);
+  const { data: apiCampaign, isLoading: isApiLoading } = useCampaignDetail("reporter", id);
 
   // 서버 API 데이터로 로드
   useEffect(() => {

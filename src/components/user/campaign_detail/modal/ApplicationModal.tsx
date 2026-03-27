@@ -88,10 +88,23 @@ export default function ApplicationModal({
     clearFormData,
   } = useApplicationForm(isOpen);
 
-  // 유저/주소/채널 정보 훅
-  const { userName, userAddress, currentChannelUrl } = useApplicationModalUser({
+  // 유저/주소/채널 정보 훅 (R-24 API 우선, R-28 fallback)
+  const {
+    userName,
+    userAddress,
+    currentChannelUrl,
+    canApply,
+    eligibilityReasons,
+    requiredChannelId,
+    isChannelConnected,
+    postNumber,
+    addressRaw,
+    addressDetailRaw,
+  } = useApplicationModalUser({
     isOpen,
     user,
+    campaignId,
+    type,
     campaignChannelName,
     userChannelUrl,
     showChannel,
@@ -106,7 +119,7 @@ export default function ApplicationModal({
   // 채널 URL (currentChannelUrl 우선, props 폴백)
   const channelUrl = currentChannelUrl || userChannelUrl || "";
 
-  // 신청 제출 훅
+  // 신청 제출 훅 (R-25 API 우선, localStorage fallback)
   const { handleSubmit } = useApplicationSubmit({
     campaignId,
     type,
@@ -121,6 +134,14 @@ export default function ApplicationModal({
     showChannel,
     channelName,
     clearFormData,
+    // R-24 데이터 전달
+    canApply,
+    eligibilityReasons,
+    requiredChannelId,
+    isChannelConnected,
+    postNumber,
+    addressRaw,
+    addressDetailRaw,
     onSuccess: successModal.open,
     onDuplicate: duplicateModal.open,
     onParticipated: participatedModal.open,

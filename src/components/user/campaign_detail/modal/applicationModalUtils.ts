@@ -20,6 +20,15 @@ import type { StoredUserAccount, StoredChannelDetail } from "@/lib/auth/types";
 
 export type ApplicationModalType = "delivery" | "review" | "mission" | "reporter" | "visit";
 
+/** 백엔드 API path에서 사용하는 캠페인 타입 */
+export type ApiCampaignType = "delivery" | "visit" | "purchase" | "reporter" | "mission";
+
+/** 프론트 타입 → 백엔드 API path 타입 변환 (review → purchase) */
+export function toApiType(type: ApplicationModalType | string): ApiCampaignType {
+  if (type === "review") return "purchase";
+  return type as ApiCampaignType;
+}
+
 // re-export for consumers that import from this file
 export type { StoredUserAccount, StoredChannelDetail };
 

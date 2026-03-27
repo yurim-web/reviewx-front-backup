@@ -25,6 +25,9 @@ import type {
   CampaignDetailApiResponse,
   CampaignApplicationPostBody,
   CampaignApplicationApiItem,
+  ApplicationFormDataResponse,
+  CampaignApplyRequest,
+  CampaignApplyResponse,
 } from "@/types/api/campaign";
 
 type RawResponse = CampaignListApiResponse | CampaignListApiItem[];
@@ -35,43 +38,77 @@ function extractItems(data: RawResponse): CampaignListApiItem[] {
 }
 
 export const fetchDeliveryCampaigns = () =>
-  apiClient.get<RawResponse>("/reviewer/campaign/delivery").then((res) => extractItems(res.data));
+  apiClient
+    .get<RawResponse>("/api/v1/reviewer/dashboard/delivery")
+    .then((res) => extractItems(res.data));
 
 export const fetchVisitCampaigns = () =>
-  apiClient.get<RawResponse>("/reviewer/campaign/visit").then((res) => extractItems(res.data));
+  apiClient
+    .get<RawResponse>("/api/v1/reviewer/dashboard/visit")
+    .then((res) => extractItems(res.data));
 
 export const fetchReviewCampaigns = () =>
   apiClient
-    .get<RawResponse>("/reviewer/campaign/purchase-review")
+    .get<RawResponse>("/api/v1/reviewer/dashboard/purchase-review")
     .then((res) => extractItems(res.data));
 
 export const fetchReporterCampaigns = () =>
-  apiClient.get<RawResponse>("/reviewer/campaign/reporter").then((res) => extractItems(res.data));
+  apiClient
+    .get<RawResponse>("/api/v1/reviewer/dashboard/reporter")
+    .then((res) => extractItems(res.data));
 
 export const fetchMissionCampaigns = () =>
-  apiClient.get<RawResponse>("/reviewer/campaign/mission").then((res) => extractItems(res.data));
+  apiClient
+    .get<RawResponse>("/api/v1/reviewer/dashboard/mission")
+    .then((res) => extractItems(res.data));
 
-/** 캠페인 상세 조회 (23번: GET /reviewer/campaign/{campaignId}) */
+/** 캠페인 상세 조회 (23번: GET /campaign/{type}/{campaignId}) */
 type RawDetailResponse = CampaignDetailApiResponse | CampaignDetailApiItem;
+
+/** 캠페인 유형 path variable (백엔드 기준) */
+type CampaignDetailType = "delivery" | "visit" | "purchase" | "reporter" | "mission";
 
 function extractDetail(data: RawDetailResponse): CampaignDetailApiItem {
   if ("campaign" in data && data.campaign) return data.campaign;
   return data as CampaignDetailApiItem;
 }
 
-export const fetchCampaignDetail = (campaignId: string | number) =>
+export const fetchCampaignDetail = (type: CampaignDetailType, campaignId: string | number) =>
   apiClient
-    .get<RawDetailResponse>(`/reviewer/campaign/${campaignId}`)
+    .get<RawDetailResponse>(`/api/v1/reviewer/campaign/${campaignId}`)
     .then((res) => extractDetail(res.data));
 
-/** 캠페인 신청 (POST /reviewer/campaign/apply → /campaign_applications) */
+/** 캠페인 신청 (POST /api/v1/reviewer/campaign/{campaignId}/apply) */
 export const postCampaignApplication = (
   body: CampaignApplicationPostBody
 ): Promise<CampaignApplicationApiItem> =>
   apiClient
-    .post<CampaignApplicationApiItem>("/reviewer/campaign/apply", body)
+    .post<CampaignApplicationApiItem>(`/api/v1/reviewer/campaign/${body.campaign_id}/apply`, body)
     .then((res) => res.data);
 
-/** 캠페인 신청 취소 (DELETE /reviewer/campaign/apply/:id → /campaign_applications/:id) */
+/** 캠페인 신청 취소 (DELETE) — TODO: 백엔드 엔드포인트 미확정, 확정 후 URL 업데이트 필요 */
 export const deleteCampaignApplication = (applicationId: number): Promise<void> =>
   apiClient.delete(`/reviewer/campaign/apply/${applicationId}`).then(() => undefined);
+
+// ========================================
+// 캠페인 신청 (백엔드 R-24, R-25)
+// ========================================
+
+/** 신청 모달 데이터 조회 (R-24: GET /api/v1/reviewer/campaign/{campaignId}/apply-form) */
+export const fetchApplicationFormData = (
+  type: CampaignDetailType,
+  campaignId: string | number
+): Promise<ApplicationFormDataResponse> =>
+  apiClient
+    .get<ApplicationFormDataResponse>(`/api/v1/reviewer/campaign/${campaignId}/apply-form`)
+    .then((res) => res.data);
+
+/** 캠페인 신청 등록 (R-25: POST /api/v1/reviewer/campaign/{campaignId}/apply) */
+export const submitCampaignApplication = (
+  type: CampaignDetailType,
+  campaignId: string | number,
+  body: CampaignApplyRequest
+): Promise<CampaignApplyResponse> =>
+  apiClient
+    .post<CampaignApplyResponse>(`/api/v1/reviewer/campaign/${campaignId}/apply`, body)
+    .then((res) => res.data);

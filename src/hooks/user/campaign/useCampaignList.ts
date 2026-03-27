@@ -16,8 +16,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { getPartnerCampaignsByType } from "@/lib/api/dashboard";
-import type { PartnerCampaignCard } from "@/types/api/dashboard";
+import { fetchCampaignListByType } from "@/lib/api/userCampaignList";
 import type { CampaignListApiItem } from "@/types/api/campaign";
 
 // 정적 fallback 데이터
@@ -107,32 +106,6 @@ function calcSchedule(recruitStartAt: string): string {
   return "";
 }
 
-/** 파트너 API 캠페인 카드 → CampaignListAdapted */
-function adaptPartnerCard(item: PartnerCampaignCard): CampaignListAdapted {
-  const recruitStartAt = item.recruit?.recruitStartAt ?? "";
-  const recruitEndAt = item.recruit?.recruitEndAt ?? "";
-  return {
-    id: String(item.campaignId ?? (item as unknown as { id?: number }).id ?? ""),
-    title: item.title,
-    category: TYPE_LABEL[item.type] ?? item.type,
-    subcategory: item.category?.categoryName ?? "기타",
-    channel: item.requiredPlatform?.channelName
-      ? (CHANNEL_LABEL[item.requiredPlatform.channelName] ?? item.requiredPlatform.channelName)
-      : "",
-    image: item.thumbnail?.url ?? (item as unknown as { thumbnailUrl?: string }).thumbnailUrl ?? "",
-    recruitment: {
-      current: item.metrics?.appliedCount ?? 0,
-      total: item.recruit?.recruitLimit ?? 0,
-    },
-    dayCount: calcDayCount(recruitEndAt),
-    schedule: calcSchedule(recruitStartAt),
-    detailedSchedule: { applicationStart: recruitStartAt, applicationEnd: recruitEndAt },
-    region: item.region?.name,
-    isUrgent: item.status === "EMERGENCY",
-    registeredAt: recruitStartAt,
-  };
-}
-
 /** 백엔드 API 응답 → CampaignListAdapted */
 function adaptApiCampaign(item: CampaignListApiItem): CampaignListAdapted {
   const recruitStartAt = item.recruitStartAt ?? item.recruit?.recruitStartAt ?? "";
@@ -216,8 +189,11 @@ export function useDeliveryCampaignList(filters?: CampaignListFilterParams) {
     queryKey: ["campaigns", "delivery", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const res = await getPartnerCampaignsByType({ type: "DELIVERY", ...filters });
-        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
+        const res = await fetchCampaignListByType("delivery", {
+          categoryId: filters?.categoryId,
+          requiredPlatformId: filters?.channelId,
+        });
+        if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
       return deliveryCampaigns.map(adaptStaticCampaign);
     },
@@ -231,8 +207,11 @@ export function useVisitCampaignList(filters?: CampaignListFilterParams) {
     queryKey: ["campaigns", "visit", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const res = await getPartnerCampaignsByType({ type: "VISIT", ...filters });
-        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
+        const res = await fetchCampaignListByType("visit", {
+          categoryId: filters?.categoryId,
+          requiredPlatformId: filters?.channelId,
+        });
+        if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
       return visitCampaigns.map(adaptStaticCampaign);
     },
@@ -246,8 +225,11 @@ export function useReviewCampaignList(filters?: CampaignListFilterParams) {
     queryKey: ["campaigns", "purchase-review", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const res = await getPartnerCampaignsByType({ type: "PURCHASE", ...filters });
-        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
+        // 프론트엔드 경로는 /campaign/review이지만 백엔드 API는 /campaign/purchase
+        const res = await fetchCampaignListByType("purchase", {
+          categoryId: filters?.categoryId,
+        });
+        if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
       return reviewCampaigns.map(adaptStaticCampaign);
     },
@@ -261,8 +243,11 @@ export function useReporterCampaignList(filters?: CampaignListFilterParams) {
     queryKey: ["campaigns", "reporter", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const res = await getPartnerCampaignsByType({ type: "REPORTER", ...filters });
-        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
+        const res = await fetchCampaignListByType("reporter", {
+          categoryId: filters?.categoryId,
+          requiredPlatformId: filters?.channelId,
+        });
+        if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
       return reporterCampaigns.map(adaptStaticCampaign);
     },
@@ -276,8 +261,11 @@ export function useMissionCampaignList(filters?: CampaignListFilterParams) {
     queryKey: ["campaigns", "mission", filters?.categoryId, filters?.channelId],
     queryFn: async () => {
       try {
-        const res = await getPartnerCampaignsByType({ type: "MISSION", ...filters });
-        if (res.campaigns.length > 0) return res.campaigns.map(adaptPartnerCard);
+        // 미션형은 채널 필터 없음
+        const res = await fetchCampaignListByType("mission", {
+          categoryId: filters?.categoryId,
+        });
+        if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
       return missionCampaigns.map(adaptStaticCampaign);
     },

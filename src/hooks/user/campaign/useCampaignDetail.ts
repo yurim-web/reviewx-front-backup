@@ -14,7 +14,7 @@
  * - /campaign/reporter/[id]
  * - /campaign/mission/[id]
  *
- * API: 23번 GET /reviewer/campaign/{campaignId}
+ * API: 23번 GET /campaign/{type}/{campaignId}
  */
 
 import { useQuery } from "@tanstack/react-query";
@@ -245,11 +245,14 @@ function normalizeId(id: string | number): string | number {
    훅
    ======================================== */
 
-export function useCampaignDetail(campaignId: string | number) {
+/** 캠페인 유형 path variable (백엔드 기준) */
+type CampaignDetailType = "delivery" | "visit" | "purchase" | "reporter" | "mission";
+
+export function useCampaignDetail(type: CampaignDetailType, campaignId: string | number) {
   const resolvedId = normalizeId(campaignId);
   return useQuery({
-    queryKey: ["campaign", "detail", String(campaignId)],
-    queryFn: () => fetchCampaignDetail(resolvedId).then(adaptCampaignDetail),
+    queryKey: ["campaign", "detail", type, String(campaignId)],
+    queryFn: () => fetchCampaignDetail(type, resolvedId).then(adaptCampaignDetail),
     enabled: !!campaignId,
   });
 }

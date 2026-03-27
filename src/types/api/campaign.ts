@@ -357,12 +357,76 @@ export interface CampaignStatsResponse extends ApiResponse {
 }
 
 // ========================================
-// mock json-server 쓰기 타입
+// 캠페인 신청 모달 데이터 (백엔드 R-24)
+// GET /campaign/{type}/{campaignId}
+// ========================================
+
+/** 신청 모달 데이터 응답 (R-24) */
+export interface ApplicationFormDataResponse {
+  result: string;
+  generatedAt: string;
+  campaignId: number;
+  type: string;
+  applicant: {
+    name: string;
+    phoneNum: string;
+    postNumber: number | null;
+    address: string | null;
+    addressDetail: string | null;
+  };
+  requiredChannel: {
+    channelId: number;
+    channelName: string;
+    isConnected: boolean;
+    userChannelId: number | null;
+    externalId: string | null;
+    channelUrl: string | null;
+  } | null;
+  defaults: {
+    memo: string;
+    isAgreed: boolean;
+  };
+  eligibility: {
+    canApply: boolean;
+    reasons: string[];
+  };
+}
+
+// ========================================
+// 캠페인 신청 등록 (백엔드 R-25)
+// POST /campaign/{type}/{campaignId}
+// ========================================
+
+/** 캠페인 신청 요청 바디 (R-25) */
+export interface CampaignApplyRequest {
+  requiredChannelId: number | null;
+  isAgreed: boolean;
+  memo?: string;
+  shippingAddress?: {
+    postNumber: number;
+    address: string;
+    addressDetail: string;
+  };
+}
+
+/** 캠페인 신청 응답 (R-25) */
+export interface CampaignApplyResponse {
+  result: string;
+  generatedAt: string;
+  applicationId: number;
+  campaignId: number;
+  status: string;
+  appliedAt: string;
+}
+
+// ========================================
+// mock json-server 쓰기 타입 (하위 호환)
 // ========================================
 
 /**
  * POST /reviewer/campaign/apply → /campaign_applications
  * 캠페인 신청 Request body (mock)
+ * @deprecated R-25 CampaignApplyRequest 사용
  */
 export interface CampaignApplicationPostBody {
   campaign_id: number;
@@ -373,7 +437,9 @@ export interface CampaignApplicationPostBody {
   introduction: string;
 }
 
-/** campaign_applications 아이템 응답 (mock) */
+/** campaign_applications 아이템 응답 (mock)
+ * @deprecated R-25 CampaignApplyResponse 사용
+ */
 export interface CampaignApplicationApiItem {
   id: number;
   campaign_id: number;
