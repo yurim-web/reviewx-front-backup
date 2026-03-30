@@ -200,3 +200,70 @@ export const WithError: Story = {
     onVerificationCodeChange: (code) => console.log("Code changed:", code),
   },
 };
+
+// 계정 없음 에러
+export const AccountNotFound: Story = {
+  render: (args) => {
+    const [phone, setPhone] = useState("010-9999-9999");
+    const [verificationCode, setVerificationCode] = useState("");
+    return React.createElement(PhoneVerification, {
+      ...args,
+      phone,
+      verificationCode,
+      onPhoneChange: (value) => {
+        setPhone(value);
+        args.onPhoneChange?.(value);
+      },
+      onVerificationCodeChange: (value) => {
+        setVerificationCode(value);
+        args.onVerificationCodeChange?.(value);
+      },
+    });
+  },
+  args: {
+    phone: "010-9999-9999",
+    verificationCode: "",
+    isVerificationRequested: false,
+    isPhoneVerified: false,
+    timer: 0,
+    accountNotFoundError: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.",
+    onPhoneChange: (phone) => console.log("Phone changed:", phone),
+    onVerificationRequest: () => console.log("Verification requested"),
+    onVerify: () => console.log("Verify"),
+    onVerificationCodeChange: (code) => console.log("Code changed:", code),
+  },
+};
+
+// 인증번호 오류
+export const WithVerificationCodeError: Story = {
+  render: (args) => {
+    const [phone, setPhone] = useState("010-1234-5678");
+    const [verificationCode, setVerificationCode] = useState("000000");
+    return React.createElement(PhoneVerification, {
+      ...args,
+      phone,
+      verificationCode,
+      onPhoneChange: (value) => {
+        setPhone(value);
+        args.onPhoneChange?.(value);
+      },
+      onVerificationCodeChange: (value) => {
+        setVerificationCode(value);
+        args.onVerificationCodeChange?.(value);
+      },
+    });
+  },
+  args: {
+    phone: "010-1234-5678",
+    verificationCode: "000000",
+    isVerificationRequested: true,
+    isPhoneVerified: false,
+    timer: 150,
+    verificationCodeError: "인증번호가 일치하지 않습니다.",
+    onPhoneChange: (phone) => console.log("Phone changed:", phone),
+    onVerificationRequest: () => console.log("Verification requested"),
+    onResend: () => console.log("Resend"),
+    onVerify: () => console.log("Verify"),
+    onVerificationCodeChange: (code) => console.log("Code changed:", code),
+  },
+};

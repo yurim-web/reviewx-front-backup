@@ -153,8 +153,22 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
       setVerificationCodeError(undefined);
       setRequestCount((prev) => prev + 1);
       setTimer(240); // 4분 = 240초 타이머 시작
-    } catch {
-      setPhoneError("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+    } catch (error: unknown) {
+      const axiosErr = error as { response?: { data?: { errorCode?: string } } };
+      const errCode = axiosErr?.response?.data?.errorCode;
+
+      if (errCode === "ALREADY_REGISTERED") {
+        // 이미 가입된 번호 → 페이지에서 A_M1 모달 처리
+        setPhoneError("ALREADY_REGISTERED");
+      } else if (errCode === "SEND_LIMIT_EXCEEDED") {
+        // I_E14: 5회 초과 (서버 응답)
+        setPhoneError("MAX_VERIFICATION_REQUEST_EXCEEDED");
+      } else if (errCode === "TOO_MANY_REQUESTS") {
+        // 쿨다운 60초 이내 재요청
+        setPhoneError("잠시 후 다시 시도해주세요.");
+      } else {
+        setPhoneError("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -182,8 +196,20 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
       } else {
         setVerificationCodeError("인증번호가 일치하지 않습니다.");
       }
-    } catch {
-      setVerificationCodeError("인증번호가 일치하지 않습니다.");
+    } catch (error: unknown) {
+      const axiosErr = error as { response?: { data?: { errorCode?: string } } };
+      const errCode = axiosErr?.response?.data?.errorCode;
+
+      if (errCode === "VERIFICATION_EXPIRED") {
+        // I_E10: 인증 시간 만료
+        setVerificationCodeError("인증번호 입력 시간을 초과했습니다.");
+      } else if (errCode === "TOO_MANY_ATTEMPTS") {
+        // 인증 시도 횟수 초과
+        setVerificationCodeError("인증 시도 횟수를 초과했습니다. 다시 요청해주세요.");
+      } else {
+        // I_E5: VERIFICATION_CODE_MISMATCH / CODE_MISMATCH
+        setVerificationCodeError("인증번호가 일치하지 않습니다.");
+      }
     }
   };
 
