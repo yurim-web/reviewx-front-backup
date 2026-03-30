@@ -6,6 +6,7 @@
  * PointHistoryPage
  *
  * 목적: 포인트 내역(전체/적립/출금)을 필터링하여 표시하는 공통 컴포넌트
+ *       커서 기반 무한 스크롤을 지원합니다.
  *
  * 사용 페이지:
  * - /user/point/all (전체 포인트 내역)
@@ -15,7 +16,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useModalState } from "@/hooks/useModalState";
@@ -25,7 +26,6 @@ import TextareaModal from "@/components/common/modal/TextareaModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PendingPointModal from "@/components/user/point/PendingPointModal";
 import { MainTab, PointTab, PointHistory } from "@/types/domain/user";
-import { pointHistoryData } from "@/data/user/point/pointData";
 import { useAuth } from "@/hooks/useAuth";
 import { usePointData } from "@/hooks/user/point/usePointData";
 import Loading from "@/app/loading";
@@ -46,8 +46,17 @@ export default function PointHistoryPage({
 }: PointHistoryPageProps) {
   const router = useRouter();
   const { user } = useAuth();
-  const { pointInfo, userPointHistory, pendingPointList, isAccountInfoValid, isLoading, isError } =
-    usePointData();
+  const {
+    pointInfo,
+    userPointHistory,
+    pendingPointList,
+    isAccountInfoValid,
+    isLoading,
+    isError,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = usePointData(activePointTab);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
@@ -75,6 +84,29 @@ export default function PointHistoryPage({
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  // 무한 스크롤: IntersectionObserver
+  const observerRef = useRef<HTMLDivElement | null>(null);
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [hasNextPage, isFetchingNextPage, fetchNextPage]
+  );
+
+  useEffect(() => {
+    const el = observerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(handleObserver, {
+      threshold: 0.1,
+      rootMargin: "200px",
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const handlePointTabChange = (tab: PointTab) => {
     switch (tab) {
@@ -122,8 +154,7 @@ export default function PointHistoryPage({
   // 데이터 필터링 및 정렬
   // ========================================
 
-  const historyDataSource = user ? userPointHistory : pointHistoryData;
-  const effectiveHistoryData = isEmptyView ? [] : historyDataSource;
+  const effectiveHistoryData = isEmptyView ? [] : userPointHistory;
   const filteredHistoryData = effectiveHistoryData
     .filter(filterFunction)
     .sort((a, b) => b.date.localeCompare(a.date));
@@ -232,64 +263,33 @@ export default function PointHistoryPage({
                 <p className={styles.empty_message}>포인트 내역이 없습니다.</p>
               </div>
             ) : (
-              filteredHistoryData.map((history) => (
-                <div key={history.id} className={styles.history_item}>
-                  {/* PC 버전 (모바일에서 숨김) */}
-                  <div className={styles.status_badge_container}>
-                    <div className={`${styles.status_badge} ${getStatusBadgeClass(history)}`}>
-                      {getStatusBadgeText(history)}
-                    </div>
-                  </div>
-
-                  <div className={styles.history_info}>
-                    <div className={styles.history_description}>
-                      {history.status === "failed" ? (
-                        <div className={styles.cancelled_description}>
-                          <span className={styles.main_text}>{history.description}</span>
-                          <RejectionReasonLink history={history} iconSize={16} />
-                        </div>
-                      ) : (
-                        history.description
-                      )}
-                    </div>
-                    <div className={styles.history_date}>{history.date}</div>
-                  </div>
-
-                  <div className={styles.point_info}>
-                    <div
-                      className={`${styles.point_change} ${
-                        history.status === "failed"
-                          ? styles.cancelled_amount
-                          : history.amount > 0
-                            ? styles.positive
-                            : styles.negative
-                      }`}
-                    >
-                      {history.amount > 0
-                        ? `+ ${history.amount.toLocaleString()}`
-                        : `${history.amount.toLocaleString()}`}{" "}
-                      P
-                    </div>
-                    <div className={styles.point_balance}>{history.balance.toLocaleString()} P</div>
-                  </div>
-
-                  {/* 모바일 버전 (PC에서 숨김) */}
-                  {/* 1번째 줄: 설명 (왼쪽) + 포인트 금액 + 잔액 (오른쪽) */}
-                  <div className={styles.mobile_row_first}>
-                    <div className={styles.mobile_description}>
-                      {history.status === "failed" ? (
-                        <div className={styles.cancelled_description}>
-                          <span className={styles.main_text}>{history.description}</span>
-                          <RejectionReasonLink history={history} iconSize={12} />
-                        </div>
-                      ) : (
-                        history.description
-                      )}
+              <>
+                {filteredHistoryData.map((history) => (
+                  <div key={history.id} className={styles.history_item}>
+                    {/* PC 버전 (모바일에서 숨김) */}
+                    <div className={styles.status_badge_container}>
+                      <div className={`${styles.status_badge} ${getStatusBadgeClass(history)}`}>
+                        {getStatusBadgeText(history)}
+                      </div>
                     </div>
 
-                    <div className={styles.mobile_points_group}>
+                    <div className={styles.history_info}>
+                      <div className={styles.history_description}>
+                        {history.status === "failed" ? (
+                          <div className={styles.cancelled_description}>
+                            <span className={styles.main_text}>{history.description}</span>
+                            <RejectionReasonLink history={history} iconSize={16} />
+                          </div>
+                        ) : (
+                          history.description
+                        )}
+                      </div>
+                      <div className={styles.history_date}>{history.date}</div>
+                    </div>
+
+                    <div className={styles.point_info}>
                       <div
-                        className={`${styles.mobile_point_change} ${
+                        className={`${styles.point_change} ${
                           history.status === "failed"
                             ? styles.cancelled_amount
                             : history.amount > 0
@@ -302,21 +302,65 @@ export default function PointHistoryPage({
                           : `${history.amount.toLocaleString()}`}{" "}
                         P
                       </div>
-                      <div className={styles.mobile_balance}>
+                      <div className={styles.point_balance}>
                         {history.balance.toLocaleString()} P
                       </div>
                     </div>
-                  </div>
 
-                  {/* 2번째 줄: 날짜 (왼쪽) + 상태 (오른쪽) */}
-                  <div className={styles.mobile_row_second}>
-                    <div className={styles.mobile_date}>{history.date}</div>
-                    <div className={`${styles.mobile_status} ${getStatusBadgeClass(history)}`}>
-                      {getStatusBadgeText(history, true)}
+                    {/* 모바일 버전 (PC에서 숨김) */}
+                    {/* 1번째 줄: 설명 (왼쪽) + 포인트 금액 + 잔액 (오른쪽) */}
+                    <div className={styles.mobile_row_first}>
+                      <div className={styles.mobile_description}>
+                        {history.status === "failed" ? (
+                          <div className={styles.cancelled_description}>
+                            <span className={styles.main_text}>{history.description}</span>
+                            <RejectionReasonLink history={history} iconSize={12} />
+                          </div>
+                        ) : (
+                          history.description
+                        )}
+                      </div>
+
+                      <div className={styles.mobile_points_group}>
+                        <div
+                          className={`${styles.mobile_point_change} ${
+                            history.status === "failed"
+                              ? styles.cancelled_amount
+                              : history.amount > 0
+                                ? styles.positive
+                                : styles.negative
+                          }`}
+                        >
+                          {history.amount > 0
+                            ? `+ ${history.amount.toLocaleString()}`
+                            : `${history.amount.toLocaleString()}`}{" "}
+                          P
+                        </div>
+                        <div className={styles.mobile_balance}>
+                          {history.balance.toLocaleString()} P
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2번째 줄: 날짜 (왼쪽) + 상태 (오른쪽) */}
+                    <div className={styles.mobile_row_second}>
+                      <div className={styles.mobile_date}>{history.date}</div>
+                      <div className={`${styles.mobile_status} ${getStatusBadgeClass(history)}`}>
+                        {getStatusBadgeText(history, true)}
+                      </div>
                     </div>
                   </div>
+                ))}
+
+                {/* 무한 스크롤 트리거 + 로딩 표시 */}
+                <div ref={observerRef} className={styles.scroll_trigger}>
+                  {isFetchingNextPage && (
+                    <div className={styles.loading_more}>
+                      <span>불러오는 중...</span>
+                    </div>
+                  )}
                 </div>
-              ))
+              </>
             )}
           </article>
         </div>

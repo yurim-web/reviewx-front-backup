@@ -692,3 +692,21 @@
     color: #ff2626;
   }
 }
+
+/* ========================================
+   무한 스크롤 트리거 + 로딩
+   ======================================== */
+
+.scroll_trigger {
+  min-height: 1px;
+  padding: 4px 0;
+}
+
+.loading_more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  color: #888;
+  font-size: 14px;
+}

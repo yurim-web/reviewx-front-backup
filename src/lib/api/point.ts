@@ -28,9 +28,7 @@ import type {
  * GET /reviewer/mypage/point/:reviewerId → /reviewers/:id
  */
 export const fetchReviewerPoint = (reviewerId: number): Promise<ReviewerPointApiItem> =>
-  apiClient
-    .get<ReviewerPointApiItem>(`/reviewer/mypage/point/${reviewerId}`)
-    .then((res) => res.data);
+  apiClient.get<ReviewerPointApiItem>(`/api/v1/reviewer/points`).then((res) => res.data);
 
 /**
  * 포인트 거래 내역 조회
@@ -38,12 +36,12 @@ export const fetchReviewerPoint = (reviewerId: number): Promise<ReviewerPointApi
  */
 export const fetchPointHistory = (): Promise<PointHistoryApiItem[]> =>
   apiClient
-    .get<PointHistoryApiItem[]>(`/reviewer/mypage/point/history`)
+    .get<PointHistoryApiItem[]>(`/api/v1/reviewer/points`)
     .then((res) => (Array.isArray(res.data) ? res.data : []));
 
 /** 출금 신청 (POST /reviewer/mypage/withdrawal → /withdrawal_requests) */
 export const postWithdrawalRequest = (body: WithdrawalPostBody): Promise<{ id: number }> =>
-  apiClient.post<{ id: number }>("/reviewer/mypage/withdrawal", body).then((res) => res.data);
+  apiClient.post<{ id: number }>("/api/v1/reviewer/points/withdraw", body).then((res) => res.data);
 
 /** 출금 상태 변경 (승인/반려) (PATCH /admin/withdrawal/:id → /withdrawal_requests/:id) */
 export const patchWithdrawalStatus = (
@@ -57,7 +55,7 @@ export const patchWithdrawalStatus = (
  */
 export const fetchPendingPoints = (): Promise<PointHistoryApiItem[]> =>
   apiClient
-    .get<PointHistoryApiItem[]>(`/reviewer/mypage/point/history/pending`)
+    .get<PointHistoryApiItem[]>(`/api/v1/reviewer/points`)
     .then((res) => (Array.isArray(res.data) ? res.data : []));
 
 /**

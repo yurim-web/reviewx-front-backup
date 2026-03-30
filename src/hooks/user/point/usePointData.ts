@@ -5,71 +5,88 @@
 /**
  * usePointData
  *
- * 목적: 포인트 잔액·내역을 API에서 조회하고, 계좌 정보는 localStorage에서 로드합니다.
+ * 목적: 리뷰어 포인트 잔액·내역을 실제 API에서 조회하고,
+ *       계좌 정보는 프로필에서 로드합니다.
+ *       커서 기반 무한 스크롤을 지원합니다.
  *
  * 사용 페이지:
  * - /user/point/all (전체 포인트 내역)
  * - /user/point/earned (적립 포인트 내역)
  * - /user/point/withdrawn (출금 포인트 내역)
+ *
+ * API: 33번 GET /user/point
  */
 
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useMemo } from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import type { PointHistory } from "@/types/domain/user";
-import { pointHistoryData, pendingPointListData, pointSummary } from "@/data/user/point/pointData";
-import { fetchReviewerPoint, fetchPointHistory, fetchPendingPoints } from "@/lib/api/point";
-import type { PointHistoryApiItem } from "@/types/api/point";
-import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
+import type { PointHistory, PointTab } from "@/types/domain/user";
+import { pendingPointListData } from "@/data/user/point/pointData";
+import { fetchUserPoint } from "@/lib/api/userPoint";
+import type { UserPointTransactionItem, PointTransactionTypeParam } from "@/types/api/userPoint";
+import { fetchPendingPoints } from "@/lib/api/point";
+import { fetchReviewerEdit } from "@/lib/api/reviewer";
 
 // ========================================
-// 유틸: 사용자 ID → 리뷰어 ID (mock 전용)
-// 실제 백엔드 전환 시 JWT 기반으로 교체
+// 어댑터: 백엔드 응답 → 도메인 PointHistory 타입
 // ========================================
 
-function getReviewerId(userId: string): number {
-  if (userId.includes("kakao")) return 1;
-  if (userId.includes("naver")) return 2;
-  return 1;
-}
+const TYPE_DESCRIPTION: Record<string, { positive: string; negative: string }> = {
+  PAYOUT: { positive: "포인트 적립", negative: "적립 취소" },
+  WITHDRAW: { positive: "포인트 환입", negative: "포인트 출금" },
+  CHARGE: { positive: "포인트 충전", negative: "충전 취소" },
+  REFUND: { positive: "포인트 환불", negative: "환불 취소" },
+};
 
-// ========================================
-// 어댑터: API 응답 → 도메인 PointHistory 타입
-// ========================================
+function adaptItem(item: UserPointTransactionItem): PointHistory {
+  const date = item.createdAt.slice(0, 10); // ISO → "YYYY-MM-DD"
+  const desc = TYPE_DESCRIPTION[item.type] ?? { positive: "포인트 변동", negative: "포인트 변동" };
 
-function adaptHistoryItem(item: PointHistoryApiItem): PointHistory {
-  const date = item.date.slice(0, 10); // ISO → "YYYY-MM-DD"
-  const typeUpper = item.type?.toUpperCase();
-  const statusUpper = item.status?.toUpperCase();
-
-  if (typeUpper === "EARNED") {
+  if (item.type === "PAYOUT") {
     return {
-      id: String(item.id),
+      id: String(item.pointTransactionId),
       type: "earned",
-      amount: item.amount ?? 0,
-      description: item.description ?? "",
+      amount: item.amount,
+      description: item.amount >= 0 ? desc.positive : desc.negative,
       date,
-      status: statusUpper === "FAILED" ? "failed" : "earned",
-      balance: item.balance ?? 0,
-      rejection_reason: item.rejection_reason,
+      status: item.amount >= 0 ? "earned" : "failed",
+      balance: item.balanceAfter,
     };
   }
 
-  // WITHDRAWAL
-  const type = statusUpper === "PENDING" ? "withdrawal_pending" : "withdrawn";
-  const status =
-    statusUpper === "COMPLETED" ? "completed" : statusUpper === "FAILED" ? "failed" : "pending";
+  if (item.type === "WITHDRAW") {
+    // 양수 amount → 출금 취소/환입, 음수 → 출금 완료
+    return {
+      id: String(item.pointTransactionId),
+      type: "withdrawn",
+      amount: item.amount,
+      description: item.amount >= 0 ? desc.positive : desc.negative,
+      date,
+      status: item.amount >= 0 ? ("earned" as const) : ("completed" as const),
+      balance: item.balanceAfter,
+    };
+  }
 
+  // CHARGE, REFUND — 리뷰어에서는 일반적으로 나타나지 않음
   return {
-    id: String(item.id),
-    type,
-    amount: item.amount ?? 0,
-    description: item.description ?? "",
+    id: String(item.pointTransactionId),
+    type: "earned",
+    amount: item.amount,
+    description: item.amount >= 0 ? desc.positive : desc.negative,
     date,
-    status,
-    balance: item.balance ?? 0,
-    rejection_reason: item.rejection_reason,
+    status: item.amount >= 0 ? "earned" : "failed",
+    balance: item.balanceAfter,
   };
+}
+
+// ========================================
+// 탭 → API 파라미터 매핑
+// ========================================
+
+function getTransactionType(tab: PointTab): PointTransactionTypeParam | undefined {
+  if (tab === "earned") return "PAYOUT";
+  if (tab === "withdrawn") return "WITHDRAW";
+  return undefined; // 전체 탭: 파라미터 없이 호출
 }
 
 // ========================================
@@ -97,47 +114,52 @@ export interface UsePointDataReturn {
   isAccountInfoValid: () => boolean;
   isLoading: boolean;
   isError: boolean;
+  hasNextPage: boolean;
+  fetchNextPage: () => void;
+  isFetchingNextPage: boolean;
 }
 
 // ========================================
 // 훅
 // ========================================
 
-export function usePointData(): UsePointDataReturn {
+export function usePointData(pointTab: PointTab = "all"): UsePointDataReturn {
   const { user } = useAuth();
-  const reviewerId = user ? getReviewerId(user.id) : 0;
-  const { data: profile } = useReviewerProfile(user?.id);
-
-  // 포인트 잔액 (API)
-  const { data: reviewerData } = useQuery({
-    queryKey: ["reviewerPoint", reviewerId],
-    queryFn: () => fetchReviewerPoint(reviewerId),
-    enabled: reviewerId > 0,
+  const { data: editData } = useQuery({
+    queryKey: ["reviewerEdit"],
+    queryFn: fetchReviewerEdit,
+    enabled: !!user,
     staleTime: 30_000,
-    refetchOnWindowFocus: true,
   });
+  const transactionType = getTransactionType(pointTab);
 
-  // 포인트 거래 내역 (API)
+  // 포인트 내역 (실제 API — useInfiniteQuery, 커서 기반)
   const {
-    data: apiHistory,
+    data: pointData,
     isLoading: historyLoading,
     isError,
-  } = useQuery({
-    queryKey: ["pointHistory", reviewerId],
-    queryFn: () => fetchPointHistory(),
-    enabled: reviewerId > 0,
-    staleTime: 30_000,
-    refetchOnWindowFocus: true,
-    select: (data) => data.map(adaptHistoryItem),
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["userPoint", transactionType],
+    queryFn: ({ pageParam }) =>
+      fetchUserPoint({
+        point_transaction_type: transactionType,
+        cursor: pageParam,
+      }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    staleTime: 1000 * 60 * 5,
+    enabled: !!user,
   });
 
-  // 적립 예정 포인트 (API)
+  // 적립 예정 포인트 (아직 별도 실제 API 없음 — mock fallback)
   const { data: apiPendingList } = useQuery({
-    queryKey: ["pendingPoints", reviewerId],
+    queryKey: ["pendingPoints"],
     queryFn: () => fetchPendingPoints(),
-    enabled: reviewerId > 0,
+    enabled: !!user,
     staleTime: 30_000,
-    refetchOnWindowFocus: true,
     select: (data) =>
       data.map((item) => ({
         id: String(item.id),
@@ -156,20 +178,26 @@ export function usePointData(): UsePointDataReturn {
   });
 
   useEffect(() => {
-    if (!user || !profile) return;
+    if (!user || !editData) return;
     setAccountInfo({
-      name: profile.account_holder ?? profile.name ?? "",
-      bank: profile.bank ?? "",
-      accountNumber: profile.account_number ?? "",
-      residentNumber:
-        profile.ssn_front && profile.ssn_back ? `${profile.ssn_front}-${profile.ssn_back}` : "",
+      name: editData.bankAccount?.accountHolder ?? editData.user?.name ?? "",
+      bank: editData.bankAccount?.bankName ?? "",
+      accountNumber: editData.bankAccount?.accountNumber ?? "",
+      residentNumber: "",
     });
-  }, [user, profile]);
+  }, [user, editData]);
+
+  // 페이지 데이터 평탄화
+  const balance = pointData?.pages[0]?.balance ?? 0;
+  const userPointHistory = useMemo(
+    () => pointData?.pages.flatMap((page) => page.items.map(adaptItem)) ?? [],
+    [pointData]
+  );
 
   const pointInfo: PointInfo = {
-    available_points: reviewerData?.current_points ?? pointSummary.available_points,
-    current_points: reviewerData?.current_points ?? pointSummary.available_points,
-    pending_points: 0,
+    available_points: balance,
+    current_points: balance,
+    pending_points: 0, // 별도 API 필요 — 현재 미구현
   };
 
   const isAccountInfoValid = () =>
@@ -181,10 +209,13 @@ export function usePointData(): UsePointDataReturn {
   return {
     pointInfo,
     accountInfo,
-    userPointHistory: apiHistory ?? pointHistoryData,
+    userPointHistory,
     pendingPointList: apiPendingList ?? pendingPointListData,
     isAccountInfoValid,
-    isLoading: reviewerId > 0 && historyLoading,
+    isLoading: !!user && historyLoading,
     isError,
+    hasNextPage: hasNextPage ?? false,
+    fetchNextPage,
+    isFetchingNextPage,
   };
 }

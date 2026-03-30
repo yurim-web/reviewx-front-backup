@@ -9,6 +9,10 @@
  *
  * 사용 페이지:
  * - /user/point/withdrawal_request (포인트 출금 신청)
+ *
+ * API:
+ * - 34번: GET /user/point/withdrawal_request (진입 데이터)
+ * - 35번: POST /user/point/withdrawal_request (출금 신청)
  */
 
 "use client";
@@ -25,11 +29,9 @@ import { parseFormattedAmount } from "@/utils/formatting/amount";
 import { validateAmount } from "@/utils/validation/amount";
 import { useAuth } from "@/hooks/useAuth";
 import { useWithdrawalInfo } from "@/hooks/user/point/useWithdrawalInfo";
+import type { WithdrawalResponse } from "@/types/api/withdrawal";
 import Loading from "@/app/loading";
 import styles from "../../../../styles/user/point/withdrawal_request.module.css";
-
-const MIN_AMOUNT = 10000;
-const MAX_AMOUNT = 500000;
 
 export default function WithdrawalRequestPage() {
   const router = useRouter();
@@ -37,11 +39,10 @@ export default function WithdrawalRequestPage() {
   const {
     userInfo,
     calculateNetAmount,
-    getDaysSinceLastWithdrawal,
-    canWithdraw,
     isAccountInfoValid,
-    submitWithdrawal,
     isLoading,
+    isError,
+    withdrawalMutation,
   } = useWithdrawalInfo();
 
   const [withdrawalAmount, setWithdrawalAmount] = useState<string>("");
@@ -50,14 +51,8 @@ export default function WithdrawalRequestPage() {
   const [isAccountWarningModalOpen, setIsAccountWarningModalOpen] = useState<boolean>(false);
   const [isWithdrawalBlockedModalOpen, setIsWithdrawalBlockedModalOpen] = useState<boolean>(false);
   const [isServerErrorModalOpen, setIsServerErrorModalOpen] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  const [blockedMessage, setBlockedMessage] = useState<string>("");
+  const [completedData, setCompletedData] = useState<WithdrawalResponse | null>(null);
 
   // 로그인 체크
   useEffect(() => {
@@ -66,6 +61,11 @@ export default function WithdrawalRequestPage() {
     }
   }, [user, router]);
 
+  // 서버 오류 모달 (GET 실패)
+  useEffect(() => {
+    if (isError) setIsServerErrorModalOpen(true);
+  }, [isError]);
+
   if (isLoading) return <Loading />;
 
   const amount = withdrawalAmount ? Number(withdrawalAmount.replace(/,/g, "")) : 0;
@@ -73,39 +73,73 @@ export default function WithdrawalRequestPage() {
 
   const isButtonEnabled = (): boolean => {
     if (amount === 0) return false;
-    if (amount < MIN_AMOUNT) return false;
-    if (amount > MAX_AMOUNT) return false;
+    if (amount < userInfo.minAmount) return false;
+    if (amount > userInfo.maxAmount) return false;
     if (amount > userInfo.availablePoints) return false;
     return true;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!isButtonEnabled()) return;
 
+    // B_M2: 계좌 미등록 체크
     if (!isAccountInfoValid()) {
       setIsAccountWarningModalOpen(true);
       return;
     }
 
-    if (!canWithdraw()) {
-      setIsWithdrawalBlockedModalOpen(true);
-      return;
-    }
-
-    try {
-      const success = await submitWithdrawal(amount, netAmount);
-      if (success) {
+    withdrawalMutation.mutate(amount, {
+      onSuccess: (res) => {
+        // C_M2: 출금 완료 모달에 상세 정보 표시
+        setCompletedData(res);
         setIsCompleteModalOpen(true);
-      } else {
-        setIsServerErrorModalOpen(true);
-      }
-    } catch {
-      setIsServerErrorModalOpen(true);
-    }
+      },
+      onError: (error) => {
+        const errorData = error.response?.data;
+        const code = errorData?.errorCode;
+
+        if (code === "NO_BANK_ACCOUNT") {
+          // B_M2: 계좌 미등록
+          setIsAccountWarningModalOpen(true);
+        } else if (code === "PENDING_WITHDRAWAL_EXISTS") {
+          // B_M1: 중복 신청 (처리 중인 출금 있음)
+          setBlockedMessage(
+            "처리 중인 출금 신청이 있습니다.<br>이전 신청이 완료된 후 다시 시도해주세요."
+          );
+          setIsWithdrawalBlockedModalOpen(true);
+        } else if (code === "WITHDRAWAL_WEEKLY_LIMIT_EXCEEDED") {
+          // B_M1: 주 1회 제한
+          setBlockedMessage(
+            "이번 주 출금 신청 횟수를 초과했습니다.<br>다음 주에 다시 시도해주세요."
+          );
+          setIsWithdrawalBlockedModalOpen(true);
+        } else if (code === "EXCEED_MONTHLY_MAX_WITHDRAWAL") {
+          setBlockedMessage("월 최대 출금 금액(2,000,000원)을 초과했습니다.");
+          setIsWithdrawalBlockedModalOpen(true);
+        } else if (code === "INSUFFICIENT_POINT") {
+          // W_E3: 잔액 부족
+          setErrorMessage("출금은 보유 포인트 이내에서만 신청할 수 있습니다.");
+        } else if (code === "BELOW_MIN_WITHDRAWAL") {
+          // W_E1: 최솟값 미달
+          setErrorMessage(
+            `출금은 최소 ${userInfo.minAmount.toLocaleString()}원부터 신청할 수 있습니다.`
+          );
+        } else if (code === "EXCEED_MAX_WITHDRAWAL") {
+          // W_E2: 최댓값 초과
+          setErrorMessage(
+            `출금은 최대 ${userInfo.maxAmount.toLocaleString()}원까지 신청할 수 있습니다.`
+          );
+        } else {
+          // E_M5: 서버 오류
+          setIsServerErrorModalOpen(true);
+        }
+      },
+    });
   };
 
   const handleCompleteModalClose = () => {
     setIsCompleteModalOpen(false);
+    setCompletedData(null);
     router.push("/user/point");
   };
 
@@ -113,23 +147,32 @@ export default function WithdrawalRequestPage() {
     setWithdrawalAmount(formattedValue);
     const numValue = parseFormattedAmount(formattedValue);
     const validation = validateAmount(numValue, {
-      minAmount: MIN_AMOUNT,
-      maxAmount: MAX_AMOUNT,
+      minAmount: userInfo.minAmount,
+      maxAmount: userInfo.maxAmount,
       availablePoints: userInfo.availablePoints,
       errorMessages: {
-        min: "출금은 최소 10,000원부터 신청할 수 있습니다.",
-        max: "출금은 최대 500,000원까지 신청할 수 있습니다.",
+        min: `출금은 최소 ${userInfo.minAmount.toLocaleString()}원부터 신청할 수 있습니다.`,
+        max: `출금은 최대 ${userInfo.maxAmount.toLocaleString()}원까지 신청할 수 있습니다.`,
         exceedsAvailable: "출금은 보유 포인트 이내에서만 신청할 수 있습니다.",
       },
     });
     setErrorMessage(validation.errorMessage);
   };
 
+  // C_M2: 출금 완료 모달 메시지 (상세 정보 포함)
+  const completeModalMessage = completedData
+    ? `출금 신청이 완료되었습니다.<br><br>` +
+      `<strong>신청번호</strong>: ${completedData.withdrawalNumber}<br>` +
+      `<strong>신청금액</strong>: ${completedData.requestedAmount.toLocaleString()}원<br>` +
+      `<strong>공제금액</strong> (${(completedData.feeRate * 100).toFixed(1)}%): ${completedData.feeAmount.toLocaleString()}원<br>` +
+      `<strong>실수령액</strong>: ${completedData.expectedAmount.toLocaleString()}원`
+    : "출금 신청이 완료되었습니다.";
+
   return (
     <div className={styles.request_page}>
       <SubHeader />
       <main className={styles.main_content}>
-        <PageTitle title={isMobile ? "포인트 충전" : "포인트 출금 신청"} />
+        <PageTitle title="포인트 출금 신청" />
 
         <div className={styles.container}>
           <AvailablePointsDisplay
@@ -166,13 +209,6 @@ export default function WithdrawalRequestPage() {
                   labelClassName={styles.form_label}
                   inputClassName={`${styles.form_input} ${styles.disabled}`}
                 />
-                <ReadOnlyFormField
-                  label="주민등록번호"
-                  value={userInfo.residentNumber}
-                  className={styles.form_group}
-                  labelClassName={styles.form_label}
-                  inputClassName={`${styles.form_input} ${styles.disabled}`}
-                />
               </div>
             </div>
 
@@ -183,10 +219,10 @@ export default function WithdrawalRequestPage() {
                   <AmountInput
                     value={withdrawalAmount}
                     onChange={handleAmountChange}
-                    minAmount={MIN_AMOUNT}
-                    maxAmount={MAX_AMOUNT}
+                    minAmount={userInfo.minAmount}
+                    maxAmount={userInfo.maxAmount}
                     availablePoints={userInfo.availablePoints}
-                    placeholder="최소 10,000원 이상 최대 500,000원 이하"
+                    placeholder={`최소 ${userInfo.minAmount.toLocaleString()}원 이상 최대 ${userInfo.maxAmount.toLocaleString()}원 이하`}
                     label="출금 금액"
                     errorMessage={errorMessage}
                     className=""
@@ -227,9 +263,9 @@ export default function WithdrawalRequestPage() {
                 <button
                   className={`${styles.submit_button} ${!isButtonEnabled() ? styles.disabled : ""}`}
                   onClick={handleSubmit}
-                  disabled={!isButtonEnabled()}
+                  disabled={!isButtonEnabled() || withdrawalMutation.isPending}
                 >
-                  출금 신청
+                  {withdrawalMutation.isPending ? "신청 중..." : "출금 신청"}
                 </button>
               </div>
             </div>
@@ -237,6 +273,7 @@ export default function WithdrawalRequestPage() {
         </div>
       </main>
 
+      {/* B_M2: 계좌 미등록 경고 모달 */}
       <BaseModal
         is_open={isAccountWarningModalOpen}
         on_close={() => setIsAccountWarningModalOpen(false)}
@@ -246,23 +283,25 @@ export default function WithdrawalRequestPage() {
         type="center"
       />
 
+      {/* B_M1: 출금 신청 불가 모달 (중복 신청/주간 제한/월 한도 초과) */}
       <BaseModal
         is_open={isWithdrawalBlockedModalOpen}
         on_close={() => setIsWithdrawalBlockedModalOpen(false)}
-        message={`마지막 출금 이후 7일이 지나야<br>다시 출금할 수 있습니다.<br><span style="color: #ff2626;">(현재: ${getDaysSinceLastWithdrawal() ?? 0}일 경과)</span>`}
+        message={blockedMessage}
         buttons={["닫기"]}
         type="center"
       />
 
+      {/* C_M2: 출금 신청 완료 모달 (상세 정보 포함) */}
       <BaseModal
         is_open={isCompleteModalOpen}
         on_close={handleCompleteModalClose}
-        message="출금 신청이 완료되었습니다."
+        message={completeModalMessage}
         buttons={["닫기"]}
         type="center"
       />
 
-      {/* 서버 오류 모달 (E_M5) */}
+      {/* E_M5: 서버 오류 모달 */}
       <BaseModal
         is_open={isServerErrorModalOpen}
         on_close={() => setIsServerErrorModalOpen(false)}

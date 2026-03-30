@@ -5,177 +5,105 @@
 /**
  * useWithdrawalInfo
  *
- * 목적: 출금 신청 페이지의 유저 정보 로드, 금액 계산, 유효성 검증 로직을 관리합니다.
+ * 목적: 출금 신청 페이지의 유저 정보 로드, 금액 계산, 유효성 검증,
+ *       출금 신청 뮤테이션 로직을 관리합니다.
  *
  * 사용 페이지:
  * - /user/point/withdrawal_request (포인트 출금 신청)
+ *
+ * API:
+ * - 34번: GET /user/point/withdrawal_request (진입 데이터)
+ * - 35번: POST /user/point/withdrawal_request (출금 신청)
  */
 
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchReviewerPoint, postWithdrawalRequest } from "@/lib/api/point";
-import { pointSummary } from "@/data/user/point/pointData";
-import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
+import { fetchWithdrawalInfo, submitWithdrawalRequest } from "@/lib/api/withdrawal";
+import type { WithdrawalResponse, WithdrawalErrorResponse } from "@/types/api/withdrawal";
+import type { AxiosError } from "axios";
+
+// ========================================
+// 타입 정의
+// ========================================
 
 export interface WithdrawalUserInfo {
   name: string;
   bank: string;
   accountNumber: string;
-  residentNumber: string;
   availablePoints: number;
-  lastWithdrawalDate: Date | null;
+  minAmount: number;
+  maxAmount: number;
 }
 
 export interface UseWithdrawalInfoReturn {
   userInfo: WithdrawalUserInfo;
   calculateNetAmount: (amount: number) => number;
-  getDaysSinceLastWithdrawal: () => number | null;
-  canWithdraw: () => boolean;
   isAccountInfoValid: () => boolean;
-  submitWithdrawal: (amount: number, netAmount: number) => Promise<boolean>;
   isLoading: boolean;
+  isError: boolean;
+  /** useMutation 반환값 */
+  withdrawalMutation: ReturnType<
+    typeof useMutation<WithdrawalResponse, AxiosError<WithdrawalErrorResponse>, number>
+  >;
 }
 
-function getReviewerId(userId: string): number {
-  if (userId.includes("kakao")) return 1;
-  if (userId.includes("naver")) return 2;
-  return 1;
-}
+// ========================================
+// 훅
+// ========================================
 
 export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
   const { user } = useAuth();
-  const reviewerId = user ? getReviewerId(user.id) : 0;
-  const { data: profile } = useReviewerProfile(user?.id);
+  const queryClient = useQueryClient();
 
-  // 포인트 잔액 (API)
-  const { data: reviewerData, isLoading } = useQuery({
-    queryKey: ["reviewerPoint", reviewerId],
-    queryFn: () => fetchReviewerPoint(reviewerId),
-    enabled: reviewerId > 0,
-    staleTime: 30_000,
+  // 34번 API: 출금 페이지 진입 데이터 조회
+  const {
+    data: infoData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["withdrawalInfo"],
+    queryFn: fetchWithdrawalInfo,
+    staleTime: 1000 * 60, // 1분 캐시
+    enabled: !!user,
   });
 
-  const [userInfo, setUserInfo] = useState<WithdrawalUserInfo>({
-    name: "",
-    bank: "",
-    accountNumber: "",
-    residentNumber: "",
-    availablePoints: 0,
-    lastWithdrawalDate: null,
+  // 35번 API: 출금 신청 뮤테이션
+  const withdrawalMutation = useMutation<
+    WithdrawalResponse,
+    AxiosError<WithdrawalErrorResponse>,
+    number
+  >({
+    mutationFn: (requestedAmount: number) => submitWithdrawalRequest({ requestedAmount }),
+    onSuccess: () => {
+      // 포인트 내역 + 출금 정보 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["userPoint"] });
+      queryClient.invalidateQueries({ queryKey: ["withdrawalInfo"] });
+    },
   });
 
-  // 서버 프로필에서 계좌 정보 로드
-  useEffect(() => {
-    if (!user || !profile) return;
-    setUserInfo((prev) => ({
-      ...prev,
-      name: profile.account_holder ?? profile.name ?? "",
-      bank: profile.bank ?? "",
-      accountNumber: profile.account_number ?? "",
-      residentNumber:
-        profile.ssn_front && profile.ssn_back ? `${profile.ssn_front}-${profile.ssn_back}` : "",
-    }));
-  }, [user, profile]);
+  // 백엔드 응답에서 정보 추출
+  const bankAccount = infoData?.bankAccount;
+  const policy = infoData?.withdrawalPolicy;
 
-  const calculateNetAmount = (amount: number): number => Math.floor(amount * 0.967);
-
-  const getDaysSinceLastWithdrawal = (): number | null => {
-    if (!userInfo.lastWithdrawalDate) return null;
-    const today = new Date();
-    const lastDate = new Date(userInfo.lastWithdrawalDate);
-    today.setHours(0, 0, 0, 0);
-    lastDate.setHours(0, 0, 0, 0);
-    return Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+  const userInfo: WithdrawalUserInfo = {
+    name: bankAccount?.accountHolder ?? "",
+    bank: bankAccount?.bankName ?? "",
+    accountNumber: bankAccount?.accountNumber ?? "",
+    availablePoints: infoData?.balancePoint ?? 0,
+    minAmount: policy?.minAmount ?? 10000,
+    maxAmount: policy?.maxAmount ?? 500000,
   };
 
-  const canWithdraw = (): boolean => {
-    const daysSince = getDaysSinceLastWithdrawal();
-    return daysSince === null || daysSince >= 7;
-  };
+  const calculateNetAmount = (amount: number): number => Math.floor(amount * 0.967); // 3.3% 공제
 
-  const isAccountInfoValid = (): boolean =>
-    userInfo.name.trim() !== "" &&
-    userInfo.bank.trim() !== "" &&
-    userInfo.accountNumber.trim() !== "" &&
-    userInfo.residentNumber.trim() !== "";
-
-  const submitWithdrawal = async (amount: number, netAmount: number): Promise<boolean> => {
-    if (typeof window === "undefined" || !user) return false;
-
-    const now = new Date();
-    const requestId = `withdrawal_${user.id}_${now.getTime()}`;
-
-    const payload = {
-      reviewer_id: getReviewerId(user.id),
-      user_name: userInfo.name,
-      requested_amount: amount,
-      net_amount: netAmount,
-      tax_amount: amount - netAmount,
-      bank: userInfo.bank,
-      account_number: userInfo.accountNumber,
-      account_holder: userInfo.name,
-      status: "PENDING" as const,
-      request_date: now.toISOString(),
-      processed_date: null,
-    };
-
-    // mock API 출금 신청 (서버 응답 확인)
-    try {
-      await postWithdrawalRequest(payload);
-    } catch (_apiError) {
-      // mock 서버 미실행 시 localStorage fallback
-      console.warn("출금 신청 API 호출 실패 (localStorage fallback):", _apiError);
-    }
-
-    // TODO: 실제 백엔드 연동 시 아래 localStorage 코드 전체 제거
-    // localStorage 동기화 (오프라인 fallback 겸 캐시)
-    const storedRequests = localStorage.getItem("withdrawal_requests");
-    const requests = storedRequests ? (JSON.parse(storedRequests) as unknown[]) : [];
-    requests.unshift({
-      id: requestId,
-      user_id: user.id,
-      user_name: userInfo.name,
-      user_number: user.id.includes("kakao") ? "000001" : "000002",
-      requested_amount: amount,
-      net_amount: netAmount,
-      tax_amount: amount - netAmount,
-      bank: userInfo.bank,
-      account_number: userInfo.accountNumber,
-      account_holder: userInfo.name,
-      status: "pending",
-      request_date: now.toISOString(),
-      processed_date: null,
-    });
-    localStorage.setItem("withdrawal_requests", JSON.stringify(requests));
-
-    // 알림 추가
-    const storedNotifications = localStorage.getItem("notifications");
-    const notifications = storedNotifications ? (JSON.parse(storedNotifications) as unknown[]) : [];
-    notifications.unshift({
-      id: `notif_${requestId}_${now.getTime()}`,
-      user_id: user.id,
-      type: "withdrawal_requested",
-      title: "포인트 출금 신청",
-      message: "포인트 출금 신청이 접수되었습니다.",
-      is_read: false,
-      created_at: now.toISOString(),
-    });
-    localStorage.setItem("notifications", JSON.stringify(notifications));
-
-    return true;
-  };
-
-  // API 잔액 우선, 없으면 정적 fallback
-  const availablePoints = reviewerData?.current_points ?? pointSummary.available_points;
+  const isAccountInfoValid = (): boolean => bankAccount !== null && bankAccount !== undefined;
 
   return {
-    userInfo: { ...userInfo, availablePoints },
+    userInfo,
     calculateNetAmount,
-    getDaysSinceLastWithdrawal,
-    canWithdraw,
     isAccountInfoValid,
-    submitWithdrawal,
-    isLoading: reviewerId > 0 && isLoading,
+    isLoading: !!user && isLoading,
+    isError,
+    withdrawalMutation,
   };
 }
