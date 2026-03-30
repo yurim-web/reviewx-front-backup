@@ -16,6 +16,42 @@
 import { apiClient } from "@/lib/api/client";
 import type { PenaltyItem, PenaltyStatusData } from "@/data/campaign_management/penaltyTypes";
 
+// ────────────────────────────────────────────────────────────────
+// R-36 백엔드 타입
+// ────────────────────────────────────────────────────────────────
+
+export interface PenaltySummary {
+  currentTotalScore: number;
+  currentLevel: "NORMAL" | "CAUTION" | "SUSPENDED" | "BANNED";
+  isSuspended: boolean;
+  suspendedRemainingDays: number | null;
+  isPermanentlyBanned: boolean;
+}
+
+export interface PenaltyHistoryItem {
+  userPenaltyHistoryId: number;
+  penaltyCode: string;
+  penaltyReason: string;
+  penaltyScore: number;
+  imposeType: "SYSTEM" | "MANUAL";
+  createdAt: string;
+  campaignTitle?: string;
+}
+
+export interface PenaltyApiResponse {
+  result: "OK";
+  generatedAt: string;
+  summary: PenaltySummary;
+  items: PenaltyHistoryItem[];
+}
+
+/**
+ * 리뷰어 패널티 현황/내역 조회 (R-36)
+ * GET /user/campaign_management/penalty (Bearer 토큰)
+ */
+export const fetchReviewerPenalty = (): Promise<PenaltyApiResponse> =>
+  apiClient.get<PenaltyApiResponse>("/api/v1/reviewer/penalties").then((r) => r.data);
+
 /**
  * 유저(리뷰어) 패널티 내역 조회
  * GET /reviewer/penalty?reviewer_id=:id → /user_penalties?reviewer_id=:id
