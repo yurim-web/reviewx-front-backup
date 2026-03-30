@@ -22,36 +22,50 @@ import { sanitizeRichHtml } from "@/utils/security/sanitize";
 import { posts_data } from "@/data/manager_ga/community/postsData";
 import { get_post_detail } from "@/data/manager_ga/community/postsData";
 import { convertPostsToFAQs, type FAQItem, type FAQTarget } from "@/utils/faq/convertPostToFAQ";
+import Loading from "@/app/loading";
+
+/** API 모드에서 전달하는 상세 데이터 */
+interface ApiFaqDetailData {
+  item: {
+    boardId: number;
+    boardCategory: string;
+    title: string;
+    content: string;
+    createdAt: string;
+  } | null;
+  isLoading: boolean;
+  categoryLabel: string;
+}
 
 interface FAQDetailPageClientProps {
   target?: FAQTarget; // "user" | "partner" (기본값: "user")
   header_component?: ReactNode; // 헤더 컴포넌트 (선택적, 없으면 기본 뒤로가기 버튼 사용)
+  /** API 데이터 (API 연동 시 전달) */
+  api_detail?: ApiFaqDetailData;
 }
 
 export default function FAQDetailPageClient({
   target = "user",
   header_component,
+  api_detail,
 }: FAQDetailPageClientProps) {
   const router = useRouter();
   const params = useParams();
   const faq_id = params?.id as string;
+  const is_api_mode = !!api_detail;
 
+  // ── localStorage 모드 전용 ──
   const [faq_detail, set_faq_detail] = useState<FAQItem | null>(null);
 
-  /**
-   * 관리자 게시글 데이터를 FAQ로 변환하여 조회
-   * - division이 "자주 묻는 질문"인 게시글만 변환
-   * - PostDetail의 content도 포함하여 변환
-   */
   const allFAQs = useMemo(() => {
+    if (is_api_mode) return [];
     const faqs = convertPostsToFAQs(posts_data, get_post_detail);
     return faqs;
-  }, []);
+  }, [is_api_mode]);
 
   useEffect(() => {
-    if (!faq_id) return;
+    if (is_api_mode || !faq_id) return;
 
-    // 관리자 게시글 데이터에서 FAQ 찾기
     const numericId = Number(faq_id);
     if (Number.isNaN(numericId)) {
       set_faq_detail(null);
@@ -60,10 +74,9 @@ export default function FAQDetailPageClient({
 
     const detail = allFAQs.find((faq) => faq.id === numericId) || null;
     set_faq_detail(detail);
-  }, [faq_id, allFAQs]);
+  }, [faq_id, allFAQs, is_api_mode]);
 
   const handle_back_click = () => {
-    // target에 따라 뒤로가기 경로 결정
     if (target === "partner") {
       router.push("/partner/faq");
     } else {
@@ -71,7 +84,43 @@ export default function FAQDetailPageClient({
     }
   };
 
-  if (!faq_detail) {
+  // ── 로딩 ──
+  if (is_api_mode && api_detail.isLoading) {
+    return (
+      <main className={styles.container}>
+        {header_component}
+        <Loading />
+      </main>
+    );
+  }
+
+  // ── 데이터 결정 ──
+  let display_category = "";
+  let display_date = "";
+  let display_question = "";
+  let display_answer = "";
+  let has_data = false;
+
+  if (is_api_mode) {
+    if (api_detail.item) {
+      has_data = true;
+      display_category = api_detail.categoryLabel;
+      display_question = api_detail.item.title;
+      display_answer = api_detail.item.content;
+      const d = api_detail.item.createdAt;
+      display_date = d.includes("T")
+        ? d.split("T")[0].replace(/-/g, ".")
+        : d.split(" ")[0].replace(/-/g, ".");
+    }
+  } else if (faq_detail) {
+    has_data = true;
+    display_category = faq_detail.category;
+    display_date = faq_detail.date;
+    display_question = faq_detail.question;
+    display_answer = faq_detail.answer;
+  }
+
+  if (!has_data) {
     return (
       <main className={styles.container}>
         <div className={styles.loading_message}>FAQ를 불러오는 중...</div>
@@ -81,20 +130,13 @@ export default function FAQDetailPageClient({
 
   return (
     <main className={styles.container}>
-      {/* 헤더 컴포넌트 (선택적) */}
-      {/* header_component가 있으면 사용하고, 없으면 기본 뒤로가기 버튼 사용 */}
       {header_component}
 
       {/* 메인 콘텐츠 영역 */}
       <section className={styles.main_content}>
-        {/* 상단 헤더 영역 (구분 제목 + 뒤로가기 버튼) */}
-        {/* header_component가 없을 때만 표시 */}
         {!header_component && (
           <div className={styles.page_header_wrapper}>
-            {/* 페이지 제목 (자주 묻는 질문 고정) */}
             <h1 className={styles.division_title}>자주 묻는 질문</h1>
-
-            {/* 뒤로가기 버튼 */}
             <button
               className={styles.back_button}
               onClick={handle_back_click}
@@ -107,29 +149,24 @@ export default function FAQDetailPageClient({
 
         {/* FAQ 상세 카드 */}
         <div className={styles.faq_card} aria-label="FAQ 상세 정보">
-          {/* 헤더 박스 (메타 정보 + 질문) */}
           <div className={styles.faq_header_box}>
             <div className={styles.faq_meta}>
-              <span className={styles.category_label}>{faq_detail.category}</span>
-              <span className={styles.faq_date}>{faq_detail.date}</span>
+              <span className={styles.category_label}>{display_category}</span>
+              <span className={styles.faq_date}>{display_date}</span>
             </div>
-
-            {/* 질문 영역 */}
             <div className={styles.question_section}>
               <span className={styles.question_label}>Q.</span>
-              <h2 className={styles.question_text}>{faq_detail.question}</h2>
+              <h2 className={styles.question_text}>{display_question}</h2>
             </div>
           </div>
 
-          {/* 구분선 */}
           <div className={styles.divider}></div>
 
-          {/* 답변 영역 */}
           <div className={styles.answer_section}>
             <span className={styles.answer_label}>A.</span>
             <div
               className={styles.answer_text}
-              dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(faq_detail.answer) }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(display_answer) }}
             />
           </div>
         </div>
