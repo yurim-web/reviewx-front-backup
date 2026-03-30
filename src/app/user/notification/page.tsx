@@ -23,14 +23,10 @@ import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchNotifications } from "@/lib/api/notification";
-import type { NotificationApiItem } from "@/types/api/notification";
+import { fetchNotifications, deleteAllNotifications } from "@/lib/api/notification";
+import type { ReviewerNotificationApiItem } from "@/types/api/notification";
 import Loading from "@/app/loading";
-// 알림 정적 fallback 데이터
-import {
-  mockReviewerNotifications,
-  type NotificationItem as ExternalNotificationItem,
-} from "@/data/notification/notificationData";
+import { type NotificationItem as ExternalNotificationItem } from "@/data/notification/notificationData";
 
 interface StoredNotification {
   id: string;
@@ -66,12 +62,6 @@ function formatNotificationDate(dateStr?: string | null): string {
   return `${y}-${m}-${d} ${h}:${min}`;
 }
 
-function getReviewerId(userId: string): number {
-  if (userId.includes("kakao")) return 1;
-  if (userId.includes("naver")) return 2;
-  return 1;
-}
-
 const TYPE_TO_CATEGORY: Record<string, string> = {
   CAMPAIGN_SELECTED: "A_R1",
   CAMPAIGN_UPDATED: "A_R2",
@@ -92,15 +82,15 @@ const TYPE_TO_CATEGORY: Record<string, string> = {
   CHANNEL_ERROR: "A_R17",
 };
 
-function adaptApiNotification(item: NotificationApiItem): NotificationItem {
+function adaptApiNotification(item: ReviewerNotificationApiItem): NotificationItem {
   return {
-    id: item.id,
+    id: item.notificationHistoryId,
     category: TYPE_TO_CATEGORY[item.type] ?? "A_R1",
     message: item.message,
-    time: formatNotificationDate(item.created_at),
-    campaign_id: item.campaign_id,
-    campaign_name: item.campaign_name,
-    is_read: item.is_read,
+    time: formatNotificationDate(item.createdAt),
+    campaign_id: item.campaignId ?? undefined,
+    campaign_name: undefined,
+    is_read: false,
     _source: "api",
   };
 }
@@ -109,20 +99,19 @@ export default function UserNotificationPage() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const reviewerId = user ? getReviewerId(user.id) : 0;
-
-  // 알림 목록 (API)
+  // 알림 목록 (API — 백엔드 R-26)
   const {
-    data: apiNotifications,
+    data: apiResponse,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["notifications", reviewerId],
-    queryFn: () => fetchNotifications(reviewerId),
-    enabled: reviewerId > 0,
+    queryKey: ["notifications"],
+    queryFn: () => fetchNotifications(),
+    enabled: !!user,
     staleTime: 30_000,
     retry: false,
   });
+  const apiNotifications = apiResponse?.items ?? null;
 
   // 모바일 여부 감지
   const [isMobile, setIsMobile] = useState(false);
@@ -142,9 +131,7 @@ export default function UserNotificationPage() {
       router.push("/user/login");
     }
   }, [user, router, authLoading]);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(
-    mockReviewerNotifications as NotificationItem[]
-  );
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [isDeleteToastOpen, setIsDeleteToastOpen] = useState(false);
   const [isServerErrorModalOpen, setIsServerErrorModalOpen] = useState(false);
 
@@ -176,14 +163,12 @@ export default function UserNotificationPage() {
 
   /**
    * 알림 목록 구성: API 데이터 + localStorage 병합
-   * API 로드 성공 → API 데이터 사용 / 실패·로딩 중 → mockReviewerNotifications fallback
+   * API 로드 성공 → API 데이터 사용 / 실패·로딩 중 → 빈 배열
    */
   useEffect(() => {
-    // base: API 데이터 또는 정적 fallback
+    // base: API 데이터
     const baseNotifications: NotificationItem[] =
-      apiNotifications != null
-        ? apiNotifications.map(adaptApiNotification)
-        : (mockReviewerNotifications as unknown as NotificationItem[]);
+      apiNotifications != null ? apiNotifications.map(adaptApiNotification) : [];
 
     if (typeof window !== "undefined" && user) {
       try {
@@ -227,30 +212,20 @@ export default function UserNotificationPage() {
     if (isError) setIsServerErrorModalOpen(true);
   }, [isError]);
 
-  /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트 표시 */
-  const handleDeleteAllClick = () => {
-    setNotifications([]);
-    setDisplayCount(PAGE_SIZE);
-    // 헤더 알림 아이콘 즉시 비활성화 — 캐시를 빈 배열로 덮어씀
-    queryClient.setQueryData(["notifications", reviewerId], []);
-    if (typeof window !== "undefined" && user) {
-      try {
-        const storedNotifications = localStorage.getItem("notifications");
-        if (storedNotifications) {
-          const allNotifications = JSON.parse(storedNotifications);
-          const otherUserNotifications = (allNotifications as StoredNotification[]).filter(
-            (notif) => notif.user_id !== user.id
-          );
-          localStorage.setItem("notifications", JSON.stringify(otherUserNotifications));
-        }
-      } catch (error) {
-        console.error("Failed to clear localStorage notifications:", error);
-      }
+  /** 전체 삭제 버튼 클릭 → DELETE API 호출 후 토스트 표시 */
+  const handleDeleteAllClick = async () => {
+    try {
+      await deleteAllNotifications();
+      setNotifications([]);
+      setDisplayCount(PAGE_SIZE);
+      queryClient.setQueryData(["notifications"], { result: "OK", items: [], nextCursor: null });
+      setIsDeleteToastOpen(true);
+    } catch {
+      setIsServerErrorModalOpen(true);
     }
-    setIsDeleteToastOpen(true);
   };
 
-  if (reviewerId > 0 && isLoading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   return (
     <div className={`${styles.notification_container} ${isMobile ? styles.mobile : ""}`}>

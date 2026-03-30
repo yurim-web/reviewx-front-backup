@@ -5,25 +5,26 @@
 import { apiClient } from "@/lib/api/client";
 import type {
   AdminNotificationListResponse,
-  NotificationApiItem,
+  ReviewerNotificationListResponse,
   PartnerNotificationApiItem,
 } from "@/types/api/notification";
 
 /**
- * 리뷰어 알림 목록 조회 (Mock — 백엔드 미전환)
- * GET /reviewer/notification?reviewer_id=:id
+ * 리뷰어 알림 목록 조회
+ * GET /user/notification (백엔드 R-26)
+ * Bearer 토큰으로 사용자 식별
  */
-export const fetchNotifications = (reviewerId: number): Promise<NotificationApiItem[]> =>
+export const fetchNotifications = (): Promise<ReviewerNotificationListResponse> =>
   apiClient
-    .get<NotificationApiItem[]>(`/reviewer/notification?reviewer_id=${reviewerId}`)
-    .then((res) => (Array.isArray(res.data) ? res.data : []));
+    .get<ReviewerNotificationListResponse>("/api/v1/reviewer/notifications")
+    .then((res) => res.data);
 
 /**
- * 알림 읽음 처리 (Mock — 백엔드 미전환)
- * PATCH /notifications/:id { is_read: true }
+ * 리뷰어 전체 알림 삭제
+ * DELETE /api/v1/reviewer/notifications/all
  */
-export const patchNotificationRead = (id: number | string): Promise<void> =>
-  apiClient.patch(`/notifications/${id}`, { is_read: true }).then(() => undefined);
+export const deleteAllNotifications = (): Promise<void> =>
+  apiClient.delete("/api/v1/reviewer/notifications/all").then(() => undefined);
 
 /**
  * GA 관리자 알림 목록 조회

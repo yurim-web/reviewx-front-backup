@@ -32,7 +32,6 @@ export interface AdminNotificationApiItem {
   notificationType: "EMAIL" | "SMS" | "KAKAO" | "PUSH";
   title: string;
   message: string;
-  isRead: boolean;
   sentAt: string;
 }
 
@@ -44,7 +43,6 @@ export interface AdminNotificationListResponse {
   generatedAt: string;
   data: {
     totalCount: number;
-    unreadCount: number;
     notifications: AdminNotificationApiItem[];
   };
 }
