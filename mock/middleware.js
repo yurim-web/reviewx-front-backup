@@ -243,31 +243,61 @@ module.exports = function createMiddleware(db) {
   }
 
   // ============ GET /api/admin-sa/campaign/progress/stats ============
-  // SA-02: SA 캠페인 상태별 통계 카드 조회
+  // SA-02: SA 캠페인 상태별 통계 카드 조회 (GA 캠페인 데이터 공유)
   if (req.method === "GET" && req.path === "/api/admin-sa/campaign/progress/stats") {
-    var saStats = db ? (db.get("sa_campaign_progress_stats").value() || null) : null;
-    if (!saStats) {
-      try { saStats = require("./db.json").sa_campaign_progress_stats || null; } catch (_e) {}
-    }
-    if (saStats) {
-      return res.status(200).json(saStats);
-    }
+    var saCampaignsForStats = getCampaigns();
+    var SA_STATUS_MAP = { REGISTERING: "OPEN_SCHEDULED", RECRUITING: "APPLYING", SELECTING: "IN_PROGRESS", PURCHASING: "IN_PROGRESS", EMERGENCY: "URGENT", CLOSED: "ENDED", CANCELLED: "CANCELLED" };
+    var statsCount = { total: 0, openScheduled: 0, applying: 0, inProgress: 0, ended: 0, cancelled: 0, urgent: 0 };
+    saCampaignsForStats.forEach(function(c) {
+      var saStatusVal = SA_STATUS_MAP[c.status] || "IN_PROGRESS";
+      statsCount.total++;
+      if (saStatusVal === "OPEN_SCHEDULED") statsCount.openScheduled++;
+      else if (saStatusVal === "APPLYING") statsCount.applying++;
+      else if (saStatusVal === "IN_PROGRESS") statsCount.inProgress++;
+      else if (saStatusVal === "ENDED") statsCount.ended++;
+      else if (saStatusVal === "CANCELLED") statsCount.cancelled++;
+      else if (saStatusVal === "URGENT") statsCount.urgent++;
+    });
     return res.status(200).json({
       result: "OK",
       generatedAt: new Date().toISOString(),
-      stats: { total: 0, openScheduled: 0, applying: 0, inProgress: 0, ended: 0, cancelled: 0, urgent: 0 },
+      stats: statsCount,
     });
   }
 
   // ============ GET /api/admin-sa/campaign/progress ============
-  // SA-02: SA 캠페인 목록 조회
+  // SA-02: SA 캠페인 목록 조회 (GA 캠페인 데이터 공유)
   if (req.method === "GET" && req.path === "/api/admin-sa/campaign/progress") {
-    var saList = db ? (db.get("sa_campaign_progress").value() || []) : [];
-    if (!saList || saList.length === 0) {
-      try { saList = require("./db.json").sa_campaign_progress || []; } catch (_e) {}
-    }
+    var saCampaigns = getCampaigns();
+    var SA_STATUS_FROM_GA = { REGISTERING: "OPEN_SCHEDULED", RECRUITING: "APPLYING", SELECTING: "IN_PROGRESS", PURCHASING: "IN_PROGRESS", EMERGENCY: "URGENT", CLOSED: "ENDED", CANCELLED: "CANCELLED" };
+    var SA_CHANNEL_FROM_GA = { NAVER_BLOG: "BLOG", BLOG: "BLOG", NAVER_CLIP: "CLIP", CLIP: "CLIP", INSTAGRAM: "INSTAGRAM", INSTAGRAM_REELS: "REELS", REELS: "REELS", YOUTUBE: "YOUTUBE", YOUTUBE_SHORTS: "SHORTS", SHORTS: "SHORTS", STORE: "REVIEW", COUPANG: "REVIEW", REVIEW: "REVIEW", MISSION: "MISSION" };
+    var SA_TYPE_FROM_GA = { DELIVERY: "DELIVERY", VISIT: "VISIT", PURCHASE_REVIEW: "REVIEW", PURCHASE: "REVIEW", REPORTER: "REPORTER", MISSION: "MISSION" };
+    var SA_PARTNER_NAMES = { 501: "마크엑스컴퍼니", 502: "청불 천막집 방이점", 503: "명륜진사갈비 수원광교점", 504: "(주) 레인보우8", 505: "(주)플레티어", 506: "꽃초롱", 507: "주식회사 와이디컴퍼니그룹", 508: "(주)아이엠에스커뮤니케이션" };
+
+    var saMapped = saCampaigns.map(function(c) {
+      var cid = c.campaignId || c.id;
+      var channelName = (c.requiredPlatform && c.requiredPlatform.channelName) || "";
+      var saStatus = SA_STATUS_FROM_GA[c.status] || "IN_PROGRESS";
+      var saChannel = SA_CHANNEL_FROM_GA[channelName] || SA_CHANNEL_FROM_GA[c.type] || "BLOG";
+      var saType = SA_TYPE_FROM_GA[c.type] || "DELIVERY";
+      var campaignNum = cid > 100000 ? String(50000 + (cid % 10000)).padStart(6, "0") : String(4000 + cid).padStart(6, "0");
+      var partnerName = c.partnerName || SA_PARTNER_NAMES[c.partner_id || c.partnerId] || "테스트 파트너";
+      return {
+        campaignId: cid,
+        campaignNumber: campaignNum,
+        partnerName: partnerName,
+        campaignName: c.title || "",
+        status: saStatus,
+        type: saType,
+        channel: saChannel,
+        applyCount: c.appliedCount || (c.metrics && c.metrics.appliedCount) || 0,
+        recruitCount: parseInt(c.recruitLimit) || (c.recruit && c.recruit.recruitLimit) || 0,
+        point: (c.reward && c.reward.extraRewardPoint) || c.rewardPoint || 0,
+      };
+    });
+
     var { status: saStatus, type: saType, channel: saChannel, keyword: saKeyword } = req.query;
-    var saFiltered = saList;
+    var saFiltered = saMapped;
     if (saStatus) {
       var saStatusList = saStatus.split(",").map(function(s) { return s.trim(); });
       saFiltered = saFiltered.filter(function(c) { return saStatusList.includes(c.status); });
@@ -4111,6 +4141,775 @@ module.exports = function createMiddleware(db) {
 
       return res.json(result);
     }
+  }
+
+  // ====================================================================
+  // 리뷰어 마이페이지 Mock (백엔드 R-28~R-32 응답 구조)
+  // ====================================================================
+
+  // GET /user/mypage/profile → 프로필 조회 (R-28 백엔드 정확 구조)
+  if (req.method === "GET" && req.path === "/user/mypage/profile") {
+    const reviewers = db ? (db.get("reviewers").value() || []) : [];
+    const r = reviewers.find(rv => rv.id === 2) || reviewers[0] || {};
+    const channels = r.channel_details || [];
+    const firstConnected = channels.find(ch => ch.status === "connected");
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      user: {
+        userId: r.id || 2, role: "REVIEWER", name: r.name || "김은지",
+        email: r.email || "kimeunji@gmail.com", phoneNum: r.phone || "010-2222-2222",
+        address: r.address || "", postNumber: parseInt(r.postal_code) || 0, status: "ACTIVE",
+        profileImage: r.profile_image ? { attachmentId: 1, fileId: 1, originalName: "profile.jpg", storedName: "profile.jpg", filePath: r.profile_image, fileType: "IMAGE" } : null,
+        lastLoginAt: new Date().toISOString()
+      },
+      reviewerProfile: {
+        reviewerId: r.number ? parseInt(r.number) : 2, grade: r.grade || "NORMAL",
+        sex: r.gender === "여성" ? "W" : "M", birthDate: "1998-03-03",
+        channel: firstConnected ? { channelId: 1, channelName: firstConnected.name, userChannelId: 10, externalId: firstConnected.url ? firstConnected.url.split("/").pop() : "", channelUrl: firstConnected.url } : null
+      }
+    });
+  }
+
+  // GET /user/mypage/edit → 내 정보 수정 조회 (R-31 백엔드 정확 구조)
+  if (req.method === "GET" && req.path === "/user/mypage/edit") {
+    const reviewers = db ? (db.get("reviewers").value() || []) : [];
+    const r = reviewers.find(rv => rv.id === 2) || reviewers[0] || {};
+    return res.json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      user: { userId: r.id || 2, name: r.name || "김은지", email: r.email || "kimeunji@gmail.com", phoneNum: r.phone || "010-2222-2222", status: "ACTIVE", createdAt: r.join_date || "2025-06-01T00:00:00+09:00", lastLoginAt: new Date().toISOString(), profileImageUrl: r.profile_image || null },
+      address: r.address ? { zipCode: r.postal_code || "", address: r.address, addressDetail: r.detail_address || "" } : null,
+      bankAccount: r.bank ? { bankName: r.bank, accountNumber: r.account_number || "", accountHolder: r.account_holder || "" } : null,
+      reviewerProfile: { reviewerId: 2, grade: r.grade || "NORMAL", sex: r.gender === "여성" ? "FEMALE" : "MALE", birthDate: "1998-03-03" },
+      social: { kakaoId: null, naverAccountId: "naver_12345" }
+    });
+  }
+
+  // POST /user/mypage/edit → 내 정보 수정 저장 (R-32)
+  if (req.method === "POST" && req.path === "/user/mypage/edit") {
+    const body = req.body || {};
+    return res.json({
+      result: "UPDATED",
+      generatedAt: new Date().toISOString(),
+      userId: 2,
+      address: { zipCode: String(body.postNumber || ""), address: body.address || "", addressDetail: body.addressDetail || "" },
+      bankAccount: { bankAccountId: 7, bankName: body.bankName || "", accountNumber: body.accountNumber || "", accountHolder: body.accountHolder || "" },
+      residentRegNoMasked: body.residentRegNo ? body.residentRegNo.substring(0, 6) + "-***" : "",
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  // GET /user/mypage/channel → 채널 조회 (R-29 백엔드 정확 구조)
+  if (req.method === "GET" && req.path === "/user/mypage/channel") {
+    const reviewers = db ? (db.get("reviewers").value() || []) : [];
+    const r = reviewers.find(rv => rv.id === 2) || reviewers[0] || {};
+    const channels = (r.channel_details || []).map((ch, idx) => ({
+      userChannelId: idx + 1,
+      channelId: idx + 1,
+      channelName: ch.name,
+      isConnected: ch.status === "connected",
+      externalId: ch.url ? ch.url.split("/").pop() : null,
+      channelUrl: ch.url || null,
+      connectedAt: ch.status === "connected" ? "2025-06-01T00:00:00+09:00" : null
+    }));
+    return res.json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      user: { userId: r.id || 2, role: "REVIEWER", name: r.name || "김은지", email: r.email || "", phoneNum: r.phone || "", address: r.address || "", postNumber: r.postal_code || "", status: "ACTIVE", profileImage: r.profile_image || null },
+      reviewerProfile: { reviewerId: 2, grade: r.grade || "NORMAL", sex: r.gender === "여성" ? "W" : "M", birthDay: "1998-03-03", channel: channels }
+    });
+  }
+
+  // POST /user/mypage/channel → 채널 등록/수정 (R-30)
+  if (req.method === "POST" && req.path === "/user/mypage/channel") {
+    return res.json({ result: "OK", generatedAt: new Date().toISOString() });
+  }
+
+  // GET /user/point → 포인트 내역 (R-33) - middleware에서 처리
+  if (req.method === "GET" && req.path === "/user/point") {
+    const pointHistory = db ? (db.get("point_history").value() || []) : [];
+    const typeFilter = req.query.point_transaction_type;
+    const typeMap = { earned: "PAYOUT", withdrawn: "WITHDRAW" };
+    let filtered = pointHistory;
+    if (typeFilter) {
+      filtered = pointHistory.filter(p => {
+        if (typeFilter === "PAYOUT") return p.type === "earned" || p.type === "PAYOUT";
+        if (typeFilter === "WITHDRAW") return p.type === "withdrawn" || p.type === "WITHDRAW";
+        return true;
+      });
+    }
+    const items = filtered.map((p, idx) => ({
+      pointTransactionId: p.id || idx + 1,
+      type: p.type === "earned" ? "PAYOUT" : p.type === "withdrawn" ? "WITHDRAW" : (p.type || "PAYOUT"),
+      amount: p.amount || 0,
+      balanceBefore: (p.balance || 0) - (p.amount || 0),
+      balanceAfter: p.balance || 0,
+      description: p.description || "",
+      campaignTitle: p.campaign_id ? "캠페인 " + p.campaign_id : null,
+      status: p.status || "completed",
+      rejectionReason: p.rejection_reason || null,
+      createdAt: p.date ? p.date + "T00:00:00+09:00" : new Date().toISOString()
+    }));
+    return res.json({ result: "OK", generatedAt: new Date().toISOString(), balance: 511200, items: items, nextCursor: null });
+  }
+
+  // GET /user/point/withdrawal_request → 출금 페이지 (R-34)
+  if (req.method === "GET" && req.path === "/user/point/withdrawal_request") {
+    return res.json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      balancePoint: 511200,
+      bankAccount: { bankAccountId: 1, bankName: "신한은행", accountNumber: "00002469134000", accountHolder: "김은지" },
+      withdrawalPolicy: { minAmount: 10000, maxAmount: 500000 }
+    });
+  }
+
+  // POST /user/point/withdrawal_request → 출금 신청 (R-35)
+  if (req.method === "POST" && req.path === "/user/point/withdrawal_request") {
+    const amount = (req.body && req.body.requestedAmount) || 0;
+    const fee = Math.round(amount * 0.033);
+    return res.json({
+      result: "REQUESTED", withdrawalId: 100, bankAccountId: 1, pointTransactionId: 200,
+      withdrawalNumber: "WD-" + new Date().toISOString().slice(0,10).replace(/-/g,"") + "-000001",
+      status: "PENDING", requestedAmount: amount, feeAmount: fee, expectedAmount: amount - fee,
+      feeRate: 0.033, balanceBefore: 511200, balanceAfter: 511200 - amount,
+      requestedAt: new Date().toISOString()
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 공지사항 Mock (백엔드 R-37 응답 구조)
+  // ====================================================================
+
+  // GET /user/notice → 공지사항 목록
+  if (req.method === "GET" && req.path === "/user/notice") {
+    const db = require("./db.json");
+    const allNotices = db.user_notices || [];
+    const boardCategory = req.query.board_category;
+
+    const filtered = boardCategory && boardCategory !== "ALL"
+      ? allNotices.filter((n) => n.boardCategory === boardCategory)
+      : allNotices;
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: filtered.length,
+      items: filtered,
+    });
+  }
+
+  // GET /user/notice/:id → 공지사항 상세
+  if (req.method === "GET" && req.path.match(/^\/user\/notice\/\d+$/)) {
+    const db = require("./db.json");
+    const allNotices = db.user_notices || [];
+    const boardId = Number(req.path.split("/").pop());
+    const notice = allNotices.find((n) => n.boardId === boardId);
+
+    if (!notice) {
+      return res.status(404).json({
+        result: "ERROR",
+        generatedAt: new Date().toISOString(),
+        error: { code: "NOT_FOUND", message: "존재하지 않는 공지사항입니다." },
+      });
+    }
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      item: notice,
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 FAQ Mock (백엔드 R-38 응답 구조)
+  // ====================================================================
+
+  // GET /user/faq → FAQ 목록
+  if (req.method === "GET" && req.path === "/user/faq") {
+    const db = require("./db.json");
+    const allFaqs = db.user_faqs || [];
+    const boardCategory = req.query.board_category;
+
+    const filtered = boardCategory && boardCategory !== "ALL"
+      ? allFaqs.filter((f) => f.boardCategory === boardCategory)
+      : allFaqs;
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      totalCount: filtered.length,
+      items: filtered,
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 캠페인 유형별 목록 Mock (백엔드 R-22 응답 구조)
+  // GET /campaign/{type} — type: delivery, visit, purchase, reporter, mission
+  // ====================================================================
+
+  var campaignTypeMatch = req.method === "GET" && /^\/campaign\/(delivery|visit|purchase|reporter|mission)$/.exec(req.path);
+  if (campaignTypeMatch) {
+    var cType = campaignTypeMatch[1];
+    var collectionName = "campaign_" + cType;
+    var dbData = require("./db.json");
+    var allItems = dbData[collectionName] || [];
+
+    // 필터: categoryId, requiredPlatformId
+    var filtered = allItems;
+    if (req.query.categoryId) {
+      var catId = Number(req.query.categoryId);
+      filtered = filtered.filter(function(c) { return c.category && c.category.categoryId === catId; });
+    }
+    if (req.query.requiredPlatformId) {
+      var platId = Number(req.query.requiredPlatformId);
+      filtered = filtered.filter(function(c) { return c.requiredPlatform && c.requiredPlatform.channelId === platId; });
+    }
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      items: filtered,
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 캠페인 상세 Mock (백엔드 R-23 응답 구조)
+  // GET /campaign/{type}/{campaignId}
+  // ====================================================================
+
+  var campaignDetailMatch = req.method === "GET" && /^\/campaign\/(delivery|visit|purchase|reporter|mission)\/([^/]+)$/.exec(req.path);
+  if (campaignDetailMatch) {
+    var detailType = campaignDetailMatch[1];
+    var detailIdRaw = campaignDetailMatch[2];
+    var detailId = /^\d+$/.test(detailIdRaw) ? Number(detailIdRaw) : detailIdRaw;
+    var dbData2 = require("./db.json");
+    var allCampaigns = dbData2.campaigns || [];
+    // 1차: campaignId, id, campaignInfo.id 로 검색
+    var found = allCampaigns.find(function(c) {
+      var cId = c.campaignId || c.id;
+      var infoId = c.campaignInfo && c.campaignInfo.id;
+      return cId === detailId || String(cId) === String(detailId)
+        || infoId === detailId || String(infoId) === String(detailId);
+    });
+    // 2차: 타입별 전용 배열에서 검색 (delivery_campaigns, visit_campaigns 등)
+    if (!found) {
+      var typeArrayKey = detailType + "_campaigns";
+      var typeArray = dbData2[typeArrayKey] || [];
+      found = typeArray.find(function(c) {
+        var cId = c.campaignId || c.id;
+        var infoId = c.campaignInfo && c.campaignInfo.id;
+        return cId === detailId || String(cId) === String(detailId)
+          || infoId === detailId || String(infoId) === String(detailId);
+      });
+    }
+    // 3차: 모든 타입별 배열에서 검색
+    if (!found) {
+      var typeKeys = ["delivery_campaigns", "visit_campaigns", "review_campaigns", "reporter_campaigns", "mission_campaigns", "purchase_campaigns"];
+      for (var ti = 0; ti < typeKeys.length && !found; ti++) {
+        var arr = dbData2[typeKeys[ti]] || [];
+        found = arr.find(function(c) {
+          var cId = c.campaignId || c.id;
+          var infoId = c.campaignInfo && c.campaignInfo.id;
+          return cId === detailId || String(cId) === String(detailId)
+            || infoId === detailId || String(infoId) === String(detailId);
+        });
+      }
+    }
+
+    if (!found) {
+      return res.status(404).json({
+        result: "FAIL",
+        error: { code: "CAMPAIGN_NOT_FOUND", message: "캠페인을 찾을 수 없습니다." },
+      });
+    }
+
+    // campaignInfo 중첩 구조인 경우 풀어서 사용
+    var campaignData = found.campaignInfo ? Object.assign({}, found, found.campaignInfo) : found;
+
+    // R-24 신청 모달 데이터도 함께 반환 (실제 백엔드는 인증된 유저에 대해 추가 필드 반환)
+    var needsChannel = (detailType === "delivery" || detailType === "visit" || detailType === "reporter");
+    var channelName = (campaignData.requiredPlatform && campaignData.requiredPlatform.channelName)
+      || campaignData.channel || "NAVER_BLOG";
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      campaign: campaignData,
+      // R-24 추가 필드
+      campaignId: campaignData.id || detailId,
+      type: campaignData.type || campaignData.campaignType || detailType.toUpperCase(),
+      applicant: {
+        name: "테스트 리뷰어",
+        phoneNum: "010-1234-5678",
+        postNumber: 12345,
+        address: "서울특별시 강남구 테헤란로 123",
+        addressDetail: "4층 401호",
+      },
+      requiredChannel: needsChannel ? {
+        channelId: (campaignData.requiredPlatform && campaignData.requiredPlatform.channelId) || 1,
+        channelName: channelName,
+        isConnected: true,
+        userChannelId: 100,
+        externalId: "test_user_channel",
+        channelUrl: "https://blog.naver.com/test_reviewer",
+      } : null,
+      defaults: { memo: "", isAgreed: false },
+      eligibility: { canApply: true, reasons: [] },
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 캠페인 신청 Mock (백엔드 R-25 응답 구조)
+  // POST /campaign/{type}/{campaignId}
+  // ====================================================================
+
+  var campaignApplyMatch = req.method === "POST" && /^\/campaign\/(delivery|visit|purchase|reporter|mission)\/([^/]+)$/.exec(req.path);
+  if (campaignApplyMatch) {
+    var applyIdRaw = campaignApplyMatch[2];
+    var applyId = /^\d+$/.test(applyIdRaw) ? Number(applyIdRaw) : 9999;
+    var dbData3 = require("./db.json");
+    var allCampaigns3 = dbData3.campaigns || [];
+    var foundCampaign = allCampaigns3.find(function(c) { return (c.campaignId || c.id) === applyId; });
+
+    if (!foundCampaign) {
+      return res.status(404).json({
+        result: "FAIL",
+        error: { code: "CAMPAIGN_NOT_FOUND", message: "캠페인을 찾을 수 없습니다." },
+      });
+    }
+
+    // 모집중이 아니면 에러
+    if (foundCampaign.status && foundCampaign.status !== "RECRUITING" && foundCampaign.status !== "EMERGENCY") {
+      return res.status(400).json({
+        result: "FAIL",
+        error: { code: "CAMPAIGN_NOT_RECRUITING", message: "모집 중인 캠페인이 아닙니다." },
+      });
+    }
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      applicationId: Math.floor(Math.random() * 10000) + 1,
+      campaignId: applyId,
+      status: "APPLIED",
+      appliedAt: new Date().toISOString(),
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 캠페인 신청 Mock (백엔드 R-24, R-25 응답 구조)
+  // ====================================================================
+
+  // GET /campaign/:type/:id → 신청 모달 데이터 조회 (R-24)
+  if (req.method === "GET" && req.path.match(/^\/campaign\/(delivery|visit|review|reporter|mission)\/[^/]+$/)) {
+    const reviewers = db ? (db.get("reviewers").value() || []) : [];
+    const r = reviewers.find(rv => rv.id === 2) || reviewers[0] || {};
+    const channels = r.channel_details || [];
+    const firstConnected = channels.find(ch => ch.status === "connected");
+    return res.json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      applicant: { name: r.name || "김은지", phoneNum: r.phone || "010-2222-2222", postNumber: parseInt(r.postal_code) || 0, address: r.address || "", addressDetail: r.detail_address || "" },
+      requiredChannel: firstConnected ? { channelId: 1, channelName: firstConnected.name, isConnected: true, userChannelId: 10, channelUrl: firstConnected.url } : null,
+      eligibility: { canApply: true, reasons: [] }
+    });
+  }
+
+  // POST /campaign/:type/:id → 캠페인 신청 (R-25)
+  if (req.method === "POST" && req.path.match(/^\/campaign\/(delivery|visit|review|reporter|mission)\/[^/]+$/)) {
+    const pathParts = req.path.split("/");
+    const campaignId = parseInt(pathParts[pathParts.length - 1]);
+    return res.json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      applicationId: 900 + campaignId,
+      campaignId: campaignId,
+      status: "APPLIED",
+      appliedAt: new Date().toISOString()
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 대시보드 Mock (백엔드 R-20 응답 구조)
+  // GET /user → 대시보드 메인페이지 (섹션별 캠페인 목록)
+  // ====================================================================
+
+  if (req.method === "GET" && req.path === "/user") {
+    var dashDb = require("./db.json");
+    var allTypes = ["campaign_delivery", "campaign_visit", "campaign_purchase", "campaign_reporter", "campaign_mission"];
+    var typeMap = { campaign_delivery: "DELIVERY", campaign_visit: "VISIT", campaign_purchase: "PURCHASE", campaign_reporter: "REPORTER", campaign_mission: "MISSION" };
+    var channelMap = { 1: "NAVER_BLOG", 2: "INSTAGRAM", 3: "YOUTUBE", 4: "NAVER_CLIP" };
+    var categoryMap = { 1: "뷰티", 2: "맛집", 3: "생활", 4: "디지털", 5: "여행", 6: "패션", 7: "건강", 8: "반려동물" };
+
+    // db.json의 모든 타입별 캠페인을 UserDashboardCampaignItem 형식으로 변환
+    var dashCampaigns = [];
+    allTypes.forEach(function(typeKey) {
+      var arr = dashDb[typeKey] || [];
+      arr.forEach(function(c) {
+        var cId = c.campaignId || c.id;
+        if (!cId || typeof cId === "string" && cId.includes("test")) return; // 테스트 데이터 제외
+        var catId = c.categoryId || c.category?.categoryId || 1;
+        var chId = c.channelId || c.requiredPlatform?.channelId || 1;
+        dashCampaigns.push({
+          campaignId: typeof cId === "string" ? parseInt(cId) || cId : cId,
+          type: c.type || typeMap[typeKey],
+          status: c.status || "RECRUITING",
+          title: c.title || "캠페인 " + cId,
+          thumbnail: { url: c.thumbnailUrl || c.image || "/images/main/campaign_img/eximg_01.png" },
+          category: { categoryId: catId, categoryName: c.category?.categoryName || categoryMap[catId] || "생활" },
+          requiredPlatform: { channelId: chId, channelName: c.requiredPlatform?.channelName || channelMap[chId] || "NAVER_BLOG" },
+          region: c.region || null,
+          recruit: {
+            recruitLimit: c.recruitLimit || c.recruit?.recruitLimit || 10,
+            recruitStartAt: c.recruitStartAt || c.recruit?.recruitStartAt || "2026-03-01T00:00:00+09:00",
+            recruitEndAt: c.recruitEndAt || c.recruit?.recruitEndAt || "2026-04-30T23:59:59+09:00",
+          },
+          metrics: {
+            appliedCount: c.appliedCount || c.metrics?.appliedCount || Math.floor(Math.random() * 50),
+            selectedCount: c.selectedCount || c.metrics?.selectedCount || 0,
+            applicationRate: 0,
+          },
+          reward: {
+            extraRewardPoint: c.extraRewardPoint || c.reward?.extraRewardPoint || 0,
+            paymentRewardPoint: c.paymentRewardPoint || c.reward?.paymentRewardPoint || 0,
+          },
+        });
+      });
+    });
+
+    // 섹션별 분배 (파트너 대시보드와 동일한 로직)
+    var recruiting = dashCampaigns.filter(function(c) { return c.status === "RECRUITING"; });
+    var shuffled = recruiting.sort(function() { return 0.5 - Math.random(); });
+
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      sections: {
+        highSelectionProbability: shuffled.filter(function(c) { return c.metrics.appliedCount < 20; }).slice(0, 8),
+        popularNow: shuffled.filter(function(c) { return c.metrics.appliedCount >= 5; }).slice(0, 8),
+        ongoing: shuffled.slice(0, 32),
+        similar: shuffled.slice(0, 8),
+      },
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 검색 Mock (백엔드 R-21 응답 구조)
+  // ====================================================================
+
+  // GET /search → 캠페인 검색 (R-21)
+  if (req.method === "GET" && req.path === "/search") {
+    const keyword = (req.query.keyword || "").toLowerCase();
+    const campaigns = db ? (db.get("campaigns").value() || []) : [];
+    const filtered = keyword
+      ? campaigns.filter(c => (c.title || "").toLowerCase().includes(keyword))
+      : campaigns;
+    const items = filtered.map(c => ({
+      campaignId: c.id || c.campaignId,
+      title: c.title || "",
+      recruitLimit: c.recruitLimit || c.recruitment?.total || 10,
+      campaignApplicationCount: c.campaignApplicationCount || c.recruitment?.current || 0,
+      imageUrl: c.imageUrl || c.image || "",
+      categoryId: c.categoryId || 1,
+      channelId: c.channelId || 1,
+    }));
+    return res.json({ result: "OK", generatedAt: new Date().toISOString(), items: items });
+  }
+
+  // ====================================================================
+  // 리뷰어 패널티 Mock (백엔드 R-36 응답 구조)
+  // ====================================================================
+
+  // GET /user/campaign_management/penalty → 패널티 현황/내역 (R-36)
+  if (req.method === "GET" && req.path === "/user/campaign_management/penalty") {
+    const penalties = db ? (db.get("user_penalties").value() || []) : [];
+    const statusArr = db ? (db.get("user_penalty_status").value() || []) : [];
+    const statusData = statusArr[0] || { currentStatus: "활동 가능", penaltyCount: 0 };
+
+    // currentStatus → currentLevel 매핑
+    const levelMap = { "활동 가능": "NORMAL", "경고 조치": "NORMAL", "이용 정지 7일": "CAUTION", "이용 정지 15일": "CAUTION", "이용 정지 30일": "CAUTION", "영구 정지": "BANNED" };
+    const isSuspended = statusData.currentStatus.includes("이용 정지");
+    const remainDaysMatch = statusData.currentStatus.match(/(\d+)일/);
+
+    const items = penalties.map((p, idx) => ({
+      userPenaltyHistoryId: idx + 1,
+      penaltyCode: "P00" + (idx + 1),
+      penaltyReason: p.title || "",
+      penaltyScore: (idx + 1) * 10,
+      imposeType: "SYSTEM",
+      createdAt: (p.date || "2025-09-01") + "T09:00:00+09:00",
+      campaignTitle: p.campaignTitle || null,
+    }));
+
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      summary: {
+        currentTotalScore: statusData.penaltyCount || 0,
+        currentLevel: levelMap[statusData.currentStatus] || "NORMAL",
+        isSuspended: isSuspended,
+        suspendedRemainingDays: isSuspended && remainDaysMatch ? parseInt(remainDaysMatch[1]) : null,
+        isPermanentlyBanned: statusData.currentStatus === "영구 정지",
+      },
+      items: items,
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 알림 Mock (백엔드 R-26 응답 구조)
+  // ====================================================================
+
+  // GET /user/notification → 알림 내역 조회
+  if (req.method === "GET" && req.path === "/user/notification") {
+    const mockNotifications = db ? (db.get("notifications").value() || []) : [];
+    const items = mockNotifications.map((n, idx) => ({
+      notificationHistoryId: n.id || 1200 + idx,
+      campaignId: n.campaign_id || null,
+      userId: 2,
+      type: n.type || "CAMPAIGN_SELECTED",
+      message: n.message || "",
+      createdAt: n.created_at || new Date(Date.now() - idx * 3600000).toISOString(),
+    }));
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      items: items,
+      nextCursor: null
+    });
+  }
+
+  // DELETE /user/notification → 전체 알림 삭제
+  if (req.method === "DELETE" && req.path === "/user/notification") {
+    return res.json({ result: "OK" });
+  }
+
+  // ====================================================================
+  // 리뷰어 소셜 로그인 Mock (OAuth 시뮬레이션)
+  // ====================================================================
+
+  // GET /api/v1/auth/naver/authorize → 네이버 OAuth 시뮬레이션 (302 → callback)
+  if (req.method === "GET" && req.path === "/api/v1/auth/naver/authorize") {
+    return res.redirect(302, "http://localhost:3002/user/login/callback?code=mock_naver_code&state=mock_naver_state");
+  }
+
+  // GET /api/v1/auth/kakao/authorize → 카카오 OAuth 시뮬레이션 (302 → callback)
+  if (req.method === "GET" && req.path === "/api/v1/auth/kakao/authorize") {
+    return res.redirect(302, "http://localhost:3002/user/login/callback?code=mock_kakao_code&state=mock_kakao_state");
+  }
+
+  // GET /api/v1/auth/naver/callback → 기존 회원 (LOGGED_IN)
+  if (req.method === "GET" && req.path === "/api/v1/auth/naver/callback") {
+    return res.json({
+      result: "LOGGED_IN",
+      provider: "NAVER",
+      user: { userId: 2, role: "REVIEWER", email: "kimeunji@gmail.com", name: "김은지" },
+      token: { accessToken: "mock_access_token_naver_" + Date.now(), refreshToken: "mock_refresh_token_naver" },
+      next: { action: "REDIRECT", redirectPath: "/user/campaign_management" }
+    });
+  }
+
+  // GET /api/v1/auth/kakao/callback → 미가입자 (SIGN_UP_REQUIRED)
+  if (req.method === "GET" && req.path === "/api/v1/auth/kakao/callback") {
+    return res.json({
+      result: "SIGN_UP_REQUIRED",
+      provider: "KAKAO",
+      signupToken: "st_mock_kakao_" + Date.now(),
+      prefill: { email: "newuser@kakao.com", name: "", nickname: "", profileImageUrl: "", gender: null, ageRange: null, birthyear: null, phoneNum: null },
+      next: { action: "SIGN_UP", redirectPath: "/user/signup" }
+    });
+  }
+
+  // ====================================================================
+  // 리뷰어 회원가입 Mock
+  // ====================================================================
+
+  // GET /reviewer/sign-up → signupToken 검증 + prefill
+  if (req.method === "GET" && req.path === "/reviewer/sign-up" && req.query.signupToken) {
+    return res.json({ email: "newuser@kakao.com", provider: "KAKAO" });
+  }
+
+  // POST /api/v1/reviewer/sign-up → 회원가입 완료
+  if (req.method === "POST" && req.path === "/api/v1/reviewer/sign-up") {
+    const body = req.body || {};
+    return res.json({
+      result: "SIGNED_UP_AND_LOGGED_IN",
+      user: { userId: 999, role: "REVIEWER", email: body.email || "newuser@kakao.com", name: body.name || "새회원", phoneNum: body.phoneNum || "" },
+      token: { accessToken: "mock_access_token_signup_" + Date.now(), refreshToken: "mock_refresh_token_signup" },
+      next: { action: "REDIRECT", redirectPath: "/user/signup/complete" }
+    });
+  }
+
+  // GET /api/v1/reviewer/sign-up/finish → 회원가입 완료 상태 확인
+  if (req.method === "GET" && req.path === "/api/v1/reviewer/sign-up/finish") {
+    return res.json({ result: "OK", page: "SIGN_UP_FINISH", message: "회원가입이 완료되었습니다." });
+  }
+
+  // ====================================================================
+  // 리뷰어 계정 찾기 Mock
+  // ====================================================================
+
+  // POST /api/v1/auth/find-account → 계정 조회
+  if (req.method === "POST" && req.path === "/api/v1/auth/find-account") {
+    const phone = (req.body && req.body.phoneNum) || "";
+    // 010-0000-0000 / 01000000000 → 네이버 계정 찾음
+    if (phone === "01000000000" || phone === "010-0000-0000") {
+      return res.json({ result: "FOUND", provider: "NAVER", maskedEmail: "gd***@naver.com" });
+    }
+    // 010-1111-1111 → 카카오 계정 찾음
+    if (phone === "01011111111" || phone === "010-1111-1111") {
+      return res.json({ result: "FOUND", provider: "KAKAO", maskedEmail: "ka***@kakao.com" });
+    }
+    return res.json({ result: "NOT_FOUND" });
+  }
+
+  // ====================================================================
+  // 리뷰어 회원 탈퇴 Mock
+  // ====================================================================
+
+  // DELETE /api/v1/reviewer/withdraw → 탈퇴 처리
+  if (req.method === "DELETE" && req.path === "/api/v1/reviewer/withdraw") {
+    return res.json({ result: "OK", message: "탈퇴가 완료되었습니다." });
+  }
+
+  // ====================================================================
+  // 리뷰어 캠페인 관리 Mock (백엔드 R-27 응답 구조)
+  // ====================================================================
+
+  // GET /user/campaign_management → 내 캠페인 내역 조회
+  if (req.method === "GET" && req.path === "/user/campaign_management") {
+    const statusFilter = req.query.status;
+    const allItems = db ? (db.get("reviewer_campaign_management").value() || []) : [];
+
+    // 백엔드 status 매핑 (db.json 한글 → 백엔드 ENUM)
+    const statusMap = { "신청완료": "APPLIED", "선정완료": "SELECTED", "콘텐츠등록": "SELECTED", "완료": "COMPLETE", "취소/반려": "CANCELED" };
+    const typeMap = { "배송형": "DELIVERY", "방문형": "VISIT", "구매평": "PURCHASE", "기자단": "REPORTER", "미션형": "MISSION" };
+
+    const mapped = allItems.map((item, idx) => ({
+      campaignApplicationId: 900 + idx,
+      campaignId: parseInt(item.id) || idx,
+      campaignType: typeMap[item.type] || "DELIVERY",
+      status: statusMap[item.status] || "APPLIED",
+      title: item.title || "",
+      thumbnailUrl: item.image || "",
+      appliedAt: new Date(Date.now() - idx * 86400000).toISOString(),
+      selectedAt: (item.status === "선정완료" || item.status === "콘텐츠등록" || item.status === "완료") ? new Date(Date.now() - idx * 43200000).toISOString() : null,
+      content: (item.status === "선정완료" || item.status === "콘텐츠등록") ? {
+        campaignContentId: 500 + idx,
+        contentStatus: item.hasContent ? "SUBMITTED" : "WAIT",
+        contentUrl: item.hasContent ? "https://blog.naver.com/mock/" + item.id : null
+      } : null,
+      remainingDays: item.remainingDays || 0,
+      isUrgent: item.isUrgent || false,
+      type: item.type || "배송형",
+      category: item.category || "",
+      image: item.image || "",
+      statusMessage: item.statusMessage || "",
+      hasContent: item.hasContent || false,
+      isPenalty: item.isPenalty || false,
+      extensionCount: item.extensionCount || 0,
+      contentType: item.contentType || undefined,
+    }));
+
+    let filtered = mapped;
+    if (statusFilter) {
+      if (statusFilter === "REJECT") {
+        filtered = mapped.filter(i => i.status === "CANCELED" && (allItems.find(o => o.id === String(i.campaignId))?.status === "취소/반려"));
+      } else {
+        filtered = mapped.filter(i => i.status === statusFilter);
+      }
+    }
+
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      items: filtered,
+      totalCount: filtered.length,
+      nextCursor: null
+    });
+  }
+
+  // DELETE /reviewer/my-page/my-campaign/:id → 신청 취소
+  if (req.method === "DELETE" && req.path.match(/^\/reviewer\/my-page\/my-campaign\/\d+$/)) {
+    return res.json({ result: "OK", message: "신청이 취소되었습니다." });
+  }
+
+  // POST /reviewer/my-page/my-campaign/:id/content → 콘텐츠 등록
+  if (req.method === "POST" && req.path.match(/^\/reviewer\/my-page\/my-campaign\/\d+\/content$/)) {
+    return res.json({ result: "OK", campaignContentId: 600, contentStatus: "SUBMITTED" });
+  }
+
+  // PUT /reviewer/my-page/my-campaign/:id/content → 콘텐츠 수정
+  if (req.method === "PUT" && req.path.match(/^\/reviewer\/my-page\/my-campaign\/\d+\/content$/)) {
+    return res.json({ result: "OK", campaignContentId: 600, contentStatus: "SUBMITTED" });
+  }
+
+  // POST /reviewer/my-page/my-campaign/:id/extension → 기한 연장
+  if (req.method === "POST" && req.path.match(/^\/reviewer\/my-page\/my-campaign\/\d+\/extension$/)) {
+    return res.json({ result: "OK", extensionCount: 1, newDeadline: new Date(Date.now() + 3 * 86400000).toISOString() });
+  }
+
+  // GET /user/campaign_management/content/rejection-reason/:id → 반려 사유
+  if (req.method === "GET" && req.path.match(/^\/user\/campaign_management\/content\/rejection-reason\/\d+$/)) {
+    return res.json({ result: "OK", rejectionCode: "R003", rejectionReason: "콘텐츠 내 홍보 키워드 누락", rejectedAt: new Date().toISOString(), resubmitDeadline: new Date(Date.now() + 5 * 86400000).toISOString() });
+  }
+
+  // ── SA-01: 대시보드 통합 조회 ──
+  if (req.method === "GET" && req.path === "/api/admin-sa/dashboard") {
+    const now = new Date();
+    return res.json({
+      result: "OK",
+      generatedAt: now.toISOString(),
+      dashboardData: {
+        settlementSummary: {
+          withdrawalRequestAmount: 1250000,
+          withdrawalCompleteAmount: 3800000,
+          totalDepositBalance: 15600000,
+          settlementChart: [
+            { month: "2025-10", amount: 2400000 },
+            { month: "2025-11", amount: 3100000 },
+            { month: "2025-12", amount: 2800000 },
+            { month: "2026-01", amount: 3500000 },
+            { month: "2026-02", amount: 3200000 },
+            { month: "2026-03", amount: 3800000 },
+          ],
+        },
+        paymentSummary: {
+          totalPaymentAmount: 8500000,
+          completedPaymentAmount: 6200000,
+          pendingPaymentAmount: 2300000,
+          paymentChart: [
+            { month: "2025-10", amount: 1200000 },
+            { month: "2025-11", amount: 1500000 },
+            { month: "2025-12", amount: 1800000 },
+            { month: "2026-01", amount: 1400000 },
+            { month: "2026-02", amount: 1600000 },
+            { month: "2026-03", amount: 1000000 },
+          ],
+        },
+        memberActivation: {
+          totalMembers: 1250,
+          activeMembers: 890,
+          inactiveMembers: 360,
+          activePercentage: 71,
+          totalMembersChange: { percentage: 5, type: "positive" },
+        },
+        memberType: {
+          totalPartners: 320,
+          activePartners: 245,
+          totalReviewers: 930,
+          activeReviewers: 645,
+          partnerPercentage: 25.6,
+          reviewerPercentage: 74.4,
+          activePartnerPercentage: 77,
+          activeReviewerPercentage: 69,
+          totalPartnersChange: { percentage: 3, type: "positive" },
+          totalReviewersChange: { percentage: 7, type: "positive" },
+        },
+        channelMember: {
+          blog: { count: 420, percentage: 45 },
+          instagram: { count: 280, percentage: 30 },
+          clip: { count: 140, percentage: 15 },
+          youtube: { count: 90, percentage: 10 },
+        },
+      },
+    });
   }
 
   // 그 외 → json-server 기본 처리
