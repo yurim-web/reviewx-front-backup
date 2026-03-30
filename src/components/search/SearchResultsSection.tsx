@@ -1,12 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import CampaignBox from "@/components/main/CampaignBox";
 import Titletext from "@/components/main/Titletext";
 import home_styles from "@/styles/home/home.module.css";
 import mainStyles from "@/styles/filter/filter_bar/main.module.css";
 import SortModalFilter from "@/components/campaign/filter/SortModalFilter";
+import { apiClient } from "@/lib/api/client";
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+
+interface SearchApiItem {
+  campaignId: number;
+  title: string;
+  recruitLimit: number;
+  campaignApplicationCount: number;
+  imageUrl: string;
+  categoryId: number;
+  channelId: number;
+}
+
+interface SearchApiResponse {
+  result: string;
+  items: SearchApiItem[];
+}
 
 interface SearchCampaign {
   id: string;
@@ -31,9 +52,41 @@ interface SearchCampaign {
   };
 }
 
+function adaptApiItem(item: SearchApiItem): SearchCampaign {
+  return {
+    id: String(item.campaignId),
+    title: item.title,
+    category: "캠페인",
+    image: item.imageUrl,
+    recruitment: {
+      current: item.campaignApplicationCount,
+      total: item.recruitLimit,
+    },
+    dayCount: "",
+    isUrgent: false,
+  };
+}
+
+function getStaticFallback(keyword: string): SearchCampaign[] {
+  const normalized = keyword.toLowerCase();
+  const all = [
+    ...deliveryCampaigns,
+    ...reviewCampaigns,
+    ...visitCampaigns,
+    ...missionCampaigns,
+    ...reporterCampaigns,
+  ];
+  if (!keyword) return all as SearchCampaign[];
+  return all.filter((campaign) => {
+    const title = campaign.title?.toLowerCase() ?? "";
+    const description = (campaign as { description?: string }).description?.toLowerCase() ?? "";
+    return title.includes(normalized) || description.includes(normalized);
+  }) as SearchCampaign[];
+}
+
 interface SearchResultsSectionProps {
-  campaigns: SearchCampaign[];
   keyword?: string;
+  campaigns?: SearchCampaign[];
   totalCount?: number;
 }
 
@@ -79,13 +132,42 @@ const sort_campaigns = (campaigns: SearchCampaign[], sort_by: string) => {
 };
 
 export default function SearchResultsSection({
-  campaigns,
-  keyword,
-  totalCount,
+  keyword = "",
+  campaigns: externalCampaigns,
+  totalCount: _totalCount,
 }: SearchResultsSectionProps) {
   const [selected_sort, set_selected_sort] = useState<string>(DEFAULT_SORT);
   const [is_sort_modal_open, set_is_sort_modal_open] = useState(false);
   const [temp_sort, set_temp_sort] = useState<string>(DEFAULT_SORT);
+  const [campaigns, set_campaigns] = useState<SearchCampaign[]>(externalCampaigns ?? []);
+  const [is_loading, set_is_loading] = useState(true);
+
+  // R-21: GET /search?keyword={keyword}
+  // apiClient 인터셉터가 localStorage의 Bearer 토큰을 자동 주입
+  useEffect(() => {
+    let cancelled = false;
+    set_is_loading(true);
+
+    const params = keyword ? { keyword } : {};
+    apiClient
+      .get<SearchApiResponse>("/search", { params })
+      .then((res) => {
+        if (cancelled) return;
+        const items = res.data.items ?? [];
+        set_campaigns(items.map(adaptApiItem));
+      })
+      .catch(() => {
+        if (cancelled) return;
+        set_campaigns(getStaticFallback(keyword));
+      })
+      .finally(() => {
+        if (!cancelled) set_is_loading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [keyword]);
 
   const sorted_campaigns = sort_campaigns(campaigns, selected_sort);
   const has_result = sorted_campaigns.length > 0;
@@ -106,6 +188,21 @@ export default function SearchResultsSection({
     set_selected_sort(sort_value);
     set_is_sort_modal_open(false);
   };
+
+  if (is_loading) {
+    return (
+      <section
+        className={`${home_styles.campaign_container} ${home_styles.search_campaign_container}`}
+      >
+        <div className={home_styles.search_header_row}>
+          <Titletext main_title="검색 결과" />
+        </div>
+        <div className={home_styles.empty_state}>
+          <p className={home_styles.empty_text}>검색 중...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <>
