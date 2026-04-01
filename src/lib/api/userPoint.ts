@@ -24,6 +24,10 @@ export const fetchUserPoint = async (params?: {
   point_transaction_type?: PointTransactionTypeParam;
   cursor?: string;
 }): Promise<UserPointResponse> => {
-  const { data } = await apiClient.get<UserPointResponse>("/api/v1/reviewer/points", { params });
-  return data;
+  const { data } = await apiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<UserPointResponse, "result" | "generatedAt">;
+  }>("/api/v1/reviewer/points", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

@@ -39,10 +39,12 @@ import type {
  * → 파트너 정보, 카테고리, 채널, 지역 목록 반환
  */
 export const getCampaignCreatePage = async (): Promise<CampaignCreatePageResponse> => {
-  const { data } = await partnerApiClient.get<CampaignCreatePageResponse>(
-    "/partner/campaign/create"
-  );
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<CampaignCreatePageResponse, "result" | "generatedAt">;
+  }>("/partner/campaign/create");
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /**
@@ -83,13 +85,56 @@ export const postCampaignCreate = async (
   // VISIT 전용
   if (request.regionId != null) formData.append("regionId", String(request.regionId));
   if (request.visitAddress) formData.append("visitAddress", request.visitAddress);
+  if (request.visitZipCode) formData.append("visitZipCode", request.visitZipCode);
+  if (request.visitBaseAddress) formData.append("visitBaseAddress", request.visitBaseAddress);
+  if (request.visitDetailAddress) formData.append("visitDetailAddress", request.visitDetailAddress);
+  if (request.addressDetail) formData.append("addressDetail", request.addressDetail);
+  if (request.visitLink) formData.append("visitLink", request.visitLink);
 
-  // axios가 FormData에서 boundary를 자동 설정하도록 Content-Type 헤더 생략
-  const { data } = await partnerApiClient.post<CampaignCreateResponse>(
-    "/partner/campaign/create",
-    formData
-  );
-  return data;
+  // 구매평 전용
+  if (request.purchasePeriod) formData.append("purchasePeriod", request.purchasePeriod);
+  // 미션형 전용
+  if (request.requireContentLink != null)
+    formData.append("requireContentLink", String(request.requireContentLink));
+  if (request.requireContentImage != null)
+    formData.append("requireContentImage", String(request.requireContentImage));
+
+  // 기본 미션 설정
+  if (request.minTextLength != null)
+    formData.append("minTextLength", String(request.minTextLength));
+  if (request.minImageCount != null)
+    formData.append("minImageCount", String(request.minImageCount));
+  if (request.videoCount != null) formData.append("videoCount", String(request.videoCount));
+  if (request.videoDuration != null)
+    formData.append("videoDuration", String(request.videoDuration));
+  if (request.requireLinkAttachment != null)
+    formData.append("requireLinkAttachment", String(request.requireLinkAttachment));
+  if (request.requireKeywordAttachment != null)
+    formData.append("requireKeywordAttachment", String(request.requireKeywordAttachment));
+
+  // 참여/제출 옵션
+  if (request.adultOnly != null) formData.append("adultOnly", String(request.adultOnly));
+  if (request.allowReParticipation != null)
+    formData.append("allowReParticipation", String(request.allowReParticipation));
+  if (request.allowLateSubmission != null)
+    formData.append("allowLateSubmission", String(request.allowLateSubmission));
+
+  // 긴급/연락처/공정위
+  if (request.is_urgent != null) formData.append("is_urgent", String(request.is_urgent));
+  if (request.contact_phone) formData.append("contact_phone", request.contact_phone);
+  if (request.ftc_agreement != null)
+    formData.append("ftc_agreement", String(request.ftc_agreement));
+
+  // partnerApiClient 기본 헤더가 application/json이므로
+  // FormData 전송 시 Content-Type 헤더를 삭제 → axios가 multipart/form-data + boundary 자동 설정
+  const { data } = await partnerApiClient.post<{
+    result: "OK";
+    data: Omit<CampaignCreateResponse, "result">;
+  }>("/partner/campaign/create", formData, {
+    headers: { "Content-Type": null as unknown as string },
+    timeout: 30000,
+  });
+  return { result: data.result, ...data.data };
 };
 
 /**
@@ -127,13 +172,24 @@ export const postCampaignDraft = async (
   if (request.notification) formData.append("notification", request.notification);
   if (request.regionId != null) formData.append("regionId", String(request.regionId));
   if (request.visitAddress) formData.append("visitAddress", request.visitAddress);
+  if (request.visitZipCode) formData.append("visitZipCode", request.visitZipCode);
+  if (request.visitBaseAddress) formData.append("visitBaseAddress", request.visitBaseAddress);
+  if (request.visitDetailAddress) formData.append("visitDetailAddress", request.visitDetailAddress);
+  if (request.addressDetail) formData.append("addressDetail", request.addressDetail);
+  if (request.visitLink) formData.append("visitLink", request.visitLink);
+  if (request.region) formData.append("region", request.region);
+  if (request.subRegion) formData.append("subRegion", request.subRegion);
 
-  // axios가 FormData에서 boundary를 자동 설정하도록 Content-Type 헤더 생략
-  const { data } = await partnerApiClient.post<CampaignDraftSaveResponse>(
-    "/partner/campaign/draft",
-    formData
-  );
-  return data;
+  // partnerApiClient 기본 헤더가 application/json이므로
+  // FormData 전송 시 Content-Type을 제거하여 axios가 multipart/form-data로 자동 설정하게 함
+  const { data } = await partnerApiClient.post<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<CampaignDraftSaveResponse, "result" | "generatedAt">;
+  }>("/partner/campaign/draft", formData, {
+    headers: { "Content-Type": null as unknown as string },
+  });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /**
@@ -141,10 +197,12 @@ export const postCampaignDraft = async (
  * GET /partner/campaign/draft/{campaignId}
  */
 export const getCampaignDraft = async (campaignId: number): Promise<CampaignDraftLoadResponse> => {
-  const { data } = await partnerApiClient.get<CampaignDraftLoadResponse>(
-    `/partner/campaign/draft/${campaignId}`
-  );
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<CampaignDraftLoadResponse, "result" | "generatedAt">;
+  }>(`/partner/campaign/draft/${campaignId}`);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /**
@@ -156,10 +214,12 @@ export const getCampaignEditPage = async (
   type: CampaignType,
   campaignId: number
 ): Promise<CampaignEditPageResponse> => {
-  const { data } = await partnerApiClient.get<CampaignEditPageResponse>(
-    `/partner/campaign/edit/${type}/${campaignId}`
-  );
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<CampaignEditPageResponse, "result" | "generatedAt">;
+  }>(`/partner/campaign/edit/${type}/${campaignId}`);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /**
@@ -205,12 +265,21 @@ export const postCampaignEdit = async (
     if (request.notification) formData.append("notification", request.notification);
     if (request.regionId != null) formData.append("regionId", String(request.regionId));
     if (request.visitAddress) formData.append("visitAddress", request.visitAddress);
+    if (request.visitZipCode) formData.append("visitZipCode", request.visitZipCode);
+    if (request.visitBaseAddress) formData.append("visitBaseAddress", request.visitBaseAddress);
+    if (request.visitDetailAddress)
+      formData.append("visitDetailAddress", request.visitDetailAddress);
+    if (request.addressDetail) formData.append("addressDetail", request.addressDetail);
+    if (request.visitLink) formData.append("visitLink", request.visitLink);
 
-    const { data } = await partnerApiClient.post<CampaignEditResponse>(
-      `/partner/campaign/edit/${type}/${campaignId}`,
-      formData
-    );
-    return data;
+    const { data } = await partnerApiClient.post<{
+      result: "OK";
+      generatedAt: string;
+      data: Omit<CampaignEditResponse, "result" | "generatedAt">;
+    }>(`/partner/campaign/edit/${type}/${campaignId}`, formData, {
+      headers: { "Content-Type": null as unknown as string },
+    });
+    return { result: data.result, generatedAt: data.generatedAt, ...data.data };
   }
 
   // 텍스트만 수정 → JSON (mock 서버 호환)
@@ -222,9 +291,10 @@ export const postCampaignEdit = async (
     }
   });
 
-  const { data } = await partnerApiClient.post<CampaignEditResponse>(
-    `/partner/campaign/edit/${type}/${campaignId}`,
-    jsonBody
-  );
-  return data;
+  const { data } = await partnerApiClient.post<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<CampaignEditResponse, "result" | "generatedAt">;
+  }>(`/partner/campaign/edit/${type}/${campaignId}`, jsonBody);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

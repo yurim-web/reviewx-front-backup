@@ -24,17 +24,22 @@ import type {
 
 /** 출금 신청 페이지 진입 데이터 조회 (34번: GET /user/point/withdrawal_request) */
 export const fetchWithdrawalInfo = async (): Promise<WithdrawalInfoResponse> => {
-  const { data } = await apiClient.get<WithdrawalInfoResponse>("/api/v1/reviewer/points/withdraw");
-  return data;
+  const { data } = await apiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<WithdrawalInfoResponse, "result" | "generatedAt">;
+  }>("/api/v1/reviewer/points/withdraw");
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** 출금 신청 제출 (35번: POST /user/point/withdrawal_request) */
 export const submitWithdrawalRequest = async (
   body: WithdrawalRequestBody
 ): Promise<WithdrawalResponse> => {
-  const { data } = await apiClient.post<WithdrawalResponse>(
-    "/api/v1/reviewer/points/withdraw",
-    body
-  );
-  return data;
+  const { data } = await apiClient.post<{
+    result: "REQUESTED";
+    generatedAt: string;
+    data: Omit<WithdrawalResponse, "result" | "generatedAt">;
+  }>("/api/v1/reviewer/points/withdraw", body);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

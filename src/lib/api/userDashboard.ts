@@ -19,6 +19,10 @@ import type { UserDashboardResponse } from "@/types/api/userDashboard";
 
 /** 리뷰어 대시보드 조회 (20번: GET /api/v1/reviewer/dashboard) */
 export const fetchUserDashboard = async (): Promise<UserDashboardResponse> => {
-  const { data } = await apiClient.get<UserDashboardResponse>("/api/v1/reviewer/dashboard");
-  return data;
+  const { data } = await apiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<UserDashboardResponse, "result" | "generatedAt">;
+  }>("/api/v1/reviewer/dashboard");
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

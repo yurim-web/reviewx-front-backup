@@ -36,17 +36,18 @@ import type {
 // ----------------------------------------
 // API 22: 콘텐츠 내역 조회
 // GET /partner/campaign/{campaignId}/contents?tab=waiting|submitted|approved
-// 백엔드 응답: flat 구조 (data wrapper 없음)
+// 백엔드 응답: ApiResponse.ok() 래퍼 사용
 // ----------------------------------------
 export async function getCampaignContents(params: {
   campaignId: string;
   tab: ContentTab;
 }): Promise<CampaignContentsResponse> {
-  const { data } = await partnerApiClient.get<CampaignContentsResponse>(
-    `/partner/campaign/${params.campaignId}/contents`,
-    { params: { tab: params.tab } }
-  );
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<CampaignContentsResponse, "result" | "generatedAt">;
+  }>(`/partner/campaign/${params.campaignId}/contents`, { params: { tab: params.tab } });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 }
 
 // ----------------------------------------

@@ -62,7 +62,7 @@ export const fetchMissionCampaigns = () =>
     .get<RawResponse>("/api/v1/reviewer/dashboard/mission")
     .then((res) => extractItems(res.data));
 
-/** 캠페인 상세 조회 (23번: GET /campaign/{type}/{campaignId}) */
+/** 캠페인 상세 조회 (23번: GET /campaign/{campaignId}) */
 type RawDetailResponse = CampaignDetailApiResponse | CampaignDetailApiItem;
 
 /** 캠페인 유형 path variable (백엔드 기준) */
@@ -100,8 +100,16 @@ export const fetchApplicationFormData = (
   campaignId: string | number
 ): Promise<ApplicationFormDataResponse> =>
   apiClient
-    .get<ApplicationFormDataResponse>(`/api/v1/reviewer/campaign/${campaignId}/apply-form`)
-    .then((res) => res.data);
+    .get<{
+      result: string;
+      generatedAt: string;
+      data: Omit<ApplicationFormDataResponse, "result" | "generatedAt">;
+    }>(`/api/v1/reviewer/campaign/${campaignId}/apply-form`)
+    .then((res) => ({
+      result: res.data.result,
+      generatedAt: res.data.generatedAt,
+      ...res.data.data,
+    }));
 
 /** 캠페인 신청 등록 (R-25: POST /api/v1/reviewer/campaign/{campaignId}/apply) */
 export const submitCampaignApplication = (
@@ -110,5 +118,13 @@ export const submitCampaignApplication = (
   body: CampaignApplyRequest
 ): Promise<CampaignApplyResponse> =>
   apiClient
-    .post<CampaignApplyResponse>(`/api/v1/reviewer/campaign/${campaignId}/apply`, body)
-    .then((res) => res.data);
+    .post<{
+      result: string;
+      generatedAt: string;
+      data: Omit<CampaignApplyResponse, "result" | "generatedAt">;
+    }>(`/api/v1/reviewer/campaign/${campaignId}/apply`, body)
+    .then((res) => ({
+      result: res.data.result,
+      generatedAt: res.data.generatedAt,
+      ...res.data.data,
+    }));

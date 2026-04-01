@@ -12,11 +12,12 @@ import type {
 export async function getPartnerNotifications(
   params?: PartnerNotificationsParams
 ): Promise<PartnerNotificationsResponse> {
-  const { data } = await partnerApiClient.get<PartnerNotificationsResponse>(
-    "/partner/notifications",
-    { params }
-  );
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<PartnerNotificationsResponse, "result" | "generatedAt">;
+  }>("/partner/notifications", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 }
 
 /**
@@ -24,7 +25,10 @@ export async function getPartnerNotifications(
  * DELETE /partner/notifications
  */
 export async function deleteAllPartnerNotifications(): Promise<PartnerNotificationsDeleteResponse> {
-  const { data } =
-    await partnerApiClient.delete<PartnerNotificationsDeleteResponse>("/partner/notifications");
-  return data;
+  const { data } = await partnerApiClient.delete<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<PartnerNotificationsDeleteResponse, "result" | "generatedAt">;
+  }>("/partner/notifications");
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 }

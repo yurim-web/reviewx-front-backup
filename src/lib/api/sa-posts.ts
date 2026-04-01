@@ -127,20 +127,33 @@ export interface SABoardFormOptionsResponse {
 
 /** SA 게시글 목록 조회 */
 export const getSABoardList = async (params?: BoardListParams): Promise<SABoardListResponse> => {
-  const { data } = await apiClient.get<SABoardListResponse>("/api/admin-sa/board", { params });
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: SABoardApiItem[];
+  }>("/api/admin-sa/board", { params });
+  const boards = data.data ?? [];
+  return { result: data.result, generatedAt: data.generatedAt, totalCount: boards.length, boards };
 };
 
 /** SA 게시글 상세 조회 */
 export const getSABoardDetail = async (boardId: number): Promise<SABoardDetailResponse> => {
-  const { data } = await apiClient.get<SABoardDetailResponse>(`/api/admin-sa/board/${boardId}`);
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: SABoardDetailItem;
+  }>(`/api/admin-sa/board/${boardId}`);
+  return { result: data.result, generatedAt: data.generatedAt, board: data.data };
 };
 
 /** SA 게시글 등록 */
 export const createSABoard = async (body: SACreateBoardRequest): Promise<SACreateBoardResponse> => {
-  const { data } = await apiClient.post<SACreateBoardResponse>("/api/admin-sa/board", body);
-  return data;
+  const { data } = await apiClient.post<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SACreateBoardResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/board", body);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** SA 게시글 수정 */
@@ -148,39 +161,49 @@ export const updateSABoard = async (
   boardId: number,
   body: SAUpdateBoardRequest
 ): Promise<{ result: string }> => {
-  const { data } = await apiClient.put<{ result: string }>(`/api/admin-sa/board/${boardId}`, body);
-  return data;
+  const { data } = await apiClient.put<{ result: string; generatedAt: string; data: unknown }>(
+    `/api/admin-sa/board/${boardId}`,
+    body
+  );
+  return { result: data.result };
 };
 
 /** SA 게시글 삭제 (복수) */
 export const deleteSABoards = async (
   boardIds: number[]
 ): Promise<{ result: string; deletedCount: number }> => {
-  const { data } = await apiClient.delete<{ result: string; deletedCount: number }>(
-    "/api/admin-sa/board",
-    {
-      params: { boardIds },
-    }
-  );
-  return data;
+  const { data } = await apiClient.delete<{
+    result: string;
+    generatedAt: string;
+    data: { deletedCount: number };
+  }>("/api/admin-sa/board", {
+    params: { boardIds },
+  });
+  return { result: data.result, deletedCount: data.data.deletedCount };
 };
 
 /** SA 게시글 고정 */
 export const pinSABoard = async (boardId: number): Promise<{ result: string }> => {
-  const { data } = await apiClient.patch<{ result: string }>(`/api/admin-sa/board/${boardId}/pin`);
-  return data;
+  const { data } = await apiClient.patch<{ result: string; generatedAt: string; data: null }>(
+    `/api/admin-sa/board/${boardId}/pin`
+  );
+  return { result: data.result };
 };
 
 /** SA 게시글 고정 해제 */
 export const unpinSABoard = async (boardId: number): Promise<{ result: string }> => {
-  const { data } = await apiClient.patch<{ result: string }>(
+  const { data } = await apiClient.patch<{ result: string; generatedAt: string; data: null }>(
     `/api/admin-sa/board/${boardId}/unpin`
   );
-  return data;
+  return { result: data.result };
 };
 
 /** SA 게시글 폼 옵션 조회 */
 export const getSABoardFormOptions = async (): Promise<SABoardFormOptionsResponse> => {
-  const { data } = await apiClient.get<SABoardFormOptionsResponse>("/api/admin-sa/board/write");
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SABoardFormOptionsResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/board/write");
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

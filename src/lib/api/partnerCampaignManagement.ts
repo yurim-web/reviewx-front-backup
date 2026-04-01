@@ -64,8 +64,10 @@ export const getCampaignsByStatus = async (
  * DELETE /partner/campaign/{campaignId}
  */
 export const deleteCampaign = async (campaignId: number): Promise<CampaignDeleteResponse> => {
-  const { data } = await partnerApiClient.delete<CampaignDeleteResponse>(
-    `/partner/campaign/${campaignId}`
-  );
-  return data;
+  const { data } = await partnerApiClient.delete<{
+    result: string;
+    generatedAt: string;
+    data: Omit<CampaignDeleteResponse, "result" | "generatedAt">;
+  }>(`/partner/campaign/${campaignId}`);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

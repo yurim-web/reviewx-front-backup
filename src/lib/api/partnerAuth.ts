@@ -3,6 +3,8 @@ import type {
   PartnerLoginRequest,
   PartnerLoginResponse,
   PartnerSessionResponse,
+  PartnerSessionUser,
+  PartnerSessionPartner,
 } from "@/types/api/partnerAuth";
 
 /**
@@ -21,8 +23,15 @@ export const partnerLogin = async (req: PartnerLoginRequest): Promise<PartnerLog
  * 쿠키 자동 포함 (withCredentials: true)
  */
 export const getPartnerSession = async (): Promise<PartnerSessionResponse> => {
-  const { data } = await partnerApiClient.get<PartnerSessionResponse>("/partner/session");
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: { user: PartnerSessionUser; partner: PartnerSessionPartner } | null;
+  }>("/partner/session");
+  if (data.result === "UNAUTHENTICATED" || !data.data) {
+    return { result: "UNAUTHENTICATED" as const, generatedAt: data.generatedAt };
+  }
+  return { result: "AUTHENTICATED" as const, generatedAt: data.generatedAt, ...data.data };
 };
 
 /**

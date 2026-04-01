@@ -16,8 +16,12 @@ import type {
  */
 export const fetchNotifications = (): Promise<ReviewerNotificationListResponse> =>
   apiClient
-    .get<ReviewerNotificationListResponse>("/api/v1/reviewer/notifications")
-    .then((res) => res.data);
+    .get<{
+      result: string;
+      generatedAt: string;
+      data: Omit<ReviewerNotificationListResponse, "result">;
+    }>("/api/v1/reviewer/notifications")
+    .then((res) => ({ result: res.data.result, ...res.data.data }));
 
 /**
  * 리뷰어 전체 알림 삭제
@@ -67,10 +71,13 @@ export const fetchPartnerNotifications = (
   apiClient
     .get<{
       result: string;
-      items: PartnerNotificationApiItem[];
-      nextCursor: string | null;
+      generatedAt: string;
+      data: {
+        items: PartnerNotificationApiItem[];
+        nextCursor: string | null;
+      };
     }>("/partner/notifications", { params: { cursor, size } })
     .then((res) => ({
-      items: res.data.items || [],
-      nextCursor: res.data.nextCursor ?? null,
+      items: res.data.data?.items || [],
+      nextCursor: res.data.data?.nextCursor ?? null,
     }));

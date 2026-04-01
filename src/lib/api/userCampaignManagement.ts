@@ -51,6 +51,7 @@ export interface MyCampaignItem {
   campaignApplicationId: number;
   campaignId: number;
   campaignType: CampaignType;
+  channelType?: string; // 채널 유형 (예: 인스타그램, 네이버블로그, 유튜브 등)
   status: ApplicationStatus;
   appliedAt: string;
   selectedAt: string | null;
@@ -59,6 +60,10 @@ export interface MyCampaignItem {
   thumbnailUrl: string;
   recruitEndAt: string;
   isUrgent: boolean;
+  subStatus?: string;
+  rejectionReason?: string;
+  rejectedAt?: string; // 반려 일시 (ISO8601) - 반려된 콘텐츠에만 존재
+  isPenalty?: boolean;
 }
 
 /** 캠페인 관리 목록 응답 */
@@ -120,10 +125,30 @@ export interface RejectionReasonResponse {
 export const fetchMyCampaigns = async (
   params?: MyCampaignParams
 ): Promise<MyCampaignListResponse> => {
-  const { data } = await apiClient.get<MyCampaignListResponse>("/api/v1/reviewer/campaigns", {
-    params,
-  });
-  return data;
+  const { data } = await apiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: {
+      totalCount: number;
+      campaigns: Array<
+        Omit<MyCampaignItem, "campaignType" | "status"> & {
+          type: string;
+          applicationStatus: string;
+        }
+      >;
+    };
+  }>("/api/v1/reviewer/campaigns", { params });
+  const items = (data.data?.campaigns ?? []).map((item) => ({
+    ...item,
+    campaignType: item.type as CampaignType,
+    status: item.applicationStatus as ApplicationStatus,
+  }));
+  return {
+    result: data.result,
+    generatedAt: data.generatedAt,
+    items,
+    nextCursor: null,
+  };
 };
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -137,10 +162,12 @@ export const fetchMyCampaigns = async (
 export const cancelApplication = async (
   applicationId: number
 ): Promise<CancelApplicationResponse> => {
-  const { data } = await apiClient.delete<CancelApplicationResponse>(
-    `/api/v1/reviewer/campaigns/${applicationId}/cancel`
-  );
-  return data;
+  const { data } = await apiClient.delete<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<CancelApplicationResponse, "result">;
+  }>(`/api/v1/reviewer/campaigns/${applicationId}/cancel`);
+  return { result: data.result, ...data.data };
 };
 
 /**
@@ -151,12 +178,14 @@ export const submitContent = async (
   applicationId: number,
   formData: FormData
 ): Promise<SubmitContentResponse> => {
-  const { data } = await apiClient.post<SubmitContentResponse>(
-    `/api/v1/reviewer/campaigns/${applicationId}/content`,
-    formData,
-    { headers: { "Content-Type": "multipart/form-data" } }
-  );
-  return data;
+  const { data } = await apiClient.post<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<SubmitContentResponse, "result">;
+  }>(`/api/v1/reviewer/campaigns/${applicationId}/content`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return { result: data.result, ...data.data };
 };
 
 /**
@@ -167,12 +196,14 @@ export const updateContent = async (
   applicationId: number,
   formData: FormData
 ): Promise<SubmitContentResponse> => {
-  const { data } = await apiClient.put<SubmitContentResponse>(
-    `/api/v1/reviewer/campaigns/${applicationId}/content`,
-    formData,
-    { headers: { "Content-Type": "multipart/form-data" } }
-  );
-  return data;
+  const { data } = await apiClient.put<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<SubmitContentResponse, "result">;
+  }>(`/api/v1/reviewer/campaigns/${applicationId}/content`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return { result: data.result, ...data.data };
 };
 
 /**
@@ -180,10 +211,12 @@ export const updateContent = async (
  * POST /reviewer/my-page/my-campaign/{applicationId}/extension
  */
 export const requestExtension = async (applicationId: number): Promise<ExtensionResponse> => {
-  const { data } = await apiClient.post<ExtensionResponse>(
-    `/api/v1/reviewer/campaigns/${applicationId}/content/extend`
-  );
-  return data;
+  const { data } = await apiClient.post<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<ExtensionResponse, "result">;
+  }>(`/api/v1/reviewer/campaigns/${applicationId}/content/extend`);
+  return { result: data.result, ...data.data };
 };
 
 /**
@@ -193,8 +226,10 @@ export const requestExtension = async (applicationId: number): Promise<Extension
 export const getRejectionReason = async (
   applicationId: number
 ): Promise<RejectionReasonResponse> => {
-  const { data } = await apiClient.get<RejectionReasonResponse>(
-    `/api/v1/reviewer/campaigns/${applicationId}/content/rejection`
-  );
-  return data;
+  const { data } = await apiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<RejectionReasonResponse, "result">;
+  }>(`/api/v1/reviewer/campaigns/${applicationId}/content/rejection`);
+  return { result: data.result, ...data.data };
 };

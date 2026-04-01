@@ -94,10 +94,20 @@ export interface SACategoryFormOptionsResponse {
 export const getSACategoryList = async (
   params?: SACategoryListParams
 ): Promise<SACategoryListResponse> => {
-  const { data } = await apiClient.get<SACategoryListResponse>("/api/admin-sa/categories", {
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: SACategoryApiItem[];
+  }>("/api/admin-sa/categories", {
     params,
   });
-  return data;
+  const categories = data.data ?? [];
+  return {
+    result: data.result,
+    generatedAt: data.generatedAt,
+    totalCount: categories.length,
+    categories,
+  };
 };
 
 /**
@@ -107,18 +117,24 @@ export const getSACategoryList = async (
 export const getSACategoryDetail = async (
   categoryId: number
 ): Promise<SACategoryDetailResponse> => {
-  const { data } = await apiClient.get<SACategoryDetailResponse>(
-    `/api/admin-sa/categories/${categoryId}`
-  );
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: SACategoryApiItem;
+  }>(`/api/admin-sa/categories/${categoryId}`);
+  return { result: data.result, generatedAt: data.generatedAt, category: data.data };
 };
 
 /** 카테고리 등록  POST /api/admin-sa/categories */
 export const createSACategory = async (
   body: SACreateCategoryRequest
 ): Promise<SACreateCategoryResponse> => {
-  const { data } = await apiClient.post<SACreateCategoryResponse>("/api/admin-sa/categories", body);
-  return data;
+  const { data } = await apiClient.post<{
+    result: string;
+    generatedAt: string;
+    data: SACategoryApiItem;
+  }>("/api/admin-sa/categories", body);
+  return { result: data.result, generatedAt: data.generatedAt, category: data.data };
 };
 
 /** 카테고리 수정  PUT /api/admin-sa/categories/{categoryId} */
@@ -126,25 +142,28 @@ export const updateSACategory = async (
   categoryId: number,
   body: SAUpdateCategoryRequest
 ): Promise<SAUpdateCategoryResponse> => {
-  const { data } = await apiClient.put<SAUpdateCategoryResponse>(
-    `/api/admin-sa/categories/${categoryId}`,
-    body
-  );
-  return data;
+  const { data } = await apiClient.put<{
+    result: string;
+    generatedAt: string;
+    data: SACategoryApiItem;
+  }>(`/api/admin-sa/categories/${categoryId}`, body);
+  return { result: data.result, generatedAt: data.generatedAt, category: data.data };
 };
 
 /** 카테고리 삭제  DELETE /api/admin-sa/categories/{categoryId} */
 export const deleteSACategory = async (categoryId: number): Promise<SADeleteCategoryResponse> => {
-  const { data } = await apiClient.delete<SADeleteCategoryResponse>(
+  const { data } = await apiClient.delete<{ result: string; generatedAt: string; data: null }>(
     `/api/admin-sa/categories/${categoryId}`
   );
-  return data;
+  return { result: data.result, generatedAt: data.generatedAt };
 };
 
 /** 카테고리 등록 폼 옵션 조회  GET /api/admin-sa/categories/register */
 export const getSACategoryFormOptions = async (): Promise<SACategoryFormOptionsResponse> => {
-  const { data } = await apiClient.get<SACategoryFormOptionsResponse>(
-    "/api/admin-sa/categories/register"
-  );
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SACategoryFormOptionsResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/categories/register");
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

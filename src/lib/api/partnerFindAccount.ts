@@ -13,8 +13,12 @@ import type {
  * POST /partner/auth/find-id
  */
 export const findPartnerId = async (req: FindPartnerIdRequest): Promise<FindPartnerIdResponse> => {
-  const { data } = await partnerApiClient.post<FindPartnerIdResponse>("/partner/auth/find-id", req);
-  return data;
+  const { data } = await partnerApiClient.post<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<FindPartnerIdResponse, "result">;
+  }>("/partner/auth/find-id", req);
+  return { result: data.result, ...data.data };
 };
 
 /**
@@ -24,11 +28,11 @@ export const findPartnerId = async (req: FindPartnerIdRequest): Promise<FindPart
 export const findPartnerPassword = async (
   req: FindPartnerPasswordRequest
 ): Promise<FindPartnerPasswordResponse> => {
-  const { data } = await partnerApiClient.post<FindPartnerPasswordResponse>(
+  const { data } = await partnerApiClient.post<{ result: "OK"; generatedAt: string; data: null }>(
     "/partner/auth/find-password",
     req
   );
-  return data;
+  return { result: data.result };
 };
 
 /**
@@ -38,9 +42,9 @@ export const findPartnerPassword = async (
 export const resetPartnerPassword = async (
   req: ResetPartnerPasswordRequest
 ): Promise<ResetPartnerPasswordResponse> => {
-  const { data } = await partnerApiClient.post<ResetPartnerPasswordResponse>(
+  const { data } = await partnerApiClient.post<{ result: "OK"; generatedAt: string; data: null }>(
     "/partner/auth/reset-password",
     req
   );
-  return data;
+  return { result: data.result };
 };

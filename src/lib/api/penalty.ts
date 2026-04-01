@@ -50,7 +50,13 @@ export interface PenaltyApiResponse {
  * GET /user/campaign_management/penalty (Bearer 토큰)
  */
 export const fetchReviewerPenalty = (): Promise<PenaltyApiResponse> =>
-  apiClient.get<PenaltyApiResponse>("/api/v1/reviewer/penalties").then((r) => r.data);
+  apiClient
+    .get<{
+      result: "OK";
+      generatedAt: string;
+      data: Omit<PenaltyApiResponse, "result" | "generatedAt">;
+    }>("/api/v1/reviewer/penalties")
+    .then((r) => ({ result: r.data.result, generatedAt: r.data.generatedAt, ...r.data.data }));
 
 /**
  * 유저(리뷰어) 패널티 내역 조회

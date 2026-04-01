@@ -356,12 +356,13 @@ export const reportAdminCampaign = async (
 export const fetchSACampaignStats = async (
   params?: Pick<SACampaignProgressParams, "startDate" | "endDate">
 ): Promise<SACampaignStatsResponse["stats"]> => {
-  const { data } = await apiClient.get<SACampaignStatsResponse>(
-    "/api/admin-sa/campaign/progress/stats",
-    { params }
-  );
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SACampaignStatsResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/campaign/progress/stats", { params });
   return (
-    data?.stats ?? {
+    data.data?.stats ?? {
       total: 0,
       openScheduled: 0,
       applying: 0,
@@ -377,12 +378,15 @@ export const fetchSACampaignStats = async (
 export const fetchSACampaignList = async (
   params?: SACampaignProgressParams
 ): Promise<SACampaignItem[]> => {
-  const { data } = await apiClient.get<SACampaignListResponse>("/api/admin-sa/campaign/progress", {
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SACampaignListResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/campaign/progress", {
     params,
   });
-  const campaigns = data?.campaigns;
+  const campaigns = data.data?.campaigns;
   if (Array.isArray(campaigns)) return campaigns;
-  if (Array.isArray(data)) return data as unknown as SACampaignItem[];
   return [];
 };
 
@@ -403,33 +407,36 @@ export const reportSACampaign = async (
 export const fetchSAWithdrawalRequests = async (
   params?: SAWithdrawalRequestParams
 ): Promise<SAWithdrawalRequestListResponse> => {
-  const { data } = await apiClient.get<SAWithdrawalRequestListResponse>(
-    "/api/admin-sa/settlement/withdrawal/requests",
-    { params }
-  );
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAWithdrawalRequestListResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/settlement/withdrawal/requests", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** SA 출금 승인 (일괄) */
 export const approveSAWithdrawalRequests = async (
   body: SAWithdrawalApproveRequest
 ): Promise<SAWithdrawalApproveResponse> => {
-  const { data } = await apiClient.post<SAWithdrawalApproveResponse>(
-    "/api/admin-sa/settlement/withdrawal/requests/approve",
-    body
-  );
-  return data;
+  const { data } = await apiClient.post<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAWithdrawalApproveResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/settlement/withdrawal/requests/approve", body);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** SA 출금 반려 (일괄) */
 export const rejectSAWithdrawalRequests = async (
   body: SAWithdrawalRejectRequest
 ): Promise<SAWithdrawalRejectResponse> => {
-  const { data } = await apiClient.post<SAWithdrawalRejectResponse>(
-    "/api/admin-sa/settlement/withdrawal/requests/reject",
-    body
-  );
-  return data;
+  const { data } = await apiClient.post<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAWithdrawalRejectResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/settlement/withdrawal/requests/reject", body);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 // ── SA 출금 현황 (SA-04) ──
@@ -438,12 +445,13 @@ export const rejectSAWithdrawalRequests = async (
 export const fetchSAWithdrawalStats = async (
   params?: SAWithdrawalStatusParams
 ): Promise<SAWithdrawalStatsResponse["stats"]> => {
-  const { data } = await apiClient.get<SAWithdrawalStatsResponse>(
-    "/api/admin-sa/settlement/withdrawal/stats",
-    { params }
-  );
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAWithdrawalStatsResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/settlement/withdrawal/stats", { params });
   return (
-    data?.stats ?? {
+    data.data?.stats ?? {
       urgentAmount: 0,
       urgentCount: 0,
       weekScheduledAmount: 0,
@@ -459,11 +467,12 @@ export const fetchSAWithdrawalStats = async (
 export const fetchSAWithdrawalList = async (
   params?: SAWithdrawalStatusParams
 ): Promise<SAWithdrawalStatusListResponse> => {
-  const { data } = await apiClient.get<SAWithdrawalStatusListResponse>(
-    "/api/admin-sa/settlement/withdrawal",
-    { params }
-  );
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAWithdrawalStatusListResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/settlement/withdrawal", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 // ── SA 결제 내역 (SA-06) ──
@@ -472,39 +481,52 @@ export const fetchSAWithdrawalList = async (
 export const fetchSAPaymentList = async (
   params?: SAPaymentHistoryParams
 ): Promise<SAPaymentListResponse> => {
-  const { data } = await apiClient.get<SAPaymentListResponse>("/api/admin-sa/settlement/payment", {
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAPaymentListResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/settlement/payment", {
     params,
   });
-  return data;
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 // ── SA 리뷰어 목록 (SA-07) ──
 
 /** SA 리뷰어 통계 카드 조회 */
 export const fetchSAReviewerStats = async (): Promise<SAReviewerStatsResponse> => {
-  const { data } = await apiClient.get<SAReviewerStatsResponse>("/api/admin-sa/reviewer/stats");
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAReviewerStatsResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/reviewer/stats");
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** SA 리뷰어 목록 조회 */
 export const fetchSAReviewerList = async (
   params?: SAReviewerListParams
 ): Promise<SAReviewerListResponse> => {
-  const { data } = await apiClient.get<SAReviewerListResponse>("/api/admin-sa/reviewer", {
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAReviewerListResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/reviewer", {
     params,
   });
-  return data;
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** SA 리뷰어 이용 제한 처리 */
 export const restrictSAReviewers = async (
   body: SAReviewerRestrictRequest
 ): Promise<SAReviewerRestrictResponse> => {
-  const { data } = await apiClient.post<SAReviewerRestrictResponse>(
-    "/api/admin-sa/reviewer/restrict",
-    body
-  );
-  return data;
+  const { data } = await apiClient.post<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAReviewerRestrictResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/reviewer/restrict", body);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** 캠페인 상세 조회  GET /admin/campaign/:id → /campaigns/:id */
@@ -564,8 +586,12 @@ export const fetchAdminDashboard = (): Promise<AdminDashboardApiItem | null> =>
 export const getAdminDashboardStats = async (
   params?: AdminDashboardParams
 ): Promise<AdminDashboardResponse> => {
-  const { data } = await apiClient.get<AdminDashboardResponse>("/api/admin/dashboard", { params });
-  return data;
+  const { data } = await apiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<AdminDashboardResponse, "result" | "generatedAt">;
+  }>("/api/admin/dashboard", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /**
@@ -681,16 +707,24 @@ export const fetchAccountByPhone = async (
 
 /** SA 파트너 통계 조회  GET /api/admin-sa/partners/stats */
 export const fetchSAPartnerStats = async (): Promise<SAPartnerStatsResponse> => {
-  const { data } = await apiClient.get<SAPartnerStatsResponse>("/api/admin-sa/partners/stats");
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAPartnerStatsResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/partners/stats");
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** SA 파트너 목록 조회  GET /api/admin-sa/partners */
 export const fetchSAPartnerList = async (
   params?: SAPartnerListParams
 ): Promise<SAPartnerListResponse> => {
-  const { data } = await apiClient.get<SAPartnerListResponse>("/api/admin-sa/partners", { params });
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAPartnerListResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/partners", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 // ----------------------------------------
@@ -701,14 +735,21 @@ export const fetchSAPartnerList = async (
 export const fetchSAAdminList = async (
   params?: SAAdminListParams
 ): Promise<SAAdminListResponse> => {
-  const { data } = await apiClient.get<SAAdminListResponse>("/api/admin-sa/admins", { params });
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SAAdminListResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/admins", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** SA 관리자 등록  POST /api/admin-sa/admins */
 export const createSAAdmin = async (body: SAAdminCreateParams): Promise<{ result: string }> => {
-  const { data } = await apiClient.post("/api/admin-sa/admins", body);
-  return data;
+  const { data } = await apiClient.post<{ result: string; generatedAt: string; data: unknown }>(
+    "/api/admin-sa/admins",
+    body
+  );
+  return { result: data.result };
 };
 
 /** SA 관리자 수정  PUT /api/admin-sa/admins/:id */
@@ -716,11 +757,14 @@ export const updateSAAdmin = async (
   id: number,
   body: SAAdminUpdateParams
 ): Promise<{ result: string }> => {
-  const { data } = await apiClient.put(`/api/admin-sa/admins/${id}`, body);
-  return data;
+  const { data } = await apiClient.put<{ result: string; generatedAt: string; data: unknown }>(
+    `/api/admin-sa/admins/${id}`,
+    body
+  );
+  return { result: data.result };
 };
 
-/** SA 관리자 삭제 (일괄)  DELETE /api/admin-sa/admins (request body: { adminIds }) */
+/** SA 관리자 삭제 (복수)  DELETE /api/admin-sa/admins (body: { adminIds }) */
 export const deleteSAAdmin = async (id: number): Promise<void> => {
   await apiClient.delete("/api/admin-sa/admins", { data: { adminIds: [id] } });
 };
@@ -733,10 +777,14 @@ export const deleteSAAdmin = async (id: number): Promise<void> => {
 export const fetchSABlacklist = async (
   params?: SABlacklistParams
 ): Promise<SABlacklistResponse> => {
-  const { data } = await apiClient.get<SABlacklistResponse>("/api/admin-sa/member/blacklist", {
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SABlacklistResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/member/blacklist", {
     params,
   });
-  return data;
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };
 
 /** SA 이용 제한 해제  DELETE /api/admin-sa/member/blacklist/:id */
@@ -750,6 +798,10 @@ export const deleteSABlacklistItem = async (id: string): Promise<void> => {
 export const fetchSADashboard = async (
   params?: SADashboardParams
 ): Promise<SADashboardResponse> => {
-  const { data } = await apiClient.get<SADashboardResponse>("/api/admin-sa/dashboard", { params });
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<SADashboardResponse, "result" | "generatedAt">;
+  }>("/api/admin-sa/dashboard", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

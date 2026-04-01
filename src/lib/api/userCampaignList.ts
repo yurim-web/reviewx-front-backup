@@ -39,9 +39,10 @@ export async function fetchCampaignListByType(
   type: CampaignTypeParam,
   params?: CampaignListParams
 ): Promise<CampaignListApiResponse> {
-  const { data } = await apiClient.get<CampaignListApiResponse>(
-    `/api/v1/reviewer/dashboard/${type}`,
-    { params }
-  );
-  return data;
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<CampaignListApiResponse, "result">;
+  }>(`/api/v1/reviewer/dashboard/${type}`, { params });
+  return { result: data.result, ...data.data };
 }

@@ -15,26 +15,38 @@ import type {
 
 /** GET /partner/mypage — 파트너 프로필 조회 */
 export const getPartnerProfile = async (): Promise<PartnerProfile> => {
-  const { data } = await partnerApiClient.get("/partner/mypage");
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: PartnerProfile;
+  }>("/partner/mypage");
+  return data.data;
 };
 
 /** PUT /partner/mypage — 내 정보 수정 */
 export const updatePartnerProfile = async (
   request: UpdatePartnerProfileRequest
 ): Promise<PartnerProfile> => {
-  const { data } = await partnerApiClient.put("/partner/mypage", request);
-  return data;
+  const { data } = await partnerApiClient.put<{
+    result: string;
+    generatedAt: string;
+    data: PartnerProfile;
+  }>("/partner/mypage", request);
+  return data.data;
 };
 
 /** POST /partner/mypage/profile-image — 프로필 사진 업로드 */
 export const uploadProfileImage = async (imageFile: File): Promise<ProfileImageUploadResponse> => {
   const formData = new FormData();
   formData.append("image", imageFile);
-  const { data } = await partnerApiClient.post("/partner/mypage/profile-image", formData, {
+  const { data } = await partnerApiClient.post<{
+    result: string;
+    generatedAt: string;
+    data: ProfileImageUploadResponse;
+  }>("/partner/mypage/profile-image", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-  return data;
+  return data.data;
 };
 
 /** DELETE /partner/mypage/profile-image — 프로필 사진 삭제 */
@@ -48,10 +60,14 @@ export const uploadBusinessDocument = async (
 ): Promise<BusinessDocumentUploadResponse> => {
   const formData = new FormData();
   formData.append("document", documentFile);
-  const { data } = await partnerApiClient.post("/partner/mypage/business-document", formData, {
+  const { data } = await partnerApiClient.post<{
+    result: string;
+    generatedAt: string;
+    data: BusinessDocumentUploadResponse;
+  }>("/partner/mypage/business-document", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-  return data;
+  return data.data;
 };
 
 /** PUT /partner/mypage/password — 비밀번호 변경 */

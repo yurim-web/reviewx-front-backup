@@ -10,10 +10,14 @@ import type {
  * GET /partner/boards/notices
  */
 export async function getPartnerNoticeList(params?: NoticeListParams): Promise<NoticeListResponse> {
-  const { data } = await partnerApiClient.get<NoticeListResponse>("/partner/boards/notices", {
+  const { data } = await partnerApiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<NoticeListResponse, "result" | "generatedAt">;
+  }>("/partner/boards/notices", {
     params,
   });
-  return data;
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 }
 
 /**
@@ -21,8 +25,10 @@ export async function getPartnerNoticeList(params?: NoticeListParams): Promise<N
  * GET /partner/boards/notices/{boardId}
  */
 export async function getPartnerNoticeDetail(boardId: number): Promise<NoticeDetailResponse> {
-  const { data } = await partnerApiClient.get<NoticeDetailResponse>(
-    `/partner/boards/notices/${boardId}`
-  );
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<NoticeDetailResponse, "result" | "generatedAt">;
+  }>(`/partner/boards/notices/${boardId}`);
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 }

@@ -21,8 +21,12 @@ import type { FaqListParams, FaqListResponse } from "@/types/api/partnerFaq";
 
 /** 리뷰어 FAQ 목록 조회 (38번: GET /user/faq) */
 export async function fetchUserFaqList(params?: FaqListParams): Promise<FaqListResponse> {
-  const { data } = await apiClient.get<FaqListResponse>("/api/v1/reviewer/faq", {
+  const { data } = await apiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<FaqListResponse, "result" | "generatedAt">;
+  }>("/api/v1/reviewer/faq", {
     params,
   });
-  return data;
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 }

@@ -22,8 +22,12 @@ import type { PartnerPenaltyResponse, PenaltyTab } from "@/types/api/partnerPena
 export const getPartnerPenalty = async (
   tab: PenaltyTab = "warning"
 ): Promise<PartnerPenaltyResponse> => {
-  const { data } = await partnerApiClient.get<PartnerPenaltyResponse>("/partner/account/penalty", {
+  const { data } = await partnerApiClient.get<{
+    result: "OK";
+    generatedAt: string;
+    data: Omit<PartnerPenaltyResponse, "result" | "generatedAt">;
+  }>("/partner/account/penalty", {
     params: { tab },
   });
-  return data;
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 };

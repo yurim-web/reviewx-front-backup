@@ -6,6 +6,10 @@ import type { FaqListResponse, FaqListParams } from "@/types/api/partnerFaq";
  * GET /partner/boards/faqs
  */
 export async function getPartnerFaqList(params?: FaqListParams): Promise<FaqListResponse> {
-  const { data } = await partnerApiClient.get<FaqListResponse>("/partner/boards/faqs", { params });
-  return data;
+  const { data } = await partnerApiClient.get<{
+    result: string;
+    generatedAt: string;
+    data: Omit<FaqListResponse, "result" | "generatedAt">;
+  }>("/partner/boards/faqs", { params });
+  return { result: data.result, generatedAt: data.generatedAt, ...data.data };
 }
