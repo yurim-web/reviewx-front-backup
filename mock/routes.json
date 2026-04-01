@@ -7,9 +7,9 @@
   "/api/v1/reviewer/dashboard/reporter": "/campaigns?type=REPORTER",
   "/api/v1/reviewer/dashboard/mission": "/campaigns?type=MISSION",
 
-  "/api/v1/reviewer/campaign/:id/apply": "/campaign_applications",
-  "/api/v1/reviewer/campaign/:id/apply-form": "/campaigns/:id",
-  "/api/v1/reviewer/campaign/:id": "/campaigns/:id",
+  "/api/v1/reviewer/campaign/:type/:id/apply": "/campaign_applications",
+  "/api/v1/reviewer/campaign/:type/:id/apply-form": "/campaigns/:id",
+  "/api/v1/reviewer/campaign/:type/:id": "/campaigns/:id",
 
   "/api/v1/reviewer/campaigns": "/reviewer_campaign_management",
   "/api/v1/reviewer/campaigns/:id/cancel": "/reviewer_campaign_management/:id",
@@ -58,6 +58,7 @@
   "/api/admin/campaigns/rejected/:id/code": "/rejection_history/:id",
   "/api/admin/campaigns/rejected/:id/report": "/rejection_history/:id",
   "/api/admin/campaigns/:id": "/campaigns/:id",
+  "/admin/campaign/:id": "/campaigns/:id",
   "/api/admin/campaigns/:id/report": "/campaigns/:id",
   "/api/admin/reviewers": "/reviewers",
   "/api/admin/reviewers/stats": "/reviewer_stats",

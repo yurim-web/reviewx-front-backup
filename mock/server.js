@@ -28,7 +28,7 @@ server.use((req, res, next) => {
   const isMultipartRoute =
     req.path === "/partner/campaign/create" ||
     req.path === "/partner/campaign/draft" ||
-    /^\/partner\/campaign\/edit\/\d+$/.test(req.path);
+    /^\/partner\/campaign\/edit\//.test(req.path);
   const isMultipart =
     req.headers["content-type"] &&
     req.headers["content-type"].includes("multipart/form-data");
@@ -55,13 +55,62 @@ server.use((req, res, next) => {
   next();
 });
 
-// 순서: CORS → body parser → 커스텀 미들웨어(router.db 주입) → 기본 설정 → 라우트 리라이터 → 라우터
+// ── ApiResponse wrapper ──
+// 실제 백엔드는 모든 응답을 { result, generatedAt, data } 로 감싸므로
+// mock 서버도 동일하게 감싸서 프론트엔드 API 함수와 호환시킴
+function wrapApiResponse(body) {
+  if (body == null) {
+    return { result: "OK", generatedAt: new Date().toISOString(), data: null };
+  }
+  // 이미 { result, data } 구조 → generatedAt만 보충
+  if (typeof body === "object" && !Array.isArray(body) && body.result && "data" in body) {
+    if (!body.generatedAt) body.generatedAt = new Date().toISOString();
+    return body;
+  }
+  // result는 있지만 data wrapper 없음 (flat 응답) → 나머지를 data로 이동
+  if (typeof body === "object" && !Array.isArray(body) && body.result) {
+    const { result, generatedAt, ...rest } = body;
+    return {
+      result,
+      generatedAt: generatedAt || new Date().toISOString(),
+      data: Object.keys(rest).length > 0 ? rest : null,
+    };
+  }
+  // result 없음 (json-server 원본 데이터) → 전체를 data로 감싸기
+  return { result: "OK", generatedAt: new Date().toISOString(), data: body };
+}
+
+// 리뷰어 인증 경로는 백엔드에서 ApiResponse를 사용하지 않으므로 제외
+const NO_WRAP_PREFIXES = [
+  "/api/v1/auth/",
+  "/api/v1/reviewer/sign-up",
+  "/api/admin/login",
+  "/admin/login",
+];
+
+function shouldWrap(req) {
+  return !NO_WRAP_PREFIXES.some((p) => req.path.startsWith(p));
+}
+
+// res.json()을 가로채서 ApiResponse wrapper 적용
+server.use((req, res, next) => {
+  const originalJson = res.json.bind(res);
+  res.json = function (body) {
+    if (shouldWrap(req)) {
+      return originalJson(wrapApiResponse(body));
+    }
+    return originalJson(body);
+  };
+  next();
+});
+
+// 순서: CORS → body parser → ApiResponse wrapper → 커스텀 미들웨어(router.db 주입) → 기본 설정 → 라우트 리라이터 → 라우터
 server.use(createMiddleware(router.db));
 server.use(defaults);
 server.use(jsonServer.rewriter(routes));
 // campaigns 응답 후처리: 모집 시작 전 캠페인은 appliedCount=0
 router.render = (req, res) => {
-  const data = res.locals.data;
+  let data = res.locals.data;
   const isReviewerCampaign = req.originalUrl && req.originalUrl.startsWith("/reviewer/campaign");
   if (isReviewerCampaign && data) {
     const now = new Date();
@@ -78,10 +127,14 @@ router.render = (req, res) => {
       return c;
     };
     if (Array.isArray(data)) {
-      res.jsonp(data.map(sanitize));
+      data = data.map(sanitize);
     } else {
-      res.jsonp(sanitize(data));
+      data = sanitize(data);
     }
+  }
+  // router.render는 res.jsonp를 사용하므로 별도로 wrapping
+  if (shouldWrap(req)) {
+    res.jsonp(wrapApiResponse(data));
   } else {
     res.jsonp(data);
   }

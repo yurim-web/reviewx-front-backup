@@ -60,6 +60,15 @@ module.exports = function createMiddleware(db) {
   // 사용자/파트너 휴대폰 인증번호 발송
   if (req.method === "POST" && req.path === "/api/v1/auth/phone/verify/request") {
     const { phoneNum } = req.body || {};
+    // 01099999999 → 이미 가입된 번호 (A_M1 모달 테스트용)
+    if (phoneNum === "01099999999" || phoneNum === "010-9999-9999") {
+      return res.status(409).json({
+        result: "ERROR",
+        errorCode: "ALREADY_REGISTERED",
+        provider: "NAVER",
+        message: "이미 가입된 번호입니다.",
+      });
+    }
     const verificationId = "vrf_" + Date.now();
     adminVerificationCode = "123456";
     return res.status(200).json({
@@ -500,7 +509,16 @@ module.exports = function createMiddleware(db) {
   if (req.method === "GET" && (req.path.match(/^\/api\/admin\/partners\/\d+$/) || req.path.match(/^\/admin\/partner\/\d+$/))) {
     var ptId = Number(req.path.split("/").pop());
     var ptItem = db.get("partners").find({ id: ptId }).value();
+    // 실제 캠페인 수 동적 계산 (admin partnerId → userId 매핑)
+    var PT_USER_MAP = { 1: 502, 2: 501, 3: 1001, 4: 1005, 5: 505, 6: 506, 7: 507, 8: 508 };
+    var ptUserId = PT_USER_MAP[ptId] || ptId;
+    var ptCampaigns = getCampaigns().filter(function(c) { return c.partner_id == ptUserId || c.partner_id == ptId; });
+    var ptInProgress = ptCampaigns.filter(function(c) { return ["RECRUITING","SELECTING","PURCHASING","REGISTERING"].indexOf(c.status) >= 0; }).length;
+    var ptCompleted = ptCampaigns.filter(function(c) { return c.status === "CLOSED"; }).length;
     if (ptItem) {
+      ptItem.campaign_in_progress = ptInProgress;
+      ptItem.campaign_completed = ptCompleted;
+      ptItem.campaign_participated = ptInProgress + ptCompleted;
       return res.status(200).json(ptItem);
     }
     return res.status(200).json({
@@ -509,7 +527,9 @@ module.exports = function createMiddleware(db) {
       representative_name: "대표" + ptId, division: "개인",
       email: "partner" + ptId + "@test.com", phone: "010-0000-0000",
       address: "서울시 강남구", contact_name: "담당자" + ptId, contact_phone: "010-0000-0000",
-      campaign_in_progress: 0, campaign_completed: 0, current_points: 0, used_points: 0,
+      campaign_in_progress: ptInProgress, campaign_completed: ptCompleted,
+      campaign_participated: ptInProgress + ptCompleted,
+      current_points: 0, used_points: 0, payment_points: 0,
       status_type: "일반 회원", status: "정상", penalty_count: 0,
       last_access_date: "2026-03-20 14:30", join_date: "2025-06-01 09:00"
     });
@@ -865,7 +885,14 @@ module.exports = function createMiddleware(db) {
   if (req.method === "GET" && (req.path.match(/^\/api\/admin\/reviewers\/\d+$/) || req.path.match(/^\/admin\/reviewer\/\d+$/))) {
     var rvId = Number(req.path.split("/").pop());
     var rvItem = db.get("reviewers").find({ id: rvId }).value();
+    // 실제 캠페인 참여 수 동적 계산
+    var rvApps = db.get("campaign_applications").value() || [];
+    var rvCampaignApps = rvApps.filter(function(a) { return a.reviewer_id === rvId; });
+    var rvParticipated = rvCampaignApps.length;
+    var rvCompleted = rvCampaignApps.filter(function(a) { return a.status === "COMPLETED" || a.status === "COMPLETE"; }).length;
     if (rvItem) {
+      rvItem.campaign_participated = rvParticipated;
+      rvItem.campaign_completed = rvCompleted;
       return res.status(200).json(rvItem);
     }
     // db.json에 없으면 기본 더미 데이터 반환
@@ -878,7 +905,7 @@ module.exports = function createMiddleware(db) {
       address: "서울시 강남구 테헤란로 " + rvId,
       channels: ["Blog", "Instagram"],
       type: "일반",
-      campaign_participated: 3, campaign_completed: 2,
+      campaign_participated: rvParticipated, campaign_completed: rvCompleted,
       current_points: 50000, withdrawn_points: 30000,
       status_type: "일반 회원", status: "정상",
       penalty_count: 0, bank: "국민은행",
@@ -929,18 +956,48 @@ module.exports = function createMiddleware(db) {
     return res.status(200).json({ result: "OK", message: "다운로드 준비 완료" });
   }
 
+  // ============ GET /campaigns?partner_id=X ============
+  // 파트너 캠페인 조회: admin partnerId → 실제 campaign partner_id(userId) 매핑
+  // GA/SA 파트너 상세페이지에서 캠페인 진행 내역 모달용
+  if (req.method === "GET" && req.path === "/campaigns" && req.query.partner_id) {
+    var queryPartnerId = Number(req.query.partner_id);
+    // admin partnerId → 실제 campaign partner_id 매핑
+    // GA 목록: partnerId 1 = 청명종합(userId 501), partnerId 2 = 마크엑스(test@test.com, 세션 501)
+    // 캠페인 partner_id: 501(test@test.com), 502(14건), 1001(8건), 1005(6건)
+    var PARTNER_USER_MAP = { 1: 502, 2: 501, 3: 1001, 4: 1005, 5: 505, 6: 506, 7: 507, 8: 508 };
+    var mappedPartnerId = PARTNER_USER_MAP[queryPartnerId] || queryPartnerId;
+    var allCampaigns = getCampaigns();
+    var partnerCampaigns = allCampaigns.filter(function(c) {
+      return c.partner_id == mappedPartnerId || c.partner_id == queryPartnerId;
+    });
+    return res.status(200).json(partnerCampaigns);
+  }
+
   // ============ GET /api/admin/partners/:id/campaigns ============
-  // GA-09: 파트너 캠페인 진행 내역
+  // GA-09: 파트너 캠페인 진행 내역 (API 경로)
   if (req.method === "GET" && req.path.match(/^\/api\/admin\/partners\/\d+\/campaigns$/)) {
+    var adminPartnerId = Number(req.path.split("/")[4]);
+    var PARTNER_USER_MAP2 = { 1: 502, 2: 501, 3: 1001, 4: 1005, 5: 505, 6: 506, 7: 507, 8: 508 };
+    var mappedId2 = PARTNER_USER_MAP2[adminPartnerId] || adminPartnerId;
+    var allCampaigns2 = getCampaigns();
+    var partnerCampaigns2 = allCampaigns2.filter(function(c) {
+      return c.partner_id == mappedId2 || c.partner_id == adminPartnerId;
+    });
     return res.status(200).json({
       result: "OK", generatedAt: new Date().toISOString(),
       data: {
-        totalCount: 3,
-        campaigns: [
-          { campaignId: 201, campaignTitle: "뷰티 제품 인스타 리뷰", status: "COMPLETED", type: "DELIVERY", channel: "Instagram", rewardPoint: 50000 },
-          { campaignId: 202, campaignTitle: "건강식품 블로그 체험단", status: "IN_PROGRESS", type: "DELIVERY", channel: "Blog", rewardPoint: 30000 },
-          { campaignId: 203, campaignTitle: "카페 방문 리뷰", status: "COMPLETED", type: "VISIT", channel: "Blog", rewardPoint: 20000 },
-        ],
+        totalCount: partnerCampaigns2.length,
+        campaigns: partnerCampaigns2.map(function(c) {
+          var channelName = (c.requiredPlatform && c.requiredPlatform.channelName) || "NAVER_BLOG";
+          return {
+            campaignId: c.id,
+            campaignTitle: c.title,
+            status: c.status,
+            type: c.type || "DELIVERY",
+            channel: channelName,
+            rewardPoint: (c.reward && c.reward.extraRewardPoint) || 0,
+          };
+        }),
       },
     });
   }
@@ -1580,23 +1637,33 @@ module.exports = function createMiddleware(db) {
 
   // ============ GET /partner/search ============
   if (req.method === "GET" && (req.path === "/partner/search" || req.url.startsWith("/partner/search"))) {
-    const db = require("./db.json");
-    const searchData = db.search || { result: "OK", campaigns: [] };
+    const allCampaigns = getCampaigns();
     const keyword = (req.query.keyword || "").toLowerCase();
 
-    if (keyword) {
-      const filtered = (searchData.campaigns || []).filter(
-        (c) => c.title.toLowerCase().includes(keyword)
-      );
-      return res.status(200).json({
-        ...searchData,
-        keyword: req.query.keyword,
-        totalCount: filtered.length,
-        campaigns: filtered,
-      });
-    }
+    const filtered = keyword
+      ? allCampaigns.filter((c) => (c.title || "").toLowerCase().includes(keyword))
+      : allCampaigns;
 
-    return res.status(200).json(searchData);
+    const campaigns = filtered.map((c) => ({
+      campaignId: c.campaignId || c.id,
+      type: c.type,
+      status: c.status,
+      title: c.title,
+      thumbnail: c.thumbnail || { url: c.thumbnailUrl || "" },
+      category: c.category || { categoryId: 1, categoryName: "기타" },
+      requiredPlatform: c.requiredPlatform || { channelId: 1, channelName: "BLOG" },
+      recruit: c.recruit || { recruitLimit: c.recruitLimit || 10, recruitStartAt: c.recruitStartAt, recruitEndAt: c.recruitEndAt },
+      metrics: c.metrics || { appliedCount: c.appliedCount || 0, selectedCount: 0, applicationRate: 0 },
+      reward: c.reward || { extraRewardPoint: 0, paymentRewardPoint: 0 },
+    }));
+
+    return res.status(200).json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      keyword: req.query.keyword || "",
+      totalCount: campaigns.length,
+      campaigns,
+    });
   }
 
   // ============ GET /partner/boards/faqs ============
@@ -2610,41 +2677,274 @@ module.exports = function createMiddleware(db) {
         { channelId: 6, channelName: "YOUTUBE_SHORTS" },
       ],
       regions: [
+        // 서울특별시
         { regionId: 100, name: "서울특별시", level: 1, parentId: null },
-        { regionId: 101, name: "강남구", level: 2, parentId: 100 },
-        { regionId: 102, name: "강동구", level: 2, parentId: 100 },
-        { regionId: 103, name: "강북구", level: 2, parentId: 100 },
-        { regionId: 104, name: "강서구", level: 2, parentId: 100 },
-        { regionId: 105, name: "관악구", level: 2, parentId: 100 },
-        { regionId: 106, name: "성동구", level: 2, parentId: 100 },
-        { regionId: 107, name: "성북구", level: 2, parentId: 100 },
-        { regionId: 108, name: "송파구", level: 2, parentId: 100 },
-        { regionId: 109, name: "마포구", level: 2, parentId: 100 },
+        { regionId: 101, name: "강북구", level: 2, parentId: 100 },
+        { regionId: 102, name: "관악구", level: 2, parentId: 100 },
+        { regionId: 103, name: "구로구", level: 2, parentId: 100 },
+        { regionId: 104, name: "노원구", level: 2, parentId: 100 },
+        { regionId: 105, name: "동대문구", level: 2, parentId: 100 },
+        { regionId: 106, name: "마포구", level: 2, parentId: 100 },
+        { regionId: 107, name: "서초구", level: 2, parentId: 100 },
+        { regionId: 108, name: "성북구", level: 2, parentId: 100 },
+        { regionId: 109, name: "양천구", level: 2, parentId: 100 },
+        { regionId: 110, name: "용산구", level: 2, parentId: 100 },
+        { regionId: 111, name: "강남구", level: 2, parentId: 100 },
+        { regionId: 112, name: "강서구", level: 2, parentId: 100 },
+        { regionId: 113, name: "광진구", level: 2, parentId: 100 },
+        { regionId: 114, name: "금천구", level: 2, parentId: 100 },
+        { regionId: 115, name: "도봉구", level: 2, parentId: 100 },
+        { regionId: 116, name: "동작구", level: 2, parentId: 100 },
+        { regionId: 117, name: "서대문구", level: 2, parentId: 100 },
+        { regionId: 118, name: "성동구", level: 2, parentId: 100 },
+        { regionId: 119, name: "송파구", level: 2, parentId: 100 },
+        { regionId: 120, name: "영등포구", level: 2, parentId: 100 },
+        { regionId: 121, name: "은평구", level: 2, parentId: 100 },
+        { regionId: 122, name: "종로구", level: 2, parentId: 100 },
+        { regionId: 123, name: "중구", level: 2, parentId: 100 },
+        { regionId: 124, name: "중랑구", level: 2, parentId: 100 },
+        { regionId: 125, name: "강동구", level: 2, parentId: 100 },
+        // 인천광역시
         { regionId: 200, name: "인천광역시", level: 1, parentId: null },
-        { regionId: 201, name: "남동구", level: 2, parentId: 200 },
-        { regionId: 202, name: "부평구", level: 2, parentId: 200 },
+        { regionId: 201, name: "강화군", level: 2, parentId: 200 },
+        { regionId: 202, name: "검단구", level: 2, parentId: 200 },
+        { regionId: 203, name: "계양구", level: 2, parentId: 200 },
+        { regionId: 204, name: "남구", level: 2, parentId: 200 },
+        { regionId: 205, name: "남동구", level: 2, parentId: 200 },
+        { regionId: 206, name: "미추홀구", level: 2, parentId: 200 },
+        { regionId: 207, name: "부평구", level: 2, parentId: 200 },
+        { regionId: 208, name: "서구", level: 2, parentId: 200 },
+        { regionId: 209, name: "연수구", level: 2, parentId: 200 },
+        { regionId: 210, name: "영종구", level: 2, parentId: 200 },
+        { regionId: 211, name: "옹진군", level: 2, parentId: 200 },
+        { regionId: 212, name: "제물포구", level: 2, parentId: 200 },
+        // 경기도
         { regionId: 300, name: "경기도", level: 1, parentId: null },
-        { regionId: 301, name: "수원시", level: 2, parentId: 300 },
-        { regionId: 302, name: "성남시", level: 2, parentId: 300 },
-        { regionId: 303, name: "고양시", level: 2, parentId: 300 },
-        { regionId: 400, name: "부산광역시", level: 1, parentId: null },
-        { regionId: 401, name: "해운대구", level: 2, parentId: 400 },
-        { regionId: 500, name: "대구광역시", level: 1, parentId: null },
-        { regionId: 600, name: "대전광역시", level: 1, parentId: null },
-        { regionId: 700, name: "광주광역시", level: 1, parentId: null },
-        { regionId: 800, name: "울산광역시", level: 1, parentId: null },
-        { regionId: 900, name: "세종특별자치시", level: 1, parentId: null },
-        { regionId: 901, name: "세종시", level: 2, parentId: 900 },
-        { regionId: 1000, name: "강원특별자치도", level: 1, parentId: null },
-        { regionId: 1100, name: "충청북도", level: 1, parentId: null },
-        { regionId: 1200, name: "충청남도", level: 1, parentId: null },
-        { regionId: 1300, name: "전라북도", level: 1, parentId: null },
-        { regionId: 1400, name: "전라남도", level: 1, parentId: null },
-        { regionId: 1500, name: "경상북도", level: 1, parentId: null },
-        { regionId: 1600, name: "경상남도", level: 1, parentId: null },
+        { regionId: 301, name: "고양시", level: 2, parentId: 300 },
+        { regionId: 302, name: "광명시", level: 2, parentId: 300 },
+        { regionId: 303, name: "구리시", level: 2, parentId: 300 },
+        { regionId: 304, name: "김포시", level: 2, parentId: 300 },
+        { regionId: 305, name: "동두천시", level: 2, parentId: 300 },
+        { regionId: 306, name: "성남시", level: 2, parentId: 300 },
+        { regionId: 307, name: "시흥시", level: 2, parentId: 300 },
+        { regionId: 308, name: "안성시", level: 2, parentId: 300 },
+        { regionId: 309, name: "양주시", level: 2, parentId: 300 },
+        { regionId: 310, name: "여주시", level: 2, parentId: 300 },
+        { regionId: 311, name: "가평군", level: 2, parentId: 300 },
+        { regionId: 312, name: "과천시", level: 2, parentId: 300 },
+        { regionId: 313, name: "광주시", level: 2, parentId: 300 },
+        { regionId: 314, name: "군포시", level: 2, parentId: 300 },
+        { regionId: 315, name: "남양주시", level: 2, parentId: 300 },
+        { regionId: 316, name: "부천시", level: 2, parentId: 300 },
+        { regionId: 317, name: "수원시", level: 2, parentId: 300 },
+        { regionId: 318, name: "안산시", level: 2, parentId: 300 },
+        { regionId: 319, name: "안양시", level: 2, parentId: 300 },
+        { regionId: 320, name: "양평군", level: 2, parentId: 300 },
+        { regionId: 321, name: "연천군", level: 2, parentId: 300 },
+        { regionId: 322, name: "오산시", level: 2, parentId: 300 },
+        { regionId: 323, name: "용인시", level: 2, parentId: 300 },
+        { regionId: 324, name: "의왕시", level: 2, parentId: 300 },
+        { regionId: 325, name: "의정부시", level: 2, parentId: 300 },
+        { regionId: 326, name: "이천시", level: 2, parentId: 300 },
+        { regionId: 327, name: "파주시", level: 2, parentId: 300 },
+        { regionId: 328, name: "평택시", level: 2, parentId: 300 },
+        { regionId: 329, name: "포천시", level: 2, parentId: 300 },
+        { regionId: 330, name: "하남시", level: 2, parentId: 300 },
+        { regionId: 331, name: "화성시", level: 2, parentId: 300 },
+        // 강원특별자치도
+        { regionId: 400, name: "강원특별자치도", level: 1, parentId: null },
+        { regionId: 401, name: "강릉시", level: 2, parentId: 400 },
+        { regionId: 402, name: "고성군", level: 2, parentId: 400 },
+        { regionId: 403, name: "동해시", level: 2, parentId: 400 },
+        { regionId: 404, name: "삼척시", level: 2, parentId: 400 },
+        { regionId: 405, name: "속초시", level: 2, parentId: 400 },
+        { regionId: 406, name: "양구군", level: 2, parentId: 400 },
+        { regionId: 407, name: "양양군", level: 2, parentId: 400 },
+        { regionId: 408, name: "영월군", level: 2, parentId: 400 },
+        { regionId: 409, name: "원주시", level: 2, parentId: 400 },
+        { regionId: 410, name: "인제군", level: 2, parentId: 400 },
+        { regionId: 411, name: "정선군", level: 2, parentId: 400 },
+        { regionId: 412, name: "철원군", level: 2, parentId: 400 },
+        { regionId: 413, name: "춘천시", level: 2, parentId: 400 },
+        { regionId: 414, name: "태백시", level: 2, parentId: 400 },
+        { regionId: 415, name: "평창군", level: 2, parentId: 400 },
+        { regionId: 416, name: "홍천군", level: 2, parentId: 400 },
+        { regionId: 417, name: "화천군", level: 2, parentId: 400 },
+        { regionId: 418, name: "횡성군", level: 2, parentId: 400 },
+        // 대전광역시
+        { regionId: 500, name: "대전광역시", level: 1, parentId: null },
+        { regionId: 501, name: "대덕구", level: 2, parentId: 500 },
+        { regionId: 502, name: "동구", level: 2, parentId: 500 },
+        { regionId: 503, name: "서구", level: 2, parentId: 500 },
+        { regionId: 504, name: "유성구", level: 2, parentId: 500 },
+        { regionId: 505, name: "중구", level: 2, parentId: 500 },
+        // 세종특별자치시
+        { regionId: 600, name: "세종특별자치시", level: 1, parentId: null },
+        { regionId: 601, name: "세종시", level: 2, parentId: 600 },
+        // 충청북도
+        { regionId: 700, name: "충청북도", level: 1, parentId: null },
+        { regionId: 701, name: "괴산군", level: 2, parentId: 700 },
+        { regionId: 702, name: "단양군", level: 2, parentId: 700 },
+        { regionId: 703, name: "보은군", level: 2, parentId: 700 },
+        { regionId: 704, name: "영동군", level: 2, parentId: 700 },
+        { regionId: 705, name: "옥천군", level: 2, parentId: 700 },
+        { regionId: 706, name: "음성군", level: 2, parentId: 700 },
+        { regionId: 707, name: "제천시", level: 2, parentId: 700 },
+        { regionId: 708, name: "증평군", level: 2, parentId: 700 },
+        { regionId: 709, name: "진천군", level: 2, parentId: 700 },
+        { regionId: 710, name: "청원군", level: 2, parentId: 700 },
+        { regionId: 711, name: "청주시", level: 2, parentId: 700 },
+        { regionId: 712, name: "충주시", level: 2, parentId: 700 },
+        // 충청남도
+        { regionId: 800, name: "충청남도", level: 1, parentId: null },
+        { regionId: 801, name: "계룡시", level: 2, parentId: 800 },
+        { regionId: 802, name: "공주시", level: 2, parentId: 800 },
+        { regionId: 803, name: "금산군", level: 2, parentId: 800 },
+        { regionId: 804, name: "논산시", level: 2, parentId: 800 },
+        { regionId: 805, name: "당진시", level: 2, parentId: 800 },
+        { regionId: 806, name: "보령시", level: 2, parentId: 800 },
+        { regionId: 807, name: "부여군", level: 2, parentId: 800 },
+        { regionId: 808, name: "서산시", level: 2, parentId: 800 },
+        { regionId: 809, name: "서천군", level: 2, parentId: 800 },
+        { regionId: 810, name: "아산시", level: 2, parentId: 800 },
+        { regionId: 811, name: "연기군", level: 2, parentId: 800 },
+        { regionId: 812, name: "예산군", level: 2, parentId: 800 },
+        { regionId: 813, name: "천안시", level: 2, parentId: 800 },
+        { regionId: 814, name: "청양군", level: 2, parentId: 800 },
+        { regionId: 815, name: "태안군", level: 2, parentId: 800 },
+        { regionId: 816, name: "홍성군", level: 2, parentId: 800 },
+        // 전라북도
+        { regionId: 900, name: "전라북도", level: 1, parentId: null },
+        { regionId: 901, name: "고창군", level: 2, parentId: 900 },
+        { regionId: 902, name: "군산시", level: 2, parentId: 900 },
+        { regionId: 903, name: "김제시", level: 2, parentId: 900 },
+        { regionId: 904, name: "남원시", level: 2, parentId: 900 },
+        { regionId: 905, name: "무주군", level: 2, parentId: 900 },
+        { regionId: 906, name: "부안군", level: 2, parentId: 900 },
+        { regionId: 907, name: "순창군", level: 2, parentId: 900 },
+        { regionId: 908, name: "완주군", level: 2, parentId: 900 },
+        { regionId: 909, name: "익산시", level: 2, parentId: 900 },
+        { regionId: 910, name: "임실군", level: 2, parentId: 900 },
+        { regionId: 911, name: "장수군", level: 2, parentId: 900 },
+        { regionId: 912, name: "전주시", level: 2, parentId: 900 },
+        { regionId: 913, name: "정읍시", level: 2, parentId: 900 },
+        { regionId: 914, name: "진안군", level: 2, parentId: 900 },
+        // 전라남도
+        { regionId: 1000, name: "전라남도", level: 1, parentId: null },
+        { regionId: 1001, name: "강진군", level: 2, parentId: 1000 },
+        { regionId: 1002, name: "고흥군", level: 2, parentId: 1000 },
+        { regionId: 1003, name: "곡성군", level: 2, parentId: 1000 },
+        { regionId: 1004, name: "광양시", level: 2, parentId: 1000 },
+        { regionId: 1005, name: "구례군", level: 2, parentId: 1000 },
+        { regionId: 1006, name: "나주시", level: 2, parentId: 1000 },
+        { regionId: 1007, name: "담양군", level: 2, parentId: 1000 },
+        { regionId: 1008, name: "목포시", level: 2, parentId: 1000 },
+        { regionId: 1009, name: "무안군", level: 2, parentId: 1000 },
+        { regionId: 1010, name: "보성군", level: 2, parentId: 1000 },
+        { regionId: 1011, name: "순천시", level: 2, parentId: 1000 },
+        { regionId: 1012, name: "신안군", level: 2, parentId: 1000 },
+        { regionId: 1013, name: "여수시", level: 2, parentId: 1000 },
+        { regionId: 1014, name: "영광군", level: 2, parentId: 1000 },
+        { regionId: 1015, name: "영암군", level: 2, parentId: 1000 },
+        { regionId: 1016, name: "완도군", level: 2, parentId: 1000 },
+        { regionId: 1017, name: "장성군", level: 2, parentId: 1000 },
+        { regionId: 1018, name: "장흥군", level: 2, parentId: 1000 },
+        { regionId: 1019, name: "진도군", level: 2, parentId: 1000 },
+        { regionId: 1020, name: "함평군", level: 2, parentId: 1000 },
+        { regionId: 1021, name: "해남군", level: 2, parentId: 1000 },
+        { regionId: 1022, name: "화순군", level: 2, parentId: 1000 },
+        // 광주광역시
+        { regionId: 1100, name: "광주광역시", level: 1, parentId: null },
+        { regionId: 1101, name: "광산구", level: 2, parentId: 1100 },
+        { regionId: 1102, name: "남구", level: 2, parentId: 1100 },
+        { regionId: 1103, name: "동구", level: 2, parentId: 1100 },
+        { regionId: 1104, name: "북구", level: 2, parentId: 1100 },
+        { regionId: 1105, name: "서구", level: 2, parentId: 1100 },
+        // 대구광역시
+        { regionId: 1200, name: "대구광역시", level: 1, parentId: null },
+        { regionId: 1201, name: "남구", level: 2, parentId: 1200 },
+        { regionId: 1202, name: "달서구", level: 2, parentId: 1200 },
+        { regionId: 1203, name: "달성군", level: 2, parentId: 1200 },
+        { regionId: 1204, name: "동구", level: 2, parentId: 1200 },
+        { regionId: 1205, name: "북구", level: 2, parentId: 1200 },
+        { regionId: 1206, name: "서구", level: 2, parentId: 1200 },
+        { regionId: 1207, name: "수성구", level: 2, parentId: 1200 },
+        { regionId: 1208, name: "중구", level: 2, parentId: 1200 },
+        // 경상북도
+        { regionId: 1300, name: "경상북도", level: 1, parentId: null },
+        { regionId: 1301, name: "경산시", level: 2, parentId: 1300 },
+        { regionId: 1302, name: "경주시", level: 2, parentId: 1300 },
+        { regionId: 1303, name: "고령군", level: 2, parentId: 1300 },
+        { regionId: 1304, name: "구미시", level: 2, parentId: 1300 },
+        { regionId: 1305, name: "군위군", level: 2, parentId: 1300 },
+        { regionId: 1306, name: "김천시", level: 2, parentId: 1300 },
+        { regionId: 1307, name: "문경시", level: 2, parentId: 1300 },
+        { regionId: 1308, name: "봉화군", level: 2, parentId: 1300 },
+        { regionId: 1309, name: "상주시", level: 2, parentId: 1300 },
+        { regionId: 1310, name: "성주군", level: 2, parentId: 1300 },
+        { regionId: 1311, name: "안동시", level: 2, parentId: 1300 },
+        { regionId: 1312, name: "영덕군", level: 2, parentId: 1300 },
+        { regionId: 1313, name: "영양군", level: 2, parentId: 1300 },
+        { regionId: 1314, name: "영주시", level: 2, parentId: 1300 },
+        { regionId: 1315, name: "영천시", level: 2, parentId: 1300 },
+        { regionId: 1316, name: "예천군", level: 2, parentId: 1300 },
+        { regionId: 1317, name: "울릉군", level: 2, parentId: 1300 },
+        { regionId: 1318, name: "울진군", level: 2, parentId: 1300 },
+        { regionId: 1319, name: "의성군", level: 2, parentId: 1300 },
+        { regionId: 1320, name: "청도군", level: 2, parentId: 1300 },
+        { regionId: 1321, name: "청송군", level: 2, parentId: 1300 },
+        { regionId: 1322, name: "칠곡군", level: 2, parentId: 1300 },
+        { regionId: 1323, name: "포항시", level: 2, parentId: 1300 },
+        // 경상남도
+        { regionId: 1400, name: "경상남도", level: 1, parentId: null },
+        { regionId: 1401, name: "거제시", level: 2, parentId: 1400 },
+        { regionId: 1402, name: "거창군", level: 2, parentId: 1400 },
+        { regionId: 1403, name: "고성군", level: 2, parentId: 1400 },
+        { regionId: 1404, name: "김해시", level: 2, parentId: 1400 },
+        { regionId: 1405, name: "남해군", level: 2, parentId: 1400 },
+        { regionId: 1406, name: "마산시", level: 2, parentId: 1400 },
+        { regionId: 1407, name: "밀양시", level: 2, parentId: 1400 },
+        { regionId: 1408, name: "사천시", level: 2, parentId: 1400 },
+        { regionId: 1409, name: "산청군", level: 2, parentId: 1400 },
+        { regionId: 1410, name: "양산시", level: 2, parentId: 1400 },
+        { regionId: 1411, name: "의령군", level: 2, parentId: 1400 },
+        { regionId: 1412, name: "진주시", level: 2, parentId: 1400 },
+        { regionId: 1413, name: "진해시", level: 2, parentId: 1400 },
+        { regionId: 1414, name: "창녕군", level: 2, parentId: 1400 },
+        { regionId: 1415, name: "창원시", level: 2, parentId: 1400 },
+        { regionId: 1416, name: "통영시", level: 2, parentId: 1400 },
+        { regionId: 1417, name: "하동군", level: 2, parentId: 1400 },
+        { regionId: 1418, name: "함안군", level: 2, parentId: 1400 },
+        { regionId: 1419, name: "합천군", level: 2, parentId: 1400 },
+        // 부산광역시
+        { regionId: 1500, name: "부산광역시", level: 1, parentId: null },
+        { regionId: 1501, name: "강서구", level: 2, parentId: 1500 },
+        { regionId: 1502, name: "금정구", level: 2, parentId: 1500 },
+        { regionId: 1503, name: "기장군", level: 2, parentId: 1500 },
+        { regionId: 1504, name: "남구", level: 2, parentId: 1500 },
+        { regionId: 1505, name: "동구", level: 2, parentId: 1500 },
+        { regionId: 1506, name: "동래구", level: 2, parentId: 1500 },
+        { regionId: 1507, name: "부산진구", level: 2, parentId: 1500 },
+        { regionId: 1508, name: "북구", level: 2, parentId: 1500 },
+        { regionId: 1509, name: "사상구", level: 2, parentId: 1500 },
+        { regionId: 1510, name: "사하구", level: 2, parentId: 1500 },
+        { regionId: 1511, name: "서구", level: 2, parentId: 1500 },
+        { regionId: 1512, name: "수영구", level: 2, parentId: 1500 },
+        { regionId: 1513, name: "연제구", level: 2, parentId: 1500 },
+        { regionId: 1514, name: "영도구", level: 2, parentId: 1500 },
+        { regionId: 1515, name: "중구", level: 2, parentId: 1500 },
+        { regionId: 1516, name: "해운대구", level: 2, parentId: 1500 },
+        // 울산광역시
+        { regionId: 1600, name: "울산광역시", level: 1, parentId: null },
+        { regionId: 1601, name: "남구", level: 2, parentId: 1600 },
+        { regionId: 1602, name: "동구", level: 2, parentId: 1600 },
+        { regionId: 1603, name: "북구", level: 2, parentId: 1600 },
+        { regionId: 1604, name: "울주군", level: 2, parentId: 1600 },
+        { regionId: 1605, name: "중구", level: 2, parentId: 1600 },
+        // 제주특별자치도
         { regionId: 1700, name: "제주특별자치도", level: 1, parentId: null },
-        { regionId: 1701, name: "제주시", level: 2, parentId: 1700 },
-        { regionId: 1702, name: "서귀포시", level: 2, parentId: 1700 },
+        { regionId: 1701, name: "서귀포시", level: 2, parentId: 1700 },
+        { regionId: 1702, name: "제주시", level: 2, parentId: 1700 },
       ],
     });
   }
@@ -2655,19 +2955,171 @@ module.exports = function createMiddleware(db) {
     const body = req.body || {};
     const campaignId = Date.now();
 
+    // ID → 이름 역조회
+    const CATEGORY_MAP = { 1: "식품", 2: "뷰티", 3: "가전", 4: "유아동", 5: "여가", 6: "서비스", 7: "생활", 8: "패션", 9: "가구", 10: "디지털", 11: "문화", 12: "반려동물", 13: "기타" };
+    const CHANNEL_MAP = { 1: "NAVER_BLOG", 2: "NAVER_CLIP", 3: "INSTAGRAM", 4: "INSTAGRAM_REELS", 5: "YOUTUBE", 6: "YOUTUBE_SHORTS" };
+    const categoryId = Number(body.categoryId) || 1;
+    const channelId = Number(body.requiredPlatformId) || 1;
+    const categoryName = CATEGORY_MAP[categoryId] || "기타";
+    const channelName = CHANNEL_MAP[channelId] || "NAVER_BLOG";
+    const campaignType = body.type || "DELIVERY";
+
+    // multer가 파싱한 파일 → buffer를 data URL로 변환하여 저장
+    console.log("[POST /partner/campaign/create] req.files:", req.files ? req.files.map(function(f) { return { fieldname: f.fieldname, size: f.size, mimetype: f.mimetype, bufferLen: f.buffer ? f.buffer.length : 0 }; }) : "NO FILES");
+    console.log("[POST /partner/campaign/create] content-type:", req.headers["content-type"]);
+    const thumbFile = req.files && req.files.find(function(f) { return f.fieldname === "thumbnailImage"; });
+    const detailFiles = req.files ? req.files.filter(function(f) { return f.fieldname === "detailImages"; }) : [];
+    const defaultThumb = "/images/main/campaign_img/eximg_1.png";
+    // multer가 파싱한 파일: buffer가 비어있으면(0바이트) 기본 이미지 사용
+    const thumbnailUrl = (thumbFile && thumbFile.buffer && thumbFile.buffer.length > 0)
+      ? "data:" + thumbFile.mimetype + ";base64," + thumbFile.buffer.toString("base64")
+      : (body.thumbnailUrl || defaultThumb);
+    const detailImageUrls = detailFiles.length > 0
+      ? detailFiles.filter(function(f) { return f.buffer && f.buffer.length > 0; }).map(function(f) { return "data:" + f.mimetype + ";base64," + f.buffer.toString("base64"); })
+      : [];
+
+    // 지역 정보 조회 (VISIT 전용) — API 09 regions와 동일한 ID 체계
+    var regionId = Number(body.regionId) || null;
+    var regionObj = null;
+    if (regionId) {
+      // level 1 (시/도) ID → name 매핑
+      var REGION_L1 = { 100: "서울특별시", 200: "인천광역시", 300: "경기도", 400: "강원특별자치도", 500: "대전광역시", 600: "세종특별자치시", 700: "충청북도", 800: "충청남도", 900: "전라북도", 1000: "전라남도", 1100: "광주광역시", 1200: "대구광역시", 1300: "경상북도", 1400: "경상남도", 1500: "부산광역시", 1600: "울산광역시", 1700: "제주특별자치도" };
+      // level 2 (시/구/군) ID → name 매핑 — API 09 regions와 동일
+      var REGION_L2 = {
+        101:"강북구",102:"관악구",103:"구로구",104:"노원구",105:"동대문구",106:"마포구",107:"서초구",108:"성북구",109:"양천구",110:"용산구",111:"강남구",112:"강서구",113:"광진구",114:"금천구",115:"도봉구",116:"동작구",117:"서대문구",118:"성동구",119:"송파구",120:"영등포구",121:"은평구",122:"종로구",123:"중구",124:"중랑구",125:"강동구",
+        201:"강화군",202:"검단구",203:"계양구",204:"남구",205:"남동구",206:"미추홀구",207:"부평구",208:"서구",209:"연수구",210:"영종구",211:"옹진군",212:"제물포구",
+        301:"고양시",302:"광명시",303:"구리시",304:"김포시",305:"동두천시",306:"성남시",307:"시흥시",308:"안성시",309:"양주시",310:"여주시",311:"가평군",312:"과천시",313:"광주시",314:"군포시",315:"남양주시",316:"부천시",317:"수원시",318:"안산시",319:"안양시",320:"양평군",321:"연천군",322:"오산시",323:"용인시",324:"의왕시",325:"의정부시",326:"이천시",327:"파주시",328:"평택시",329:"포천시",330:"하남시",331:"화성시",
+        401:"강릉시",402:"고성군",403:"동해시",404:"삼척시",405:"속초시",406:"양구군",407:"양양군",408:"영월군",409:"원주시",410:"인제군",411:"정선군",412:"철원군",413:"춘천시",414:"태백시",415:"평창군",416:"홍천군",417:"화천군",418:"횡성군",
+        501:"대덕구",502:"동구",503:"서구",504:"유성구",505:"중구",
+        601:"세종시",
+        701:"제천시",702:"청주시",703:"충주시",704:"괴산군",705:"단양군",706:"보은군",707:"영동군",708:"옥천군",709:"음성군",710:"증평군",711:"진천군",
+        801:"공주시",802:"논산시",803:"당진시",804:"보령시",805:"서산시",806:"아산시",807:"천안시",808:"금산군",809:"부여군",810:"서천군",811:"예산군",812:"청양군",813:"태안군",814:"홍성군",
+        901:"군산시",902:"김제시",903:"남원시",904:"전주시",905:"정읍시",906:"익산시",907:"고창군",908:"무주군",909:"부안군",910:"순창군",911:"완주군",912:"임실군",913:"장수군",914:"진안군",
+        1001:"광양시",1002:"나주시",1003:"목포시",1004:"순천시",1005:"여수시",1006:"강진군",1007:"고흥군",1008:"곡성군",1009:"구례군",1010:"담양군",1011:"무안군",1012:"보성군",1013:"신안군",1014:"영광군",1015:"영암군",1016:"완도군",1017:"장성군",1018:"장흥군",1019:"진도군",1020:"함평군",1021:"해남군",1022:"화순군",
+        1101:"광산구",1102:"남구",1103:"동구",1104:"북구",1105:"서구",
+        1201:"남구",1202:"달서구",1203:"동구",1204:"북구",1205:"서구",1206:"수성구",1207:"중구",1208:"달성군",
+        1301:"경산시",1302:"경주시",1303:"구미시",1304:"김천시",1305:"문경시",1306:"상주시",1307:"안동시",1308:"영주시",1309:"영천시",1310:"포항시",1311:"고령군",1312:"군위군",1313:"봉화군",1314:"성주군",1315:"영덕군",1316:"영양군",1317:"예천군",1318:"울릉군",1319:"울진군",1320:"의성군",1321:"청도군",1322:"청송군",1323:"칠곡군",
+        1401:"거제시",1402:"김해시",1403:"밀양시",1404:"사천시",1405:"양산시",1406:"진주시",1407:"창원시",1408:"통영시",1409:"거창군",1410:"고성군",1411:"남해군",1412:"산청군",1413:"의령군",1414:"창녕군",1415:"하동군",1416:"함안군",1417:"함양군",1418:"합천군",
+        1501:"강서구",1502:"금정구",1503:"기장군",1504:"남구",1505:"동구",1506:"동래구",1507:"부산진구",1508:"북구",1509:"사상구",1510:"사하구",1511:"서구",1512:"수영구",1513:"연제구",1514:"영도구",1515:"중구",1516:"해운대구",
+        1601:"남구",1602:"동구",1603:"북구",1604:"중구",1605:"울주군",
+        1701:"서귀포시",1702:"제주시"
+      };
+      if (REGION_L1[regionId]) {
+        regionObj = { regionId: regionId, name: REGION_L1[regionId], level: 1, parentId: null };
+      } else {
+        // level 2 — parentId 계산: 100단위 내림
+        var parentId = Math.floor(regionId / 100) * 100;
+        var regionName = REGION_L2[regionId] || body.subRegion || ("지역 " + regionId);
+        var parentName = REGION_L1[parentId] || "";
+        regionObj = { regionId: regionId, name: regionName, level: 2, parentId: parentId, parentName: parentName };
+      }
+    }
+
     // json-server DB(campaigns 컬렉션)에도 저장 → 캠페인 관리/상세 페이지에서 조회 가능
-    // body 전체를 저장하되 필수 필드만 기본값 보장
     const now = new Date().toISOString();
+    // 날짜 기반 status 결정 (문자열 비교로 타임존 이슈 방지)
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const rsStr = (body.recruitStartAt || "").slice(0, 10);
+    const reStr = (body.recruitEndAt || "").slice(0, 10);
+    const csStr = (body.contentStartAt || "").slice(0, 10);
+    const ceStr = (body.contentEndAt || "").slice(0, 10);
+    let initialStatus = "REGISTERING";
+    if (ceStr && ceStr < todayStr) {
+      initialStatus = "CLOSED";
+    } else if (csStr && csStr <= todayStr) {
+      initialStatus = "PURCHASING";
+    } else if (reStr && reStr < todayStr) {
+      initialStatus = "SELECTING";
+    } else if (rsStr && rsStr <= todayStr) {
+      initialStatus = "RECRUITING";
+    }
+    console.log("[CAMPAIGN CREATE] dates:", { todayStr, rsStr, reStr, csStr, ceStr, initialStatus });
     const dbRecord = {
-      ...body,
       id: campaignId,
       campaignId,
       partner_id: body.partner_id || currentSession.partnerId || 501,
-      status: body.status || "REGISTERING",
+      type: campaignType,
+      campaignType: campaignType,
+      status: initialStatus,
+      isEmergency: body.is_urgent === "true" || body.is_urgent === true,
+      title: body.title || "새 캠페인",
+      // 이미지
+      thumbnailUrl: thumbnailUrl,
+      thumbnail: { url: thumbnailUrl },
+      detailImages: detailImageUrls,
+      // 카테고리/플랫폼
+      category: { categoryId: categoryId, categoryName: categoryName },
+      platform: channelName,
+      requiredPlatform: { channelId: channelId, channelName: channelName },
+      // 지역 (VISIT 전용)
+      region: regionObj,
+      // 모집 정보
+      recruitLimit: Number(body.recruitLimit) || 10,
+      recruitCount: Number(body.recruitLimit) || 10,
+      recruitStartAt: body.recruitStartAt || now,
+      recruitEndAt: body.recruitEndAt || now,
+      applicationStartDate: body.recruitStartAt || now,
+      applicationEndDate: body.recruitEndAt || now,
+      campaignStartDate: body.contentStartAt || now,
+      campaignEndDate: body.contentEndAt || now,
+      recruit: {
+        recruitLimit: Number(body.recruitLimit) || 10,
+        recruitStartAt: body.recruitStartAt || now,
+        recruitEndAt: body.recruitEndAt || now,
+        selectedAt: body.selectedAt || now,
+        contentStartAt: body.contentStartAt || now,
+        contentEndAt: body.contentEndAt || now,
+      },
+      content: {
+        contentStartAt: body.contentStartAt || now,
+        contentEndAt: body.contentEndAt || now,
+      },
+      // 포인트
+      reward: {
+        extraRewardPoint: Number(body.extraRewardPoint) || 0,
+        paymentRewardPoint: Number(body.paymentRewardPoint) || 0,
+      },
+      // 미션 설정
+      keywordPolicy: {
+        keyword: body.keyword || "",
+        minTextLength: Number(body.minTextLength) || 0,
+        minPhotoCount: Number(body.minImageCount) || 0,
+        minVideoCount: Number(body.videoCount) || 0,
+        minVideoDuration: Number(body.videoDuration) || 0,
+        requireBodyLink: body.requireLinkAttachment === "true" || body.requireLinkAttachment === true,
+        requireKeywordAttachment: body.requireKeywordAttachment === "true" || body.requireKeywordAttachment === true,
+      },
+      // 참여/제출 옵션
+      adultOnly: body.adultOnly === "true" || body.adultOnly === true,
+      allowReParticipation: body.allowReParticipation === "true" || body.allowReParticipation === true,
+      allowLateSubmission: body.allowLateSubmission === "true" || body.allowLateSubmission === true,
+      // 미션형 전용
+      requireContentLink: body.requireContentLink === "true" || body.requireContentLink === true,
+      requireContentImage: body.requireContentImage === "true" || body.requireContentImage === true,
+      // 구매평 전용
+      purchasePeriod: body.purchasePeriod || "",
+      purchaseLink: body.promotionUrl || "",
+      purchaseInfo: body.promotionUrl ? { purchaseLink: body.promotionUrl || "", purchasePoint: Number(body.paymentRewardPoint) || 0 } : null,
+      description: body.description || "",
+      promotionUrl: body.promotionUrl || "",
+      promotionLink: body.promotionUrl || "",
+      keyword: body.keyword || "",
+      notification: body.notification || "",
+      visitAddress: body.visitAddress || "",
+      visitZipCode: body.visitZipCode || "",
+      visitBaseAddress: body.visitBaseAddress || "",
+      visitDetailAddress: body.visitDetailAddress || "",
+      addressDetail: body.addressDetail || "",
+      addressGuide: body.addressDetail || "",
+      visitLink: body.visitLink || "",
+      contact_phone: body.contact_phone || "",
+      ftc_agreement: body.ftc_agreement === "true" || body.ftc_agreement === true,
       appliedCount: 0,
+      currentApplicants: 0,
+      selectedCount: 0,
+      metrics: { appliedCount: 0, selectedCount: 0, applicationRate: 0 },
       created_at: now,
       updated_at: now,
-      metrics: body.metrics || { appliedCount: 0, selectedCount: 0, applicationRate: 0 },
     };
     pushCampaign(dbRecord);
 
@@ -2677,21 +3129,17 @@ module.exports = function createMiddleware(db) {
       campaign: {
         campaignId,
         partnerId: 501,
-        type: body.type || "DELIVERY",
+        type: campaignType,
         status: "REGISTERING",
         title: body.title || "새 캠페인",
-        category: body.category || { categoryId: 1, categoryName: "식품" },
-        requiredPlatform: body.requiredPlatform || { channelId: 1, channelName: "NAVER_BLOG" },
-        recruit: body.recruit || {
-          recruitLimit: 10,
-          recruitStartAt: new Date().toISOString(),
-          recruitEndAt: new Date().toISOString(),
-          selectedAt: new Date().toISOString(),
-          contentStartAt: new Date().toISOString(),
-          contentEndAt: new Date().toISOString(),
-        },
-        reward: body.reward || { extraRewardPoint: 0, paymentRewardPoint: 0 },
-        regAt: new Date().toISOString(),
+        category: { categoryId: categoryId, categoryName: categoryName },
+        requiredPlatform: { channelId: channelId, channelName: channelName },
+        thumbnail: { attachmentId: 1, fileId: 1, url: thumbnailUrl },
+        detailImages: dbRecord.detailImages,
+        recruit: dbRecord.recruit,
+        reward: dbRecord.reward,
+        keywordPolicy: dbRecord.keywordPolicy,
+        regAt: now,
       },
       partner: { partnerId: 501, currentPoint: 400000 },
       next: { action: "REDIRECT", redirectPath: "/partner/campaign_management" },
@@ -2703,6 +3151,11 @@ module.exports = function createMiddleware(db) {
   if (req.method === "POST" && (req.path === "/partner/campaign/draft" || (req.originalUrl && req.originalUrl.startsWith("/partner/campaign/draft")))) {
     const body = req.body || {};
     const campaignId = Date.now();
+
+    // categoryId → categoryName 역조회
+    const CATEGORY_MAP = { 1: "식품", 2: "뷰티", 3: "가전", 4: "유아동", 5: "여가", 6: "서비스", 7: "생활", 8: "패션", 9: "가구", 10: "디지털", 11: "문화", 12: "반려동물", 13: "기타" };
+    const CHANNEL_MAP = { 1: "NAVER_BLOG", 2: "NAVER_CLIP", 3: "INSTAGRAM", 4: "INSTAGRAM_REELS", 5: "YOUTUBE", 6: "YOUTUBE_SHORTS" };
+
     // 인메모리에 draft 데이터 저장 (API 12 불러오기용)
     draftStore[campaignId] = {
       campaignId,
@@ -2711,8 +3164,10 @@ module.exports = function createMiddleware(db) {
       status: "DRAFT",
       title: body.title || "",
       description: body.description || undefined,
-      category: body.categoryId ? { categoryId: Number(body.categoryId), categoryName: "" } : null,
-      requiredPlatform: body.requiredPlatformId ? { channelId: Number(body.requiredPlatformId), channelName: "" } : undefined,
+      category: body.categoryId ? { categoryId: Number(body.categoryId), categoryName: CATEGORY_MAP[Number(body.categoryId)] || "기타" } : null,
+      requiredPlatform: body.requiredPlatformId ? { channelId: Number(body.requiredPlatformId), channelName: CHANNEL_MAP[Number(body.requiredPlatformId)] || "NAVER_BLOG" } : undefined,
+      thumbnail: body.thumbnailUrl ? { attachmentId: 1, fileId: 1, url: body.thumbnailUrl } : undefined,
+      detailImages: body.detailImageUrls ? body.detailImageUrls.map((url, i) => ({ attachmentId: i + 1, fileId: i + 1, url, displayOrder: i + 1 })) : undefined,
       recruit: (body.recruitLimit || body.recruitStartAt) ? {
         recruitLimit: Number(body.recruitLimit) || 0,
         recruitStartAt: body.recruitStartAt || "",
@@ -2728,6 +3183,14 @@ module.exports = function createMiddleware(db) {
       promotionUrl: body.promotionUrl || undefined,
       keyword: body.keyword || undefined,
       notification: body.notification || undefined,
+      visitAddress: body.visitAddress || undefined,
+      visitZipCode: body.visitZipCode || undefined,
+      visitBaseAddress: body.visitBaseAddress || undefined,
+      visitDetailAddress: body.visitDetailAddress || undefined,
+      addressDetail: body.addressDetail || undefined,
+      visitLink: body.visitLink || undefined,
+      region: body.region || undefined,
+      subRegion: body.subRegion || undefined,
       savedAt: new Date().toISOString(),
     };
     return res.status(200).json({
@@ -2785,7 +3248,7 @@ module.exports = function createMiddleware(db) {
         description: campaign.description || "",
         category: campaign.category || { categoryId: 1, categoryName: "식품" },
         requiredPlatform: campaign.requiredPlatform || null,
-        region: campaign.region ? { regionId: 110, name: campaign.region, level: 2, parentId: 100 } : null,
+        region: campaign.region && typeof campaign.region === "object" ? campaign.region : (campaign.region ? { regionId: 0, name: String(campaign.region), level: 2, parentId: null } : null),
         thumbnail: campaign.thumbnail || { attachmentId: 1, fileId: 1, url: campaign.thumbnailUrl || "" },
         detailImages: (campaign.detailImages || []).map((img, i) => (
           typeof img === "string"
@@ -2806,8 +3269,10 @@ module.exports = function createMiddleware(db) {
         notification: campaign.notification || "",
         visitAddress: campaign.visitAddress || campaign.visitBaseAddress || "",
         visitZipCode: campaign.visitZipCode || "",
+        visitBaseAddress: campaign.visitBaseAddress || "",
         visitDetailAddress: campaign.visitDetailAddress || "",
         addressGuide: campaign.addressGuide || campaign.addressDetail || "",
+        visitLink: campaign.visitLink || "",
         keywordPolicy: campaign.keywordPolicy || null,
         contact_phone: campaign.contact_phone || "",
         isEmergency: campaign.isEmergency || false,
@@ -2826,24 +3291,112 @@ module.exports = function createMiddleware(db) {
       categories: [
         { categoryId: 1, categoryName: "식품" },
         { categoryId: 2, categoryName: "뷰티" },
-        { categoryId: 3, categoryName: "패션" },
-        { categoryId: 4, categoryName: "생활" },
-        { categoryId: 5, categoryName: "카페" },
-        { categoryId: 6, categoryName: "유아동" },
+        { categoryId: 3, categoryName: "가전" },
+        { categoryId: 4, categoryName: "유아동" },
+        { categoryId: 5, categoryName: "여가" },
+        { categoryId: 6, categoryName: "서비스" },
+        { categoryId: 7, categoryName: "생활" },
+        { categoryId: 8, categoryName: "패션" },
+        { categoryId: 9, categoryName: "가구" },
+        { categoryId: 10, categoryName: "디지털" },
+        { categoryId: 11, categoryName: "문화" },
+        { categoryId: 12, categoryName: "반려동물" },
+        { categoryId: 13, categoryName: "기타" },
       ],
       channels: [
         { channelId: 1, channelName: "NAVER_BLOG" },
         { channelId: 2, channelName: "NAVER_CLIP" },
         { channelId: 3, channelName: "INSTAGRAM" },
-        { channelId: 4, channelName: "YOUTUBE" },
+        { channelId: 4, channelName: "INSTAGRAM_REELS" },
+        { channelId: 5, channelName: "YOUTUBE" },
+        { channelId: 6, channelName: "YOUTUBE_SHORTS" },
       ],
       regions: [
-        { regionId: 100, name: "전국", level: 1, parentId: null },
-        { regionId: 110, name: "서울", level: 1, parentId: null },
-        { regionId: 111, name: "서울/강남", level: 2, parentId: 110 },
-        { regionId: 112, name: "서울/성수", level: 2, parentId: 110 },
-        { regionId: 120, name: "경기", level: 1, parentId: null },
-        { regionId: 121, name: "경기/수원", level: 2, parentId: 120 },
+        { regionId: 100, name: "서울특별시", level: 1, parentId: null },
+        { regionId: 101, name: "강북구", level: 2, parentId: 100 },
+        { regionId: 102, name: "관악구", level: 2, parentId: 100 },
+        { regionId: 103, name: "구로구", level: 2, parentId: 100 },
+        { regionId: 104, name: "노원구", level: 2, parentId: 100 },
+        { regionId: 105, name: "동대문구", level: 2, parentId: 100 },
+        { regionId: 106, name: "마포구", level: 2, parentId: 100 },
+        { regionId: 107, name: "서초구", level: 2, parentId: 100 },
+        { regionId: 108, name: "성북구", level: 2, parentId: 100 },
+        { regionId: 109, name: "양천구", level: 2, parentId: 100 },
+        { regionId: 110, name: "용산구", level: 2, parentId: 100 },
+        { regionId: 111, name: "강남구", level: 2, parentId: 100 },
+        { regionId: 112, name: "강서구", level: 2, parentId: 100 },
+        { regionId: 113, name: "광진구", level: 2, parentId: 100 },
+        { regionId: 114, name: "금천구", level: 2, parentId: 100 },
+        { regionId: 115, name: "도봉구", level: 2, parentId: 100 },
+        { regionId: 116, name: "동작구", level: 2, parentId: 100 },
+        { regionId: 117, name: "서대문구", level: 2, parentId: 100 },
+        { regionId: 118, name: "성동구", level: 2, parentId: 100 },
+        { regionId: 119, name: "송파구", level: 2, parentId: 100 },
+        { regionId: 120, name: "영등포구", level: 2, parentId: 100 },
+        { regionId: 121, name: "은평구", level: 2, parentId: 100 },
+        { regionId: 122, name: "종로구", level: 2, parentId: 100 },
+        { regionId: 123, name: "중구", level: 2, parentId: 100 },
+        { regionId: 124, name: "중랑구", level: 2, parentId: 100 },
+        { regionId: 125, name: "강동구", level: 2, parentId: 100 },
+        { regionId: 200, name: "인천광역시", level: 1, parentId: null },
+        { regionId: 201, name: "강화군", level: 2, parentId: 200 },
+        { regionId: 202, name: "검단구", level: 2, parentId: 200 },
+        { regionId: 203, name: "계양구", level: 2, parentId: 200 },
+        { regionId: 204, name: "남구", level: 2, parentId: 200 },
+        { regionId: 205, name: "남동구", level: 2, parentId: 200 },
+        { regionId: 206, name: "미추홀구", level: 2, parentId: 200 },
+        { regionId: 207, name: "부평구", level: 2, parentId: 200 },
+        { regionId: 208, name: "서구", level: 2, parentId: 200 },
+        { regionId: 209, name: "연수구", level: 2, parentId: 200 },
+        { regionId: 210, name: "영종구", level: 2, parentId: 200 },
+        { regionId: 211, name: "옹진군", level: 2, parentId: 200 },
+        { regionId: 212, name: "제물포구", level: 2, parentId: 200 },
+        { regionId: 300, name: "경기도", level: 1, parentId: null },
+        { regionId: 301, name: "고양시", level: 2, parentId: 300 },
+        { regionId: 302, name: "광명시", level: 2, parentId: 300 },
+        { regionId: 303, name: "구리시", level: 2, parentId: 300 },
+        { regionId: 304, name: "김포시", level: 2, parentId: 300 },
+        { regionId: 305, name: "동두천시", level: 2, parentId: 300 },
+        { regionId: 306, name: "성남시", level: 2, parentId: 300 },
+        { regionId: 307, name: "시흥시", level: 2, parentId: 300 },
+        { regionId: 308, name: "안성시", level: 2, parentId: 300 },
+        { regionId: 309, name: "양주시", level: 2, parentId: 300 },
+        { regionId: 310, name: "여주시", level: 2, parentId: 300 },
+        { regionId: 311, name: "가평군", level: 2, parentId: 300 },
+        { regionId: 312, name: "과천시", level: 2, parentId: 300 },
+        { regionId: 313, name: "광주시", level: 2, parentId: 300 },
+        { regionId: 314, name: "군포시", level: 2, parentId: 300 },
+        { regionId: 315, name: "남양주시", level: 2, parentId: 300 },
+        { regionId: 316, name: "부천시", level: 2, parentId: 300 },
+        { regionId: 317, name: "수원시", level: 2, parentId: 300 },
+        { regionId: 318, name: "안산시", level: 2, parentId: 300 },
+        { regionId: 319, name: "안양시", level: 2, parentId: 300 },
+        { regionId: 320, name: "양평군", level: 2, parentId: 300 },
+        { regionId: 321, name: "연천군", level: 2, parentId: 300 },
+        { regionId: 322, name: "오산시", level: 2, parentId: 300 },
+        { regionId: 323, name: "용인시", level: 2, parentId: 300 },
+        { regionId: 324, name: "의왕시", level: 2, parentId: 300 },
+        { regionId: 325, name: "의정부시", level: 2, parentId: 300 },
+        { regionId: 326, name: "이천시", level: 2, parentId: 300 },
+        { regionId: 327, name: "파주시", level: 2, parentId: 300 },
+        { regionId: 328, name: "평택시", level: 2, parentId: 300 },
+        { regionId: 329, name: "포천시", level: 2, parentId: 300 },
+        { regionId: 330, name: "하남시", level: 2, parentId: 300 },
+        { regionId: 331, name: "화성시", level: 2, parentId: 300 },
+        { regionId: 400, name: "강원특별자치도", level: 1, parentId: null },
+        { regionId: 500, name: "대전광역시", level: 1, parentId: null },
+        { regionId: 600, name: "세종특별자치시", level: 1, parentId: null },
+        { regionId: 700, name: "충청북도", level: 1, parentId: null },
+        { regionId: 800, name: "충청남도", level: 1, parentId: null },
+        { regionId: 900, name: "전라북도", level: 1, parentId: null },
+        { regionId: 1000, name: "전라남도", level: 1, parentId: null },
+        { regionId: 1100, name: "광주광역시", level: 1, parentId: null },
+        { regionId: 1200, name: "대구광역시", level: 1, parentId: null },
+        { regionId: 1300, name: "경상북도", level: 1, parentId: null },
+        { regionId: 1400, name: "경상남도", level: 1, parentId: null },
+        { regionId: 1500, name: "부산광역시", level: 1, parentId: null },
+        { regionId: 1600, name: "울산광역시", level: 1, parentId: null },
+        { regionId: 1700, name: "제주특별자치도", level: 1, parentId: null },
       ],
     });
   }
@@ -2874,6 +3427,30 @@ module.exports = function createMiddleware(db) {
           if (cleanBody.promotionUrl && !cleanBody.promotionLink) {
             cleanBody.promotionLink = cleanBody.promotionUrl;
           }
+
+          // 날짜 변경 시 status 재계산 (등록 로직과 동일)
+          const existingCampaign = campaign.value();
+          const todayStr = new Date().toISOString().slice(0, 10);
+          const rsStr = (cleanBody.recruitStartAt || existingCampaign.recruitStartAt || (existingCampaign.recruit && existingCampaign.recruit.recruitStartAt) || "").slice(0, 10);
+          const reStr = (cleanBody.recruitEndAt || existingCampaign.recruitEndAt || (existingCampaign.recruit && existingCampaign.recruit.recruitEndAt) || "").slice(0, 10);
+          const csStr = (cleanBody.contentStartAt || (existingCampaign.content && existingCampaign.content.contentStartAt) || "").slice(0, 10);
+          const ceStr = (cleanBody.contentEndAt || (existingCampaign.content && existingCampaign.content.contentEndAt) || "").slice(0, 10);
+          let newStatus = "REGISTERING";
+          if (ceStr && ceStr < todayStr) {
+            newStatus = "CLOSED";
+          } else if (csStr && csStr <= todayStr) {
+            newStatus = "PURCHASING";
+          } else if (reStr && reStr < todayStr) {
+            newStatus = "SELECTING";
+          } else if (rsStr && rsStr <= todayStr) {
+            newStatus = "RECRUITING";
+          }
+          // EMERGENCY(취소)는 유지
+          if (existingCampaign.status !== "EMERGENCY" && existingCampaign.status !== "CANCELLED") {
+            cleanBody.status = newStatus;
+          }
+          console.log("[CAMPAIGN EDIT] status recalc:", { todayStr, rsStr, reStr, csStr, ceStr, oldStatus: existingCampaign.status, newStatus: cleanBody.status });
+
           campaign.assign(cleanBody).write();
           updated = campaign.value();
         }
@@ -3166,18 +3743,20 @@ module.exports = function createMiddleware(db) {
 
   // ============ GET /partner/campaign_management/:status ============
   // API 14: 캠페인 상태별 조회
-  if (req.method === "GET" && req.path.match(/^\/partner\/campaign_management\/[A-Za-z]+$/)) {
+  if (req.method === "GET" && req.path.startsWith("/partner/campaign_management/")) {
+    console.log("[API 14 HIT] path:", req.path, "method:", req.method);
     const pathStatus = req.path.split("/").pop();
-    const campaigns = req.routerDb
-      ? req.routerDb.get("campaigns").value()
-      : require("./db.json").campaigns || [];
+    const campaigns = getCampaigns();
     const partnerId = currentSession.partnerId;
     const allCampaigns = campaigns
       .filter((c) => c.partner_id === partnerId || c.partner_id === currentSession.userId || c.partner_id === 1)
       .map(transformCampaign);
 
+    console.log("[API 14] pathStatus:", pathStatus, "total campaigns:", allCampaigns.length, "statuses:", allCampaigns.map(c => c.status));
+
     // status별 필터링
     let filtered = filterByApiStatus(allCampaigns, pathStatus);
+    console.log("[API 14] filtered count:", filtered.length);
 
     // type 필터
     if (req.query.type) {
@@ -3224,6 +3803,18 @@ module.exports = function createMiddleware(db) {
   // API 17: 캠페인 삭제
   if (req.method === "DELETE" && req.path.match(/^\/partner\/campaign\/\d+$/)) {
     const campaignId = Number(req.path.split("/").pop());
+    if (db) {
+      try {
+        // 삭제가 아닌 status를 EMERGENCY(취소)로 변경 → 취소 탭에 표시
+        const campaign = db.get("campaigns").find({ id: campaignId }).value();
+        if (campaign) {
+          db.get("campaigns").find({ id: campaignId }).assign({
+            status: "EMERGENCY",
+            updated_at: new Date().toISOString(),
+          }).write();
+        }
+      } catch (_e) { /* fallback */ }
+    }
     return res.status(200).json({
       result: "OK",
       generatedAt: new Date().toISOString(),
@@ -3704,26 +4295,14 @@ module.exports = function createMiddleware(db) {
     const statusFilter = (req.query.status || "ALL").toUpperCase();
     const sort = (req.query.sort || "LATEST").toUpperCase();
 
-    // 캠페인 정보 조회 (campaigns 컬렉션에서)
+    // 캠페인 정보 조회 (campaigns 단일 테이블에서)
     const allCampaigns = db.get("campaigns").value() || [];
     const campaign = allCampaigns.find((c) => c.id === campaignId || c.id === String(campaignId));
 
-    // partner_campaigns에서도 찾기 (id가 문자열일 수 있음)
-    const allPartnerCampaigns = db.get("partner_campaigns").value() || [];
-    const pCampaign = allPartnerCampaigns.find((c) => c.id == campaignId || String(c.id) === String(campaignId));
-
-    // 캠페인 타입/플랫폼 결정
-    const typeMap = { DELIVERY: "delivery", VISIT: "visit", PURCHASE_REVIEW: "purchase", REPORTER: "reporter", MISSION: "mission" };
+    // 캠페인 상태 정규화 맵
     const statusNorm = { SCHEDULED: "REGISTERING", approved: "REGISTERING", IN_PROGRESS: "SELECTING", SELECTED: "PURCHASING", REVIEW: "PURCHASING", COMPLETED: "CLOSED", CANCELLED: "EMERGENCY" };
-    // requiredPlatform.channelName → API platform 코드 매핑
-    const channelNameToPlatform = {
-      NAVER_BLOG: "naver_blog", NAVER_CLIP: "naver_clip",
-      INSTAGRAM: "instagram", YOUTUBE: "youtube",
-      REELS: "reels", SHORTS: "shorts",
-    };
-
     // 캠페인 유형 코드 (백엔드: VISIT, PURCHASE 등 대문자)
-    const typeMapUpper = { DELIVERY: "DELIVERY", VISIT: "VISIT", PURCHASE_REVIEW: "PURCHASE", REPORTER: "REPORTER", MISSION: "MISSION" };
+    const typeMapUpper = { DELIVERY: "DELIVERY", VISIT: "VISIT", PURCHASE: "PURCHASE", PURCHASE_REVIEW: "PURCHASE", REPORTER: "REPORTER", MISSION: "MISSION" };
 
     let campaignInfo;
     if (campaign) {
@@ -3759,37 +4338,6 @@ module.exports = function createMiddleware(db) {
         region: campaign.region || undefined,
         subRegion: campaign.subRegion || undefined,
       };
-    } else if (pCampaign && pCampaign.campaignInfo) {
-      const ci = pCampaign.campaignInfo;
-      const typeReverseMap = { "배송형": "DELIVERY", "방문형": "VISIT", "구매평": "PURCHASE", "기자단": "REPORTER", "미션형": "MISSION" };
-      const statusReverseMap = { "대기 중": "REGISTERING", "모집 중": "RECRUITING", "선정 중": "SELECTING", "진행 중": "PURCHASING", "종료": "CLOSED", "취소": "EMERGENCY" };
-      // brandName/channel → 플랫폼 코드 매핑
-      const brandToPlatform = {
-        "네이버 블로그": "NAVER_BLOG", "네이버블로그": "NAVER_BLOG",
-        "네이버 클립": "NAVER_CLIP", "네이버클립": "NAVER_CLIP",
-        "인스타그램": "INSTAGRAM", "유튜브": "YOUTUBE",
-        "릴스": "REELS", "숏츠": "SHORTS",
-      };
-      const channelSource = ci.brandName || ci.channel || "네이버 블로그";
-      campaignInfo = {
-        campaignId: campaignId,
-        title: ci.title || "",
-        type: typeReverseMap[ci.campaignType] || "DELIVERY",
-        status: statusReverseMap[ci.status] || "RECRUITING",
-        recruitLimit: ci.totalCount || 10,
-        totalApplied: ci.recruitedCount || 0,
-        totalSelected: 0,
-        totalCanceled: 0,
-        recruitStartAt: (ci.recruitmentPeriod || "").split(" ~ ")[0] || "",
-        recruitEndAt: (ci.recruitmentPeriod || "").split(" ~ ")[1] || "",
-        thumbnailUrl: ci.image || "",
-        platform: brandToPlatform[channelSource] || "NAVER_BLOG",
-        category: ci.category || "",
-        campaignStartAt: (ci.registrationPeriod || "").split(" ~ ")[0] || "",
-        campaignEndAt: (ci.registrationPeriod || "").split(" ~ ")[1] || "",
-        announcementDate: ci.announcementDate || "",
-        points: ci.additionalPoint || ci.point || 0,
-      };
     } else {
       // 캠페인 없으면 기본 정보 생성
       campaignInfo = {
@@ -3816,51 +4364,6 @@ module.exports = function createMiddleware(db) {
     // 신청내역 조회 (campaign_id가 문자열/숫자 모두 가능)
     const allApplications = db.get("campaign_applications").value() || [];
     let applications = allApplications.filter((a) => a.campaign_id == campaignId);
-
-    // campaign_applications에 없으면 partner_campaigns의 applicantData에서 생성
-    if (applications.length === 0 && pCampaign && pCampaign.applicantData) {
-      const applicants = pCampaign.applicantData.applicants || [];
-      const selectedApplicants = pCampaign.applicantData.selectedApplicants || [];
-      // applicants → APPLIED, selectedApplicants → SELECTED로 변환
-      let fakeId = campaignId * 1000;
-      applications = applicants.map((a) => ({
-        id: fakeId++,
-        campaign_id: campaignId,
-        reviewer_id: fakeId,
-        status: "APPLIED",
-        memo: a.memo || "",
-        apply_date: a.registrationDate || new Date().toISOString(),
-        _nickname: a.nickname,
-        _profileImage: a.profileImage,
-        _userType: a.userType,
-        _memberType: a.memberType,
-        _channel: a.channel,
-        _dailyVisits: a.dailyVisits,
-        _totalVisits: a.totalVisits,
-        _neighbors: a.neighbors,
-        _followers: a.followers,
-        _subscribers: a.subscribers,
-      }));
-      const selectedApps = selectedApplicants.map((a) => ({
-        id: fakeId++,
-        campaign_id: campaignId,
-        reviewer_id: fakeId,
-        status: "SELECTED",
-        memo: a.memo || "",
-        apply_date: a.registrationDate || new Date().toISOString(),
-        _nickname: a.nickname,
-        _profileImage: a.profileImage,
-        _userType: a.userType,
-        _memberType: a.memberType,
-        _channel: a.channel,
-        _dailyVisits: a.dailyVisits,
-        _totalVisits: a.totalVisits,
-        _neighbors: a.neighbors,
-        _followers: a.followers,
-        _subscribers: a.subscribers,
-      }));
-      applications = [...applications, ...selectedApps];
-    }
 
     // status 필터
     if (statusFilter === "APPLIED") {
@@ -3890,22 +4393,15 @@ module.exports = function createMiddleware(db) {
     const enrichedApps = applications.map((app) => {
       const reviewer = allReviewers.find((r) => r.id === app.reviewer_id);
       const channelName = campaignChannel; // 캠페인 플랫폼에 맞춤
-      // partner_campaigns에서 온 데이터는 _prefix 필드를 가짐 → 우선 사용
-      const hasPcData = !!app._nickname;
-      const metrics = hasPcData
-        ? { dailyVisits: app._dailyVisits || 0, totalVisits: app._totalVisits || 0, neighbors: app._neighbors || 0, followerCount: app._followers || app._subscribers || 0, subscribers: app._subscribers || 0 }
-        : (channelMetricsFn[channelName] || channelMetricsFn.NAVER_BLOG)(app.reviewer_id || 1);
+      const metrics = (channelMetricsFn[channelName] || channelMetricsFn.NAVER_BLOG)(app.reviewer_id || 1);
       const channelUrl = reviewer && reviewer.channel_details && reviewer.channel_details[0] ? reviewer.channel_details[0].url : "";
 
-      // partner_campaigns에서 온 데이터는 _prefix 필드 우선 사용
       const rId = app.reviewer_id || 1;
-      const userTypeLabelMap = { "리뷰어": "REVIEWER", "인플루언서": "INFLUENCER" };
-      const memberTypeLabelMap = { "모범 회원": "MODEL", "주의 회원": "CAUTION", "경고 회원": "WARNING", "이용 제한": "BLOCKED" };
 
       return {
         applicationId: app.id,
         reviewerId: rId,
-        reviewerName: hasPcData ? app._nickname : (reviewer ? reviewer.nickname : `리뷰어${rId}`),
+        reviewerName: reviewer ? reviewer.nickname : `리뷰어${rId}`,
         reviewerEmail: `reviewer${rId}@example.com`,
         reviewerPhone: `010-${String(1000 + (rId % 9000)).padStart(4, "0")}-${String(1000 + ((rId * 7) % 9000)).padStart(4, "0")}`,
         reviewerGrade: grades[rId % grades.length],
@@ -3924,9 +4420,9 @@ module.exports = function createMiddleware(db) {
         selectedAt: app.status === "SELECTED" ? (app.selected_at || new Date().toISOString()) : null,
         canceledAt: null,
         // 프론트엔드 UI 추가 필드
-        profileImage: hasPcData ? (app._profileImage || "/images/mypage/profile.svg") : ((reviewer && reviewer.profile_image) || "/images/mypage/profile.svg"),
-        userType: hasPcData ? (userTypeLabelMap[app._userType] || "REVIEWER") : (rId % 5 === 0 ? "INFLUENCER" : "REVIEWER"),
-        memberType: hasPcData ? (memberTypeLabelMap[app._memberType] || "MODEL") : memberTypes[rId % memberTypes.length],
+        profileImage: (reviewer && reviewer.profile_image) || "/images/mypage/profile.svg",
+        userType: rId % 5 === 0 ? "INFLUENCER" : "REVIEWER",
+        memberType: memberTypes[rId % memberTypes.length],
       };
     });
 
@@ -3947,12 +4443,12 @@ module.exports = function createMiddleware(db) {
       enrichedApps.sort((a, b) => (b.appliedAt || "").localeCompare(a.appliedAt || ""));
     }
 
-    // enrichedApps 기반으로 집계 (partner_campaigns 데이터 포함)
+    // enrichedApps 기반으로 집계
     const appliedCount = enrichedApps.filter((a) => a.status === "APPLIED").length;
     const selectedCount = enrichedApps.filter((a) => a.status === "SELECTED").length;
     const canceledCount = enrichedApps.filter((a) => a.status === "CANCELED").length;
 
-    // campaignInfo 집계값 반영 (단, partner_campaigns의 recruitedCount가 더 크면 그 값 사용)
+    // campaignInfo 집계값 반영
     campaignInfo.totalApplied = Math.max(appliedCount, campaignInfo.totalApplied || 0);
     campaignInfo.totalSelected = Math.max(selectedCount, campaignInfo.totalSelected || 0);
     campaignInfo.totalCanceled = canceledCount;
@@ -4147,6 +4643,58 @@ module.exports = function createMiddleware(db) {
   // 리뷰어 마이페이지 Mock (백엔드 R-28~R-32 응답 구조)
   // ====================================================================
 
+  // GET /api/v1/reviewer/mypage/profile → 프로필 조회 (R-28 실제 API 경로)
+  if (req.method === "GET" && req.path === "/api/v1/reviewer/mypage/profile") {
+    const reviewers = db ? (db.get("reviewers").value() || []) : [];
+    const r = reviewers.find(rv => rv.id === 2) || reviewers[0] || {};
+    const channels = r.channel_details || [];
+    const firstConnected = channels.find(ch => ch.status === "connected");
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      user: {
+        userId: r.id || 2, role: "REVIEWER", name: r.name || "김은지",
+        email: r.email || "kimeunji@gmail.com", phoneNum: r.phone || "010-2222-2222",
+        address: r.address || "", postNumber: parseInt(r.postal_code) || 0, status: "ACTIVE",
+        profileImage: r.profile_image ? { attachmentId: 1, fileId: 1, originalName: "profile.jpg", storedName: "profile.jpg", filePath: r.profile_image, fileType: "IMAGE" } : null,
+        lastLoginAt: new Date().toISOString()
+      },
+      reviewerProfile: {
+        reviewerId: r.number ? parseInt(r.number) : 2, grade: r.grade || "NORMAL",
+        sex: r.gender === "여성" ? "W" : "M", birthDate: "1998-03-03",
+        channel: firstConnected ? { channelId: 1, channelName: firstConnected.name, userChannelId: 10, externalId: firstConnected.url ? firstConnected.url.split("/").pop() : "", channelUrl: firstConnected.url } : null
+      }
+    });
+  }
+
+  // GET /api/v1/reviewer/mypage/edit → 내 정보 수정 조회 (R-31 실제 API 경로)
+  if (req.method === "GET" && req.path === "/api/v1/reviewer/mypage/edit") {
+    const reviewers = db ? (db.get("reviewers").value() || []) : [];
+    const r = reviewers.find(rv => rv.id === 2) || reviewers[0] || {};
+    return res.json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      user: { userId: r.id || 2, name: r.name || "김은지", email: r.email || "kimeunji@gmail.com", phoneNum: r.phone || "010-2222-2222", status: "ACTIVE", createdAt: r.join_date || "2025-06-01T00:00:00+09:00", lastLoginAt: new Date().toISOString(), profileImageUrl: r.profile_image || null },
+      address: r.address ? { zipCode: r.postal_code || "", address: r.address, addressDetail: r.detail_address || "" } : null,
+      bankAccount: r.bank ? { bankName: r.bank, accountNumber: r.account_number || "", accountHolder: r.account_holder || "" } : null,
+      reviewerProfile: { reviewerId: 2, grade: r.grade || "NORMAL", sex: r.gender === "여성" ? "FEMALE" : "MALE", birthDate: "1998-03-03" },
+      social: { kakaoId: null, naverAccountId: "naver_12345" }
+    });
+  }
+
+  // PUT /api/v1/reviewer/mypage/edit → 내 정보 수정 저장 (R-32 실제 API 경로)
+  if (req.method === "PUT" && req.path === "/api/v1/reviewer/mypage/edit") {
+    const body = req.body || {};
+    return res.json({
+      result: "UPDATED",
+      generatedAt: new Date().toISOString(),
+      userId: 2,
+      address: { zipCode: String(body.postNumber || ""), address: body.address || "", addressDetail: body.addressDetail || "" },
+      bankAccount: { bankAccountId: 7, bankName: body.bankName || "", accountNumber: body.accountNumber || "", accountHolder: body.accountHolder || "" },
+      residentRegNoMasked: body.residentRegNo ? body.residentRegNo.substring(0, 6) + "-***" : "",
+      updatedAt: new Date().toISOString()
+    });
+  }
+
   // GET /user/mypage/profile → 프로필 조회 (R-28 백엔드 정확 구조)
   if (req.method === "GET" && req.path === "/user/mypage/profile") {
     const reviewers = db ? (db.get("reviewers").value() || []) : [];
@@ -4199,6 +4747,31 @@ module.exports = function createMiddleware(db) {
     });
   }
 
+  // GET /api/v1/reviewer/mypage/channels → 채널 조회 (R-29 실제 API 경로)
+  if (req.method === "GET" && req.path === "/api/v1/reviewer/mypage/channels") {
+    const reviewers = db ? (db.get("reviewers").value() || []) : [];
+    const r = reviewers.find(rv => rv.id === 2) || reviewers[0] || {};
+    const channels = (r.channel_details || []).map((ch, idx) => ({
+      userChannelId: idx + 1,
+      channelId: idx + 1,
+      channelName: ch.name,
+      isConnected: ch.status === "connected",
+      externalId: ch.url ? ch.url.split("/").pop() : null,
+      channelUrl: ch.url || null,
+      connectedAt: ch.status === "connected" ? "2025-06-01T00:00:00+09:00" : null
+    }));
+    return res.json({
+      result: "OK", generatedAt: new Date().toISOString(),
+      user: { userId: r.id || 2, role: "REVIEWER", name: r.name || "김은지", email: r.email || "", phoneNum: r.phone || "", address: r.address || "", postNumber: r.postal_code || "", status: "ACTIVE", profileImage: r.profile_image || null },
+      reviewerProfile: { reviewerId: 2, grade: r.grade || "NORMAL", sex: r.gender === "여성" ? "W" : "M", birthDay: "1998-03-03", channel: channels }
+    });
+  }
+
+  // PUT /api/v1/reviewer/mypage/channels → 채널 등록/수정 (R-30 실제 API 경로)
+  if (req.method === "PUT" && req.path === "/api/v1/reviewer/mypage/channels") {
+    return res.json({ result: "OK", generatedAt: new Date().toISOString() });
+  }
+
   // GET /user/mypage/channel → 채널 조회 (R-29 백엔드 정확 구조)
   if (req.method === "GET" && req.path === "/user/mypage/channel") {
     const reviewers = db ? (db.get("reviewers").value() || []) : [];
@@ -4225,7 +4798,7 @@ module.exports = function createMiddleware(db) {
   }
 
   // GET /user/point → 포인트 내역 (R-33) - middleware에서 처리
-  if (req.method === "GET" && req.path === "/user/point") {
+  if (req.method === "GET" && (req.path === "/user/point" || req.path === "/api/v1/reviewer/points")) {
     const pointHistory = db ? (db.get("point_history").value() || []) : [];
     const typeFilter = req.query.point_transaction_type;
     const typeMap = { earned: "PAYOUT", withdrawn: "WITHDRAW" };
@@ -4249,29 +4822,34 @@ module.exports = function createMiddleware(db) {
       rejectionReason: p.rejection_reason || null,
       createdAt: p.date ? p.date + "T00:00:00+09:00" : new Date().toISOString()
     }));
-    return res.json({ result: "OK", generatedAt: new Date().toISOString(), balance: 511200, items: items, nextCursor: null });
+    return res.json({ result: "OK", generatedAt: new Date().toISOString(), data: { balance: 511200, items: items, nextCursor: null } });
   }
 
   // GET /user/point/withdrawal_request → 출금 페이지 (R-34)
-  if (req.method === "GET" && req.path === "/user/point/withdrawal_request") {
+  if (req.method === "GET" && (req.path === "/user/point/withdrawal_request" || req.path === "/api/v1/reviewer/points/withdraw")) {
     return res.json({
       result: "OK", generatedAt: new Date().toISOString(),
-      balancePoint: 511200,
-      bankAccount: { bankAccountId: 1, bankName: "신한은행", accountNumber: "00002469134000", accountHolder: "김은지" },
-      withdrawalPolicy: { minAmount: 10000, maxAmount: 500000 }
+      data: {
+        balancePoint: 511200,
+        bankAccount: { bankAccountId: 1, bankName: "신한은행", accountNumber: "00002469134000", accountHolder: "김은지" },
+        withdrawalPolicy: { minAmount: 10000, maxAmount: 500000 }
+      }
     });
   }
 
   // POST /user/point/withdrawal_request → 출금 신청 (R-35)
-  if (req.method === "POST" && req.path === "/user/point/withdrawal_request") {
+  if (req.method === "POST" && (req.path === "/user/point/withdrawal_request" || req.path === "/api/v1/reviewer/points/withdraw")) {
     const amount = (req.body && req.body.requestedAmount) || 0;
     const fee = Math.round(amount * 0.033);
     return res.json({
-      result: "REQUESTED", withdrawalId: 100, bankAccountId: 1, pointTransactionId: 200,
-      withdrawalNumber: "WD-" + new Date().toISOString().slice(0,10).replace(/-/g,"") + "-000001",
-      status: "PENDING", requestedAmount: amount, feeAmount: fee, expectedAmount: amount - fee,
-      feeRate: 0.033, balanceBefore: 511200, balanceAfter: 511200 - amount,
-      requestedAt: new Date().toISOString()
+      result: "REQUESTED", generatedAt: new Date().toISOString(),
+      data: {
+        withdrawalId: 100, bankAccountId: 1, pointTransactionId: 200,
+        withdrawalNumber: "WD-" + new Date().toISOString().slice(0,10).replace(/-/g,"") + "-000001",
+        status: "PENDING", requestedAmount: amount, feeAmount: fee, expectedAmount: amount - fee,
+        feeRate: 0.033, balanceBefore: 511200, balanceAfter: 511200 - amount,
+        requestedAt: new Date().toISOString()
+      }
     });
   }
 
@@ -4280,7 +4858,7 @@ module.exports = function createMiddleware(db) {
   // ====================================================================
 
   // GET /user/notice → 공지사항 목록
-  if (req.method === "GET" && req.path === "/user/notice") {
+  if (req.method === "GET" && (req.path === "/user/notice" || req.path === "/api/v1/reviewer/notices")) {
     const db = require("./db.json");
     const allNotices = db.user_notices || [];
     const boardCategory = req.query.board_category;
@@ -4292,13 +4870,12 @@ module.exports = function createMiddleware(db) {
     return res.status(200).json({
       result: "OK",
       generatedAt: new Date().toISOString(),
-      totalCount: filtered.length,
-      items: filtered,
+      data: { totalCount: filtered.length, items: filtered },
     });
   }
 
   // GET /user/notice/:id → 공지사항 상세
-  if (req.method === "GET" && req.path.match(/^\/user\/notice\/\d+$/)) {
+  if (req.method === "GET" && (req.path.match(/^\/user\/notice\/\d+$/) || req.path.match(/^\/api\/v1\/reviewer\/notices\/\d+$/))) {
     const db = require("./db.json");
     const allNotices = db.user_notices || [];
     const boardId = Number(req.path.split("/").pop());
@@ -4315,7 +4892,7 @@ module.exports = function createMiddleware(db) {
     return res.status(200).json({
       result: "OK",
       generatedAt: new Date().toISOString(),
-      item: notice,
+      data: { item: notice },
     });
   }
 
@@ -4324,7 +4901,7 @@ module.exports = function createMiddleware(db) {
   // ====================================================================
 
   // GET /user/faq → FAQ 목록
-  if (req.method === "GET" && req.path === "/user/faq") {
+  if (req.method === "GET" && (req.path === "/user/faq" || req.path === "/api/v1/reviewer/faq")) {
     const db = require("./db.json");
     const allFaqs = db.user_faqs || [];
     const boardCategory = req.query.board_category;
@@ -4336,8 +4913,7 @@ module.exports = function createMiddleware(db) {
     return res.status(200).json({
       result: "OK",
       generatedAt: new Date().toISOString(),
-      totalCount: filtered.length,
-      items: filtered,
+      data: { totalCount: filtered.length, items: filtered },
     });
   }
 
@@ -4352,6 +4928,30 @@ module.exports = function createMiddleware(db) {
     var collectionName = "campaign_" + cType;
     var dbData = require("./db.json");
     var allItems = dbData[collectionName] || [];
+
+    // 유형별 컬렉션이 비어있으면 campaigns에서 유형별로 필터
+    if (allItems.length === 0) {
+      var TYPE_MAP_REVERSE = { delivery: "DELIVERY", visit: "VISIT", purchase: "PURCHASE_REVIEW", reporter: "REPORTER", mission: "MISSION" };
+      var targetType = TYPE_MAP_REVERSE[cType] || cType.toUpperCase();
+      var getCampaigns2 = function() {
+        return getCampaigns();
+      };
+      allItems = getCampaigns2().filter(function(c) {
+        return c.type === targetType || c.type === cType.toUpperCase();
+      }).map(function(c) {
+        // region 객체를 문자열로 변환
+        var regionStr = c.region;
+        if (c.region && typeof c.region === "object") {
+          var parentName = c.region.parentName || "";
+          var regionName = c.region.name || "";
+          // 시/도 이름을 필터 표시용 짧은 이름으로 변환
+          var REGION_SHORT = {"서울특별시":"서울","인천광역시":"인천","경기도":"경기","강원특별자치도":"강원","대전광역시":"대전","세종특별자치시":"세종","충청북도":"충북","충청남도":"충남","전라북도":"전북","전라남도":"전남","광주광역시":"광주","대구광역시":"대구","경상북도":"경북","경상남도":"경남","부산광역시":"부산","울산광역시":"울산","제주특별자치도":"제주"};
+          var shortParent = REGION_SHORT[parentName] || parentName;
+          regionStr = regionName ? (shortParent + " > " + regionName) : shortParent;
+        }
+        return Object.assign({}, c, { region: regionStr });
+      });
+    }
 
     // 필터: categoryId, requiredPlatformId
     var filtered = allItems;
@@ -4382,7 +4982,7 @@ module.exports = function createMiddleware(db) {
     var detailIdRaw = campaignDetailMatch[2];
     var detailId = /^\d+$/.test(detailIdRaw) ? Number(detailIdRaw) : detailIdRaw;
     var dbData2 = require("./db.json");
-    var allCampaigns = dbData2.campaigns || [];
+    var allCampaigns = getCampaigns();
     // 1차: campaignId, id, campaignInfo.id 로 검색
     var found = allCampaigns.find(function(c) {
       var cId = c.campaignId || c.id;
@@ -4532,45 +5132,41 @@ module.exports = function createMiddleware(db) {
   // ====================================================================
 
   if (req.method === "GET" && req.path === "/user") {
-    var dashDb = require("./db.json");
-    var allTypes = ["campaign_delivery", "campaign_visit", "campaign_purchase", "campaign_reporter", "campaign_mission"];
-    var typeMap = { campaign_delivery: "DELIVERY", campaign_visit: "VISIT", campaign_purchase: "PURCHASE", campaign_reporter: "REPORTER", campaign_mission: "MISSION" };
     var channelMap = { 1: "NAVER_BLOG", 2: "INSTAGRAM", 3: "YOUTUBE", 4: "NAVER_CLIP" };
     var categoryMap = { 1: "뷰티", 2: "맛집", 3: "생활", 4: "디지털", 5: "여행", 6: "패션", 7: "건강", 8: "반려동물" };
 
-    // db.json의 모든 타입별 캠페인을 UserDashboardCampaignItem 형식으로 변환
+    // campaigns 테이블 하나에서 모든 타입의 캠페인을 UserDashboardCampaignItem 형식으로 변환
+    var allCampaignsForDash = getCampaigns();
     var dashCampaigns = [];
-    allTypes.forEach(function(typeKey) {
-      var arr = dashDb[typeKey] || [];
-      arr.forEach(function(c) {
-        var cId = c.campaignId || c.id;
-        if (!cId || typeof cId === "string" && cId.includes("test")) return; // 테스트 데이터 제외
-        var catId = c.categoryId || c.category?.categoryId || 1;
-        var chId = c.channelId || c.requiredPlatform?.channelId || 1;
-        dashCampaigns.push({
-          campaignId: typeof cId === "string" ? parseInt(cId) || cId : cId,
-          type: c.type || typeMap[typeKey],
-          status: c.status || "RECRUITING",
-          title: c.title || "캠페인 " + cId,
-          thumbnail: { url: c.thumbnailUrl || c.image || "/images/main/campaign_img/eximg_01.png" },
-          category: { categoryId: catId, categoryName: c.category?.categoryName || categoryMap[catId] || "생활" },
-          requiredPlatform: { channelId: chId, channelName: c.requiredPlatform?.channelName || channelMap[chId] || "NAVER_BLOG" },
-          region: c.region || null,
-          recruit: {
-            recruitLimit: c.recruitLimit || c.recruit?.recruitLimit || 10,
-            recruitStartAt: c.recruitStartAt || c.recruit?.recruitStartAt || "2026-03-01T00:00:00+09:00",
-            recruitEndAt: c.recruitEndAt || c.recruit?.recruitEndAt || "2026-04-30T23:59:59+09:00",
-          },
-          metrics: {
-            appliedCount: c.appliedCount || c.metrics?.appliedCount || Math.floor(Math.random() * 50),
-            selectedCount: c.selectedCount || c.metrics?.selectedCount || 0,
-            applicationRate: 0,
-          },
-          reward: {
-            extraRewardPoint: c.extraRewardPoint || c.reward?.extraRewardPoint || 0,
-            paymentRewardPoint: c.paymentRewardPoint || c.reward?.paymentRewardPoint || 0,
-          },
-        });
+    allCampaignsForDash.forEach(function(c) {
+      var cId = c.campaignId || c.id;
+      if (!cId || (typeof cId === "string" && cId.includes("test"))) return; // 테스트 데이터 제외
+      if (!c.type) return; // 타입 없는 항목 제외
+      var catId = c.categoryId || (c.category && c.category.categoryId) || 1;
+      var chId = c.channelId || (c.requiredPlatform && c.requiredPlatform.channelId) || 1;
+      dashCampaigns.push({
+        campaignId: typeof cId === "string" ? parseInt(cId) || cId : cId,
+        type: c.type,
+        status: c.status || "RECRUITING",
+        title: c.title || "캠페인 " + cId,
+        thumbnail: { url: c.thumbnailUrl || (c.thumbnail && c.thumbnail.url) || "/images/main/campaign_img/eximg_01.png" },
+        category: { categoryId: catId, categoryName: (c.category && c.category.categoryName) || categoryMap[catId] || "생활" },
+        requiredPlatform: { channelId: chId, channelName: (c.requiredPlatform && c.requiredPlatform.channelName) || channelMap[chId] || "NAVER_BLOG" },
+        region: c.region || null,
+        recruit: {
+          recruitLimit: c.recruitLimit || (c.recruit && c.recruit.recruitLimit) || 10,
+          recruitStartAt: c.recruitStartAt || (c.recruit && c.recruit.recruitStartAt) || "2026-03-01T00:00:00+09:00",
+          recruitEndAt: c.recruitEndAt || (c.recruit && c.recruit.recruitEndAt) || "2026-04-30T23:59:59+09:00",
+        },
+        metrics: {
+          appliedCount: c.appliedCount || (c.metrics && c.metrics.appliedCount) || 0,
+          selectedCount: c.selectedCount || (c.metrics && c.metrics.selectedCount) || 0,
+          applicationRate: 0,
+        },
+        reward: {
+          extraRewardPoint: c.extraRewardPoint || (c.reward && c.reward.extraRewardPoint) || 0,
+          paymentRewardPoint: c.paymentRewardPoint || (c.reward && c.reward.paymentRewardPoint) || 0,
+        },
       });
     });
 
@@ -4591,26 +5187,87 @@ module.exports = function createMiddleware(db) {
   }
 
   // ====================================================================
+  // 리뷰어 캠페인 유형별 목록 Mock (백엔드 R-22 응답 구조)
+  // ====================================================================
+
+  // GET /api/v1/reviewer/dashboard/{type} → 유형별 캠페인 목록
+  const reviewerTypeMatch = req.method === "GET" && req.path.match(/^\/api\/v1\/reviewer\/dashboard\/(delivery|visit|purchase|purchase-review|reporter|mission)$/);
+  if (reviewerTypeMatch) {
+    const typeParam = reviewerTypeMatch[1];
+    const typeMap = { "delivery": "DELIVERY", "visit": "VISIT", "purchase": "PURCHASE", "purchase-review": "PURCHASE", "reporter": "REPORTER", "mission": "MISSION" };
+    const targetType = typeMap[typeParam] || typeParam.toUpperCase();
+    const campaigns = getCampaigns();
+    const filtered = campaigns.filter(c => c.type === targetType);
+    const items = filtered.map(c => ({
+      campaignId: c.id || c.campaignId,
+      type: c.type,
+      status: c.status || "REGISTERING",
+      isEmergency: c.isUrgent === true || c.isEmergency === true,
+      title: c.title || "",
+      thumbnailUrl: c.thumbnailUrl || c.thumbnail?.url || "/images/main/campaign_img/eximg_1.png",
+      category: c.category || { categoryId: 1, categoryName: "기타" },
+      requiredPlatform: c.requiredPlatform || { channelId: 1, channelName: "NAVER_BLOG" },
+      recruitStartAt: c.recruitStartAt || c.recruit?.recruitStartAt || "",
+      recruitEndAt: c.recruitEndAt || c.recruit?.recruitEndAt || "",
+      recruitLimit: c.recruitLimit || c.recruit?.recruitLimit || 10,
+      appliedCount: c.appliedCount || c.metrics?.appliedCount || c.recruitment?.current || 0,
+      region: c.region || null,
+    }));
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      data: { items },
+    });
+  }
+
+  // ====================================================================
   // 리뷰어 검색 Mock (백엔드 R-21 응답 구조)
   // ====================================================================
 
-  // GET /search → 캠페인 검색 (R-21)
-  if (req.method === "GET" && req.path === "/search") {
+  // GET /search → 캠페인 검색 (R-21) — 파트너 검색과 동일한 응답 구조
+  if (req.method === "GET" && (req.path === "/search" || req.path === "/api/v1/reviewer/dashboard/search")) {
     const keyword = (req.query.keyword || "").toLowerCase();
-    const campaigns = db ? (db.get("campaigns").value() || []) : [];
-    const filtered = keyword
-      ? campaigns.filter(c => (c.title || "").toLowerCase().includes(keyword))
-      : campaigns;
-    const items = filtered.map(c => ({
-      campaignId: c.id || c.campaignId,
-      title: c.title || "",
-      recruitLimit: c.recruitLimit || c.recruitment?.total || 10,
-      campaignApplicationCount: c.campaignApplicationCount || c.recruitment?.current || 0,
-      imageUrl: c.imageUrl || c.image || "",
-      categoryId: c.categoryId || 1,
-      channelId: c.channelId || 1,
-    }));
-    return res.json({ result: "OK", generatedAt: new Date().toISOString(), items: items });
+    const allCampaigns = getCampaigns();
+    var filtered = keyword
+      ? allCampaigns.filter(function(c) { return (c.title || "").toLowerCase().includes(keyword); })
+      : allCampaigns;
+    var searchCampaigns = filtered.map(function(c) {
+      return {
+        campaignId: c.id || c.campaignId,
+        type: c.type || "DELIVERY",
+        status: c.status || "RECRUITING",
+        title: c.title || "",
+        thumbnail: { url: c.thumbnailUrl || (c.thumbnail && c.thumbnail.url) || "" },
+        category: c.category || { categoryId: 1, categoryName: "뷰티" },
+        requiredPlatform: c.requiredPlatform || { channelId: 2, channelName: "NAVER_BLOG" },
+        recruit: {
+          recruitLimit: (c.recruit && c.recruit.recruitLimit) || c.recruitLimit || 30,
+          recruitStartAt: (c.recruit && c.recruit.recruitStartAt) || c.recruitStartAt || "",
+          recruitEndAt: (c.recruit && c.recruit.recruitEndAt) || c.recruitEndAt || "",
+        },
+        metrics: {
+          appliedCount: (c.metrics && c.metrics.appliedCount) || 0,
+        },
+        reward: c.reward || { extraRewardPoint: 0, paymentRewardPoint: 0 },
+      };
+    });
+    // R-21 flat 필드 추가 (실제 백엔드 호환)
+    var searchItems = searchCampaigns.map(function(c) {
+      return Object.assign({}, c, {
+        imageUrl: c.thumbnail && c.thumbnail.url ? c.thumbnail.url : "",
+        recruitLimit: c.recruit ? c.recruit.recruitLimit : 0,
+        campaignApplicationCount: c.metrics ? c.metrics.appliedCount : 0,
+        categoryId: c.category ? c.category.categoryId : 1,
+        channelId: c.requiredPlatform ? c.requiredPlatform.channelId : 1,
+      });
+    });
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      keyword: keyword,
+      totalCount: searchItems.length,
+      items: searchItems,
+    });
   }
 
   // ====================================================================
@@ -4618,7 +5275,7 @@ module.exports = function createMiddleware(db) {
   // ====================================================================
 
   // GET /user/campaign_management/penalty → 패널티 현황/내역 (R-36)
-  if (req.method === "GET" && req.path === "/user/campaign_management/penalty") {
+  if (req.method === "GET" && (req.path === "/user/campaign_management/penalty" || req.path === "/api/v1/reviewer/penalties")) {
     const penalties = db ? (db.get("user_penalties").value() || []) : [];
     const statusArr = db ? (db.get("user_penalty_status").value() || []) : [];
     const statusData = statusArr[0] || { currentStatus: "활동 가능", penaltyCount: 0 };
@@ -4641,14 +5298,16 @@ module.exports = function createMiddleware(db) {
     return res.json({
       result: "OK",
       generatedAt: new Date().toISOString(),
-      summary: {
-        currentTotalScore: statusData.penaltyCount || 0,
-        currentLevel: levelMap[statusData.currentStatus] || "NORMAL",
-        isSuspended: isSuspended,
-        suspendedRemainingDays: isSuspended && remainDaysMatch ? parseInt(remainDaysMatch[1]) : null,
-        isPermanentlyBanned: statusData.currentStatus === "영구 정지",
+      data: {
+        summary: {
+          currentTotalScore: statusData.penaltyCount || 0,
+          currentLevel: levelMap[statusData.currentStatus] || "NORMAL",
+          isSuspended: isSuspended,
+          suspendedRemainingDays: isSuspended && remainDaysMatch ? parseInt(remainDaysMatch[1]) : null,
+          isPermanentlyBanned: statusData.currentStatus === "영구 정지",
+        },
+        items: items,
       },
-      items: items,
     });
   }
 
@@ -4657,7 +5316,7 @@ module.exports = function createMiddleware(db) {
   // ====================================================================
 
   // GET /user/notification → 알림 내역 조회
-  if (req.method === "GET" && req.path === "/user/notification") {
+  if (req.method === "GET" && (req.path === "/user/notification" || req.path === "/api/v1/reviewer/notifications")) {
     const mockNotifications = db ? (db.get("notifications").value() || []) : [];
     const items = mockNotifications.map((n, idx) => ({
       notificationHistoryId: n.id || 1200 + idx,
@@ -4670,13 +5329,15 @@ module.exports = function createMiddleware(db) {
     return res.json({
       result: "OK",
       generatedAt: new Date().toISOString(),
-      items: items,
-      nextCursor: null
+      data: {
+        items: items,
+        nextCursor: null
+      },
     });
   }
 
   // DELETE /user/notification → 전체 알림 삭제
-  if (req.method === "DELETE" && req.path === "/user/notification") {
+  if (req.method === "DELETE" && (req.path === "/user/notification" || req.path === "/api/v1/reviewer/notifications/all")) {
     return res.json({ result: "OK" });
   }
 
@@ -4720,9 +5381,9 @@ module.exports = function createMiddleware(db) {
   // 리뷰어 회원가입 Mock
   // ====================================================================
 
-  // GET /reviewer/sign-up → signupToken 검증 + prefill
-  if (req.method === "GET" && req.path === "/reviewer/sign-up" && req.query.signupToken) {
-    return res.json({ email: "newuser@kakao.com", provider: "KAKAO" });
+  // GET /api/v1/reviewer/sign-up → signupToken 검증 + prefill
+  if (req.method === "GET" && req.path === "/api/v1/reviewer/sign-up" && req.query.signupToken) {
+    return res.json({ result: "OK", data: { email: "newuser@kakao.com", provider: "KAKAO" } });
   }
 
   // POST /api/v1/reviewer/sign-up → 회원가입 완료
@@ -4783,7 +5444,7 @@ module.exports = function createMiddleware(db) {
 
     const mapped = allItems.map((item, idx) => ({
       campaignApplicationId: 900 + idx,
-      campaignId: parseInt(item.id) || idx,
+      campaignId: isNaN(parseInt(item.id)) ? item.id : parseInt(item.id),
       campaignType: typeMap[item.type] || "DELIVERY",
       status: statusMap[item.status] || "APPLIED",
       title: item.title || "",
@@ -4825,27 +5486,140 @@ module.exports = function createMiddleware(db) {
     });
   }
 
-  // DELETE /reviewer/my-page/my-campaign/:id → 신청 취소
+  // GET /api/v1/reviewer/campaigns → 내 캠페인 내역 조회 (실제 API 경로)
+  if (req.method === "GET" && req.path === "/api/v1/reviewer/campaigns") {
+    const statusFilter = req.query.status;
+    const allItems = db ? (db.get("reviewer_campaign_management").value() || []) : [];
+
+    const statusMap = { "신청완료": "APPLIED", "선정완료": "SELECTED", "콘텐츠등록": "SELECTED", "완료": "COMPLETE", "취소/반려": "CANCELED" };
+    const typeMap = { "배송형": "DELIVERY", "방문형": "VISIT", "구매평": "PURCHASE", "기자단": "REPORTER", "미션형": "MISSION" };
+
+    const mapped = allItems.map((item, idx) => ({
+      campaignApplicationId: 900 + idx,
+      campaignId: isNaN(parseInt(item.id)) ? item.id : parseInt(item.id),
+      campaignType: typeMap[item.type] || "DELIVERY",
+      channelType: item.category || "",
+      status: statusMap[item.status] || "APPLIED",
+      title: item.title || "",
+      thumbnailUrl: item.image || "",
+      recruitEndAt: new Date(Date.now() + (item.remainingDays || 0) * 86400000).toISOString(),
+      appliedAt: new Date(Date.now() - idx * 86400000).toISOString(),
+      selectedAt: (item.status === "선정완료" || item.status === "콘텐츠등록" || item.status === "완료") ? new Date(Date.now() - idx * 43200000).toISOString() : null,
+      content: (item.status === "선정완료" || item.status === "콘텐츠등록") ? {
+        campaignContentId: 500 + idx,
+        contentStatus: item.hasContent ? "SUBMITTED" : "WAIT",
+        contentUrl: item.hasContent ? "https://blog.naver.com/mock/" + item.id : null
+      } : null,
+      isUrgent: item.isUrgent || false,
+      subStatus: item.subStatus || undefined,
+      rejectionReason: item.rejectionReason || undefined,
+      rejectedAt: item.rejectedAt || undefined,
+      isPenalty: item.isPenalty || false,
+    }));
+
+    let filtered = mapped;
+    if (statusFilter) {
+      filtered = mapped.filter(i => i.status === statusFilter);
+    }
+
+    return res.json({
+      result: "OK",
+      generatedAt: new Date().toISOString(),
+      items: filtered,
+      nextCursor: null
+    });
+  }
+
+  // DELETE /api/v1/reviewer/campaigns/:id/cancel → 신청 취소
+  if (req.method === "DELETE" && req.path.match(/^\/api\/v1\/reviewer\/campaigns\/\d+\/cancel$/)) {
+    return res.json({ result: "OK", message: "신청이 취소되었습니다." });
+  }
+
+  // POST /api/v1/reviewer/campaigns/:id/content → 콘텐츠 등록
+  if (req.method === "POST" && req.path.match(/^\/api\/v1\/reviewer\/campaigns\/\d+\/content$/)) {
+    return res.json({ result: "OK", campaignContentId: 600, contentStatus: "SUBMITTED" });
+  }
+
+  // PUT /api/v1/reviewer/campaigns/:id/content → 콘텐츠 수정
+  if (req.method === "PUT" && req.path.match(/^\/api\/v1\/reviewer\/campaigns\/\d+\/content$/)) {
+    return res.json({ result: "OK", campaignContentId: 600, contentStatus: "SUBMITTED" });
+  }
+
+  // POST /api/v1/reviewer/campaigns/:id/content/extend → 기한 연장
+  if (req.method === "POST" && req.path.match(/^\/api\/v1\/reviewer\/campaigns\/\d+\/content\/extend$/)) {
+    return res.json({ result: "OK", extensionCount: 1, newDeadline: new Date(Date.now() + 3 * 86400000).toISOString() });
+  }
+
+  // GET /api/v1/reviewer/campaigns/:id/content/rejection → 반려 사유
+  if (req.method === "GET" && req.path.match(/^\/api\/v1\/reviewer\/campaigns\/\d+\/content\/rejection$/)) {
+    return res.json({ result: "OK", rejectionCode: "R003", rejectionReason: "콘텐츠 내 홍보 키워드 누락", rejectedAt: new Date().toISOString(), resubmitDeadline: new Date(Date.now() + 5 * 86400000).toISOString() });
+  }
+
+  // ====================================================================
+  // R-24: 신청 모달 데이터 조회 (GET /api/v1/reviewer/campaign/{type}/{id}/apply-form)
+  // ====================================================================
+  var applyFormMatch = req.method === "GET" && /^\/api\/v1\/reviewer\/campaign\/(delivery|visit|purchase|reporter|mission)\/([^/]+)\/apply-form$/.exec(req.path);
+  if (applyFormMatch) {
+    var applyFormType = applyFormMatch[1];
+    var needsChannelApplyForm = (applyFormType === "delivery" || applyFormType === "visit" || applyFormType === "reporter");
+    return res.status(200).json({
+      result: "OK",
+      applicant: {
+        name: "테스트유저",
+        phoneNum: "010-1234-5678",
+        postNumber: 12345,
+        address: "서울특별시 강남구 테헤란로 123",
+        addressDetail: "4층 401호",
+      },
+      requiredChannel: needsChannelApplyForm ? {
+        channelId: 1,
+        channelName: "NAVER_BLOG",
+        isConnected: true,
+        userChannelId: 100,
+        channelUrl: "https://blog.naver.com/test_reviewer",
+      } : null,
+      eligibility: { canApply: true, reasons: [] },
+    });
+  }
+
+  // ====================================================================
+  // R-25: 캠페인 신청 (POST /api/v1/reviewer/campaign/{type}/{id}/apply)
+  // ====================================================================
+  var apiApplyMatch = req.method === "POST" && /^\/api\/v1\/reviewer\/campaign\/(delivery|visit|purchase|reporter|mission)\/([^/]+)\/apply$/.exec(req.path);
+  if (apiApplyMatch) {
+    var apiApplyIdRaw = apiApplyMatch[2];
+    var apiApplyId = /^\d+$/.test(apiApplyIdRaw) ? Number(apiApplyIdRaw) : 9999;
+    return res.status(200).json({
+      result: "APPLIED",
+      generatedAt: new Date().toISOString(),
+      applicationId: Math.floor(Math.random() * 9000) + 1000,
+      campaignId: apiApplyId,
+      status: "APPLIED",
+      appliedAt: new Date().toISOString(),
+    });
+  }
+
+  // DELETE /reviewer/my-page/my-campaign/:id → 신청 취소 (구 경로 유지)
   if (req.method === "DELETE" && req.path.match(/^\/reviewer\/my-page\/my-campaign\/\d+$/)) {
     return res.json({ result: "OK", message: "신청이 취소되었습니다." });
   }
 
-  // POST /reviewer/my-page/my-campaign/:id/content → 콘텐츠 등록
+  // POST /reviewer/my-page/my-campaign/:id/content → 콘텐츠 등록 (구 경로 유지)
   if (req.method === "POST" && req.path.match(/^\/reviewer\/my-page\/my-campaign\/\d+\/content$/)) {
     return res.json({ result: "OK", campaignContentId: 600, contentStatus: "SUBMITTED" });
   }
 
-  // PUT /reviewer/my-page/my-campaign/:id/content → 콘텐츠 수정
+  // PUT /reviewer/my-page/my-campaign/:id/content → 콘텐츠 수정 (구 경로 유지)
   if (req.method === "PUT" && req.path.match(/^\/reviewer\/my-page\/my-campaign\/\d+\/content$/)) {
     return res.json({ result: "OK", campaignContentId: 600, contentStatus: "SUBMITTED" });
   }
 
-  // POST /reviewer/my-page/my-campaign/:id/extension → 기한 연장
+  // POST /reviewer/my-page/my-campaign/:id/extension → 기한 연장 (구 경로 유지)
   if (req.method === "POST" && req.path.match(/^\/reviewer\/my-page\/my-campaign\/\d+\/extension$/)) {
     return res.json({ result: "OK", extensionCount: 1, newDeadline: new Date(Date.now() + 3 * 86400000).toISOString() });
   }
 
-  // GET /user/campaign_management/content/rejection-reason/:id → 반려 사유
+  // GET /user/campaign_management/content/rejection-reason/:id → 반려 사유 (구 경로 유지)
   if (req.method === "GET" && req.path.match(/^\/user\/campaign_management\/content\/rejection-reason\/\d+$/)) {
     return res.json({ result: "OK", rejectionCode: "R003", rejectionReason: "콘텐츠 내 홍보 키워드 누락", rejectedAt: new Date().toISOString(), resubmitDeadline: new Date(Date.now() + 5 * 86400000).toISOString() });
   }
