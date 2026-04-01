@@ -137,9 +137,7 @@
 }
 
 .modal_footer_button_confirm_pink:hover {
-  background:
-    linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
-    #ff5694;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%), #ff5694;
 }
 
 /* 모달 푸터 확인 버튼 (빨간색 - 파트너 연장 등) */
@@ -149,9 +147,7 @@
 }
 
 .modal_footer_button_confirm_red:hover {
-  background:
-    linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
-    #ff2626;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%), #ff2626;
 }
 
 /* 기존 호환성을 위한 클래스 (기본값: 핑크) */
@@ -161,9 +157,7 @@
 }
 
 .modal_footer_button_confirm:hover {
-  background:
-    linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
-    #ff5694;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%), #ff5694;
 }
 
 /* 하나 버튼 스타일 (전체 너비) */
@@ -174,6 +168,16 @@
 }
 .modal_footer_button_single:hover {
   background: rgba(119, 119, 119, 0.2);
+}
+
+/* 버튼 disabled 상태 (로딩 중) */
+.modal_footer_button_cancel:disabled,
+.modal_footer_button_confirm_pink:disabled,
+.modal_footer_button_confirm_red:disabled,
+.modal_footer_button_confirm:disabled,
+.modal_footer_button_single:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ========================================

@@ -177,10 +177,14 @@ export const CAMPAIGN_TYPE_LABEL: Record<string, string> = {
   visit: "방문형",
   purchase: "구매평",
   report: "기자단",
+  reporter: "기자단",
+  mission: "미션형",
   DELIVERY: "배송형",
   VISIT: "방문형",
   PURCHASE: "구매평",
   REPORT: "기자단",
+  REPORTER: "기자단",
+  MISSION: "미션형",
 };
 
 /** 백엔드 platform → 프론트엔드 한글 */

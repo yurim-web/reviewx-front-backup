@@ -73,6 +73,29 @@ export interface CreateCampaignRequest {
   notification?: string;
   regionId?: number;
   visitAddress?: string;
+  visitZipCode?: string;
+  visitBaseAddress?: string;
+  visitDetailAddress?: string;
+  addressDetail?: string;
+  visitLink?: string;
+  region?: string;
+  subRegion?: string;
+  // 구매평 전용
+  purchasePeriod?: string;
+  // 미션형 전용
+  requireContentLink?: boolean;
+  requireContentImage?: boolean;
+  // 기본 미션 설정
+  minTextLength?: number;
+  minImageCount?: number;
+  videoCount?: number;
+  videoDuration?: number;
+  requireLinkAttachment?: boolean;
+  requireKeywordAttachment?: boolean;
+  // 참여/제출 옵션
+  adultOnly?: boolean;
+  allowReParticipation?: boolean;
+  allowLateSubmission?: boolean;
   // 프론트엔드 전용 필드 (백엔드 미구현)
   is_urgent: boolean;
   contact_phone: string;
@@ -312,6 +335,13 @@ export interface CampaignDraftLoadResponse {
     };
     regionId?: number;
     visitAddress?: string;
+    visitZipCode?: string;
+    visitBaseAddress?: string;
+    visitDetailAddress?: string;
+    addressDetail?: string;
+    visitLink?: string;
+    region?: string;
+    subRegion?: string;
     promotionUrl?: string;
     keyword?: string;
     notification?: string;

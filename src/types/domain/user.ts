@@ -191,12 +191,16 @@ export interface CampaignApplication {
   }>;
   /** 반려 사유 (취소/반려 상태일 때 사용) */
   rejectionReason?: string; // 콘텐츠 반려 사유 텍스트
+  /** 반려 일시 (반려된 콘텐츠에만 존재) */
+  rejectedAt?: string; // 반려 일시 (ISO8601)
   /** 등록된 콘텐츠 링크 (수정 모드에서 사용) */
   registeredContentLink?: string;
   /** 등록된 콘텐츠 이미지 URL 배열 (수정 모드에서 사용) */
   registeredContentImages?: string[];
   /** 등록된 구매 영수증 이미지 URL 배열 (수정 모드에서 사용) */
   registeredReceiptImages?: string[];
+  /** 캠페인 신청 ID (취소/콘텐츠 등록 등 액션 API 호출 시 사용) */
+  campaignApplicationId?: number;
 }
 
 /**
