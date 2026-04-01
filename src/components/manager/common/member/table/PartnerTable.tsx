@@ -138,7 +138,7 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
     return partners_to_filter.filter((partner) => {
       // 검색어 필터
       if (search_query) {
-        const matches_search = partner.business_name
+        const matches_search = (partner.business_name ?? "")
           .toLowerCase()
           .includes(search_query.toLowerCase());
         if (!matches_search) return false;

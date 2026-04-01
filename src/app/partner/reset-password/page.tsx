@@ -17,7 +17,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { withPartnerAuth } from "@/components/auth/withAuth";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import ErrorText from "@/components/common/error_text/ErrorText";
@@ -368,4 +367,4 @@ function PartnerResetPasswordPage() {
   );
 }
 
-export default withPartnerAuth(PartnerResetPasswordPage);
+export default PartnerResetPasswordPage;

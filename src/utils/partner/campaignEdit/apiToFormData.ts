@@ -301,20 +301,52 @@ export function editApiResponseToFormData(response: CampaignEditPageResponse): C
   const ext = c as any;
   const kp = c.keywordPolicy;
 
-  // 방문형 region 분리
+  // 방문형 region 분리 — API 응답의 region 객체 활용
+  // region: { regionId, name, level, parentId } 형태
   let region = "";
   let subRegion = "";
   if (c.region) {
-    const name = c.region.name || "";
-    // "서울/성수" 또는 "서울 > 강남구" 형태 모두 처리
-    const parts = name.includes("/")
-      ? name.split("/").map((s) => s.trim())
-      : name.split(">").map((s) => s.trim());
-    if (parts.length >= 2) {
-      region = parts[0];
-      subRegion = parts[1];
+    const regionObj = c.region;
+    if (regionObj.level === 1) {
+      // level 1: 시/도만 (예: 서울특별시)
+      region = regionObj.name || "";
+    } else if (regionObj.level === 2 && regionObj.parentId != null) {
+      // level 2: 시/구/군 → parentId로 시/도를 regions 목록에서 찾기
+      subRegion = regionObj.name || "";
+      // regions 목록에서 parentId에 해당하는 시/도 찾기
+      const parentRegion = response.regions?.find((r) => r.regionId === regionObj.parentId);
+      if (parentRegion) {
+        region = parentRegion.name;
+      } else {
+        // regions 목록이 없으면 이름에서 파싱 시도
+        const name = regionObj.name || "";
+        const parts = name.includes(">")
+          ? name.split(">").map((s: string) => s.trim())
+          : name.includes("/")
+            ? name.split("/").map((s: string) => s.trim())
+            : [name];
+        if (parts.length >= 2) {
+          region = parts[0];
+          subRegion = parts[1];
+        } else {
+          region = name;
+          subRegion = "";
+        }
+      }
     } else {
-      region = name;
+      // level이 없거나 다른 경우 — 이름에서 파싱
+      const name = regionObj.name || "";
+      const parts = name.includes(">")
+        ? name.split(">").map((s: string) => s.trim())
+        : name.includes("/")
+          ? name.split("/").map((s: string) => s.trim())
+          : [name];
+      if (parts.length >= 2) {
+        region = parts[0];
+        subRegion = parts[1];
+      } else {
+        region = name;
+      }
     }
     // 단축형 → 전체 이름 변환 (드롭다운 매칭용)
     region = REGION_FULL_NAME[region] || region;
@@ -362,7 +394,7 @@ export function editApiResponseToFormData(response: CampaignEditPageResponse): C
     fairTradeAgreement: true,
     promotionLink: isPurchase ? purchaseLink : (c.promotionUrl ?? ""),
     // 방문형
-    visitLink: c.type === "VISIT" ? (c.promotionUrl ?? "") : "",
+    visitLink: ext.visitLink ?? (c.type === "VISIT" ? (c.promotionUrl ?? "") : ""),
     region,
     subRegion,
     visitZipCode: ext.visitZipCode ?? "",

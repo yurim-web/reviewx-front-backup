@@ -123,11 +123,13 @@ export default function PartnerSubHeader() {
    * - router.push(): 특정 경로로 프로그래밍 방식으로 이동
    */
   const handleGoBack = () => {
-    // 파트너 캠페인 생성 페이지에서는 홈으로 이동
     if (pathname?.startsWith("/partner/campaign/create")) {
+      // 파트너 캠페인 생성 페이지에서는 홈으로 이동
       router.push("/partner");
+    } else if (pathname?.startsWith("/campaign/")) {
+      // 캠페인 상세 페이지에서는 캠페인 관리 페이지로 이동
+      router.push("/partner/campaign_management");
     } else {
-      // 그 외 모든 경우 이전 페이지로 이동
       router.back();
     }
   };

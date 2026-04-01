@@ -93,8 +93,12 @@ export default function CategoryFilterSection({
       try {
         await deleteMutation.mutateAsync(Number(id));
       } catch (error) {
-        const status = (error as { response?: { status?: number } })?.response?.status;
-        if (status === 409) {
+        const err = error as {
+          response?: { status?: number; data?: { error?: { code?: string } } };
+        };
+        const status = err?.response?.status;
+        const code = err?.response?.data?.error?.code;
+        if (status === 400 && (code === "CATEGORY_HAS_BOARDS" || code === "CATEGORY_IN_USE")) {
           // 게시글이 존재하는 카테고리
           set_is_post_exists_modal_open(true);
           return;

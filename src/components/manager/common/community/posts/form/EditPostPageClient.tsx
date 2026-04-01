@@ -27,7 +27,7 @@ interface EditPostPageClientProps {
 export default function EditPostPageClient({ post_id, manager_type }: EditPostPageClientProps) {
   const is_sa = manager_type === "sa";
   const gaDetail = useBoardDetail(Number(post_id));
-  const saDetail = useSABoardDetail(Number(post_id));
+  const saDetail = useSABoardDetail(Number(post_id), { enabled: is_sa });
   const { data: detailRes, isLoading } = is_sa ? saDetail : gaDetail;
   const board = detailRes?.data;
 

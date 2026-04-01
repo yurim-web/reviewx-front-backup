@@ -13,10 +13,11 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";
+import BaseModal from "@/components/common/modal/BaseModal";
 import type { MainTab, StatTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
@@ -26,12 +27,17 @@ import { useAllCampaigns } from "@/hooks/user/campaign_management/useAllCampaign
 import Loading from "@/app/loading";
 
 function PenaltyPage() {
-  const { penaltyData, penaltyStatus, isLoading: penaltyLoading } = useUserPenalty();
+  const { penaltyData, penaltyStatus, isLoading: penaltyLoading, isError } = useUserPenalty();
   const { stats, isLoading: campaignsLoading } = useAllCampaigns();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
   const [activeStatTab, setActiveStatTab] = useState<StatTab>("패널티");
+  const [showServerErrorModal, setShowServerErrorModal] = useState(false);
+
+  useEffect(() => {
+    if (isError) setShowServerErrorModal(true);
+  }, [isError]);
 
   if (penaltyLoading || campaignsLoading) return <Loading />;
 
@@ -74,6 +80,20 @@ function PenaltyPage() {
           <PenaltyContent penaltyData={penaltyData} userStatus={penaltyStatus} />
         </div>
       </div>
+
+      {/* E_M5: 서버 오류 모달 */}
+      <BaseModal
+        is_open={showServerErrorModal}
+        on_close={() => setShowServerErrorModal(false)}
+        message="일시적인 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+        buttons={["닫기", "재시도"]}
+        on_cancel={() => setShowServerErrorModal(false)}
+        on_confirm={() => {
+          setShowServerErrorModal(false);
+          router.refresh();
+        }}
+        type="center"
+      />
     </div>
   );
 }

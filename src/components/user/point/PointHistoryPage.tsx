@@ -45,7 +45,7 @@ export default function PointHistoryPage({
   isEmptyView = false,
 }: PointHistoryPageProps) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const {
     pointInfo,
     userPointHistory,
@@ -63,12 +63,12 @@ export default function PointHistoryPage({
     if (isError) setShowErrorModal(true);
   }, [isError]);
 
-  // 로그인 체크
+  // 로그인 체크 (isAuthLoading 완료 후 판단)
   useEffect(() => {
-    if (typeof window !== "undefined" && !user) {
+    if (!isAuthLoading && !user) {
       router.push("/user/login");
     }
-  }, [user, router]);
+  }, [isAuthLoading, user, router]);
 
   const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
   const rejectionModal = useModalState();

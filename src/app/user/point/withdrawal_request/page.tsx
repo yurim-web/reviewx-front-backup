@@ -35,7 +35,7 @@ import styles from "../../../../styles/user/point/withdrawal_request.module.css"
 
 export default function WithdrawalRequestPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const {
     userInfo,
     calculateNetAmount,
@@ -54,12 +54,12 @@ export default function WithdrawalRequestPage() {
   const [blockedMessage, setBlockedMessage] = useState<string>("");
   const [completedData, setCompletedData] = useState<WithdrawalResponse | null>(null);
 
-  // 로그인 체크
+  // 로그인 체크 (isAuthLoading 완료 후 판단)
   useEffect(() => {
-    if (typeof window !== "undefined" && !user) {
+    if (!isAuthLoading && !user) {
       router.push("/user/login");
     }
-  }, [user, router]);
+  }, [isAuthLoading, user, router]);
 
   // 서버 오류 모달 (GET 실패)
   useEffect(() => {

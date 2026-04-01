@@ -31,19 +31,7 @@ const TYPE_LABEL: Record<string, string> = {
   MISSION: "미션형",
 };
 
-/** 마감일까지 남은 D-day 계산 */
-function calcDayCount(recruitEndAt?: string): string {
-  if (!recruitEndAt) return "";
-  const end = new Date(recruitEndAt);
-  const now = new Date();
-  const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-  if (diff < 0) return "마감";
-  if (diff === 0) return "D-Day";
-  return `D-${diff}`;
-}
-
 function adaptApiItem(item: PartnerCampaignCard) {
-  const dayCount = calcDayCount(item.recruit?.recruitEndAt);
   return {
     id: String(item.campaignId),
     title: item.title,
@@ -54,9 +42,14 @@ function adaptApiItem(item: PartnerCampaignCard) {
       current: item.metrics?.appliedCount ?? 0,
       total: item.recruit?.recruitLimit ?? 0,
     },
-    dayCount,
-    isUrgent: item.status === "EMERGENCY" || dayCount === "D-Day",
+    isUrgent: item.status === "EMERGENCY",
     points: (item.reward?.extraRewardPoint ?? 0) + (item.reward?.paymentRewardPoint ?? 0),
+    detailedSchedule: item.recruit?.recruitStartAt
+      ? {
+          applicationStart: item.recruit.recruitStartAt,
+          applicationEnd: item.recruit.recruitEndAt,
+        }
+      : undefined,
   };
 }
 

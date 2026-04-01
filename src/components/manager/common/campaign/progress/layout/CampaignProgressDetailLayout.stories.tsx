@@ -117,7 +117,7 @@ const meta: Meta<typeof CampaignProgressDetailLayout> = {
     sort_order: {
       description: "정렬 옵션",
       control: "select",
-      options: ["latest", "popular", "deadline", "point"],
+      options: ["latest", "oldest", "recommend"],
     },
     applicants_count: {
       description: "신청자 수",
@@ -160,9 +160,8 @@ export const Default: Story = {
     set_sort_order: (order: SortOption) => console.log("Sort changed:", order),
     sort_options: [
       { value: "latest", label: "최신순" },
-      { value: "popular", label: "인기순" },
-      { value: "deadline", label: "마감임박순" },
-      { value: "point", label: "포인트순" },
+      { value: "oldest", label: "오래된순" },
+      { value: "recommend", label: "추천순" },
     ],
     applicants_count: 2,
     selected_count: 1,
@@ -196,9 +195,8 @@ export const SelectedTab: Story = {
     set_sort_order: (order: SortOption) => console.log("Sort changed:", order),
     sort_options: [
       { value: "latest", label: "최신순" },
-      { value: "popular", label: "인기순" },
-      { value: "deadline", label: "마감임박순" },
-      { value: "point", label: "포인트순" },
+      { value: "oldest", label: "오래된순" },
+      { value: "recommend", label: "추천순" },
     ],
     applicants_count: 2,
     selected_count: 1,
@@ -232,9 +230,8 @@ export const EmptyApplicants: Story = {
     set_sort_order: (order: SortOption) => console.log("Sort changed:", order),
     sort_options: [
       { value: "latest", label: "최신순" },
-      { value: "popular", label: "인기순" },
-      { value: "deadline", label: "마감임박순" },
-      { value: "point", label: "포인트순" },
+      { value: "oldest", label: "오래된순" },
+      { value: "recommend", label: "추천순" },
     ],
     applicants_count: 0,
     selected_count: 0,

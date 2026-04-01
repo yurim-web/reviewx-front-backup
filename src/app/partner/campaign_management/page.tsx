@@ -57,7 +57,7 @@ function PartnerCampaignManagementPage() {
   }>({});
 
   // 탭별 캠페인 목록 (API → static fallback)
-  const { campaigns, stats } = usePartnerCampaigns(activeStatTab);
+  const { campaigns, stats, isLoading: isApiLoading } = usePartnerCampaigns(activeStatTab);
 
   /**
    * 필터 변경 핸들러
@@ -130,7 +130,7 @@ function PartnerCampaignManagementPage() {
   };
 
   // 로딩 중일 때 로딩 화면 표시
-  if (isLoading) {
+  if (isLoading || isApiLoading) {
     return <Loading />;
   }
 

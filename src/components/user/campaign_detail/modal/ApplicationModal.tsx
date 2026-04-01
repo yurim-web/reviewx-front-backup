@@ -191,6 +191,7 @@ export default function ApplicationModal({
   // 제출 버튼 비활성화 조건
   const isSubmitDisabled = (() => {
     if (isSuspended) return true;
+    if (!canApply) return true;
     if (type === "delivery") {
       if (!channelUrl) return true;
       return isUrgent ? !isAgreed || !isUrgentAgreed : !isAgreed;

@@ -22,10 +22,16 @@ interface SearchApiItem {
   imageUrl: string;
   categoryId: number;
   channelId: number;
+  recruit?: {
+    recruitLimit: number;
+    recruitStartAt: string;
+    recruitEndAt: string;
+  };
 }
 
 interface SearchApiResponse {
   result: string;
+  generatedAt: string;
   items: SearchApiItem[];
 }
 
@@ -62,8 +68,13 @@ function adaptApiItem(item: SearchApiItem): SearchCampaign {
       current: item.campaignApplicationCount,
       total: item.recruitLimit,
     },
-    dayCount: "",
     isUrgent: false,
+    detailedSchedule: item.recruit?.recruitStartAt
+      ? {
+          applicationStart: item.recruit.recruitStartAt,
+          applicationEnd: item.recruit.recruitEndAt,
+        }
+      : undefined,
   };
 }
 
@@ -94,16 +105,17 @@ const SORT_OPTIONS = ["최신순", "인기순", "마감임박순", "포인트높
 
 const DEFAULT_SORT = "최신순";
 
-// 남은 일수(D-값)를 정렬 가능한 숫자로 변환
-const get_day_count_value = (day_count?: string): number => {
-  if (!day_count) return Number.MAX_SAFE_INTEGER;
+// 마감까지 남은 일수를 정렬 가능한 숫자로 변환
+const get_remaining_days = (campaign: SearchCampaign): number => {
+  if (campaign.isUrgent) return 0;
 
-  // "긴급" 같은 특수 케이스는 가장 앞으로 오도록 0으로 처리
-  if (day_count.includes("긴급")) return 0;
-
-  const match = day_count.match(/D-(\d+)/);
-  if (match) {
-    return parseInt(match[1], 10);
+  if (campaign.detailedSchedule?.applicationEnd) {
+    const end = new Date(campaign.detailedSchedule.applicationEnd);
+    end.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diff = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diff < 0 ? -1 : diff;
   }
 
   return Number.MAX_SAFE_INTEGER;
@@ -118,9 +130,7 @@ const sort_campaigns = (campaigns: SearchCampaign[], sort_by: string) => {
       return copied.sort((a, b) => (b.recruitment?.current ?? 0) - (a.recruitment?.current ?? 0));
     case "마감임박순":
       // 남은 일수가 적은 순 (긴급 우선)
-      return copied.sort(
-        (a, b) => get_day_count_value(a.dayCount) - get_day_count_value(b.dayCount)
-      );
+      return copied.sort((a, b) => get_remaining_days(a) - get_remaining_days(b));
     case "포인트높은순":
       // 포인트가 높은 순
       return copied.sort((a, b) => (b.points ?? 0) - (a.points ?? 0));
@@ -140,11 +150,21 @@ export default function SearchResultsSection({
   const [is_sort_modal_open, set_is_sort_modal_open] = useState(false);
   const [temp_sort, set_temp_sort] = useState<string>(DEFAULT_SORT);
   const [campaigns, set_campaigns] = useState<SearchCampaign[]>(externalCampaigns ?? []);
-  const [is_loading, set_is_loading] = useState(true);
+  const [is_loading, set_is_loading] = useState(!externalCampaigns);
+
+  // externalCampaigns가 변경되면 반영
+  useEffect(() => {
+    if (externalCampaigns) {
+      set_campaigns(externalCampaigns);
+      set_is_loading(false);
+    }
+  }, [externalCampaigns]);
 
   // R-21: GET /search?keyword={keyword}
-  // apiClient 인터셉터가 localStorage의 Bearer 토큰을 자동 주입
+  // externalCampaigns가 없을 때만 리뷰어 검색 API 호출
   useEffect(() => {
+    if (externalCampaigns) return;
+
     let cancelled = false;
     set_is_loading(true);
 
@@ -167,7 +187,7 @@ export default function SearchResultsSection({
     return () => {
       cancelled = true;
     };
-  }, [keyword]);
+  }, [keyword, externalCampaigns]);
 
   const sorted_campaigns = sort_campaigns(campaigns, selected_sort);
   const has_result = sorted_campaigns.length > 0;

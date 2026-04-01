@@ -7,10 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState, useCallback } from "react";
 import CampaignProgressDetailLayout from "./CampaignProgressDetailLayout";
-import type {
-  CampaignWithApplicants,
-  AllApplicant,
-} from "@/data/partner/sharedCampaigns";
+import type { CampaignWithApplicants, AllApplicant } from "@/data/partner/sharedCampaigns";
 import type {
   SortOption,
   TabType,
@@ -88,11 +85,7 @@ const mockRenderCard = (
   switch (applicant.channel) {
     case "네이버블로그":
       // 네이버블로그는 dailyVisits, totalVisits, neighbors 속성이 모두 있는 Applicant 타입
-      if (
-        "dailyVisits" in applicant &&
-        "totalVisits" in applicant &&
-        "neighbors" in applicant
-      ) {
+      if ("dailyVisits" in applicant && "totalVisits" in applicant && "neighbors" in applicant) {
         return (
           <NaverBlogCard
             applicant={applicant as unknown as Applicant}
@@ -115,20 +108,13 @@ const mockRenderCard = (
           );
         }
         return (
-          <InstagramCard
-            applicant={applicant as InstagramApplicant}
-            onSelect={handle_select}
-          />
+          <InstagramCard applicant={applicant as InstagramApplicant} onSelect={handle_select} />
         );
       }
       break;
     default:
       // 기본값: 네이버블로그 카드 사용 (타입 체크 후)
-      if (
-        "dailyVisits" in applicant &&
-        "totalVisits" in applicant &&
-        "neighbors" in applicant
-      ) {
+      if ("dailyVisits" in applicant && "totalVisits" in applicant && "neighbors" in applicant) {
         return (
           <NaverBlogCard
             applicant={applicant as unknown as Applicant}
@@ -237,9 +223,7 @@ export const DefaultGA: Story = {
           ...mockCampaignData,
           applicantData: {
             applicants: mockApplicants,
-            selectedApplicants: mockApplicants.filter((app) =>
-              selectedIds.has(app.id)
-            ),
+            selectedApplicants: mockApplicants.filter((app) => selectedIds.has(app.id)),
           },
         }}
         active_tab={activeTab}
@@ -248,9 +232,8 @@ export const DefaultGA: Story = {
         set_sort_order={setSortOrder}
         sort_options={[
           { value: "latest", label: "최신순" },
-          { value: "popular", label: "인기순" },
-          { value: "deadline", label: "마감임박순" },
-          { value: "point", label: "포인트순" },
+          { value: "oldest", label: "오래된순" },
+          { value: "recommend", label: "추천순" },
         ]}
         applicants_count={mockApplicants.length}
         selected_count={selectedIds.size}
@@ -312,9 +295,7 @@ export const DefaultSA: Story = {
           ...mockCampaignData,
           applicantData: {
             applicants: mockApplicants,
-            selectedApplicants: mockApplicants.filter((app) =>
-              selectedIds.has(app.id)
-            ),
+            selectedApplicants: mockApplicants.filter((app) => selectedIds.has(app.id)),
           },
         }}
         active_tab={activeTab}
@@ -323,9 +304,8 @@ export const DefaultSA: Story = {
         set_sort_order={setSortOrder}
         sort_options={[
           { value: "latest", label: "최신순" },
-          { value: "popular", label: "인기순" },
-          { value: "deadline", label: "마감임박순" },
-          { value: "point", label: "포인트순" },
+          { value: "oldest", label: "오래된순" },
+          { value: "recommend", label: "추천순" },
         ]}
         applicants_count={mockApplicants.length}
         selected_count={selectedIds.size}

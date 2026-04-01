@@ -92,9 +92,9 @@ export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) 
 
   const is_sa = manager_type === "sa";
 
-  // API 훅 (GA/SA 모두 호출 — React 규칙, 사용할 결과만 선택)
+  // API 훅 — 각 모드에서만 활성화
   const gaListResult = useAdminPosts(api_params);
-  const saListResult = useSAAdminPosts(api_params);
+  const saListResult = useSAAdminPosts(api_params, { enabled: is_sa });
   const { data: listResponse, isLoading } = is_sa ? saListResult : gaListResult;
 
   // GA 뮤테이션

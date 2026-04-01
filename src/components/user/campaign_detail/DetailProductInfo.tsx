@@ -99,9 +99,11 @@ export default function CampaignProductInfo({
       </div>
 
       {/* 제품 메인 이미지 */}
-      <div className={styles.main_image_container}>
-        <Image src={image} alt={title} fill style={{ objectFit: "cover" }} />
-      </div>
+      {image ? (
+        <div className={styles.main_image_container}>
+          <Image src={image} alt={title} fill style={{ objectFit: "cover" }} />
+        </div>
+      ) : null}
 
       {/* 
         children: 부모 컴포넌트에서 전달한 추가 콘텐츠를 여기에 렌더링

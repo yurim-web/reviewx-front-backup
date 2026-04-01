@@ -92,8 +92,8 @@ export default function AdminLoginPage() {
     setIsSubmitting(true);
 
     try {
-      // POST /api/manager/login API 호출
-      const { data } = await apiClient.post("/api/manager/login", {
+      // POST /api/admin/login API 호출
+      const { data } = await apiClient.post("/api/admin/login", {
         email: username,
         password,
       });

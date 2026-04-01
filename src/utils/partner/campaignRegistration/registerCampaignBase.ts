@@ -22,6 +22,21 @@ import { postPartnerCampaign } from "@/lib/api/partner";
 import { postCampaignCreate } from "@/lib/api/partnerCampaign";
 import type { CreateCampaignRequest } from "@/types/api/partnerCampaign";
 
+/** Data URL → File 변환 (미리보기 URL로 실제 File 생성) */
+function dataUrlToFile(dataUrl: string | undefined, filename: string): File {
+  if (!dataUrl || !dataUrl.startsWith("data:")) {
+    return new File(["placeholder"], "placeholder.jpg", { type: "image/jpeg" });
+  }
+  const [header, base64] = dataUrl.split(",");
+  const mime = header.match(/:(.*?);/)?.[1] || "image/jpeg";
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new File([bytes], filename, { type: mime });
+}
+
 /** 캠페인 유형별 설정 */
 export interface CampaignRegistrationConfig {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -191,8 +206,20 @@ function buildApiRequest(
     title: formData.title,
     description: formData.providedItems || "",
     thumbnailImage:
-      (fd.thumbnailImage as File) || new File([], "placeholder.jpg", { type: "image/jpeg" }),
-    detailImages: (fd.detailImages as File[]) || [],
+      fd.thumbnailImage instanceof File && (fd.thumbnailImage as File).size > 0
+        ? (fd.thumbnailImage as File)
+        : dataUrlToFile(fd.thumbnailImageUrl as string | undefined, "thumbnail.jpg"),
+    detailImages: (() => {
+      const files = ((fd.detailImages as File[]) || []).filter(
+        (f) => f instanceof File && f.size > 0
+      );
+      if (files.length > 0) return files;
+      // File이 없으면 미리보기 Data URL에서 File 생성
+      const previews = (fd.detailImagePreviews as string[]) || [];
+      return previews
+        .filter((url) => url && url.startsWith("data:"))
+        .map((url, i) => dataUrlToFile(url, `detail_${i}.jpg`));
+    })(),
     recruitLimit: Number(formData.recruitmentCount) || 1,
     recruitStartAt: recruit.start,
     recruitEndAt: recruit.end,
@@ -209,6 +236,27 @@ function buildApiRequest(
       formData.visitAddress ||
       [formData.visitBaseAddress, formData.visitDetailAddress].filter(Boolean).join(" ") ||
       undefined,
+    visitZipCode: formData.visitZipCode || undefined,
+    visitBaseAddress: formData.visitBaseAddress || undefined,
+    visitDetailAddress: formData.visitDetailAddress || undefined,
+    addressDetail: formData.addressDetail || undefined,
+    visitLink: formData.visitLink || undefined,
+    // 구매평 전용
+    purchasePeriod: formData.purchasePeriod || undefined,
+    // 미션형 전용
+    requireContentLink: formData.requireContentLink === true || undefined,
+    requireContentImage: formData.requireContentImage === true || undefined,
+    // 기본 미션 설정
+    minTextLength: Number(formData.minTextLength) || undefined,
+    minImageCount: Number(formData.minImageCount) || undefined,
+    videoCount: Number(formData.videoCount) || undefined,
+    videoDuration: Number(formData.videoDuration) || undefined,
+    requireLinkAttachment: formData.requireLinkAttachment === true || undefined,
+    requireKeywordAttachment: formData.requireKeywordAttachment === true || undefined,
+    // 참여/제출 옵션
+    adultOnly: formData.adultOnly === true || undefined,
+    allowReParticipation: formData.allowReParticipation === true || undefined,
+    allowLateSubmission: formData.allowLateSubmission === true || undefined,
     is_urgent: formData.isUrgent === true,
     contact_phone: formData.contactPhone || "",
     ftc_agreement: formData.fairTradeAgreement || false,

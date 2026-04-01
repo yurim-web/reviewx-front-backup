@@ -30,7 +30,7 @@ export interface BaseModalProps {
   /** 취소 버튼 클릭 핸들러 (버튼이 두 개일 때 첫 번째 버튼, 기본값: on_close) */
   on_cancel?: () => void;
   /** 확인 버튼 클릭 핸들러 (버튼이 두 개일 때 두 번째 버튼) */
-  on_confirm?: () => void;
+  on_confirm?: () => void | Promise<void>;
   /** 버튼 영역 레이아웃 (기본값: "row") */
   button_layout?: "row" | "column";
   /**
@@ -46,6 +46,8 @@ export interface BaseModalProps {
   close_on_escape?: boolean;
   /** 확인 버튼 색상 변형 (기본값: "pink") */
   button_variant?: "pink" | "red";
+  /** 로딩 상태 — true이면 버튼 비활성화 + 확인 버튼에 로딩 표시 */
+  is_loading?: boolean;
 }
 
 /**
@@ -64,6 +66,7 @@ export default function BaseModal({
   close_on_overlay_click = true,
   close_on_escape = true,
   button_variant = "pink",
+  is_loading = false,
 }: BaseModalProps) {
   const buttons = prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
   const has_two_buttons = buttons.length === 2;
@@ -75,6 +78,7 @@ export default function BaseModal({
     if (!is_open || !close_on_escape) return;
 
     const handle_escape = (e: KeyboardEvent) => {
+      if (is_loading) return;
       if (e.key === "Escape") {
         on_close();
       }
@@ -88,15 +92,18 @@ export default function BaseModal({
   if (!is_open) return null;
 
   // 확인 버튼 클릭 핸들러
-  const handle_confirm = () => {
+  const handle_confirm = async () => {
     if (on_confirm) {
-      on_confirm();
+      await on_confirm();
     }
-    on_close();
+    if (!is_loading) {
+      on_close();
+    }
   };
 
   // 취소 버튼 클릭 핸들러
   const handle_cancel = () => {
+    if (is_loading) return;
     if (on_cancel) {
       on_cancel();
       return;
@@ -106,6 +113,7 @@ export default function BaseModal({
 
   // 오버레이 클릭 핸들러
   const handle_overlay_click = (e: React.MouseEvent) => {
+    if (is_loading) return;
     if (close_on_overlay_click && e.target === e.currentTarget) {
       on_close();
     }
@@ -145,21 +153,37 @@ export default function BaseModal({
                 {should_confirm_first ? (
                   <>
                     {/* 두 개 버튼(세로): 확인(위), 취소(아래) */}
-                    <button onClick={handle_confirm} className={confirm_button_class}>
-                      {buttons[1]}
+                    <button
+                      onClick={handle_confirm}
+                      className={confirm_button_class}
+                      disabled={is_loading}
+                    >
+                      {is_loading ? "처리 중..." : buttons[1]}
                     </button>
-                    <button onClick={handle_cancel} className={styles.modal_footer_button_cancel}>
+                    <button
+                      onClick={handle_cancel}
+                      className={styles.modal_footer_button_cancel}
+                      disabled={is_loading}
+                    >
                       {buttons[0]}
                     </button>
                   </>
                 ) : (
                   <>
                     {/* 두 개 버튼: 취소, 확인 */}
-                    <button onClick={handle_cancel} className={styles.modal_footer_button_cancel}>
+                    <button
+                      onClick={handle_cancel}
+                      className={styles.modal_footer_button_cancel}
+                      disabled={is_loading}
+                    >
                       {buttons[0]}
                     </button>
-                    <button onClick={handle_confirm} className={confirm_button_class}>
-                      {buttons[1]}
+                    <button
+                      onClick={handle_confirm}
+                      className={confirm_button_class}
+                      disabled={is_loading}
+                    >
+                      {is_loading ? "처리 중..." : buttons[1]}
                     </button>
                   </>
                 )}

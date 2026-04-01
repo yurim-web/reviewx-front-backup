@@ -18,7 +18,7 @@ import { getButtonClassName } from "@/components/common/campaign_management/util
 import CampaignCardBase from "./CampaignCardBase";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { useAuth } from "@/hooks/useAuth";
-import { cancelAppliedCampaign } from "@/components/user/campaign_management/utils/campaignCancelUtils";
+import { cancelApplication } from "@/lib/api/userCampaignManagement";
 
 interface ApplicationTabCardProps {
   campaign: CampaignApplication;
@@ -85,22 +85,32 @@ export default function ApplicationTabCard({ campaign, onCancelSuccess }: Applic
   /**
    * 신청 취소 확인 핸들러
    */
-  const handleConfirmCancel = () => {
+  const handleConfirmCancel = async () => {
     if (!user) {
       confirmModal.close();
       errorModal.open();
       return;
     }
 
-    const result = cancelAppliedCampaign(user.id, campaign.id);
-    confirmModal.close();
-
-    if (result.success) {
-      successModal.open();
-    } else if (result.reason === "already_cancelled") {
-      alreadyCancelledModal.open();
-    } else {
+    const applicationId = campaign.campaignApplicationId;
+    if (!applicationId) {
+      confirmModal.close();
       errorModal.open();
+      return;
+    }
+
+    try {
+      await cancelApplication(applicationId);
+      confirmModal.close();
+      successModal.open();
+    } catch (err: unknown) {
+      confirmModal.close();
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 409) {
+        alreadyCancelledModal.open();
+      } else {
+        errorModal.open();
+      }
     }
   };
 

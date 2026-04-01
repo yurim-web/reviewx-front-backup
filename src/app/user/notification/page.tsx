@@ -238,7 +238,11 @@ export default function UserNotificationPage() {
         <PageTitle
           title="알림"
           right_content={
-            <button className={styles.delete_all_button} onClick={handleDeleteAllClick}>
+            <button
+              className={styles.delete_all_button}
+              onClick={handleDeleteAllClick}
+              disabled={notifications.length === 0}
+            >
               전체 삭제
             </button>
           }
@@ -246,7 +250,11 @@ export default function UserNotificationPage() {
       ) : (
         <div className={styles.notification_header}>
           <h1 className={styles.notification_header_title}>알림</h1>
-          <button className={styles.delete_all_button} onClick={handleDeleteAllClick}>
+          <button
+            className={styles.delete_all_button}
+            onClick={handleDeleteAllClick}
+            disabled={notifications.length === 0}
+          >
             전체 삭제
           </button>
         </div>

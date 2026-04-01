@@ -100,9 +100,9 @@ export default function CategoryTable({
   const apiParams = selected_divisions.length === 1 ? { division: selected_divisions[0] } : {};
   const queryParams = search_query ? { ...apiParams, keyword: search_query } : apiParams;
 
-  // GA/SA 훅 모두 무조건 호출 (React hooks 규칙)
+  // GA/SA 훅 모두 무조건 호출 (React hooks 규칙) — 각 모드에서만 활성화
   const gaResult = useAdminCategories(queryParams);
-  const saResult = useSAAdminCategories(queryParams as SACategoryListParams);
+  const saResult = useSAAdminCategories(queryParams as SACategoryListParams, { enabled: is_sa });
   const { data: response, isLoading } = is_sa ? saResult : gaResult;
 
   const categories = response?.data?.categories ?? [];

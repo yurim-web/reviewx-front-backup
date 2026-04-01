@@ -23,13 +23,13 @@ export async function generateMetadata({
 
   if (!campaign) {
     return {
-      title: "ReviewX | 캠페인을 찾을 수 없습니다",
-      description: "요청하신 방문형 캠페인을 찾을 수 없습니다",
+      title: "ReviewX | 방문형 캠페인 상세",
+      description: "ReviewX 방문형 캠페인 상세 페이지",
     };
   }
 
   return {
-    title: `ReviewX | ${campaign.title}`,
+    title: "ReviewX | 방문형 캠페인 상세",
     description: campaign.description ?? `ReviewX 방문형 캠페인 - ${campaign.title}`,
   };
 }

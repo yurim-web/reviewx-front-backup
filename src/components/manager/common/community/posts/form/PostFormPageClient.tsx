@@ -39,26 +39,6 @@ interface PostFormPageClientProps {
   manager_type: "ga" | "sa";
 }
 
-// 사이드바 메뉴 데이터
-const side_menu_items = [
-  { label: "홈", isActive: false },
-  { label: "캠페인", isActive: false },
-  { label: "정산", isActive: false },
-  { label: "회원", isActive: false },
-  { label: "커뮤니티", isActive: false },
-  { label: "대시보드", isActive: false },
-  { label: "진행 현황", isActive: false },
-  { label: "출금 현황", isActive: false },
-  { label: "출금 요청", isActive: false },
-  { label: "결제 내역", isActive: false },
-  { label: "리뷰어 목록", isActive: false },
-  { label: "파트너 목록", isActive: false },
-  { label: "관리자 목록", isActive: false },
-  { label: "차단 내역", isActive: false },
-  { label: "게시글 목록", isActive: true },
-  { label: "카테고리 관리", isActive: false },
-];
-
 export default function PostFormPageClient({
   mode,
   post_id,
@@ -195,111 +175,88 @@ export default function PostFormPageClient({
   }, [is_editor_ready]);
 
   return (
-    <main className={styles.container}>
-      <header className={styles.header_bar} aria-label="상단 헤더">
-        <div className={styles.header_logo} aria-label="로고 영역">
-          로고
-        </div>
-        <div className={styles.header_actions}>
-          <span className={styles.header_action_button} aria-hidden />
-          <span className={styles.header_action_button} aria-hidden />
-        </div>
-      </header>
+    <div className={styles.main_content}>
+      <div className={styles.page_header}>
+        <h1 className={styles.page_title}>{page_title}</h1>
+      </div>
 
-      <aside className={styles.sidebar} aria-label="관리자 메뉴">
-        {side_menu_items.map((item) => (
-          <p
-            key={item.label}
-            className={`${styles.sidebar_item} ${item.isActive ? styles.sidebar_item_active : ""}`}
-          >
-            {item.label}
-          </p>
-        ))}
-      </aside>
-
-      <section className={styles.main_content}>
-        <div className={styles.page_header}>
-          <h1 className={styles.page_title}>{page_title}</h1>
-        </div>
-
-        <div className={styles.form_card} aria-label={form_aria_label}>
-          <div className={styles.form_field}>
-            <label className={styles.input_label} htmlFor="categoryType">
-              구분
-            </label>
-            <CustomDropdown
-              value={category_type}
-              options={CATEGORY_TYPE_OPTIONS}
-              onChange={handleCategoryTypeChange}
-              placeholder="구분을 선택하세요"
-            />
-          </div>
-
-          <div className={styles.form_field}>
-            <label className={styles.input_label} htmlFor="category">
-              카테고리
-            </label>
-            <CustomDropdown
-              value={category}
-              options={category_options}
-              onChange={setCategory}
-              placeholder="카테고리를 선택하세요"
-            />
-          </div>
-
-          <div className={styles.form_field}>
-            <label className={styles.input_label} htmlFor="target">
-              대상
-            </label>
-            <CustomDropdown
-              value={target}
-              options={TARGET_OPTIONS}
-              onChange={setTarget}
-              placeholder="대상을 선택하세요"
-            />
-          </div>
-
-          <div className={styles.form_field}>
-            <label className={styles.input_label} htmlFor="title">
-              {is_faq_type ? "질문" : "제목"}
-            </label>
-            <input
-              id="title"
-              className={styles.input_box}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              autoComplete="off"
-              ref={title_input_ref}
-              aria-label="게시글 제목"
-            />
-          </div>
-
-          <PostEditorField
-            is_mounted={is_mounted}
-            is_editor_ready={is_editor_ready}
-            setIsEditorReady={setIsEditorReady}
-            is_editor_unlocked={is_editor_unlocked}
-            setIsEditorUnlocked={setIsEditorUnlocked}
-            mode={mode}
-            initial_data={initial_data}
-            editor_instance_ref={editor_instance_ref}
-            title_input_ref={title_input_ref}
-            body_label={is_faq_type ? "답변" : "내용"}
+      <div className={styles.form_card} aria-label={form_aria_label}>
+        <div className={styles.form_field}>
+          <label className={styles.input_label} htmlFor="categoryType">
+            구분
+          </label>
+          <CustomDropdown
+            value={category_type}
+            options={CATEGORY_TYPE_OPTIONS}
+            onChange={handleCategoryTypeChange}
+            placeholder="구분을 선택하세요"
           />
-
-          <button
-            type="button"
-            className={`${styles.save_button} ${
-              is_button_disabled ? styles.save_button_disabled : ""
-            }`}
-            onClick={handle_submit}
-            disabled={is_button_disabled}
-            aria-label={`${button_text} 버튼`}
-          >
-            {button_text}
-          </button>
         </div>
-      </section>
+
+        <div className={styles.form_field}>
+          <label className={styles.input_label} htmlFor="category">
+            카테고리
+          </label>
+          <CustomDropdown
+            value={category}
+            options={category_options}
+            onChange={setCategory}
+            placeholder="카테고리를 선택하세요"
+          />
+        </div>
+
+        <div className={styles.form_field}>
+          <label className={styles.input_label} htmlFor="target">
+            대상
+          </label>
+          <CustomDropdown
+            value={target}
+            options={TARGET_OPTIONS}
+            onChange={setTarget}
+            placeholder="대상을 선택하세요"
+          />
+        </div>
+
+        <div className={styles.form_field}>
+          <label className={styles.input_label} htmlFor="title">
+            {is_faq_type ? "질문" : "제목"}
+          </label>
+          <input
+            id="title"
+            className={styles.input_box}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            autoComplete="off"
+            ref={title_input_ref}
+            aria-label="게시글 제목"
+          />
+        </div>
+
+        <PostEditorField
+          is_mounted={is_mounted}
+          is_editor_ready={is_editor_ready}
+          setIsEditorReady={setIsEditorReady}
+          is_editor_unlocked={is_editor_unlocked}
+          setIsEditorUnlocked={setIsEditorUnlocked}
+          mode={mode}
+          initial_data={initial_data}
+          editor_instance_ref={editor_instance_ref}
+          title_input_ref={title_input_ref}
+          body_label={is_faq_type ? "답변" : "내용"}
+        />
+
+        <button
+          type="button"
+          className={`${styles.save_button} ${
+            is_button_disabled ? styles.save_button_disabled : ""
+          }`}
+          onClick={handle_submit}
+          disabled={is_button_disabled}
+          aria-label={`${button_text} 버튼`}
+        >
+          {button_text}
+        </button>
+      </div>
 
       <Toast
         message={mode === "create" ? "등록되었습니다." : "저장되었습니다."}
@@ -307,6 +264,6 @@ export default function PostFormPageClient({
         onClose={() => set_show_toast(false)}
         duration={2000}
       />
-    </main>
+    </div>
   );
 }

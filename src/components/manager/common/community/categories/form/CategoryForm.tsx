@@ -62,7 +62,7 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
 
   // 구분 옵션 조회 — GA/SA 훅 모두 무조건 호출 (React hooks 규칙)
   const gaFormOptions = useCategoryFormOptions();
-  const saFormOptions = useSACategoryFormOptions();
+  const saFormOptions = useSACategoryFormOptions({ enabled: is_sa });
   const formOptionsResponse = is_sa ? saFormOptions.data : gaFormOptions.data;
 
   const defaultDivisions: DivisionOption[] = is_sa

@@ -25,6 +25,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import { getCampaignTypePath, convertToCampaignDataId } from "./utils/campaign_card_helpers";
 import { useCampaignCard } from "@/hooks/partner/campaign_management/useCampaignCard";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { deleteCampaign as localDeleteCampaign } from "@/data/partner/sharedCampaigns";
 import { deleteCampaign as deleteRemoteCampaign } from "@/lib/api/partnerCampaignManagement";
@@ -58,6 +59,7 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
   } = useCampaignCard({ campaign, activeTab });
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   /**
    * 버튼 클릭 핸들러
@@ -368,19 +370,20 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
         message="캠페인을 삭제하시겠습니까?<br>이 작업은 되돌릴 수 없습니다."
         buttons={["취소", "확인"]}
         button_variant="red"
+        is_loading={isDeleting}
         on_confirm={async () => {
-          closeDeleteModal();
-
-          // 모든 탭에서 DELETE API 호출
+          setIsDeleting(true);
           try {
             await deleteRemoteCampaign(Number(campaign.id));
           } catch {
             // mock 서버 미실행 시 무시
           }
           localDeleteCampaign(String(campaign.id), campaign.campaignType);
-          alert("캠페인이 삭제되었습니다.");
-          queryClient.invalidateQueries({ queryKey: ["partnerCampaignManagement"] });
-          queryClient.invalidateQueries({ queryKey: ["partnerCampaignsByStatus"] });
+          // refetchQueries로 데이터 갱신 완료까지 대기 후 모달 닫기
+          await queryClient.refetchQueries({ queryKey: ["partnerCampaignManagement"] });
+          await queryClient.refetchQueries({ queryKey: ["partnerCampaignsByStatus"] });
+          setIsDeleting(false);
+          closeDeleteModal();
         }}
       />
     </div>

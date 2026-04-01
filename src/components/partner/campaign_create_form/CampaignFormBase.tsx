@@ -255,7 +255,9 @@ export default function CampaignFormBase({
         ? (pageData?.channelNameToId[formData.platform] ?? undefined)
         : undefined,
       _regionId: formData.subRegion
-        ? (pageData?.regionNameToId[formData.subRegion] ?? undefined)
+        ? (pageData?.regionNameToId[`${formData.region}_${formData.subRegion}`] ??
+          pageData?.regionNameToId[formData.subRegion] ??
+          undefined)
         : undefined,
     };
 

@@ -95,18 +95,20 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
    * 등록 기간이 마감되었는지 확인하는 함수
    *
    * 설명:
-   * - 반려된 캠페인의 경우 수정 기간이 지났는지 확인합니다.
-   * - 현재는 반려된 캠페인들은 모두 수정 가능한 것으로 간주합니다.
-   * - TODO: 실제 데이터 구조에 맞게 수정 기간 체크 로직 구현 필요
-   *   (예: campaign.editDeadline 또는 campaign.editPeriodEndDate 필드 사용)
+   * - 반려된 캠페인의 경우 반려일(rejectedAt)로부터 5일 이내에 재등록 가능합니다.
+   * - 5일이 지난 경우 true를 반환하여 "등록 기간이 마감되었습니다." 모달을 표시합니다.
    *
    * @returns 수정 기간이 지났으면 true, 아니면 false
    */
   const isEditPeriodEnded = (): boolean => {
-    // TODO: 실제 수정 기간 필드를 사용하여 체크
-    // 현재는 반려된 캠페인들은 모두 수정 가능한 것으로 간주
-    // remainingDays가 음수여도 반려 후 수정 기간은 별도일 수 있으므로 false 반환
-    return false;
+    if (!campaign.rejectedAt) return false;
+    try {
+      const rejectedDate = new Date(campaign.rejectedAt);
+      const deadline = new Date(rejectedDate.getTime() + 5 * 24 * 60 * 60 * 1000);
+      return new Date() > deadline;
+    } catch {
+      return false;
+    }
   };
 
   /**

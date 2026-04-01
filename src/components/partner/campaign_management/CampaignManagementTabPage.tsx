@@ -38,7 +38,6 @@ export default function CampaignManagementTabPage({ statTab }: CampaignManagemen
   const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
   const [activeStatTab] = useState<PartnerStatTab>(statTab);
   const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const {
     campaigns,
@@ -69,24 +68,9 @@ export default function CampaignManagementTabPage({ statTab }: CampaignManagemen
 
   const handleFilteredCampaignsChange = (filtered: PartnerCampaign[]) => {
     setFilteredCampaigns(filtered);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setIsLoading(false);
-      });
-    });
   };
 
-  useEffect(() => {
-    setIsLoading(true);
-
-    const safetyTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(safetyTimer);
-  }, [activeStatTab]);
-
-  if (isLoading || isApiLoading) {
+  if (isApiLoading) {
     return <Loading />;
   }
 

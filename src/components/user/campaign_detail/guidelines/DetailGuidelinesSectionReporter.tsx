@@ -66,7 +66,16 @@ export default function DetailGuidelinesSectionReporter({
             </div>
           </div>
           <div className={styles.content_box}>
-            <div className={styles.keyword_text_box}>{productLink}</div>
+            <div className={styles.keyword_text_box}>
+              <a
+                href={productLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.promotion_link}
+              >
+                {productLink}
+              </a>
+            </div>
           </div>
         </div>
       )}
