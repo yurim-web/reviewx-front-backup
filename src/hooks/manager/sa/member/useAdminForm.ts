@@ -79,7 +79,8 @@ function check_form_validity(
 
   // 필수 필드 체크
   if (!is_edit_mode && !trimmed.id) return false;
-  if (!trimmed.password || !trimmed.password_confirm) return false;
+  if (!is_edit_mode && (!trimmed.password || !trimmed.password_confirm)) return false;
+  if (is_edit_mode && trimmed.password && !trimmed.password_confirm) return false;
   if (!trimmed.name || !trimmed.phone) return false;
 
   // 형식 검증

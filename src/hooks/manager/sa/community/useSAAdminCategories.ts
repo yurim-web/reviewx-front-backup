@@ -29,9 +29,13 @@ import type {
 const SA_CATEGORY_QUERY_KEY = "saAdminCategories";
 
 /** SA 카테고리 목록 조회 (SA→GA 응답 어댑터) */
-export function useSAAdminCategories(params?: SACategoryListParams) {
+export function useSAAdminCategories(
+  params?: SACategoryListParams,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: [SA_CATEGORY_QUERY_KEY, params],
+    enabled: options?.enabled ?? true,
     queryFn: async (): Promise<CategoryListResponse> => {
       const raw = await getSACategoryList(params);
       const categories: CategoryApiItem[] = raw.categories.map((cat) => ({
@@ -77,9 +81,10 @@ export function useSACategoryDetail(categoryId: number) {
 }
 
 /** SA 카테고리 등록 폼 옵션 조회 (SA→GA 응답 어댑터) */
-export function useSACategoryFormOptions() {
+export function useSACategoryFormOptions(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [SA_CATEGORY_QUERY_KEY, "formOptions"],
+    enabled: options?.enabled ?? true,
     queryFn: async (): Promise<CategoryFormOptionsResponse> => {
       const raw = await getSACategoryFormOptions();
       return {

@@ -79,9 +79,13 @@ function adaptCampaignInfo(api: {
 
   const PLATFORM_MAP: Record<string, string> = {
     NAVER_BLOG: "네이버블로그",
+    NAVER_CLIP: "네이버클립",
     INSTAGRAM: "인스타그램",
+    INSTAGRAM_REELS: "릴스",
     YOUTUBE: "유튜브",
+    YOUTUBE_SHORTS: "숏츠",
     REELS: "릴스",
+    SHORTS: "숏츠",
   };
 
   // 등록 기간: contentRegistrationDeadline에서 파생 가능

@@ -194,16 +194,28 @@ export function useCampaignFormStorage({
         type: CAMPAIGN_TYPE_MAP[campaignType] as Parameters<typeof postCampaignDraft>[0]["type"],
         title: formData.title || undefined,
         description: formData.providedItems || undefined,
+        categoryId: pageData?.categoryNameToId?.[formData.category] ?? undefined,
+        requiredPlatformId: pageData?.channelNameToId?.[formData.platform as string] ?? undefined,
         recruitLimit: Number(formData.recruitmentCount) || undefined,
         recruitStartAt: recruitRange.start || undefined,
         recruitEndAt: recruitRange.end || undefined,
         selectedAt: formData.announcementDate || undefined,
         contentStartAt: contentRange.start || undefined,
         contentEndAt: contentRange.end || undefined,
+        extraRewardPoint: formData.additionalPoints ? Number(formData.additionalPoints) : undefined,
+        paymentRewardPoint: formData.purchasePoints ? Number(formData.purchasePoints) : undefined,
         promotionUrl: formData.promotionLink || undefined,
         keyword: formData.keywords || undefined,
         notification: formData.guidelines || undefined,
-      };
+        visitAddress: formData.visitAddress || undefined,
+        visitZipCode: formData.visitZipCode || undefined,
+        visitBaseAddress: formData.visitBaseAddress || undefined,
+        visitDetailAddress: formData.visitDetailAddress || undefined,
+        addressDetail: formData.addressDetail || undefined,
+        visitLink: formData.visitLink || undefined,
+        region: formData.region || undefined,
+        subRegion: formData.subRegion || undefined,
+      } as Parameters<typeof postCampaignDraft>[0];
 
       const response = await postCampaignDraft(draftPayload);
       // 반환된 campaignId 저장 (API 12 불러오기용)
@@ -227,98 +239,170 @@ export function useCampaignFormStorage({
     try {
       if (typeof window === "undefined") return;
 
+      // localStorage에서 저장된 폼 데이터 읽기 (이미지 Data URL + 체크박스 상태 포함)
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const localData = saved
+        ? (JSON.parse(saved) as CampaignFormData & {
+            thumbnailImageUrl?: string;
+            detailImagePreviews?: string[];
+            checkboxStates?: {
+              minTextLength?: boolean;
+              minImageCount?: boolean;
+              videoCount?: boolean;
+            };
+          })
+        : null;
+
       // API 12 시도: localStorage에서 campaignId 읽기
       const storedDraftId = localStorage.getItem(DRAFT_ID_KEY);
       if (storedDraftId) {
-        const campaignId = Number(storedDraftId);
-        const response = await getCampaignDraft(campaignId);
-        const draft = response.campaign;
+        try {
+          const campaignId = Number(storedDraftId);
+          const response = await getCampaignDraft(campaignId);
+          const draft = response.campaign;
 
-        // 카테고리명/채널명 역매핑 (ID → 이름)
-        const CHANNEL_LABELS: Record<string, string> = {
-          NAVER_BLOG: "네이버 블로그",
-          NAVER_CLIP: "네이버 클립",
-          INSTAGRAM: "인스타그램",
-          INSTAGRAM_REELS: "릴스",
-          REELS: "릴스",
-          YOUTUBE: "유튜브",
-          YOUTUBE_SHORTS: "쇼츠",
-        };
-        const TYPE_KR: Record<string, string> = {
-          DELIVERY: "배송형",
-          VISIT: "방문형",
-          PURCHASE: "구매평",
-          REPORTER: "기자단",
-          MISSION: "미션형",
-        };
-        const toDateRange = (start?: string, end?: string) =>
-          start && end ? `${start.slice(0, 10)} ~ ${end.slice(0, 10)}` : "";
+          // API 응답에 유효한 데이터가 있는 경우에만 API 데이터 사용
+          if (draft && draft.title) {
+            const CHANNEL_LABELS: Record<string, string> = {
+              NAVER_BLOG: "네이버 블로그",
+              NAVER_CLIP: "네이버 클립",
+              INSTAGRAM: "인스타그램",
+              INSTAGRAM_REELS: "릴스",
+              REELS: "릴스",
+              YOUTUBE: "유튜브",
+              YOUTUBE_SHORTS: "쇼츠",
+            };
+            const TYPE_KR: Record<string, string> = {
+              DELIVERY: "배송형",
+              VISIT: "방문형",
+              PURCHASE: "구매평",
+              REPORTER: "기자단",
+              MISSION: "미션형",
+            };
+            const toDateRange = (start?: string, end?: string) =>
+              start && end ? `${start.slice(0, 10)} ~ ${end.slice(0, 10)}` : "";
 
-        const restored: Partial<CampaignFormData> = {
-          campaignType: (TYPE_KR[draft.type] as CampaignFormData["campaignType"]) || campaignType,
-          title: draft.title || "",
-          category: draft.category?.categoryName || "",
-          platform: draft.requiredPlatform
-            ? ((CHANNEL_LABELS[draft.requiredPlatform.channelName] ??
-                draft.requiredPlatform.channelName) as CampaignFormData["platform"])
-            : "",
-          providedItems: draft.description || "",
-          recruitmentCount: String(draft.recruit?.recruitLimit || ""),
-          ...(toDateRange(draft.recruit?.recruitStartAt, draft.recruit?.recruitEndAt) && {
-            recruitmentPeriod: toDateRange(
+            // API 응답에서 날짜 복원 시도, 없으면 localStorage 값 사용
+            const apiRecruitmentPeriod = toDateRange(
               draft.recruit?.recruitStartAt,
               draft.recruit?.recruitEndAt
-            ),
-          }),
-          ...(draft.recruit?.selectedAt && {
-            announcementDate: draft.recruit.selectedAt.slice(0, 10),
-          }),
-          ...(toDateRange(draft.recruit?.contentStartAt, draft.recruit?.contentEndAt) && {
-            registrationPeriod: toDateRange(
+            );
+            const apiAnnouncementDate = draft.recruit?.selectedAt
+              ? draft.recruit.selectedAt.slice(0, 10)
+              : "";
+            const apiRegistrationPeriod = toDateRange(
               draft.recruit?.contentStartAt,
               draft.recruit?.contentEndAt
-            ),
-          }),
-          additionalPoints: String(draft.reward?.extraRewardPoint || ""),
-          purchasePoints: String(draft.reward?.paymentRewardPoint || ""),
-          promotionLink: draft.promotionUrl || "",
-          keywords: draft.keyword || "",
-          guidelines: draft.notification || "",
-          visitAddress: draft.visitAddress || "",
-        };
+            );
 
-        setFormData((prev) => ({ ...prev, ...restored }));
-        setThumbnailPreview(draft.thumbnail?.url || null);
-        setDetailPreviews(draft.detailImages?.map((i) => i.url) || []);
-        setLoadConfirmModal({ is_open: false });
-        setToast({ is_open: true, message: "불러오기 완료" });
-        return;
+            const restored: Partial<CampaignFormData> = {
+              campaignType:
+                (TYPE_KR[draft.type] as CampaignFormData["campaignType"]) || campaignType,
+              title: draft.title || "",
+              // 카테고리: API 응답 우선, 없으면 localStorage 값 사용
+              category: draft.category?.categoryName || localData?.category || "",
+              // 플랫폼: API 응답 우선, 없으면 localStorage 값 사용
+              platform: draft.requiredPlatform?.channelName
+                ? ((CHANNEL_LABELS[draft.requiredPlatform.channelName] ??
+                    draft.requiredPlatform.channelName) as CampaignFormData["platform"])
+                : (localData?.platform as CampaignFormData["platform"]) || "",
+              providedItems: draft.description || localData?.providedItems || "",
+              recruitmentCount: draft.recruit?.recruitLimit
+                ? String(draft.recruit.recruitLimit)
+                : localData?.recruitmentCount != null
+                  ? String(localData.recruitmentCount)
+                  : "",
+              // 날짜: API 값 우선, 없으면 localStorage 값 사용 (항상 명시적으로 세팅)
+              recruitmentPeriod: apiRecruitmentPeriod || localData?.recruitmentPeriod || "",
+              announcementDate: apiAnnouncementDate || localData?.announcementDate || "",
+              registrationPeriod: apiRegistrationPeriod || localData?.registrationPeriod || "",
+              additionalPoints:
+                draft.reward?.extraRewardPoint != null
+                  ? String(draft.reward.extraRewardPoint)
+                  : localData?.additionalPoints != null
+                    ? String(localData.additionalPoints)
+                    : "",
+              purchasePoints:
+                draft.reward?.paymentRewardPoint != null
+                  ? String(draft.reward.paymentRewardPoint)
+                  : localData?.purchasePoints != null
+                    ? String(localData.purchasePoints)
+                    : "",
+              promotionLink: draft.promotionUrl || localData?.promotionLink || "",
+              keywords: draft.keyword || localData?.keywords || "",
+              guidelines: draft.notification || localData?.guidelines || "",
+              visitAddress: draft.visitAddress || localData?.visitAddress || "",
+              visitZipCode: draft.visitZipCode || localData?.visitZipCode || "",
+              visitBaseAddress: draft.visitBaseAddress || localData?.visitBaseAddress || "",
+              visitDetailAddress: draft.visitDetailAddress || localData?.visitDetailAddress || "",
+              addressDetail: draft.addressDetail || localData?.addressDetail || "",
+              visitLink: draft.visitLink || localData?.visitLink || "",
+              region: draft.region || localData?.region || "",
+              subRegion: draft.subRegion || localData?.subRegion || "",
+              // 기본 미션 설정 (API에 없으므로 localStorage에서 복원)
+              minTextLength: localData?.minTextLength ?? "",
+              minImageCount: localData?.minImageCount ?? "",
+              videoCount: localData?.videoCount ?? "",
+              videoDuration: localData?.videoDuration ?? "",
+              requireLinkAttachment: localData?.requireLinkAttachment ?? false,
+              requireKeywordAttachment: localData?.requireKeywordAttachment ?? false,
+              // 참여/제출 옵션 (API에 없으므로 localStorage에서 복원)
+              adultOnly: localData?.adultOnly ?? false,
+              allowReParticipation: localData?.allowReParticipation ?? false,
+              allowLateSubmission: localData?.allowLateSubmission ?? false,
+              // 공정위 동의 + 긴급 (API에 없으므로 localStorage에서 복원)
+              fairTradeAgreement: localData?.fairTradeAgreement ?? false,
+              isUrgent: localData?.isUrgent ?? false,
+            };
+
+            setFormData((prev) => ({ ...prev, ...restored }));
+
+            // 긴급 상태 부모 컴포넌트(PageHeader)에 전달
+            if (onUrgentLoad) {
+              onUrgentLoad(localData?.isUrgent ?? false);
+            }
+
+            // 이미지: API 응답 우선, 없으면 localStorage Data URL 사용
+            const apiThumbnailUrl = draft.thumbnail?.url || "";
+            const apiDetailUrls = draft.detailImages?.map((i) => i.url) || [];
+            setThumbnailPreview(apiThumbnailUrl || localData?.thumbnailImageUrl || null);
+            setDetailPreviews(
+              apiDetailUrls.length > 0 ? apiDetailUrls : localData?.detailImagePreviews || []
+            );
+
+            // 체크박스 상태 복원 (localStorage에만 저장됨)
+            if (localData?.checkboxStates) {
+              const s = localData.checkboxStates;
+              updateCheckboxState("minTextLength", s.minTextLength ?? false);
+              updateCheckboxState("minImageCount", s.minImageCount ?? false);
+              updateCheckboxState("videoCount", s.videoCount ?? false);
+            }
+
+            setLoadConfirmModal({ is_open: false });
+            setToast({ is_open: true, message: "불러오기 완료" });
+            return;
+          }
+          // API 응답이 비어있으면 localStorage fallback으로 진행
+        } catch (_apiError) {
+          // API 실패 → localStorage fallback
+        }
       }
 
-      // API 12 campaignId 없음 → localStorage fallback
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) {
+      // localStorage fallback (API 없거나 빈 응답일 때)
+      if (!localData) {
         setLoadConfirmModal({ is_open: false });
         return;
       }
-      const savedData = JSON.parse(saved) as CampaignFormData;
 
       if (onUrgentLoad) {
-        if (savedData?.isUrgent === true) onUrgentLoad(true);
-        else if (savedData?.isUrgent === false) onUrgentLoad(false);
+        if (localData?.isUrgent === true) onUrgentLoad(true);
+        else if (localData?.isUrgent === false) onUrgentLoad(false);
       }
-      setFormData(savedData);
-      const savedWithImages = savedData as CampaignFormData & {
-        thumbnailImageUrl?: string;
-        detailImagePreviews?: string[];
-      };
-      setThumbnailPreview(savedWithImages.thumbnailImageUrl || null);
-      setDetailPreviews(savedWithImages.detailImagePreviews || []);
-      const savedDataWithCheckbox = savedData as CampaignFormData & {
-        checkboxStates?: { minTextLength?: boolean; minImageCount?: boolean; videoCount?: boolean };
-      };
-      if (savedDataWithCheckbox.checkboxStates) {
-        const s = savedDataWithCheckbox.checkboxStates;
+      setFormData(localData);
+      setThumbnailPreview(localData.thumbnailImageUrl || null);
+      setDetailPreviews(localData.detailImagePreviews || []);
+      if (localData.checkboxStates) {
+        const s = localData.checkboxStates;
         if (s.minTextLength !== undefined) updateCheckboxState("minTextLength", s.minTextLength);
         if (s.minImageCount !== undefined) updateCheckboxState("minImageCount", s.minImageCount);
         if (s.videoCount !== undefined) updateCheckboxState("videoCount", s.videoCount);

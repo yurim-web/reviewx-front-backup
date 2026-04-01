@@ -134,15 +134,20 @@ export function useCampaignCreate({
         <BaseModal
           is_open={isConfirmModalOpen}
           on_close={() => {
-            setIsConfirmModalOpen(false);
+            if (!isSubmitting) {
+              setIsConfirmModalOpen(false);
+            }
           }}
           on_cancel={() => {
-            setIsConfirmModalOpen(false);
-            setPendingFormData(null);
+            if (!isSubmitting) {
+              setIsConfirmModalOpen(false);
+              setPendingFormData(null);
+            }
           }}
           message="캠페인 진행 시에는 삭제/수정이 불가합니다.<br>캠페인을 등록하시겠습니까?"
           buttons={["취소", "등록"]}
           on_confirm={handleConfirm}
+          is_loading={isSubmitting}
         />
       )}
 

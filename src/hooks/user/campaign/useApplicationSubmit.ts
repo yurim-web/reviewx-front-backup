@@ -81,6 +81,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
     channelName,
     clearFormData,
     // R-24 데이터
+    canApply,
     requiredChannelId,
     postNumber,
     addressRaw,
@@ -287,6 +288,10 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
     }
     if (isSuspended) {
       onSuspended();
+      return;
+    }
+    if (canApply === false) {
+      onError();
       return;
     }
     if (isClosed) {

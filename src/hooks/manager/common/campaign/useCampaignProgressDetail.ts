@@ -37,11 +37,10 @@ import type { CampaignInfo } from "@/components/partner/campaign_application/Cam
 /**
  * 정렬 옵션 타입 정의
  * - latest: 최신순
- * - popular: 인기순
- * - deadline: 마감임박순
- * - point: 포인트순
+ * - oldest: 등록순
+ * - recommend: 추천순
  */
-export type SortOption = "latest" | "popular" | "deadline" | "point";
+export type SortOption = "latest" | "oldest" | "recommend";
 
 /**
  * 탭 타입 정의
@@ -263,9 +262,8 @@ export function useCampaignProgressDetail(
   const [sort_order, set_sort_order] = useState<SortOption>("latest");
   const sort_options: Array<{ value: SortOption; label: string }> = [
     { value: "latest", label: "최신순" },
-    { value: "popular", label: "인기순" },
-    { value: "deadline", label: "마감임박순" },
-    { value: "point", label: "포인트순" },
+    { value: "oldest", label: "등록순" },
+    { value: "recommend", label: "추천순" },
   ];
 
   /**

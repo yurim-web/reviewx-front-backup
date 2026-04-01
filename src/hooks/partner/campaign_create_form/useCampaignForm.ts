@@ -160,12 +160,23 @@ export function useCampaignForm({
   };
 
   // 날짜 기본값 생성
-  const defaultDates = !initialData
-    ? getDefaultCampaignDates()
+  const allDefaultDates = !initialData ? getDefaultCampaignDates() : null;
+  const defaultDates = allDefaultDates
+    ? {
+        recruitmentPeriod: allDefaultDates.recruitmentPeriod,
+        announcementDate: allDefaultDates.announcementDate,
+        // 구매평: 등록기간은 구매기간 이후
+        registrationPeriod:
+          campaignType === "구매평"
+            ? allDefaultDates.registrationPeriodAfterPurchase
+            : allDefaultDates.registrationPeriod,
+        purchasePeriod: campaignType === "구매평" ? allDefaultDates.purchasePeriod : "",
+      }
     : {
         recruitmentPeriod: "",
         announcementDate: "",
         registrationPeriod: "",
+        purchasePeriod: "",
       };
 
   /**
@@ -197,7 +208,7 @@ export function useCampaignForm({
       addressDetail: "",
       purchaseLink: "",
       purchasePoints: "",
-      purchasePeriod: "",
+      purchasePeriod: defaultDates.purchasePeriod,
       deliveryZipCode: "",
       deliveryBaseAddress: "",
       deliveryDetailAddress: "",
@@ -457,8 +468,13 @@ export function useCampaignForm({
   const deductedPoints = useMemo(() => {
     const recruitmentCount = Number(formData.recruitmentCount) || 0;
     const additionalPoints = Number(String(formData.additionalPoints).replace(/,/g, "")) || 0;
+    // 구매평: (구매 지급 포인트 × 모집 인원) + (추가 지급 포인트 × 모집 인원)
+    if (campaignType === "구매평") {
+      const purchasePoints = Number(String(formData.purchasePoints).replace(/,/g, "")) || 0;
+      return (purchasePoints + additionalPoints) * recruitmentCount;
+    }
     return additionalPoints * recruitmentCount;
-  }, [formData.recruitmentCount, formData.additionalPoints]);
+  }, [campaignType, formData.recruitmentCount, formData.additionalPoints, formData.purchasePoints]);
 
   /**
    * 포인트 부족 경고 표시 여부

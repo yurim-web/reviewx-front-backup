@@ -46,7 +46,7 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
   return {
     id: String(item.campaignId),
     title: item.title || "",
-    category: "",
+    category: item.channelType || "",
     image: item.thumbnailUrl || "",
     status: "선정" as const,
     remainingDays: calcRemainingDays(item.recruitEndAt),
@@ -55,7 +55,7 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
     isUrgent: item.isUrgent || false,
     hasContent: !!item.content,
     isPenalty: false,
-    extensionCount: 0,
+    extensionCount: undefined,
     contentType: undefined,
     subStatus: mapSubStatus(item),
   };

@@ -21,10 +21,7 @@
 // 📦 Import
 // ========================================
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  filterCampaigns,
-  getItemKey,
-} from "@/components/common/campaign_management/utils/campaign_filter_helpers";
+import { filterCampaigns } from "@/components/common/campaign_management/utils/campaign_filter_helpers";
 import type {
   ActiveFilters,
   FilterableCampaign,
@@ -181,38 +178,10 @@ export function useCampaignFilterBar<T extends FilterableCampaign = FilterableCa
     onFilteredCampaignsChangeRef.current = onFilteredCampaignsChange;
   }, [onFilteredCampaignsChange]);
 
-  // 이전 필터링된 캠페인 목록 저장 (변경 감지용)
-  const prevFilteredCampaignsRef = useRef<T[]>([]);
-  const isFirstRenderRef = useRef(true);
-
-  // 필터링된 캠페인 목록이 변경되면 부모 컴포넌트에 알림
+  // 필터링된 캠페인 목록 변경 시 부모 컴포넌트에 알림
+  // React strict mode 호환: 항상 콜백 호출 (ref 기반 변경 감지 제거)
   useEffect(() => {
-    const prevFiltered = prevFilteredCampaignsRef.current;
-
-    // 첫 로드 시에만 콜백 호출
-    if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      prevFilteredCampaignsRef.current = filteredCampaigns;
-      onFilteredCampaignsChangeRef.current(filteredCampaigns);
-      return;
-    }
-
-    // 개수가 변경된 경우
-    if (prevFiltered.length !== filteredCampaigns.length) {
-      prevFilteredCampaignsRef.current = filteredCampaigns;
-      onFilteredCampaignsChangeRef.current(filteredCampaigns);
-      return;
-    }
-
-    // 내용이 변경된 경우 (ID 비교)
-    const prevKeys = prevFiltered.map(getItemKey).sort().join(",");
-    const currentKeys = filteredCampaigns.map(getItemKey).sort().join(",");
-
-    if (prevKeys !== currentKeys) {
-      prevFilteredCampaignsRef.current = filteredCampaigns;
-      onFilteredCampaignsChangeRef.current(filteredCampaigns);
-      return;
-    }
+    onFilteredCampaignsChangeRef.current(filteredCampaigns);
   }, [filteredCampaigns]);
 
   // 모달이 열려있을 때 body 스크롤 방지

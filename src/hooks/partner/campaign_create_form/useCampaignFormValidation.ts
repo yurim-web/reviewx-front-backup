@@ -183,7 +183,6 @@ function validateRequiredFieldsByCampaignType(
     case "구매평":
       return (
         baseFieldsValid &&
-        (formData.platform || "").trim() !== "" &&
         (formData.promotionLink?.trim() ?? "") !== "" &&
         (formData.purchasePeriod?.trim() ?? "") !== ""
       );

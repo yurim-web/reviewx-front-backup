@@ -28,7 +28,7 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
   return {
     id: String(item.campaignId),
     title: item.title || "",
-    category: "",
+    category: item.channelType || "",
     image: item.thumbnailUrl || "",
     status: "완료" as const,
     remainingDays: 0,

@@ -46,7 +46,7 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
   return {
     id: String(item.campaignId),
     title: item.title || "",
-    category: "",
+    category: item.channelType || "",
     image: item.thumbnailUrl || "",
     status: statusMap[item.status] || "취소/반려",
     remainingDays: calcRemainingDays(item.recruitEndAt),
@@ -54,9 +54,12 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
     type: (typeLabel[item.campaignType] || "배송형") as CampaignApplication["type"],
     isUrgent: item.isUrgent || false,
     hasContent: !!item.content,
-    isPenalty: false,
+    isPenalty: item.isPenalty || false,
     extensionCount: 0,
     contentType: undefined,
+    subStatus: item.subStatus as CampaignApplication["subStatus"],
+    rejectionReason: item.rejectionReason,
+    campaignApplicationId: item.campaignApplicationId,
   };
 }
 

@@ -44,9 +44,10 @@ const SA_QUERY_KEY = "saAdminBoards";
  * SA 게시글 목록 조회
  * - SA 응답(flat) → GA 응답(data wrapper) 형태로 변환
  */
-export function useSAAdminPosts(params?: BoardListParams) {
+export function useSAAdminPosts(params?: BoardListParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [SA_QUERY_KEY, params],
+    enabled: options?.enabled ?? true,
     queryFn: async (): Promise<BoardListResponse> => {
       const raw = await getSABoardList(params);
       // SA 응답 → GA 응답 형태로 변환
@@ -81,7 +82,7 @@ export function useSAAdminPosts(params?: BoardListParams) {
  * SA 게시글 상세 조회
  * - SA 응답(board 필드) → GA 응답(data wrapper) 형태로 변환
  */
-export function useSABoardDetail(boardId: number) {
+export function useSABoardDetail(boardId: number, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [SA_QUERY_KEY, "detail", boardId],
     queryFn: async (): Promise<BoardDetailResponse> => {
@@ -106,7 +107,7 @@ export function useSABoardDetail(boardId: number) {
         data: detail,
       };
     },
-    enabled: boardId > 0,
+    enabled: boardId > 0 && (options?.enabled ?? true),
   });
 }
 
@@ -114,9 +115,10 @@ export function useSABoardDetail(boardId: number) {
  * SA 폼 옵션 조회
  * - SA 응답(categories) → GA 응답(boardCategories) 형태로 변환
  */
-export function useSABoardFormOptions() {
+export function useSABoardFormOptions(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [SA_QUERY_KEY, "formOptions"],
+    enabled: options?.enabled ?? true,
     queryFn: async (): Promise<BoardFormOptionsResponse> => {
       const raw = await getSABoardFormOptions();
       // SA categories → GA boardCategories 변환

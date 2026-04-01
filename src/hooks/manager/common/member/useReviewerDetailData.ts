@@ -247,19 +247,24 @@ async function fetchRecentCampaignsForReviewer(reviewerId: number): Promise<Rece
     if (applications.length === 0) return [];
 
     // 각 application의 캠페인 상세 정보를 가져와 RecentCampaign으로 변환
+    // 개별 캠페인 조회 실패 시 null 반환 (하나의 실패가 전체를 막지 않도록)
     const campaigns = await Promise.all(
       applications.map(async (app) => {
-        const campaign = await fetchCampaignDetail(app.campaign_id);
-        if (!campaign) return null;
-        return {
-          campaign_number: String(campaign.id),
-          partner_name: "",
-          campaign_name: campaign.title,
-          status: mapApplicationStatus(app.status),
-          type: CAMPAIGN_TYPE_MAP[campaign.type] || "배송형",
-          channel: (API_CHANNEL_MAP[campaign.requiredPlatform?.channelName] || "Blog") as Channel,
-          points: campaign.reward?.extraRewardPoint || 0,
-        } as RecentCampaign;
+        try {
+          const campaign = await fetchCampaignDetail(app.campaign_id);
+          if (!campaign) return null;
+          return {
+            campaign_number: String(campaign.id),
+            partner_name: "",
+            campaign_name: campaign.title,
+            status: mapApplicationStatus(app.status),
+            type: CAMPAIGN_TYPE_MAP[campaign.type] || "배송형",
+            channel: (API_CHANNEL_MAP[campaign.requiredPlatform?.channelName] || "Blog") as Channel,
+            points: campaign.reward?.extraRewardPoint || 0,
+          } as RecentCampaign;
+        } catch {
+          return null;
+        }
       })
     );
     return campaigns.filter((c): c is RecentCampaign => c !== null);

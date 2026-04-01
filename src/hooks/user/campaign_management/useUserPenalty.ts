@@ -28,6 +28,7 @@ export interface UseUserPenaltyReturn {
   penaltyData: PenaltyItem[];
   penaltyStatus: PenaltyStatusData;
   isLoading: boolean;
+  isError: boolean;
 }
 
 /** R-36 currentLevel → UI PenaltyStatus 매핑 */
@@ -56,7 +57,7 @@ function mapScoreToType(score: number): PenaltyType {
 }
 
 export function useUserPenalty(): UseUserPenaltyReturn {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["userPenalties"],
     queryFn: fetchReviewerPenalty,
     staleTime: 30_000,
@@ -85,5 +86,5 @@ export function useUserPenalty(): UseUserPenaltyReturn {
       }
     : { currentStatus: "활동 가능", penaltyCount: 0 };
 
-  return { penaltyData, penaltyStatus, isLoading };
+  return { penaltyData, penaltyStatus, isLoading, isError };
 }

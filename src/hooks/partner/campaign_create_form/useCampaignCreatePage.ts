@@ -85,8 +85,20 @@ export function useCampaignCreatePage() {
 
     const regionOptions = level1.map((r) => r.name);
     const regionNameToId: Record<string, number> = {};
-    data.regions.forEach((r) => {
+    // 레벨 1 (시/도): 이름으로 매핑
+    level1.forEach((r) => {
       regionNameToId[r.name] = r.regionId;
+    });
+    // 레벨 2 (시/군/구): "상위지역_하위지역" 복합 키로 매핑 (동명 지역 구분)
+    level2.forEach((r) => {
+      const parent = level1.find((p) => p.regionId === r.parentId);
+      if (parent) {
+        regionNameToId[`${parent.name}_${r.name}`] = r.regionId;
+      }
+      // 단순 이름 매핑도 유지 (폴백)
+      if (!regionNameToId[r.name]) {
+        regionNameToId[r.name] = r.regionId;
+      }
     });
 
     // 상위 지역 → 하위 지역 매핑

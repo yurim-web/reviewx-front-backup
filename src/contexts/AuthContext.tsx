@@ -34,8 +34,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true); // 경로 변경 시 로딩 상태 리셋
 
     const checkAuth = async () => {
-      // 파트너 경로: GET /partner/session으로 세션 확인
-      if (pathname?.startsWith("/partner")) {
+      // 파트너 세션 확인이 필요한 경로 판단
+      const isPartnerPath = pathname?.startsWith("/partner");
+      const isSharedPath = pathname?.startsWith("/campaign/");
+      const hasPartnerContext =
+        isSharedPath &&
+        typeof window !== "undefined" &&
+        sessionStorage.getItem("headerContext") === "partner";
+
+      // 파트너 경로 또는 파트너 컨텍스트: GET /partner/session으로 세션 확인
+      if (isPartnerPath || hasPartnerContext) {
         try {
           const session = await getPartnerSession();
           if (cancelled) return;

@@ -46,7 +46,7 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
   return {
     id: String(item.campaignId),
     title: item.title || "",
-    category: "",
+    category: item.channelType || "",
     image: item.thumbnailUrl || "",
     status: statusMap[item.status] || "취소/반려",
     remainingDays: calcRemainingDays(item.recruitEndAt),
@@ -57,6 +57,7 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
     isPenalty: false,
     extensionCount: 0,
     contentType: undefined,
+    campaignApplicationId: item.campaignApplicationId,
   };
 }
 

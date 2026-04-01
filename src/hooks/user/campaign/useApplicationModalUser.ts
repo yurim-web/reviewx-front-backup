@@ -125,15 +125,15 @@ export function useApplicationModalUser({
     // R-24 API 데이터가 있으면 우선 사용
     if (formData) {
       const applicant = formData.applicant;
-      setUserName(applicant.name || user.name || "");
+      setUserName(applicant?.name || user?.name || "");
 
       // 주소 조합
-      const addr = applicant.address || "";
-      const pn = applicant.postNumber ? String(applicant.postNumber) : "";
+      const addr = applicant?.address || "";
+      const pn = applicant?.postNumber ? String(applicant.postNumber) : "";
       setUserAddress(addr && pn ? `${addr} | ${pn}` : addr);
-      setPostNumber(applicant.postNumber);
-      setAddressRaw(applicant.address);
-      setAddressDetailRaw(applicant.addressDetail);
+      setPostNumber(applicant?.postNumber);
+      setAddressRaw(applicant?.address);
+      setAddressDetailRaw(applicant?.addressDetail);
 
       // 채널 정보
       const rc = formData.requiredChannel;
@@ -153,8 +153,8 @@ export function useApplicationModalUser({
       }
 
       // eligibility
-      setCanApply(formData.eligibility.canApply);
-      setEligibilityReasons(formData.eligibility.reasons);
+      setCanApply(formData.eligibility?.canApply ?? true);
+      setEligibilityReasons(formData.eligibility?.reasons ?? []);
 
       if (shouldRestore === "true") {
         sessionStorage.removeItem("shouldRestoreFormData");

@@ -88,6 +88,7 @@ function adaptCampaignInfo(info: CampaignApplicationInfo): CampaignInfo {
     campaignType: CAMPAIGN_TYPE_MAP[info.type] || "배송형",
     category: info.category || "",
     brandName: CHANNEL_LABEL[info.platform || ""] || "",
+    channel: info.platform || "",
     recruitmentPeriod: formatPeriod(info.recruitStartAt, info.recruitEndAt),
     announcementDate: (info.announcementDate || "").slice(0, 10),
     registrationPeriod: formatPeriod(info.campaignStartAt || "", info.campaignEndAt || ""),

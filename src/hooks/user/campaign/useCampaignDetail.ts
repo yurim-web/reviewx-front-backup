@@ -135,9 +135,36 @@ function buildRequirements(keywordPolicy?: CampaignDetailApiItem["keywordPolicy"
   return reqs;
 }
 
+const REGION_SHORT_MAP: Record<string, string> = {
+  서울특별시: "서울",
+  인천광역시: "인천",
+  경기도: "경기",
+  강원특별자치도: "강원",
+  대전광역시: "대전",
+  세종특별자치시: "세종",
+  충청북도: "충북",
+  충청남도: "충남",
+  전라북도: "전북",
+  전라남도: "전남",
+  광주광역시: "광주",
+  대구광역시: "대구",
+  경상북도: "경북",
+  경상남도: "경남",
+  부산광역시: "부산",
+  울산광역시: "울산",
+  제주특별자치도: "제주",
+};
+
 function getRegionString(region: CampaignDetailApiItem["region"]): string {
   if (!region) return "";
   if (typeof region === "string") return region;
+  // level 2 지역: "인천 > 남구" 형식으로 표시
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const parentName = (region as any).parentName;
+  if (parentName && region.name) {
+    const short = REGION_SHORT_MAP[parentName] || parentName;
+    return `${short} > ${region.name}`;
+  }
   return region.name ?? "";
 }
 

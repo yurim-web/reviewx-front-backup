@@ -81,9 +81,9 @@ export default function usePostForm({
 
   const is_sa = manager_type === "sa";
 
-  // 폼 옵션 API 조회 (GA/SA 모두 호출 — React 규칙)
+  // 폼 옵션 API 조회 — 각 모드에서만 활성화
   const gaFormOptions = useBoardFormOptions();
-  const saFormOptions = useSABoardFormOptions();
+  const saFormOptions = useSABoardFormOptions({ enabled: is_sa });
   const formOptions = is_sa ? saFormOptions.data?.data : gaFormOptions.data?.data;
 
   // GA 뮤테이션

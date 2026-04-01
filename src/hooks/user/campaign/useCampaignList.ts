@@ -106,6 +106,41 @@ function calcSchedule(recruitStartAt: string): string {
   return "";
 }
 
+/** 시/도 이름을 필터 표시용 짧은 이름으로 변환 */
+const REGION_SHORT_MAP: Record<string, string> = {
+  서울특별시: "서울",
+  인천광역시: "인천",
+  경기도: "경기",
+  강원특별자치도: "강원",
+  대전광역시: "대전",
+  세종특별자치시: "세종",
+  충청북도: "충북",
+  충청남도: "충남",
+  전라북도: "전북",
+  전라남도: "전남",
+  광주광역시: "광주",
+  대구광역시: "대구",
+  경상북도: "경북",
+  경상남도: "경남",
+  부산광역시: "부산",
+  울산광역시: "울산",
+  제주특별자치도: "제주",
+};
+
+/** region 객체/문자열 → "인천 > 남구" 형식 문자열 변환 */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeRegion(region: any): string | undefined {
+  if (!region) return undefined;
+  if (typeof region === "string") return region;
+  const parentName = region.parentName || "";
+  const name = region.name || "";
+  if (parentName && name) {
+    const short = REGION_SHORT_MAP[parentName] || parentName;
+    return `${short} > ${name}`;
+  }
+  return name || undefined;
+}
+
 /** 백엔드 API 응답 → CampaignListAdapted */
 function adaptApiCampaign(item: CampaignListApiItem): CampaignListAdapted {
   const recruitStartAt = item.recruitStartAt ?? item.recruit?.recruitStartAt ?? "";
@@ -131,7 +166,7 @@ function adaptApiCampaign(item: CampaignListApiItem): CampaignListAdapted {
       applicationStart: recruitStartAt,
       applicationEnd: recruitEndAt,
     },
-    region: item.region,
+    region: normalizeRegion(item.region),
     isUrgent: item.isEmergency === true,
     registeredAt: recruitStartAt,
   };
@@ -168,7 +203,7 @@ function adaptStaticCampaign(item: {
     schedule: item.schedule || (appStart ? calcSchedule(appStart) : ""),
     detailedSchedule:
       appStart || appEnd ? { applicationStart: appStart, applicationEnd: appEnd } : undefined,
-    region: item.region,
+    region: normalizeRegion(item.region),
     isUrgent: item.isUrgent ?? false,
     registeredAt: item.registeredAt ?? appStart,
   };
