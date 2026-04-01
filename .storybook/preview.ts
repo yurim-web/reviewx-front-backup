@@ -7,6 +7,8 @@
 
 import type { Preview } from "@storybook/react";
 import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "../src/contexts/AuthContext";
 
 // 글로벌 CSS 파일 import
 // Next.js 앱에서 사용하는 전역 스타일을 Storybook에서도 사용할 수 있도록 합니다
@@ -20,15 +22,26 @@ const defaultWrapperStyle: React.CSSProperties = {
   minHeight: "100vh",
 };
 
+// React Query 클라이언트 — Storybook 전역 공유 (retry 0: API 실패해도 에러 스피너 없이 바로 빈 상태)
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 0, staleTime: Infinity } },
+});
+
 // 데코레이터 함수를 외부로 분리하여 안정적인 참조 유지 (깜빡임 방지)
 // 함수를 상수로 정의하면 매번 새로운 함수가 생성되지 않습니다
 const defaultDecorator = (Story: React.ComponentType) => {
-  // Storybook의 Story는 함수 컴포넌트이므로 직접 렌더링합니다
-  // 최소한의 래퍼만 제공하여 불필요한 복잡성 제거
   return React.createElement(
-    "div",
-    { style: defaultWrapperStyle },
-    React.createElement(Story)
+    QueryClientProvider,
+    { client: queryClient },
+    React.createElement(
+      AuthProvider,
+      null,
+      React.createElement(
+        "div",
+        { style: defaultWrapperStyle },
+        React.createElement(Story)
+      )
+    )
   );
 };
 

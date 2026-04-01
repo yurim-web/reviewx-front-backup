@@ -1,0 +1,16 @@
+<script>
+  // GitHub Pages 서브패스(/reviewx-storybook/) 배포 시
+  // /images/... 같은 절대경로가 올바르게 로딩되도록 base 태그 설정
+  (function() {
+    var isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocalhost) {
+      var pathParts = window.location.pathname.split('/');
+      var repoName = pathParts[1]; // 'reviewx-storybook'
+      if (repoName) {
+        var base = document.createElement('base');
+        base.href = '/' + repoName + '/';
+        document.head.insertBefore(base, document.head.firstChild);
+      }
+    }
+  })();
+</script>

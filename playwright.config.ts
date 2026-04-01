@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 export default defineConfig({
+  globalSetup: './tests/ga-global-setup',
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
