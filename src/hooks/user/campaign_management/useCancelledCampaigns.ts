@@ -50,7 +50,7 @@ const STATIC_CANCELLED: CampaignApplication[] = [
   {
     id: "u4001",
     title: "화장품 구매평 리뷰",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_9.png",
     status: "취소/반려",
     remainingDays: 0,
@@ -65,7 +65,7 @@ const STATIC_CANCELLED: CampaignApplication[] = [
   {
     id: "u4002",
     title: "자동차 시승 기자단",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_1.png",
     status: "취소/반려",
     remainingDays: 0,

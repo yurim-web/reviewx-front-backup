@@ -65,7 +65,7 @@ const STATIC_SELECTED: CampaignApplication[] = [
   {
     id: "u2001",
     title: "테크 기자단 체험단",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_6.png",
     status: "선정",
     remainingDays: 20,
@@ -80,7 +80,7 @@ const STATIC_SELECTED: CampaignApplication[] = [
   {
     id: "u2002",
     title: "패션 미션형 체험단",
-    category: "INSTAGRAM",
+    category: "인스타그램",
     image: "/images/main/campaign_img/eximg_4.png",
     status: "선정",
     remainingDays: 5,

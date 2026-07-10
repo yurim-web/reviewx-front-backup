@@ -67,7 +67,7 @@ const STATIC_ALL: CampaignApplication[] = [
   {
     id: "u1001",
     title: "프리미엄 스킨케어 세럼 체험단",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_7.png",
     status: "신청",
     remainingDays: 15,
@@ -81,7 +81,7 @@ const STATIC_ALL: CampaignApplication[] = [
   {
     id: "u1002",
     title: "프리미엄 카페 방문 체험단",
-    category: "INSTAGRAM",
+    category: "인스타그램",
     image: "/images/main/campaign_img/eximg_5.png",
     status: "신청",
     remainingDays: 8,
@@ -95,7 +95,7 @@ const STATIC_ALL: CampaignApplication[] = [
   {
     id: "u2001",
     title: "테크 기자단 체험단",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_6.png",
     status: "선정",
     remainingDays: 20,
@@ -110,7 +110,7 @@ const STATIC_ALL: CampaignApplication[] = [
   {
     id: "u2002",
     title: "패션 미션형 체험단",
-    category: "INSTAGRAM",
+    category: "인스타그램",
     image: "/images/main/campaign_img/eximg_4.png",
     status: "선정",
     remainingDays: 5,
@@ -125,7 +125,7 @@ const STATIC_ALL: CampaignApplication[] = [
   {
     id: "u3001",
     title: "피자 구매평 리뷰",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_8.png",
     status: "완료",
     remainingDays: 0,
@@ -138,7 +138,7 @@ const STATIC_ALL: CampaignApplication[] = [
   {
     id: "u3002",
     title: "인테리어 홈데코 리뷰",
-    category: "INSTAGRAM",
+    category: "인스타그램",
     image: "/images/main/campaign_img/eximg_3.png",
     status: "완료",
     remainingDays: 0,
@@ -151,7 +151,7 @@ const STATIC_ALL: CampaignApplication[] = [
   {
     id: "u4001",
     title: "화장품 구매평 리뷰",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_9.png",
     status: "취소/반려",
     remainingDays: 0,

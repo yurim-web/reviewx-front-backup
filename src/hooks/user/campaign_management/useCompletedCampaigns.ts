@@ -46,7 +46,7 @@ const STATIC_COMPLETED: CampaignApplication[] = [
   {
     id: "u3001",
     title: "피자 구매평 리뷰",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_8.png",
     status: "완료",
     remainingDays: 0,
@@ -59,7 +59,7 @@ const STATIC_COMPLETED: CampaignApplication[] = [
   {
     id: "u3002",
     title: "인테리어 홈데코 리뷰",
-    category: "INSTAGRAM",
+    category: "인스타그램",
     image: "/images/main/campaign_img/eximg_3.png",
     status: "완료",
     remainingDays: 0,

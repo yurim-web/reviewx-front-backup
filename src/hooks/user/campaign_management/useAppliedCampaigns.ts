@@ -65,7 +65,7 @@ const STATIC_APPLIED: CampaignApplication[] = [
   {
     id: "u1001",
     title: "프리미엄 스킨케어 세럼 체험단",
-    category: "NAVER_BLOG",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_7.png",
     status: "신청",
     remainingDays: 15,
@@ -79,7 +79,7 @@ const STATIC_APPLIED: CampaignApplication[] = [
   {
     id: "u1002",
     title: "프리미엄 카페 방문 체험단",
-    category: "INSTAGRAM",
+    category: "인스타그램",
     image: "/images/main/campaign_img/eximg_5.png",
     status: "신청",
     remainingDays: 8,
