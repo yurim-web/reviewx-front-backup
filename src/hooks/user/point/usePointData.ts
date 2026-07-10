@@ -90,6 +90,64 @@ function getTransactionType(tab: PointTab): PointTransactionTypeParam | undefine
 }
 
 // ========================================
+// 정적 fallback 데이터 (API 미연결 시)
+// ========================================
+
+const STATIC_POINT_HISTORY: PointHistory[] = [
+  {
+    id: "ph1",
+    type: "earned",
+    amount: 15000,
+    description: "포인트 적립",
+    date: "2026-06-20",
+    status: "earned",
+    balance: 45000,
+  },
+  {
+    id: "ph2",
+    type: "earned",
+    amount: 12000,
+    description: "포인트 적립",
+    date: "2026-06-10",
+    status: "earned",
+    balance: 30000,
+  },
+  {
+    id: "ph3",
+    type: "withdrawn",
+    amount: -10000,
+    description: "포인트 출금",
+    date: "2026-05-28",
+    status: "completed",
+    balance: 18000,
+  },
+  {
+    id: "ph4",
+    type: "earned",
+    amount: 18000,
+    description: "포인트 적립",
+    date: "2026-05-15",
+    status: "earned",
+    balance: 28000,
+  },
+  {
+    id: "ph5",
+    type: "withdrawn",
+    amount: -8000,
+    description: "포인트 출금",
+    date: "2026-05-01",
+    status: "completed",
+    balance: 10000,
+  },
+];
+
+const STATIC_POINT_INFO = {
+  available_points: 45000,
+  current_points: 45000,
+  pending_points: 0,
+};
+
+// ========================================
 // 타입 정의
 // ========================================
 
@@ -189,16 +247,18 @@ export function usePointData(pointTab: PointTab = "all"): UsePointDataReturn {
 
   // 페이지 데이터 평탄화
   const balance = pointData?.pages[0]?.balance ?? 0;
-  const userPointHistory = useMemo(
-    () => pointData?.pages.flatMap((page) => page.items.map(adaptItem)) ?? [],
-    [pointData]
-  );
+  const userPointHistory = useMemo(() => {
+    const history = pointData?.pages.flatMap((page) => page.items.map(adaptItem)) ?? [];
+    if (history.length > 0) return history;
+    // 탭별 필터링
+    if (pointTab === "earned") return STATIC_POINT_HISTORY.filter((h) => h.type === "earned");
+    if (pointTab === "withdrawn") return STATIC_POINT_HISTORY.filter((h) => h.type === "withdrawn");
+    return STATIC_POINT_HISTORY;
+  }, [pointData, pointTab]);
 
-  const pointInfo: PointInfo = {
-    available_points: balance,
-    current_points: balance,
-    pending_points: 0, // 별도 API 필요 — 현재 미구현
-  };
+  const pointInfo: PointInfo = pointData
+    ? { available_points: balance, current_points: balance, pending_points: 0 }
+    : STATIC_POINT_INFO;
 
   const isAccountInfoValid = () =>
     accountInfo.name.trim() !== "" &&

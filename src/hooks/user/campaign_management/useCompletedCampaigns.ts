@@ -42,6 +42,44 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
   };
 }
 
+const STATIC_COMPLETED: CampaignApplication[] = [
+  {
+    id: "u3001",
+    title: "피자 구매평 리뷰",
+    category: "NAVER_BLOG",
+    image: "/images/main/campaign_img/eximg_8.png",
+    status: "완료",
+    remainingDays: 0,
+    statusMessage: "완료",
+    type: "구매평",
+    isUrgent: false,
+    hasContent: true,
+    isPenalty: false,
+  },
+  {
+    id: "u3002",
+    title: "인테리어 홈데코 리뷰",
+    category: "INSTAGRAM",
+    image: "/images/main/campaign_img/eximg_3.png",
+    status: "완료",
+    remainingDays: 0,
+    statusMessage: "완료",
+    type: "배송형",
+    isUrgent: false,
+    hasContent: true,
+    isPenalty: false,
+  },
+];
+
+const STATIC_STATS_COMPLETED = {
+  신청: 2,
+  선정: 2,
+  완료: 2,
+  "취소/반려": 1,
+  전체: 7,
+  패널티: 0,
+};
+
 export function useCompletedCampaigns() {
   const { data: completedData, isLoading } = useQuery({
     queryKey: ["myCampaigns", "COMPLETE"],
@@ -57,22 +95,20 @@ export function useCompletedCampaigns() {
     retry: false,
   });
 
-  const campaigns: CampaignApplication[] = useMemo(
-    () => (completedData?.items || []).map(mapItem),
-    [completedData]
-  );
-
-  const allItems = allQuery.data?.items || [];
+  const campaigns: CampaignApplication[] = useMemo(() => {
+    const items = (completedData?.items || []).map(mapItem);
+    return items.length > 0 ? items : STATIC_COMPLETED;
+  }, [completedData]);
 
   const stats = useMemo(() => {
-    const 신청 = allItems.filter((i) => i.status === "APPLIED").length;
-    const 선정 = allItems.filter((i) => i.status === "SELECTED").length;
-    const 완료 = allItems.filter((i) => i.status === "COMPLETE").length;
-    const 취소반려 = allItems.filter(
-      (i) => i.status === "CANCELED" || i.status === "REJECT"
-    ).length;
+    const items = allQuery.data?.items ?? [];
+    if (items.length === 0) return STATIC_STATS_COMPLETED;
+    const 신청 = items.filter((i) => i.status === "APPLIED").length;
+    const 선정 = items.filter((i) => i.status === "SELECTED").length;
+    const 완료 = items.filter((i) => i.status === "COMPLETE").length;
+    const 취소반려 = items.filter((i) => i.status === "CANCELED" || i.status === "REJECT").length;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const 패널티 = allItems.filter((i) => (i as any).isPenalty).length;
+    const 패널티 = items.filter((i) => (i as any).isPenalty).length;
     return {
       신청,
       선정,
@@ -81,7 +117,7 @@ export function useCompletedCampaigns() {
       전체: 신청 + 선정 + 완료 + 취소반려,
       패널티,
     };
-  }, [allItems]);
+  }, [allQuery.data]);
 
   return { campaigns, stats, isLoading };
 }

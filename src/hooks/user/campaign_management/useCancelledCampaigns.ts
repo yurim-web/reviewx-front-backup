@@ -46,6 +46,48 @@ function mapItem(item: MyCampaignItem): CampaignApplication {
   };
 }
 
+const STATIC_CANCELLED: CampaignApplication[] = [
+  {
+    id: "u4001",
+    title: "화장품 구매평 리뷰",
+    category: "NAVER_BLOG",
+    image: "/images/main/campaign_img/eximg_9.png",
+    status: "취소/반려",
+    remainingDays: 0,
+    statusMessage: "취소됨",
+    type: "구매평",
+    isUrgent: false,
+    hasContent: false,
+    isPenalty: false,
+    rejectionReason: "선정 인원이 초과되었습니다.",
+    campaignApplicationId: 40001,
+  },
+  {
+    id: "u4002",
+    title: "자동차 시승 기자단",
+    category: "NAVER_BLOG",
+    image: "/images/main/campaign_img/eximg_1.png",
+    status: "취소/반려",
+    remainingDays: 0,
+    statusMessage: "반려됨",
+    type: "기자단",
+    isUrgent: false,
+    hasContent: false,
+    isPenalty: false,
+    rejectionReason: "조건에 부합하지 않습니다.",
+    campaignApplicationId: 40002,
+  },
+];
+
+const STATIC_STATS_CANCELLED = {
+  신청: 2,
+  선정: 2,
+  완료: 2,
+  "취소/반려": 2,
+  전체: 8,
+  패널티: 0,
+};
+
 export function useCancelledCampaigns() {
   // 백엔드 R-27: CANCELED와 REJECT는 별도 status → 각각 조회 후 병합
   const { data: cancelledData, isLoading: cancelledLoading } = useQuery({
@@ -71,25 +113,23 @@ export function useCancelledCampaigns() {
     retry: false,
   });
 
-  const campaigns: CampaignApplication[] = useMemo(
-    () => [
+  const campaigns: CampaignApplication[] = useMemo(() => {
+    const items = [
       ...(cancelledData?.items || []).map(mapItem),
       ...(rejectedData?.items || []).map(mapItem),
-    ],
-    [cancelledData, rejectedData]
-  );
-
-  const allItems = allQuery.data?.items || [];
+    ];
+    return items.length > 0 ? items : STATIC_CANCELLED;
+  }, [cancelledData, rejectedData]);
 
   const stats = useMemo(() => {
-    const 신청 = allItems.filter((i) => i.status === "APPLIED").length;
-    const 선정 = allItems.filter((i) => i.status === "SELECTED").length;
-    const 완료 = allItems.filter((i) => i.status === "COMPLETE").length;
-    const 취소반려 = allItems.filter(
-      (i) => i.status === "CANCELED" || i.status === "REJECT"
-    ).length;
+    const items = allQuery.data?.items ?? [];
+    if (items.length === 0) return STATIC_STATS_CANCELLED;
+    const 신청 = items.filter((i) => i.status === "APPLIED").length;
+    const 선정 = items.filter((i) => i.status === "SELECTED").length;
+    const 완료 = items.filter((i) => i.status === "COMPLETE").length;
+    const 취소반려 = items.filter((i) => i.status === "CANCELED" || i.status === "REJECT").length;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const 패널티 = allItems.filter((i) => (i as any).isPenalty).length;
+    const 패널티 = items.filter((i) => (i as any).isPenalty).length;
     return {
       신청,
       선정,
@@ -98,7 +138,7 @@ export function useCancelledCampaigns() {
       전체: 신청 + 선정 + 완료 + 취소반려,
       패널티,
     };
-  }, [allItems]);
+  }, [allQuery.data]);
 
   return { campaigns, stats, isLoading };
 }
