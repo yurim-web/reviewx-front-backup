@@ -216,6 +216,102 @@ const SORT_MAP: Record<SortOption, string> = {
   recommended: "RECOMMEND",
 };
 
+// ----------------------------------------
+// 정적 fallback 데이터 (API 미연결 시)
+// ----------------------------------------
+const STATIC_APPLICATION: CampaignWithApplicants = {
+  campaignInfo: {
+    id: "961",
+    title: "프리미엄 스킨케어 세트 체험단",
+    image: "/images/main/campaign_img/eximg_7.png",
+    status: "모집 중",
+    campaignType: "배송형",
+    category: "뷰티",
+    brandName: "네이버블로그",
+    recruitmentPeriod: "2026-07-01 ~ 2026-07-31",
+    announcementDate: "2026-08-05",
+    registrationPeriod: "2026-08-10 ~ 2026-08-25",
+    recruitedCount: 3,
+    totalCount: 5,
+    daysLeft: 21,
+  },
+  applicantData: {
+    applicants: [
+      {
+        id: "sa1",
+        Id: "blog.naver.com/beauty_review",
+        nickname: "뷰티러버",
+        userType: "리뷰어",
+        profileImage: "/images/mypage/profile.svg",
+        memberType: "모범 회원",
+        dailyVisits: 1200,
+        totalVisits: 450000,
+        neighbors: 2800,
+        memo: "",
+        selectionStatus: "미선택",
+        channel: "네이버블로그",
+        registrationDate: "2026-07-05",
+      },
+      {
+        id: "sa2",
+        Id: "@skincare_daily",
+        nickname: "스킨케어데일리",
+        userType: "인플루언서",
+        profileImage: "/images/mypage/profile.svg",
+        memberType: "모범 회원",
+        followers: 15000,
+        memo: "",
+        selectionStatus: "미선택",
+        channel: "인스타그램",
+        registrationDate: "2026-07-06",
+      },
+      {
+        id: "sa3",
+        Id: "youtube.com/@beauty_tube",
+        nickname: "뷰티튜버",
+        userType: "인플루언서",
+        profileImage: "/images/mypage/profile.svg",
+        memberType: "모범 회원",
+        subscribers: 35000,
+        memo: "",
+        selectionStatus: "미선택",
+        channel: "유튜브",
+        registrationDate: "2026-07-07",
+      },
+      {
+        id: "sa4",
+        Id: "nclip.naver.com/@daily_clip",
+        nickname: "데일리클립",
+        userType: "리뷰어",
+        profileImage: "/images/mypage/profile.svg",
+        memberType: "모범 회원",
+        followers: 4200,
+        memo: "",
+        selectionStatus: "미선택",
+        channel: "네이버클립",
+        registrationDate: "2026-07-08",
+      },
+    ],
+    selectedApplicants: [
+      {
+        id: "ss1",
+        Id: "blog.naver.com/selected_reviewer",
+        nickname: "선정된리뷰어",
+        userType: "리뷰어",
+        profileImage: "/images/mypage/profile.svg",
+        memberType: "모범 회원",
+        dailyVisits: 800,
+        totalVisits: 300000,
+        neighbors: 1500,
+        memo: "",
+        selectionStatus: "선정하기",
+        channel: "네이버블로그",
+        registrationDate: "2026-07-04",
+      },
+    ],
+  },
+};
+
 // ========================================
 // 메인 훅
 // ========================================
@@ -291,6 +387,15 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
     setApplicantsState(applied);
     setSelectedState(selected);
   }, [apiData]);
+
+  // API 미연결 시 정적 데이터 fallback
+  useEffect(() => {
+    if (isLoading) return;
+    if (campaignData) return;
+    setCampaignData(STATIC_APPLICATION);
+    setApplicantsState(STATIC_APPLICATION.applicantData.applicants);
+    setSelectedState(STATIC_APPLICATION.applicantData.selectedApplicants);
+  }, [isLoading, campaignData]);
 
   // 기본 헤더 숨기기
   useEffect(() => {

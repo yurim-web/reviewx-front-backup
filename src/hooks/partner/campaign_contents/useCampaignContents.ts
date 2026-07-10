@@ -144,6 +144,104 @@ function adaptContentItem(api: ContentItemApi): ContentItem {
 }
 
 // ----------------------------------------
+// 정적 fallback 데이터 (API 미연결 시)
+// ----------------------------------------
+const STATIC_CAMPAIGN_INFO: CampaignInfo = {
+  id: "961",
+  title: "프리미엄 스킨케어 세트 체험단",
+  image: "/images/main/campaign_img/eximg_7.png",
+  status: "진행 중",
+  campaignType: "배송형",
+  category: "뷰티",
+  brandName: "네이버블로그",
+  recruitmentPeriod: "2026-07-01 ~ 2026-07-31",
+  announcementDate: "2026-08-05",
+  registrationPeriod: "2026-08-10 ~ 2026-08-25",
+  recruitedCount: 4,
+  totalCount: 5,
+  daysLeft: 15,
+};
+
+const STATIC_CONTENTS: ContentByTab = {
+  waiting: [
+    {
+      id: "sw1",
+      createdAt: "2026-08-10T10:00:00.000Z",
+      status: "검수중",
+      userType: "리뷰어",
+      nickname: "뷰티블로거",
+      channelId: "blog.naver.com/beauty_blog",
+      channel: "네이버블로그",
+      profileImage: "/images/mypage/profile.svg",
+      isLateSubmission: false,
+    },
+    {
+      id: "sw2",
+      createdAt: "2026-08-11T09:00:00.000Z",
+      status: "검수중",
+      userType: "인플루언서",
+      nickname: "스킨케어스타",
+      channelId: "@skincare_star",
+      channel: "인스타그램",
+      profileImage: "/images/mypage/profile.svg",
+      isRejected: true,
+      reject_reason: "이미지 품질이 기준에 미달합니다.",
+    },
+  ],
+  reviewing: [
+    {
+      id: "sr1",
+      createdAt: "2026-08-12T14:00:00.000Z",
+      status: "검수중",
+      userType: "리뷰어",
+      nickname: "리뷰마스터",
+      channelId: "blog.naver.com/review_master",
+      channel: "네이버블로그",
+      profileImage: "/images/mypage/profile.svg",
+      thumbnailSrc: "/images/main/campaign_img/eximg_7.png",
+      isLateSubmission: false,
+    },
+    {
+      id: "sr2",
+      createdAt: "2026-08-13T11:00:00.000Z",
+      status: "검수중",
+      userType: "인플루언서",
+      nickname: "뷰티인플루언서",
+      channelId: "youtube.com/@beauty_inf",
+      channel: "유튜브",
+      profileImage: "/images/mypage/profile.svg",
+      thumbnailSrc: "/images/main/campaign_img/eximg_9.png",
+    },
+  ],
+  completed: [
+    {
+      id: "sc1",
+      createdAt: "2026-08-08T10:00:00.000Z",
+      status: "완료",
+      userType: "리뷰어",
+      nickname: "완료된리뷰어",
+      channelId: "blog.naver.com/completed",
+      channel: "네이버블로그",
+      profileImage: "/images/mypage/profile.svg",
+      thumbnailSrc: "/images/main/campaign_img/eximg_7.png",
+      updatedAt: "2026-08-09 15:30",
+    },
+    {
+      id: "sc2",
+      createdAt: "2026-08-09T09:00:00.000Z",
+      status: "완료",
+      userType: "인플루언서",
+      nickname: "클립인플루언서",
+      channelId: "nclip.naver.com/@clip_inf",
+      channel: "네이버클립",
+      profileImage: "/images/mypage/profile.svg",
+      thumbnailSrc: "/images/main/campaign_img/eximg_9.png",
+      updatedAt: "2026-08-10 11:00",
+    },
+  ],
+};
+
+// ----------------------------------------
 // 타입 정의
 // ----------------------------------------
 
@@ -266,7 +364,7 @@ export function useCampaignContents(_contentsLoader?: ContentsLoader): UseCampai
   const campaignInfo = useMemo<CampaignInfo | undefined>(() => {
     const apiInfo =
       waitingData?.campaignInfo ?? submittedData?.campaignInfo ?? approvedData?.campaignInfo;
-    if (!apiInfo) return undefined;
+    if (!apiInfo) return STATIC_CAMPAIGN_INFO;
     return adaptCampaignInfo(apiInfo as Parameters<typeof adaptCampaignInfo>[0]);
   }, [waitingData, submittedData, approvedData]);
 
@@ -290,6 +388,8 @@ export function useCampaignContents(_contentsLoader?: ContentsLoader): UseCampai
     const waiting = (waitingData?.contents ?? []).map(adaptContentItem);
     const reviewing = (submittedData?.contents ?? []).map(adaptContentItem);
     const completed = (approvedData?.contents ?? []).map(adaptContentItem);
+    const hasData = waiting.length + reviewing.length + completed.length > 0;
+    if (!hasData) return STATIC_CONTENTS;
     return { waiting, reviewing, completed };
   }, [waitingData, submittedData, approvedData]);
 
