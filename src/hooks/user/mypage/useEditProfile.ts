@@ -98,8 +98,8 @@ export function useEditProfile() {
     setFormData((prev) => ({
       ...prev,
       nickname: user.nickname ?? user.name ?? "",
-      name: editData?.user.name ?? user.name ?? "",
-      email: editData?.user.email ?? user.email ?? "",
+      name: editData?.user?.name ?? user.name ?? "",
+      email: editData?.user?.email ?? user.email ?? "",
       postalCode: editData?.address?.zipCode ?? user.postal_code ?? "",
       address: editData?.address?.address ?? user.address ?? "",
       detailAddress: editData?.address?.addressDetail ?? user.detail_address ?? "",
@@ -114,7 +114,7 @@ export function useEditProfile() {
       setIsAccountHolderVerified(true);
     }
 
-    const phoneNumber = editData?.user.phoneNum ?? user.phone;
+    const phoneNumber = editData?.user?.phoneNum ?? user.phone;
     if (phoneNumber) {
       handlePhoneChangeHook(phoneNumber);
       setIsVerified(true);
@@ -122,7 +122,7 @@ export function useEditProfile() {
     }
 
     const DEFAULT_PROFILE = "/images/mypage/profile.svg";
-    const profileImg = editData?.user.profileImageUrl ?? user.profile_image;
+    const profileImg = editData?.user?.profileImageUrl ?? user.profile_image;
     if (profileImg && profileImg !== DEFAULT_PROFILE) {
       setProfileImage(profileImg);
     }
