@@ -19,6 +19,13 @@ import { ko } from "date-fns/locale";
 import { fetchUserDashboard } from "@/lib/api/userDashboard";
 import type { UserDashboardCampaignItem } from "@/types/api/userDashboard";
 
+// 정적 fallback 데이터
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
+
 /* ========================================
    채널 / 유형 라벨 변환
    ======================================== */
@@ -111,6 +118,64 @@ function adaptItem(item: UserDashboardCampaignItem): UserDashboardCampaign {
 }
 
 /* ========================================
+   정적 fallback
+   ======================================== */
+
+type StaticCampaign = {
+  id: string;
+  title: string;
+  category: string;
+  image: string;
+  subcategory?: string;
+  channel?: string;
+  points: number;
+  recruitment: { current: number; total: number };
+  dayCount?: string;
+  schedule?: string;
+  isUrgent?: boolean;
+  detailedSchedule?: { applicationStart?: string; applicationEnd?: string };
+};
+
+function adaptStaticItem(item: StaticCampaign): UserDashboardCampaign {
+  const appEnd = item.detailedSchedule?.applicationEnd ?? "";
+  const appStart = item.detailedSchedule?.applicationStart ?? "";
+  return {
+    id: String(item.id),
+    title: item.title,
+    category: item.category,
+    channel: item.channel ?? "",
+    image: item.image,
+    dayCount: appEnd ? calcDayCount(appEnd) : (item.dayCount ?? ""),
+    isUrgent: item.isUrgent ?? false,
+    recruitment: item.recruitment,
+    schedule: "",
+    detailedSchedule: { applicationStart: appStart, applicationEnd: appEnd },
+  };
+}
+
+function buildStaticDashboard() {
+  const isOpen = (c: UserDashboardCampaign) => c.dayCount !== "마감";
+  const all = [
+    ...deliveryCampaigns,
+    ...visitCampaigns,
+    ...reviewCampaigns,
+    ...reporterCampaigns,
+    ...missionCampaigns,
+  ] as StaticCampaign[];
+  const open = all.map(adaptStaticItem).filter(isOpen);
+  return {
+    banners: [
+      { bannerId: 1, imageUrl: "/images/main/main_banner.png", linkUrl: null, displayOrder: 1 },
+      { bannerId: 2, imageUrl: "/images/main/main_banner2.png", linkUrl: null, displayOrder: 2 },
+    ],
+    highProbability: open.slice(0, 8),
+    popularNow: open.slice(8, 16),
+    ongoing: open.slice(0, 32),
+    similar: open.slice(16, 24),
+  };
+}
+
+/* ========================================
    훅
    ======================================== */
 
@@ -118,8 +183,9 @@ function adaptItem(item: UserDashboardCampaignItem): UserDashboardCampaign {
 export function useUserDashboard(enabled = true) {
   return useQuery({
     queryKey: ["user", "dashboard"],
-    queryFn: () =>
-      fetchUserDashboard().then((res) => {
+    queryFn: async () => {
+      try {
+        const res = await fetchUserDashboard();
         const isOpen = (c: UserDashboardCampaign) => c.dayCount !== "마감";
         return {
           banners: (res.banners ?? []).sort((a, b) => a.displayOrder - b.displayOrder),
@@ -131,8 +197,13 @@ export function useUserDashboard(enabled = true) {
           ongoing: (res.sections?.ongoing ?? []).map(adaptItem).filter(isOpen).slice(0, 32),
           similar: (res.sections?.similar ?? []).map(adaptItem).filter(isOpen).slice(0, 8),
         };
-      }),
+      } catch (_e) {
+        return buildStaticDashboard();
+      }
+    },
+    placeholderData: buildStaticDashboard,
     staleTime: 1000 * 60 * 5,
+    retry: false,
     enabled,
   });
 }

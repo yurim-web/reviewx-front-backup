@@ -23,6 +23,13 @@ import { ko } from "date-fns/locale";
 import { fetchCampaignDetail } from "@/lib/api/campaign";
 import type { CampaignDetailApiItem } from "@/types/api/campaign";
 
+// 정적 fallback 데이터
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
+
 /* ========================================
    채널 / 유형 라벨 변환
    ======================================== */
@@ -269,6 +276,108 @@ function normalizeId(id: string | number): string | number {
 }
 
 /* ========================================
+   정적 데이터 fallback
+   ======================================== */
+
+const TYPE_TO_STATIC: Record<
+  string,
+  {
+    id: string;
+    title: string;
+    category: string;
+    image: string;
+    subcategory?: string;
+    channel?: string;
+    points: number;
+    description: string;
+    recruitment: { current: number; total: number };
+    dayCount?: string;
+    schedule?: string;
+    isUrgent?: boolean;
+    keyword: string;
+    requirements: string[];
+    guidelineTexts: string[];
+    detailedSchedule: {
+      applicationStart: string;
+      applicationEnd: string;
+      announcement: string;
+      purchasePeriod: string;
+      registrationPeriod: string;
+    };
+    campaign_detail_image: string;
+    campaign_detail_images?: string[];
+    promotionLink?: string;
+    visitAddress?: string;
+    visitLink?: string;
+    region?: string;
+    purchaseLink?: string;
+    requireContentLink?: boolean;
+    requireContentImage?: boolean;
+  }[]
+> = {
+  delivery: deliveryCampaigns as never[],
+  visit: visitCampaigns as never[],
+  purchase: reviewCampaigns as never[],
+  reporter: reporterCampaigns as never[],
+  mission: missionCampaigns as never[],
+};
+
+function isRealCampaign(item: { title?: string }): boolean {
+  const t = item.title ?? "";
+  return (
+    !t.includes("테스트") &&
+    !t.startsWith("[취소]") &&
+    !t.includes("이미지 전용") &&
+    !t.includes("링크 전용") &&
+    !t.includes("수정 가능하게") &&
+    t.length <= 60
+  );
+}
+
+function findStaticCampaign(type: string, id: string): CampaignDetailAdapted | null {
+  const list = (TYPE_TO_STATIC[type] ?? (deliveryCampaigns as never[])).filter(isRealCampaign);
+  const item = list.find((c) => String(c.id) === String(id)) ?? list[0];
+  if (!item) return null;
+  const appEnd = item.detailedSchedule?.applicationEnd ?? "";
+  const appStart = item.detailedSchedule?.applicationStart ?? "";
+  return {
+    id: String(item.id),
+    type: type.toUpperCase(),
+    title: item.title,
+    category: item.category,
+    subcategory: item.subcategory ?? "기타",
+    channel: item.channel ?? "",
+    image: item.image,
+    detailImages: item.campaign_detail_images?.length
+      ? item.campaign_detail_images
+      : [item.campaign_detail_image ?? item.image],
+    points: item.points,
+    description: item.description,
+    recruitment: item.recruitment,
+    dayCount: appEnd ? calcDayCount(appEnd) : (item.dayCount ?? ""),
+    schedule: appStart ? calcSchedule(appStart) : (item.schedule ?? ""),
+    isUrgent: item.isUrgent ?? false,
+    keyword: item.keyword,
+    requirements: item.requirements,
+    guidelineTexts: item.guidelineTexts,
+    detailedSchedule: {
+      applicationStart: appStart,
+      applicationEnd: appEnd,
+      announcement: item.detailedSchedule?.announcement ?? "",
+      purchasePeriod: item.detailedSchedule?.purchasePeriod ?? "",
+      registrationPeriod: item.detailedSchedule?.registrationPeriod ?? "",
+    },
+    promotionLink: item.promotionLink,
+    visitAddress: item.visitAddress,
+    visitLink: item.visitLink,
+    region: item.region,
+    purchaseLink: item.purchaseLink,
+    requireContentLink: item.requireContentLink,
+    requireContentImage: item.requireContentImage,
+  };
+}
+
+/* ========================================
    훅
    ======================================== */
 
@@ -279,7 +388,16 @@ export function useCampaignDetail(type: CampaignDetailType, campaignId: string |
   const resolvedId = normalizeId(campaignId);
   return useQuery({
     queryKey: ["campaign", "detail", type, String(campaignId)],
-    queryFn: () => fetchCampaignDetail(type, resolvedId).then(adaptCampaignDetail),
+    queryFn: async () => {
+      try {
+        const result = await fetchCampaignDetail(type, resolvedId);
+        return adaptCampaignDetail(result);
+      } catch (_e) {
+        return findStaticCampaign(type, String(campaignId));
+      }
+    },
+    placeholderData: () => findStaticCampaign(type, String(campaignId)),
     enabled: !!campaignId,
+    retry: false,
   });
 }

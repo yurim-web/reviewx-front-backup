@@ -23,6 +23,15 @@ import {
 
 const ACCOUNT_STORAGE_KEY = "userAccountVerification";
 
+const STATIC_EDIT_FALLBACK = {
+  postalCode: "06236",
+  address: "서울특별시 강남구 테헤란로 152",
+  detailAddress: "7층 701호",
+  phone: "010-1234-5678",
+  bank: "국민은행",
+  accountNumber: "123456-78-901234",
+};
+
 export interface EditProfileFormData {
   nickname: string;
   name: string;
@@ -91,18 +100,30 @@ export function useEditProfile() {
   useEffect(() => {
     if (!user) return;
 
-    const accountHolderValue = editData?.bankAccount?.accountHolder ?? "";
-    const bankValue = editData?.bankAccount?.bankName ?? "";
-    const accountNumberValue = editData?.bankAccount?.accountNumber ?? "";
+    const accountHolderValue =
+      editData?.bankAccount?.accountHolder ?? (editData ? "" : (user.name ?? ""));
+    const bankValue =
+      editData?.bankAccount?.bankName ?? (editData ? "" : STATIC_EDIT_FALLBACK.bank);
+    const accountNumberValue =
+      editData?.bankAccount?.accountNumber ?? (editData ? "" : STATIC_EDIT_FALLBACK.accountNumber);
 
     setFormData((prev) => ({
       ...prev,
       nickname: user.nickname ?? user.name ?? "",
       name: editData?.user?.name ?? user.name ?? "",
       email: editData?.user?.email ?? user.email ?? "",
-      postalCode: editData?.address?.zipCode ?? user.postal_code ?? "",
-      address: editData?.address?.address ?? user.address ?? "",
-      detailAddress: editData?.address?.addressDetail ?? user.detail_address ?? "",
+      postalCode:
+        editData?.address?.zipCode ??
+        user.postal_code ??
+        (editData ? "" : STATIC_EDIT_FALLBACK.postalCode),
+      address:
+        editData?.address?.address ??
+        user.address ??
+        (editData ? "" : STATIC_EDIT_FALLBACK.address),
+      detailAddress:
+        editData?.address?.addressDetail ??
+        user.detail_address ??
+        (editData ? "" : STATIC_EDIT_FALLBACK.detailAddress),
       accountHolder: accountHolderValue,
       bank: bankValue,
       accountNumber: accountNumberValue,
@@ -114,7 +135,8 @@ export function useEditProfile() {
       setIsAccountHolderVerified(true);
     }
 
-    const phoneNumber = editData?.user?.phoneNum ?? user.phone;
+    const phoneNumber =
+      editData?.user?.phoneNum ?? user.phone ?? (editData ? "" : STATIC_EDIT_FALLBACK.phone);
     if (phoneNumber) {
       handlePhoneChangeHook(phoneNumber);
       setIsVerified(true);

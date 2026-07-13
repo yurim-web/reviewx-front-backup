@@ -140,6 +140,7 @@ export function usePartnerDashboard(enabled = true) {
         };
       }),
     staleTime: 1000 * 60 * 5,
+    retry: false,
     enabled,
   });
 }

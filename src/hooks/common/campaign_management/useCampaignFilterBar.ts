@@ -178,9 +178,13 @@ export function useCampaignFilterBar<T extends FilterableCampaign = FilterableCa
     onFilteredCampaignsChangeRef.current = onFilteredCampaignsChange;
   }, [onFilteredCampaignsChange]);
 
+  // 이전 filteredCampaigns 참조를 추적해 중복 호출 방지
+  const prevFilteredRef = useRef<T[] | null>(null);
+
   // 필터링된 캠페인 목록 변경 시 부모 컴포넌트에 알림
-  // React strict mode 호환: 항상 콜백 호출 (ref 기반 변경 감지 제거)
   useEffect(() => {
+    if (prevFilteredRef.current === filteredCampaigns) return;
+    prevFilteredRef.current = filteredCampaigns;
     onFilteredCampaignsChangeRef.current(filteredCampaigns);
   }, [filteredCampaigns]);
 

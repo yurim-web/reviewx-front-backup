@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
@@ -29,9 +29,9 @@ function AllPage() {
   const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
   const { campaigns, stats, isLoading } = useAllCampaigns();
 
-  const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
+  const handleFilteredCampaignsChange = useCallback((filtered: CampaignApplication[]) => {
     setFilteredCampaigns(filtered);
-  };
+  }, []);
 
   if (isLoading) return <Loading />;
 

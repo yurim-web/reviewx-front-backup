@@ -69,13 +69,19 @@ type RawDetailResponse = CampaignDetailApiResponse | CampaignDetailApiItem;
 type CampaignDetailType = "delivery" | "visit" | "purchase" | "reporter" | "mission";
 
 function extractDetail(data: RawDetailResponse): CampaignDetailApiItem {
-  if ("campaign" in data && data.campaign) return data.campaign;
+  // ApiResponse wrapper { result, generatedAt, data: {...} } 처리
+  if (data && typeof data === "object" && "result" in data && "data" in data && data.data) {
+    data = data.data as CampaignDetailApiItem;
+  }
+  if ("campaign" in data && (data as { campaign?: CampaignDetailApiItem }).campaign) {
+    return (data as { campaign: CampaignDetailApiItem }).campaign;
+  }
   return data as CampaignDetailApiItem;
 }
 
 export const fetchCampaignDetail = (type: CampaignDetailType, campaignId: string | number) =>
   apiClient
-    .get<RawDetailResponse>(`/api/v1/reviewer/campaign/${campaignId}`)
+    .get<RawDetailResponse>(`/api/v1/reviewer/campaign/${type.toUpperCase()}/${campaignId}`)
     .then((res) => extractDetail(res.data));
 
 /** 캠페인 신청 (POST /api/v1/reviewer/campaign/{campaignId}/apply) */

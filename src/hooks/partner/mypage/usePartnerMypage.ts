@@ -14,6 +14,7 @@ import {
   withdrawPartner,
 } from "@/lib/api/partnerMypage";
 import type {
+  PartnerProfile,
   UpdatePartnerProfileRequest,
   ChangePasswordRequest,
   WithdrawRequest,
@@ -24,12 +25,29 @@ export const partnerMypageKeys = {
   profile: () => [...partnerMypageKeys.all, "profile"] as const,
 };
 
+const STATIC_PARTNER_PROFILE: PartnerProfile = {
+  id: "partner_demo",
+  email: "test@test.com",
+  name: "이사장",
+  phone: "010-1234-5678",
+  profileImage: null,
+  businessName: "마크엑스컴퍼니",
+  representativeName: "이사장",
+  businessNumber: "123-45-67890",
+  businessType: "법인사업자",
+  postalCode: "06236",
+  address: "서울특별시 강남구 테헤란로 152",
+  detailAddress: "7층 701호",
+  joinDate: "2025-01-15",
+};
+
 /** 파트너 프로필 조회 */
 export function usePartnerProfile() {
   return useQuery({
     queryKey: partnerMypageKeys.profile(),
     queryFn: getPartnerProfile,
     staleTime: 1000 * 60 * 5,
+    placeholderData: STATIC_PARTNER_PROFILE,
   });
 }
 

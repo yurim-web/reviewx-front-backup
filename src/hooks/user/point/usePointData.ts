@@ -1,4 +1,4 @@
-/* ========================================
+﻿/* ========================================
    포인트 데이터 커스텀 훅
    ======================================== */
 
@@ -99,7 +99,7 @@ const STATIC_POINT_HISTORY: PointHistory[] = [
     type: "earned",
     amount: 15000,
     description: "포인트 적립",
-    date: "2026-06-20",
+    date: "2026-07-08",
     status: "earned",
     balance: 45000,
   },
@@ -108,7 +108,7 @@ const STATIC_POINT_HISTORY: PointHistory[] = [
     type: "earned",
     amount: 12000,
     description: "포인트 적립",
-    date: "2026-06-10",
+    date: "2026-07-05",
     status: "earned",
     balance: 30000,
   },
@@ -117,7 +117,7 @@ const STATIC_POINT_HISTORY: PointHistory[] = [
     type: "withdrawn",
     amount: -10000,
     description: "포인트 출금",
-    date: "2026-05-28",
+    date: "2026-07-01",
     status: "completed",
     balance: 18000,
   },
@@ -126,7 +126,7 @@ const STATIC_POINT_HISTORY: PointHistory[] = [
     type: "earned",
     amount: 18000,
     description: "포인트 적립",
-    date: "2026-05-15",
+    date: "2026-06-25",
     status: "earned",
     balance: 28000,
   },
@@ -135,7 +135,7 @@ const STATIC_POINT_HISTORY: PointHistory[] = [
     type: "withdrawn",
     amount: -8000,
     description: "포인트 출금",
-    date: "2026-05-01",
+    date: "2026-06-15",
     status: "completed",
     balance: 10000,
   },

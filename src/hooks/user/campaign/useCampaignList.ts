@@ -209,6 +209,19 @@ function adaptStaticCampaign(item: {
   };
 }
 
+/** 테스트/비정상 항목 제거 필터 */
+function isRealCampaign(item: { title?: string }): boolean {
+  const t = item.title ?? "";
+  return (
+    !t.includes("테스트") &&
+    !t.startsWith("[취소]") &&
+    !t.includes("이미지 전용") &&
+    !t.includes("링크 전용") &&
+    !t.includes("수정 가능하게") &&
+    t.length <= 60
+  );
+}
+
 /* ========================================
    훅 (캠페인 유형별 5개)
    API 응답이 있으면 우선 사용, 없으면 정적 데이터 fallback
@@ -230,9 +243,9 @@ export function useDeliveryCampaignList(filters?: CampaignListFilterParams) {
         });
         if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
-      return deliveryCampaigns.map(adaptStaticCampaign);
+      return deliveryCampaigns.filter(isRealCampaign).map(adaptStaticCampaign);
     },
-    placeholderData: () => deliveryCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => deliveryCampaigns.filter(isRealCampaign).map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
@@ -248,9 +261,9 @@ export function useVisitCampaignList(filters?: CampaignListFilterParams) {
         });
         if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
-      return visitCampaigns.map(adaptStaticCampaign);
+      return visitCampaigns.filter(isRealCampaign).map(adaptStaticCampaign);
     },
-    placeholderData: () => visitCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => visitCampaigns.filter(isRealCampaign).map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
@@ -266,9 +279,9 @@ export function useReviewCampaignList(filters?: CampaignListFilterParams) {
         });
         if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
-      return reviewCampaigns.map(adaptStaticCampaign);
+      return reviewCampaigns.filter(isRealCampaign).map(adaptStaticCampaign);
     },
-    placeholderData: () => reviewCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => reviewCampaigns.filter(isRealCampaign).map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
@@ -284,9 +297,9 @@ export function useReporterCampaignList(filters?: CampaignListFilterParams) {
         });
         if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
-      return reporterCampaigns.map(adaptStaticCampaign);
+      return reporterCampaigns.filter(isRealCampaign).map(adaptStaticCampaign);
     },
-    placeholderData: () => reporterCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => reporterCampaigns.filter(isRealCampaign).map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
@@ -302,9 +315,9 @@ export function useMissionCampaignList(filters?: CampaignListFilterParams) {
         });
         if (res.items?.length > 0) return res.items.map(adaptApiCampaign);
       } catch (_e) {}
-      return missionCampaigns.map(adaptStaticCampaign);
+      return missionCampaigns.filter(isRealCampaign).map(adaptStaticCampaign);
     },
-    placeholderData: () => missionCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => missionCampaigns.filter(isRealCampaign).map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
