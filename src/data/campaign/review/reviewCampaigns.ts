@@ -1,4 +1,4 @@
-/* ========================================
+﻿/* ========================================
    구매평 캠페인 데이터
    ======================================== */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -34,7 +34,7 @@ export interface ReviewCampaignData {
   schedule: string; // 날짜/시간 형식 일정 (예: "1/25 (화) 10:00\n모집 오픈")
   dayCount: string; // 남은 일수 형식 (예: "D-6")
   isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
-  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2026-07-15T10:30:00")
   detailedSchedule: {
     applicationStart: string; // 신청 시작일시
     applicationEnd: string; // 신청 마감일
@@ -68,7 +68,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2001",
     title: "스마트폰 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_1.png",
+    image: "/images/main/campaign_img/eximg_6.png",
     subcategory: "디지털",
     channel: "네이버 블로그",
     points: 45000,
@@ -80,11 +80,11 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "비타글로우",
     schedule: "",
     dayCount: "D-5",
-    registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
+    registeredAt: "2026-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 예정 탭용 - 모집 시작을 넉넉히 미래로 (2026-06-01 ~)
-      applicationStart: "2026-06-01",
-      applicationEnd: "2026-06-30",
+      // 예정 탭용 - 모집 시작을 넉넉히 미래로 (2027-06-01 ~)
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-30",
       announcement: "2026-07-02",
       purchasePeriod: "2026-07-02 ~ 2026-07-05",
       registrationPeriod: "2026-07-05 ~ 2026-07-25",
@@ -107,7 +107,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2002",
     title: "화장품 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_2.png",
+    image: "/images/main/campaign_img/eximg_9.png",
     subcategory: "뷰티",
     channel: "네이버 블로그",
     points: 32000,
@@ -120,14 +120,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
-    registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
+    registeredAt: "2027-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-03-04) 기준으로 모집 진행 중 상태로 유지
-      applicationStart: "2026-03-01",
-      applicationEnd: "2026-03-31",
-      announcement: "2026-04-02",
-      purchasePeriod: "2026-03-01 ~ 2026-03-15",
-      registrationPeriod: "2026-03-01 ~ 2026-03-31",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2027-03-04) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-15",
+      announcement: "2027-04-02",
+      purchasePeriod: "2027-03-01 ~ 2027-03-15",
+      registrationPeriod: "2027-03-01 ~ 2027-03-31",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#화장품리뷰 #뷰티 #스킨케어 #구매후기 #솔직리뷰",
@@ -148,7 +148,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2003",
     title: "가전제품 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_3.png",
+    image: "/images/main/campaign_img/eximg_6.png",
     subcategory: "생활",
     channel: "네이버 블로그",
     points: 38000,
@@ -160,14 +160,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "테크솔루션",
     schedule: "",
     dayCount: "D-3",
-    registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
+    registeredAt: "2027-01-06T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-03-26) 기준으로 모집 진행 중 상태로 유지
-      applicationStart: "2026-03-01",
-      applicationEnd: "2026-03-31",
-      announcement: "2026-04-02",
-      purchasePeriod: "2026-04-02 ~ 2026-04-10",
-      registrationPeriod: "2026-04-10 ~ 2026-04-25",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2027-03-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-15",
+      announcement: "2027-04-02",
+      purchasePeriod: "2027-04-02 ~ 2027-04-10",
+      registrationPeriod: "2027-04-10 ~ 2027-04-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#가전제품리뷰 #주방가전 #생활용품 #구매후기 #솔직리뷰",
@@ -199,14 +199,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "닥터뮬",
     schedule: "",
     dayCount: "D-7",
-    registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
+    registeredAt: "2027-01-09T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-03-15",
-      applicationEnd: "2026-03-31",
-      announcement: "2026-04-10",
-      purchasePeriod: "2026-04-10 ~ 2026-04-20",
-      registrationPeriod: "2026-04-20 ~ 2026-05-10",
+      // 모집 중 - 현재 날짜(2027-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-15",
+      announcement: "2027-04-10",
+      purchasePeriod: "2027-04-10 ~ 2027-04-20",
+      registrationPeriod: "2027-04-20 ~ 2027-05-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#의류리뷰 #패션 #옷 #구매후기 #솔직리뷰",
@@ -226,7 +226,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2005",
     title: "식품 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_5.png",
+    image: "/images/main/campaign_img/eximg_8.png",
     subcategory: "식품",
     channel: "네이버 블로그",
     points: 22000,
@@ -238,14 +238,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "그린라이프",
     schedule: "",
     dayCount: "D-6",
-    registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
+    registeredAt: "2026-12-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2026-01-15",
-      applicationEnd: "2026-01-30",
-      announcement: "2025-11-17",
-      purchasePeriod: "2025-11-17 ~ 2025-11-20",
-      registrationPeriod: "2025-11-20 ~ 2025-11-27",
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-07-30",
+      announcement: "2026-12-17",
+      purchasePeriod: "2026-12-17 ~ 2026-12-20",
+      registrationPeriod: "2026-12-20 ~ 2026-12-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#식품리뷰 #음식 #구매후기 #솔직리뷰 #맛집",
@@ -265,7 +265,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2006",
     title: "책 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_6.png",
+    image: "/images/main/campaign_img/eximg_3.png",
     subcategory: "문화",
     channel: "네이버 블로그",
     points: 18000,
@@ -277,14 +277,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "레더리아",
     schedule: "",
     dayCount: "D-4",
-    registeredAt: "2025-12-20T15:20:00.000Z", // 등록 시간
+    registeredAt: "2026-12-20T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-03-15",
-      applicationEnd: "2026-03-31",
-      announcement: "2026-04-10",
-      purchasePeriod: "2026-04-10 ~ 2026-04-20",
-      registrationPeriod: "2026-04-20 ~ 2026-05-10",
+      // 모집 중 - 현재 날짜(2027-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-15",
+      announcement: "2027-04-10",
+      purchasePeriod: "2027-04-10 ~ 2027-04-20",
+      registrationPeriod: "2027-04-20 ~ 2027-05-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#책리뷰 #독서 #문화 #구매후기 #솔직리뷰",
@@ -304,7 +304,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2007",
     title: "운동화 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_7.png",
+    image: "/images/main/campaign_img/eximg_4.png",
     subcategory: "패션",
     channel: "네이버 블로그",
     points: 35000,
@@ -316,18 +316,18 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "에코라이프",
     schedule: "",
     dayCount: "D-1",
-    registeredAt: "2025-12-25T10:00:00.000Z", // 등록 시간
+    registeredAt: "2026-12-25T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - 구매 중 상태 (구매 기간 내, 등록 기간은 이후)
-      // 모집 기간: 이미 종료 (2025-12-26 ~ 2025-12-30)
-      // 선정 발표: 이미 지남 (2026-01-04)
-      // 구매 기간: 오늘 날짜(2026-01-07)를 포함하도록 설정 (2026-01-05 ~ 2026-01-09)
-      // 등록 기간: 구매 기간 이후 (2026-01-10 ~ 2026-01-20)
-      applicationStart: "2026-01-28",
-      applicationEnd: "2026-03-12",
-      announcement: "2026-01-04",
-      purchasePeriod: "2026-01-05 ~ 2026-01-09",
-      registrationPeriod: "2026-01-10 ~ 2026-01-20",
+      // 모집 기간: 이미 종료 (2026-12-26 ~ 2026-12-30)
+      // 선정 발표: 이미 지남 (2027-01-04)
+      // 구매 기간: 오늘 날짜(2027-01-07)를 포함하도록 설정 (2027-01-05 ~ 2027-01-09)
+      // 등록 기간: 구매 기간 이후 (2027-01-10 ~ 2027-01-20)
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-07-28",
+      announcement: "2027-01-04",
+      purchasePeriod: "2027-01-05 ~ 2027-01-09",
+      registrationPeriod: "2027-01-10 ~ 2027-01-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#운동화리뷰 #신발 #패션 #구매후기 #솔직리뷰",
@@ -347,7 +347,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2008",
     title: "반려동물 용품 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_8.png",
+    image: "/images/main/campaign_img/eximg_3.png",
     subcategory: "반려동물",
     channel: "네이버 블로그",
     points: 26000,
@@ -359,14 +359,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "웰빙코리아",
     schedule: "",
     dayCount: "D-8",
-    registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
+    registeredAt: "2026-12-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2026-03-05",
-      applicationEnd: "2026-03-20",
-      announcement: "2025-11-27",
-      purchasePeriod: "2025-11-27 ~ 2025-11-30",
-      registrationPeriod: "2025-11-30 ~ 2025-12-07",
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-03",
+      announcement: "2026-12-27",
+      purchasePeriod: "2026-12-27 ~ 2026-12-30",
+      registrationPeriod: "2026-12-30 ~ 2026-12-07",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#반려동물용품 #펫용품 #구매후기 #솔직리뷰 #반려동물",
@@ -386,7 +386,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2009",
     title: "자동차 용품 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_9.png",
+    image: "/images/main/campaign_img/eximg_1.png",
     subcategory: "기타",
     channel: "네이버 블로그",
     points: 42000,
@@ -398,14 +398,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "프리미엄뷰티",
     schedule: "",
     dayCount: "D-1",
-    registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
+    registeredAt: "2026-12-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
-      applicationStart: "2025-12-28",
-      applicationEnd: "2026-01-15",
-      announcement: "2025-12-07",
-      purchasePeriod: "2025-12-07 ~ 2025-12-10",
-      registrationPeriod: "2025-12-08 ~ 2026-01-25",
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-07-15",
+      announcement: "2026-12-07",
+      purchasePeriod: "2026-12-07 ~ 2026-12-10",
+      registrationPeriod: "2026-12-08 ~ 2027-01-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#자동차용품 #액세서리 #구매후기 #솔직리뷰 #자동차",
@@ -425,7 +425,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2010",
     title: "홈데코 구매평 리뷰",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_10.png",
+    image: "/images/main/campaign_img/eximg_3.png",
     subcategory: "생활",
     channel: "네이버 블로그",
     points: 30000,
@@ -437,14 +437,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "테크솔루션",
     schedule: "",
     dayCount: "D-9",
-    registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
+    registeredAt: "2026-12-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
-      applicationStart: "2026-03-10",
-      applicationEnd: "2026-03-25",
-      announcement: "2025-11-22",
-      purchasePeriod: "2025-11-22 ~ 2025-11-25",
-      registrationPeriod: "2025-11-25 ~ 2025-12-02",
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-10",
+      announcement: "2026-12-22",
+      purchasePeriod: "2026-12-22 ~ 2026-12-25",
+      registrationPeriod: "2026-12-25 ~ 2026-12-02",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#홈데코 #인테리어 #구매후기 #솔직리뷰 #생활용품",
@@ -463,7 +463,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2011",
     title: "프리미엄 비타민C 세럼 구매평",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_2.png",
+    image: "/images/main/campaign_img/eximg_7.png",
     subcategory: "뷰티",
     channel: "배송형",
     points: 35000,
@@ -475,14 +475,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "웰빙코리아",
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
-    registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
+    registeredAt: "2027-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-03-05)
-      applicationStart: "2026-01-15",
-      applicationEnd: "2026-03-05",
-      announcement: "2026-03-07",
-      purchasePeriod: "2026-03-07 ~ 2026-03-10",
-      registrationPeriod: "2026-03-10 ~ 2026-03-17",
+      // 오픈 예정 - 현재 날짜보다 미래 (2027-01-15 ~ 2027-03-05)
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-07-22",
+      announcement: "2027-03-07",
+      purchasePeriod: "2027-03-07 ~ 2027-03-10",
+      registrationPeriod: "2027-03-10 ~ 2027-03-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#비타민C세럼 #뷰티 #스킨케어 #구매평 #솔직후기",
@@ -502,7 +502,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     id: "2012",
     title: "[마감임박] 프리미엄 무선 이어폰 구매평",
     category: "구매평",
-    image: "/images/main/campaign_img/eximg_1.png",
+    image: "/images/main/campaign_img/eximg_6.png",
     subcategory: "디지털",
     channel: "", // 구매평은 채널 없음
     points: 28000,
@@ -514,14 +514,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "내추럴푸드",
     schedule: "",
     dayCount: "D-2",
-    registeredAt: "2026-01-11T11:30:00.000Z", // 등록 시간
+    registeredAt: "2027-01-11T11:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-13 ~ 2026-01-26)
-      applicationStart: "2026-01-13",
-      applicationEnd: "2026-01-26",
-      announcement: "2026-01-28",
-      purchasePeriod: "2026-01-28 ~ 2026-01-31",
-      registrationPeriod: "2026-01-31 ~ 2026-03-08",
+      // 모집 중 - 현재 날짜 기준 (2027-01-13 ~ 2027-01-26)
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-07-26",
+      announcement: "2027-01-28",
+      purchasePeriod: "2027-01-28 ~ 2027-01-31",
+      registrationPeriod: "2027-01-31 ~ 2027-03-08",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#무선이어폰 #구매평 #오디오 #디지털기기 #솔직후기",
@@ -553,15 +553,15 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "테크솔루션",
     schedule: "",
     dayCount: "D-8",
-    registeredAt: "2025-12-20T10:00:00.000Z",
+    registeredAt: "2026-12-20T10:00:00.000Z",
     detailedSchedule: {
-      // 구매 기간: 2026-01-01 ~ 2026-01-05 (지남)
-      // 등록 기간: 2026-01-06 ~ 2026-01-15 (현재 진행 중)
-      applicationStart: "2026-01-12",
-      applicationEnd: "2026-01-27",
-      announcement: "2026-01-05",
-      purchasePeriod: "2026-01-01 ~ 2026-01-05",
-      registrationPeriod: "2026-01-06 ~ 2026-01-15",
+      // 구매 기간: 2027-01-01 ~ 2027-01-05 (지남)
+      // 등록 기간: 2027-01-06 ~ 2027-01-15 (현재 진행 중)
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-07-27",
+      announcement: "2027-01-05",
+      purchasePeriod: "2027-01-01 ~ 2027-01-05",
+      registrationPeriod: "2027-01-06 ~ 2027-01-15",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#테스트 #구매평 #리뷰 #생활용품",
@@ -593,13 +593,13 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "ABC쇼핑몰",
     schedule: "",
     dayCount: "D-5",
-    registeredAt: "2026-01-15T10:00:00.000Z",
+    registeredAt: "2027-01-15T10:00:00.000Z",
     detailedSchedule: {
-      applicationStart: "2026-03-01",
-      applicationEnd: "2026-03-28",
-      announcement: "2026-03-02",
-      purchasePeriod: "2026-03-04 ~ 2026-05-05",
-      registrationPeriod: "2026-05-05 ~ 2026-05-20",
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-12",
+      announcement: "2027-03-02",
+      purchasePeriod: "2027-03-04 ~ 2027-05-05",
+      registrationPeriod: "2027-05-05 ~ 2027-05-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#테스트 #구매평1차 #영수증확인",
@@ -628,13 +628,13 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     partnerName: "라이프스타일",
     schedule: "",
     dayCount: "D-3",
-    registeredAt: "2026-01-15T10:00:00.000Z",
+    registeredAt: "2027-01-15T10:00:00.000Z",
     detailedSchedule: {
-      applicationStart: "2026-03-01",
-      applicationEnd: "2026-03-28",
-      announcement: "2026-03-02",
-      purchasePeriod: "2026-01-20 ~ 2026-03-03",
-      registrationPeriod: "2026-03-04 ~ 2026-05-05",
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-12",
+      announcement: "2027-03-02",
+      purchasePeriod: "2027-01-20 ~ 2027-03-03",
+      registrationPeriod: "2027-03-04 ~ 2027-05-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#테스트 #구매평2차 #리뷰확인",
@@ -677,7 +677,7 @@ export interface ReviewCampaignDataExtended {
   schedule: string;
   dayCount: string;
   isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
-  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2026-07-15T10:30:00")
   detailedSchedule: {
     applicationStart: string;
     applicationEnd: string;
@@ -830,7 +830,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "성실하게 리뷰 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-15",
+          registrationDate: "2026-12-15",
         },
         {
           id: "app_review_1_네이버블로그_001_old",
@@ -845,7 +845,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "스마트폰 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-15",
+          registrationDate: "2026-12-15",
         },
         {
           id: "app_review_1_네이버블로그_002",
@@ -860,7 +860,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "상세한 디지털 제품 후기 작성 능력이 뛰어납니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-16",
+          registrationDate: "2026-12-16",
         },
         {
           id: "app_review_1_네이버블로그_003",
@@ -875,7 +875,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "사진 퀄리티가 우수하고 팔로워 수가 많습니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-17",
+          registrationDate: "2026-12-17",
         },
         {
           id: "app_review_1_네이버블로그_004",
@@ -890,7 +890,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "가독성 좋은 후기를 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-18",
+          registrationDate: "2026-12-18",
         },
         {
           id: "app_review_1_네이버블로그_005",
@@ -905,7 +905,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "고품질 구매평 리뷰 전문가입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-19",
+          registrationDate: "2026-12-19",
         },
       ],
       selectedApplicants: [],
@@ -930,7 +930,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "뷰티 제품 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-18",
+          registrationDate: "2026-12-18",
         },
         {
           id: "app_review_2_네이버블로그_002",
@@ -945,7 +945,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "화장품 리뷰를 자주 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-19",
+          registrationDate: "2026-12-19",
         },
         {
           id: "app_review_2_네이버블로그_003",
@@ -960,7 +960,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "뷰티 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-20",
+          registrationDate: "2026-12-20",
         },
       ],
       selectedApplicants: [
@@ -977,7 +977,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "이미 선정된 우수 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-18",
+          registrationDate: "2026-12-18",
         },
       ],
     },
@@ -986,7 +986,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 1. 콘텐츠 미등록 (기본 케이스)
         {
           id: "content_review_2_waiting_001",
-          createdAt: "2025-12-20T10:00:00.000Z",
+          createdAt: "2026-12-20T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "화장품구매평리뷰어A",
@@ -999,7 +999,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 2. 등록 기한 연장 요청
         {
           id: "content_review_2_waiting_002",
-          createdAt: "2025-12-21T11:00:00.000Z",
+          createdAt: "2026-12-21T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "뷰티리뷰어B",
@@ -1014,7 +1014,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 3. 연장 승인 후 아직 등록 안함 (확인용 - 실제로는 extension_request_reason이 없고 연장된 상태)
         {
           id: "content_review_2_waiting_003",
-          createdAt: "2025-12-19T09:00:00.000Z",
+          createdAt: "2026-12-19T09:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "연장승인리뷰어C",
@@ -1027,7 +1027,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 4. 반려 처리
         {
           id: "content_review_2_waiting_004",
-          createdAt: "2025-12-17T08:00:00.000Z",
+          createdAt: "2026-12-17T08:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "반려된리뷰어D",
@@ -1043,7 +1043,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 5. 신고 처리
         {
           id: "content_review_2_waiting_005",
-          createdAt: "2025-12-16T07:00:00.000Z",
+          createdAt: "2026-12-16T07:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고된리뷰어E",
@@ -1053,14 +1053,14 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
           isReported: true,
-          reportedDate: "2025-12-20 17:37",
+          reportedDate: "2026-12-20 17:37",
         },
       ],
       reviewing: [
         // 1. 최초 등록 (updatedAt 없음)
         {
           id: "content_review_2_reviewing_001",
-          createdAt: "2025-12-18T09:00:00.000Z",
+          createdAt: "2026-12-18T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "뷰티인플루언서F",
@@ -1075,13 +1075,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 2. 수정 (updatedAt 있음)
         {
           id: "content_review_2_reviewing_002",
-          createdAt: "2025-12-15T08:00:00.000Z",
+          createdAt: "2026-12-15T08:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
           nickname: "수정한리뷰어G",
           channelId: "blog_029",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-19T10:00:00.000Z",
+          updatedAt: "2026-12-19T10:00:00.000Z",
           isRejected: false,
           isLate: false,
           profileImage: "",
@@ -1091,13 +1091,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 3. 지각 등록 (isLate: true)
         {
           id: "content_review_2_reviewing_003",
-          createdAt: "2025-12-14T07:00:00.000Z",
+          createdAt: "2026-12-14T07:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
           nickname: "지각등록리뷰어H",
           channelId: "blog_030",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-20T17:37:00.000Z",
+          updatedAt: "2026-12-20T17:37:00.000Z",
           isRejected: false,
           isLate: true,
           profileImage: "",
@@ -1109,7 +1109,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 1. 확인 완료 (최초 등록)
         {
           id: "content_review_2_completed_001",
-          createdAt: "2025-12-15T08:00:00.000Z",
+          createdAt: "2026-12-15T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "선정된화장품구매평리뷰어1",
@@ -1123,13 +1123,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 2. 확인 완료 (수정 후)
         {
           id: "content_review_2_completed_002",
-          createdAt: "2025-12-13T06:00:00.000Z",
+          createdAt: "2026-12-13T06:00:00.000Z",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "수정완료리뷰어I",
           channelId: "blog_031",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-16T09:00:00.000Z",
+          updatedAt: "2026-12-16T09:00:00.000Z",
           isLate: false,
           profileImage: "",
           actionType: 0,
@@ -1156,7 +1156,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "가전제품 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-20",
+          registrationDate: "2026-12-20",
         },
         {
           id: "app_review_3_네이버블로그_002",
@@ -1171,7 +1171,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "가전제품 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-21",
+          registrationDate: "2026-12-21",
         },
         {
           id: "app_review_3_네이버블로그_003",
@@ -1186,7 +1186,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "가전제품 리뷰를 자주 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-22",
+          registrationDate: "2026-12-22",
         },
       ],
       selectedApplicants: [
@@ -1203,7 +1203,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "이미 선정된 우수 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-20",
+          registrationDate: "2026-12-20",
         },
       ],
     },
@@ -1211,7 +1211,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       waiting: [
         {
           id: "content_review_3_waiting_001",
-          createdAt: "2025-12-20T10:00:00.000Z",
+          createdAt: "2026-12-20T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "가전제품구매평리뷰어A",
@@ -1223,7 +1223,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         },
         {
           id: "content_review_3_waiting_002",
-          createdAt: "2025-12-21T11:00:00.000Z",
+          createdAt: "2026-12-21T11:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "가전인플루언서B",
@@ -1237,13 +1237,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       reviewing: [
         {
           id: "content_review_3_reviewing_001",
-          createdAt: "2025-12-19T09:00:00.000Z",
+          createdAt: "2026-12-19T09:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
           nickname: "가전리뷰어C",
           channelId: "blog_027",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-20T10:00:00.000Z",
+          updatedAt: "2026-12-20T10:00:00.000Z",
           isRejected: false,
           isLate: false,
           profileImage: "",
@@ -1254,13 +1254,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       completed: [
         {
           id: "content_review_3_completed_001",
-          createdAt: "2025-12-18T08:00:00.000Z",
+          createdAt: "2026-12-18T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "선정된가전제품구매평리뷰어1",
           channelId: "blog_028",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-19T09:00:00.000Z",
+          updatedAt: "2026-12-19T09:00:00.000Z",
           isLate: false,
           profileImage: "",
           actionType: 0,
@@ -1287,7 +1287,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 의류 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-25",
+          registrationDate: "2026-12-25",
         },
         {
           id: "app_review_4_네이버블로그_002",
@@ -1302,7 +1302,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 리뷰를 많이 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-26",
+          registrationDate: "2026-12-26",
         },
         {
           id: "app_review_4_네이버블로그_003",
@@ -1317,7 +1317,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 스타일링 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-27",
+          registrationDate: "2026-12-27",
         },
         {
           id: "app_review_4_인스타그램_001",
@@ -1332,7 +1332,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "인스타그램 패션 콘텐츠 제작자입니다.",
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
-          registrationDate: "2025-12-25",
+          registrationDate: "2026-12-25",
         },
         {
           id: "app_review_4_네이버블로그_004",
@@ -1347,7 +1347,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "의류 구매 후 상세 리뷰 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-28",
+          registrationDate: "2026-12-28",
         },
         {
           id: "app_review_4_유튜브_001",
@@ -1362,7 +1362,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 유튜브 채널 운영 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "유튜브",
-          registrationDate: "2025-12-26",
+          registrationDate: "2026-12-26",
         },
         {
           id: "app_review_4_네이버블로그_005",
@@ -1377,7 +1377,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "의류 구매평 전문으로 활동 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-29",
+          registrationDate: "2026-12-29",
         },
         {
           id: "app_review_4_인스타그램_002",
@@ -1392,7 +1392,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 스타일링 콘텐츠 제작합니다.",
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
-          registrationDate: "2025-12-27",
+          registrationDate: "2026-12-27",
         },
         {
           id: "app_review_4_네이버블로그_006",
@@ -1407,7 +1407,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 의류 구매평을 꾸준히 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-30",
+          registrationDate: "2026-12-30",
         },
         {
           id: "app_review_4_유튜브_002",
@@ -1422,7 +1422,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "의류 리뷰 영상 제작 전문입니다.",
           selectionStatus: "미선택" as const,
           channel: "유튜브",
-          registrationDate: "2025-12-28",
+          registrationDate: "2026-12-28",
         },
         {
           id: "app_review_4_네이버블로그_007",
@@ -1437,7 +1437,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 블로그 운영 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-31",
+          registrationDate: "2026-12-31",
         },
         {
           id: "app_review_4_인스타그램_003",
@@ -1452,7 +1452,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 인플루언서로 활동 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
-          registrationDate: "2026-01-01",
+          registrationDate: "2027-01-01",
         },
         {
           id: "app_review_4_네이버블로그_008",
@@ -1467,7 +1467,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "의류 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-02",
+          registrationDate: "2027-01-02",
         },
         {
           id: "app_review_4_유튜브_003",
@@ -1482,7 +1482,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 리뷰 영상 전문 유튜버입니다.",
           selectionStatus: "미선택" as const,
           channel: "유튜브",
-          registrationDate: "2025-12-29",
+          registrationDate: "2026-12-29",
         },
         {
           id: "app_review_4_네이버블로그_009",
@@ -1497,7 +1497,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "스타일링 리뷰를 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-03",
+          registrationDate: "2027-01-03",
         },
         {
           id: "app_review_4_인스타그램_004",
@@ -1512,7 +1512,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 스타일링 콘텐츠 제작합니다.",
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
-          registrationDate: "2026-01-01",
+          registrationDate: "2027-01-01",
         },
         {
           id: "app_review_4_네이버블로그_010",
@@ -1527,7 +1527,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "의류 구매평 블로그 운영 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-04",
+          registrationDate: "2027-01-04",
         },
         {
           id: "app_review_4_유튜브_004",
@@ -1542,7 +1542,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 유튜브 채널 운영 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "유튜브",
-          registrationDate: "2025-12-30",
+          registrationDate: "2026-12-30",
         },
         {
           id: "app_review_4_네이버블로그_011",
@@ -1557,7 +1557,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 리뷰 전문으로 활동 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-05",
+          registrationDate: "2027-01-05",
         },
         {
           id: "app_review_4_인스타그램_005",
@@ -1572,7 +1572,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "의류 인플루언서로 활동 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
-          registrationDate: "2026-01-02",
+          registrationDate: "2027-01-02",
         },
         {
           id: "app_review_4_네이버블로그_012",
@@ -1587,7 +1587,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "패션 구매평 리뷰를 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-06",
+          registrationDate: "2027-01-06",
         },
         {
           id: "app_review_4_유튜브_005",
@@ -1602,7 +1602,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "스타일링 리뷰 영상 제작합니다.",
           selectionStatus: "미선택" as const,
           channel: "유튜브",
-          registrationDate: "2026-01-03",
+          registrationDate: "2027-01-03",
         },
       ],
       selectedApplicants: [],
@@ -1626,7 +1626,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "식품 전문 구매평 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-10",
+          registrationDate: "2026-12-10",
         },
       ],
       selectedApplicants: [],
@@ -1635,25 +1635,25 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       reviewing: [
         {
           id: "content_review_5_001",
-          createdAt: "2025-11-20",
+          createdAt: "2026-12-20",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "식품구매평리뷰어A",
           channelId: "blog_001",
           channel: "네이버 블로그",
-          updatedAt: "2025-11-25",
+          updatedAt: "2026-12-25",
           isRejected: false,
           isLate: false,
         },
         {
           id: "content_review_5_002",
-          createdAt: "2025-11-21",
+          createdAt: "2026-12-21",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "식품인플루언서B",
           channelId: "blog_002",
           channel: "네이버 블로그",
-          updatedAt: "2025-11-26",
+          updatedAt: "2026-12-26",
           isRejected: false,
           isLate: false,
         },
@@ -1661,24 +1661,24 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       completed: [
         {
           id: "content_review_5_003",
-          createdAt: "2025-11-22",
+          createdAt: "2026-12-22",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "식품리뷰어C",
           channelId: "blog_003",
           channel: "네이버 블로그",
-          updatedAt: "2025-11-27",
+          updatedAt: "2026-12-27",
           isLate: false,
         },
         {
           id: "content_review_5_004",
-          createdAt: "2025-11-23",
+          createdAt: "2026-12-23",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "식품인플루언서D",
           channelId: "blog_004",
           channel: "네이버 블로그",
-          updatedAt: "2025-11-28",
+          updatedAt: "2026-12-28",
           isLate: false,
         },
       ],
@@ -1702,7 +1702,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "도서 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-19",
+          registrationDate: "2026-12-19",
         },
         {
           id: "app_review_6_네이버블로그_002",
@@ -1717,7 +1717,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "독서 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-20",
+          registrationDate: "2026-12-20",
         },
         {
           id: "app_review_6_네이버블로그_003",
@@ -1732,7 +1732,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "책 리뷰를 자주 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-21",
+          registrationDate: "2026-12-21",
         },
       ],
       selectedApplicants: [
@@ -1749,7 +1749,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "이미 선정된 우수 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-19",
+          registrationDate: "2026-12-19",
         },
       ],
     },
@@ -1757,7 +1757,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       waiting: [
         {
           id: "content_review_6_waiting_001",
-          createdAt: "2025-12-20T10:00:00.000Z",
+          createdAt: "2026-12-20T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "책구매평리뷰어A",
@@ -1769,7 +1769,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         },
         {
           id: "content_review_6_waiting_002",
-          createdAt: "2025-12-21T11:00:00.000Z",
+          createdAt: "2026-12-21T11:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "독서인플루언서B",
@@ -1783,13 +1783,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       reviewing: [
         {
           id: "content_review_6_reviewing_001",
-          createdAt: "2025-12-19T09:00:00.000Z",
+          createdAt: "2026-12-19T09:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
           nickname: "책전문가C",
           channelId: "blog_034",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-20T10:00:00.000Z",
+          updatedAt: "2026-12-20T10:00:00.000Z",
           isRejected: false,
           isLate: false,
           profileImage: "",
@@ -1805,13 +1805,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       completed: [
         {
           id: "content_review_6_completed_001",
-          createdAt: "2025-12-18T08:00:00.000Z",
+          createdAt: "2026-12-18T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "선정된책구매평리뷰어1",
           channelId: "blog_035",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-19T09:00:00.000Z",
+          updatedAt: "2026-12-19T09:00:00.000Z",
           isLate: false,
           profileImage: "",
           actionType: 0,
@@ -1844,7 +1844,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "운동화 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-28",
+          registrationDate: "2026-12-28",
         },
         {
           id: "app_review_7_네이버블로그_002",
@@ -1859,7 +1859,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "신발 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-29",
+          registrationDate: "2026-12-29",
         },
       ],
       selectedApplicants: [
@@ -1876,7 +1876,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "운동화 구매평 전문 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-28",
+          registrationDate: "2026-12-28",
         },
         {
           id: "sel_review_7_네이버블로그_002",
@@ -1891,7 +1891,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "신발 전문 인플루언서입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-29",
+          registrationDate: "2026-12-29",
         },
       ],
     },
@@ -1899,7 +1899,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       waiting: [
         {
           id: "content_review_7_waiting_001",
-          createdAt: "2025-12-28T10:00:00.000Z",
+          createdAt: "2026-12-28T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "운동화구매평리뷰어A",
@@ -1913,13 +1913,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       reviewing: [
         {
           id: "content_review_7_reviewing_001",
-          createdAt: "2025-12-26T09:00:00.000Z",
+          createdAt: "2026-12-26T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "신발인플루언서B",
           channelId: "blog_026",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-27T10:00:00.000Z",
+          updatedAt: "2026-12-27T10:00:00.000Z",
           isRejected: false,
           isLate: false,
           profileImage: "",
@@ -1930,13 +1930,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       completed: [
         {
           id: "content_review_7_completed_001",
-          createdAt: "2025-12-24T08:00:00.000Z",
+          createdAt: "2026-12-24T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "운동화전문가C",
           channelId: "blog_027",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-25T09:00:00.000Z",
+          updatedAt: "2026-12-25T09:00:00.000Z",
           isLate: false,
           profileImage: "",
           actionType: 0,
@@ -1963,7 +1963,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "반려동물 용품 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-12",
+          registrationDate: "2026-12-12",
         },
       ],
       selectedApplicants: [],
@@ -1973,13 +1973,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       reviewing: [
         {
           id: "content_review_8_001",
-          createdAt: "2025-11-30T10:00:00.000Z",
+          createdAt: "2026-12-30T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "반려동물용품구매평리뷰어A",
           channelId: "blog_001",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-05T10:00:00.000Z",
+          updatedAt: "2026-12-05T10:00:00.000Z",
           isRejected: false,
           isLate: false,
           profileImage: "",
@@ -1990,13 +1990,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       completed: [
         {
           id: "content_review_8_002",
-          createdAt: "2025-12-01T11:00:00.000Z",
+          createdAt: "2026-12-01T11:00:00.000Z",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "반려동물인플루언서B",
           channelId: "blog_002",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-07T11:00:00.000Z",
+          updatedAt: "2026-12-07T11:00:00.000Z",
           isLate: false,
           profileImage: "",
           actionType: 1,
@@ -2004,13 +2004,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         },
         {
           id: "content_review_8_003",
-          createdAt: "2025-12-02T12:00:00.000Z",
+          createdAt: "2026-12-02T12:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "반려동물리뷰어C",
           channelId: "blog_003",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-07T12:00:00.000Z",
+          updatedAt: "2026-12-07T12:00:00.000Z",
           isLate: false,
           profileImage: "",
           actionType: 0,
@@ -2037,7 +2037,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "자동차 용품 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-30",
+          registrationDate: "2026-12-30",
         },
         {
           id: "app_review_9_네이버블로그_002",
@@ -2052,7 +2052,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "자동차 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-31",
+          registrationDate: "2026-12-31",
         },
       ],
       selectedApplicants: [
@@ -2069,7 +2069,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "자동차 용품 구매평 전문 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-30",
+          registrationDate: "2026-12-30",
         },
       ],
     },
@@ -2078,7 +2078,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 1. 콘텐츠 미등록 (기본 케이스)
         {
           id: "content_review_9_waiting_001",
-          createdAt: "2025-12-30T10:00:00.000Z",
+          createdAt: "2026-12-30T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "자동차용품구매평리뷰어A",
@@ -2091,7 +2091,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 2. 등록 기한 연장 요청
         {
           id: "content_review_9_waiting_002",
-          createdAt: "2025-12-31T11:00:00.000Z",
+          createdAt: "2026-12-31T11:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "자동차인플루언서B",
@@ -2106,7 +2106,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 3. 연장 승인 후 아직 등록 안함
         {
           id: "content_review_9_waiting_003",
-          createdAt: "2025-12-29T09:00:00.000Z",
+          createdAt: "2026-12-29T09:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장승인자동차리뷰어C",
@@ -2119,7 +2119,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 4. 반려 처리
         {
           id: "content_review_9_waiting_004",
-          createdAt: "2025-12-27T08:00:00.000Z",
+          createdAt: "2026-12-27T08:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "반려된자동차리뷰어D",
@@ -2135,7 +2135,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 5. 신고 처리
         {
           id: "content_review_9_waiting_005",
-          createdAt: "2025-12-26T07:00:00.000Z",
+          createdAt: "2026-12-26T07:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "신고된자동차인플루언서E",
@@ -2145,14 +2145,14 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
           isReported: true,
-          reportedDate: "2025-12-30 14:25",
+          reportedDate: "2026-12-30 14:25",
         },
       ],
       reviewing: [
         // 1. 최초 등록 (updatedAt 없음)
         {
           id: "content_review_9_reviewing_001",
-          createdAt: "2025-12-28T09:00:00.000Z",
+          createdAt: "2026-12-28T09:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
           nickname: "자동차전문가F",
@@ -2167,13 +2167,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 2. 수정 (updatedAt 있음)
         {
           id: "content_review_9_reviewing_002",
-          createdAt: "2025-12-25T08:00:00.000Z",
+          createdAt: "2026-12-25T08:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "수정한자동차인플루언서G",
           channelId: "blog_035",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-29T10:00:00.000Z",
+          updatedAt: "2026-12-29T10:00:00.000Z",
           isRejected: false,
           isLate: false,
           profileImage: "",
@@ -2183,13 +2183,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 3. 지각 등록 (isLate: true)
         {
           id: "content_review_9_reviewing_003",
-          createdAt: "2025-12-24T07:00:00.000Z",
+          createdAt: "2026-12-24T07:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
           nickname: "지각등록자동차리뷰어H",
           channelId: "blog_036",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-30T14:25:00.000Z",
+          updatedAt: "2026-12-30T14:25:00.000Z",
           isRejected: false,
           isLate: true,
           profileImage: "",
@@ -2201,7 +2201,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 1. 확인 완료 (최초 등록)
         {
           id: "content_review_9_completed_001",
-          createdAt: "2025-12-26T08:00:00.000Z",
+          createdAt: "2026-12-26T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "자동차리뷰어I",
@@ -2215,13 +2215,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 2. 확인 완료 (수정 후)
         {
           id: "content_review_9_completed_002",
-          createdAt: "2025-12-23T06:00:00.000Z",
+          createdAt: "2026-12-23T06:00:00.000Z",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "수정완료자동차인플루언서J",
           channelId: "blog_037",
           channel: "네이버 블로그",
-          updatedAt: "2025-12-27T09:00:00.000Z",
+          updatedAt: "2026-12-27T09:00:00.000Z",
           isLate: false,
           profileImage: "",
           actionType: 0,
@@ -2248,7 +2248,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "홈데코 제품 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-08",
+          registrationDate: "2026-12-08",
         },
       ],
       selectedApplicants: [],
@@ -2272,7 +2272,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "뷰티 제품 구매평 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-15",
+          registrationDate: "2027-01-15",
         },
         {
           id: "app_review_11_네이버블로그_002",
@@ -2287,7 +2287,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "스킨케어 제품 상세 리뷰 작성 능력이 뛰어납니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-16",
+          registrationDate: "2027-01-16",
         },
         {
           id: "app_review_11_인스타그램_001",
@@ -2302,7 +2302,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "사진 퀄리티가 우수하고 팔로워 수가 많습니다.",
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
-          registrationDate: "2026-01-17",
+          registrationDate: "2027-01-17",
         },
         {
           id: "app_review_11_네이버블로그_003",
@@ -2317,7 +2317,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "가독성 좋은 후기를 작성합니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-18",
+          registrationDate: "2027-01-18",
         },
         {
           id: "app_review_11_유튜브_001",
@@ -2332,7 +2332,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "뷰티 제품 리뷰 영상 제작 전문입니다.",
           selectionStatus: "미선택" as const,
           channel: "유튜브",
-          registrationDate: "2026-01-19",
+          registrationDate: "2027-01-19",
         },
         {
           id: "app_review_11_네이버블로그_004",
@@ -2347,7 +2347,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "고품질 뷰티 구매평 리뷰 전문가입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-20",
+          registrationDate: "2027-01-20",
         },
         {
           id: "app_review_11_인스타그램_002",
@@ -2362,7 +2362,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "스킨케어 콘텐츠 제작 전문입니다.",
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
-          registrationDate: "2026-01-21",
+          registrationDate: "2027-01-21",
         },
         {
           id: "app_review_11_네이버블로그_005",
@@ -2377,7 +2377,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "뷰티 블로그 운영 중입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-22",
+          registrationDate: "2027-01-22",
         },
       ],
       selectedApplicants: [
@@ -2394,7 +2394,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "이미 선정된 우수 뷰티 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2026-01-15",
+          registrationDate: "2027-01-15",
         },
         {
           id: "sel_review_11_인스타그램_001",
@@ -2409,7 +2409,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "이미 선정된 우수 인플루언서입니다.",
           selectionStatus: "선정하기" as const,
           channel: "인스타그램",
-          registrationDate: "2026-01-17",
+          registrationDate: "2027-01-17",
         },
       ],
     },
@@ -2440,7 +2440,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "테스트용 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-25",
+          registrationDate: "2026-12-25",
         },
         {
           id: "app_review_13_네이버블로그_002",
@@ -2455,7 +2455,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "테스트용 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-26",
+          registrationDate: "2026-12-26",
         },
         {
           id: "app_review_13_네이버블로그_003",
@@ -2470,7 +2470,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "테스트용 인플루언서입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-27",
+          registrationDate: "2026-12-27",
         },
       ],
       selectedApplicants: [
@@ -2487,7 +2487,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "테스트용 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-25",
+          registrationDate: "2026-12-25",
         },
         {
           id: "sel_review_13_네이버블로그_002",
@@ -2502,7 +2502,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "테스트용 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-26",
+          registrationDate: "2026-12-26",
         },
         {
           id: "sel_review_13_네이버블로그_003",
@@ -2517,7 +2517,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           memo: "테스트용 인플루언서입니다.",
           selectionStatus: "선정하기" as const,
           channel: "네이버 블로그",
-          registrationDate: "2025-12-27",
+          registrationDate: "2026-12-27",
         },
       ],
     },
@@ -2526,7 +2526,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 대기 탭: 콘텐츠 미등록
         {
           id: "content_review_13_waiting_001",
-          createdAt: "2026-01-06T10:00:00.000Z",
+          createdAt: "2027-01-06T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "테스트리뷰어A",
@@ -2539,7 +2539,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 대기 탭: 등록 기한 연장 요청
         {
           id: "content_review_13_waiting_002",
-          createdAt: "2026-01-06T11:00:00.000Z",
+          createdAt: "2027-01-06T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "테스트리뷰어B",
@@ -2554,7 +2554,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 확인 탭: 최초 등록 (여러 이미지 테스트용)
         {
           id: "content_review_13_reviewing_001",
-          createdAt: "2026-01-06T09:00:00.000Z",
+          createdAt: "2027-01-06T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "테스트인플루언서C",
@@ -2576,13 +2576,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 확인 탭: 수정 (여러 이미지 테스트용)
         {
           id: "content_review_13_reviewing_002",
-          createdAt: "2026-01-05T08:00:00.000Z",
+          createdAt: "2027-01-05T08:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
           nickname: "테스트리뷰어D",
           channelId: "blog_043",
           channel: "네이버 블로그",
-          updatedAt: "2026-01-07T10:00:00.000Z",
+          updatedAt: "2027-01-07T10:00:00.000Z",
           isRejected: false,
           isLate: false,
           profileImage: "",
@@ -2608,11 +2608,11 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       total: 10,
     },
     detailedSchedule: {
-      applicationStart: "2026-03-01",
-      applicationEnd: "2026-03-28",
-      announcement: "2026-03-02",
-      purchasePeriod: "2026-03-04 ~ 2026-05-05", // 현재 구매 기간 중
-      registrationPeriod: "2026-05-05 ~ 2026-05-20",
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-12",
+      announcement: "2027-03-02",
+      purchasePeriod: "2027-03-04 ~ 2027-05-05", // 현재 구매 기간 중
+      registrationPeriod: "2027-05-05 ~ 2027-05-20",
     },
     applicantData: {
       applicants: [],
@@ -2623,7 +2623,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 경우의 수 1: 구매 미인증 (기한 내)
         {
           id: "review_1st_test_waiting_001",
-          createdAt: "2026-03-01T10:00:00.000Z",
+          createdAt: "2027-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "구매미인증유저",
@@ -2636,7 +2636,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 경우의 수 2: 연장 요청됨
         {
           id: "review_1st_test_waiting_002",
-          createdAt: "2026-03-02T11:00:00.000Z",
+          createdAt: "2027-03-02T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장요청유저",
@@ -2650,7 +2650,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 경우의 수 3: 반려됨
         {
           id: "review_1st_test_waiting_003",
-          createdAt: "2026-03-03T12:00:00.000Z",
+          createdAt: "2027-03-03T12:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "반려당한유저",
@@ -2664,7 +2664,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 경우의 수 4: 신고됨
         {
           id: "review_1st_test_waiting_004",
-          createdAt: "2026-03-04T13:00:00.000Z",
+          createdAt: "2027-03-04T13:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고당한유저",
@@ -2673,7 +2673,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           isReported: true,
-          reportedDate: "2026-03-04T14:30:00.000Z",
+          reportedDate: "2027-03-04T14:30:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -2681,7 +2681,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 확인 탭 경우의 수 1: 구매 인증 검수 중
         {
           id: "review_1st_test_reviewing_001",
-          createdAt: "2026-03-01T09:00:00.000Z",
+          createdAt: "2027-03-01T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "검수중유저",
@@ -2697,7 +2697,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 완료 탭 경우의 수 1: 구매 인증 완료
         {
           id: "review_1st_test_completed_001",
-          createdAt: "2026-01-28T08:00:00.000Z",
+          createdAt: "2027-01-28T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "인증완료유저",
@@ -2715,7 +2715,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 완료 탭 경우의 수 2: 지각등록 구매 인증 완료
         {
           id: "review_1st_test_completed_002",
-          createdAt: "2026-03-04T15:00:00.000Z",
+          createdAt: "2027-03-04T15:00:00.000Z",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "지각제출유저",
@@ -2745,11 +2745,11 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       total: 10,
     },
     detailedSchedule: {
-      applicationStart: "2026-03-01",
-      applicationEnd: "2026-03-28",
-      announcement: "2026-03-02",
-      purchasePeriod: "2026-01-20 ~ 2026-03-03", // 구매 기간 종료
-      registrationPeriod: "2026-03-04 ~ 2026-05-05", // 현재 등록 기간 중
+      applicationStart: "2026-07-01",
+      applicationEnd: "2026-08-12",
+      announcement: "2027-03-02",
+      purchasePeriod: "2027-01-20 ~ 2027-03-03", // 구매 기간 종료
+      registrationPeriod: "2027-03-04 ~ 2027-05-05", // 현재 등록 기간 중
     },
     applicantData: {
       applicants: [],
@@ -2760,7 +2760,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 경우의 수 1: 콘텐츠 미등록 (기한 내)
         {
           id: "review_2nd_test_waiting_001",
-          createdAt: "2026-03-01T10:00:00.000Z",
+          createdAt: "2027-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "콘텐츠미등록유저",
@@ -2772,7 +2772,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 경우의 수 2: 연장 요청됨
         {
           id: "review_2nd_test_waiting_002",
-          createdAt: "2026-03-02T11:00:00.000Z",
+          createdAt: "2027-03-02T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장요청유저",
@@ -2785,7 +2785,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 경우의 수 3: 반려됨
         {
           id: "review_2nd_test_waiting_003",
-          createdAt: "2026-03-03T12:00:00.000Z",
+          createdAt: "2027-03-03T12:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "반려당한유저",
@@ -2798,7 +2798,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 경우의 수 4: 신고됨
         {
           id: "review_2nd_test_waiting_004",
-          createdAt: "2026-03-04T13:00:00.000Z",
+          createdAt: "2027-03-04T13:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고당한유저",
@@ -2806,7 +2806,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버 블로그",
           profileImage: "",
           isReported: true,
-          reportedDate: "2026-03-04T14:30:00.000Z",
+          reportedDate: "2027-03-04T14:30:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -2814,7 +2814,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 확인 탭 경우의 수 1: 콘텐츠 검수 중
         {
           id: "review_2nd_test_reviewing_001",
-          createdAt: "2026-03-01T09:00:00.000Z",
+          createdAt: "2027-03-01T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "검수중유저",
@@ -2832,27 +2832,27 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
         // 완료 탭 경우의 수 1: 승인 완료
         {
           id: "review_2nd_test_completed_001",
-          createdAt: "2026-01-28T08:00:00.000Z",
+          createdAt: "2027-01-28T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "승인완료유저",
           channelId: "blog_test_004",
           channel: "네이버 블로그",
           profileImage: "",
-          updatedAt: "2026-01-29T09:00:00.000Z",
+          updatedAt: "2027-01-29T09:00:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료
         {
           id: "review_2nd_test_completed_002",
-          createdAt: "2026-03-04T15:00:00.000Z",
+          createdAt: "2027-03-04T15:00:00.000Z",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "지각제출유저",
           channelId: "insta_test_004",
           channel: "인스타그램",
           profileImage: "",
-          updatedAt: "2026-03-04T16:00:00.000Z",
+          updatedAt: "2027-03-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
         },
