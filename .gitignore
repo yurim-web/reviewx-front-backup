@@ -91,6 +91,8 @@ mock/db.backup.json
 # Cursor IDE 설정 (Claude Code와 무관)
 .cursor/
 docs/screenshots/
+!portfolio_screenshots/
+!portfolio_screenshots/*.png
 
 # Storybook build output
 storybook-static/
