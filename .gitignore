@@ -70,6 +70,7 @@ scripts/
 # 테스트 파일
 tests/
 *.mjs
+!take_screenshots.mjs
 check_*.js
 check_*.py
 check_*.ts
