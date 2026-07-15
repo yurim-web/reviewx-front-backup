@@ -64,6 +64,20 @@ await pg1.goto(BASE_URL + '/user/login', { waitUntil: 'networkidle' });
 await pg1.evaluate(() => localStorage.setItem('reviewx_last_login_provider', 'naver'));
 await pg1.reload({ waitUntil: 'networkidle' });
 await save(pg1, '08_user_login.png');
+
+// 캠페인 필터 모달 열린 상태 (미션형 - 카테고리 클릭)
+await pg1.goto(BASE_URL + '/campaign/mission', { waitUntil: 'networkidle' });
+await pg1.waitForTimeout(1200);
+try {
+  await pg1.locator('button:has-text("카테고리")').first().click({ timeout: 3000 });
+  await pg1.waitForTimeout(1000);
+} catch (e) { console.log('  filter modal click failed: ' + e.message); }
+await save(pg1, '35_campaign_filter.png');
+
+// 파트너 회원가입 페이지
+await pg1.goto(BASE_URL + '/partner/signup', { waitUntil: 'networkidle' });
+await save(pg1, '37_partner_signup.png');
+
 await ctx1.close();
 
 // ── 2. 유저 페이지 (localStorage 주입) ──
@@ -101,6 +115,21 @@ try {
   await pg2.goto(BASE_URL + '/user/notification', { waitUntil: 'domcontentloaded', timeout: 15000 });
 } catch { /* 무시 */ }
 await save(pg2, '33_user_notification.png');
+
+// 콘텐츠 등록 모달 (선정 탭 — 콘텐츠 등록 버튼 클릭)
+try {
+  await pg2.goto(BASE_URL + '/user/campaign_management/selected', { waitUntil: 'domcontentloaded', timeout: 15000 });
+} catch { /* 무시 */ }
+await pg2.waitForTimeout(4000);
+try {
+  const btnTexts = await pg2.locator('button').allTextContents();
+  console.log('  selected page buttons: ' + JSON.stringify(btnTexts.filter(t => t.trim())));
+  // waitForSelector로 버튼이 나타날 때까지 대기
+  await pg2.waitForSelector('button:has-text("콘텐츠 등록")', { timeout: 6000 });
+  await pg2.locator('button:has-text("콘텐츠 등록")').first().click();
+  await pg2.waitForTimeout(2000);
+} catch (e) { console.log('  content modal click failed: ' + e.message); }
+await save(pg2, '36_user_content_modal.png', 400);
 
 // 캠페인 신청 모달 (배송형 961 — 모크서버 날짜 인터셉트 후 신청 버튼 클릭)
 // 모크서버가 2027년 날짜를 반환하므로 route로 현재 범위로 오버라이드
@@ -196,8 +225,20 @@ try {
   await pg4.goto(BASE_URL + '/manager_ga', { waitUntil: 'domcontentloaded', timeout: 15000 });
 } catch { /* redirect 중단 무시 */ }
 await pg4.waitForTimeout(3000);
+// manager_ga가 아닌 경우 재시도 (auth 타이밍 이슈)
+if (!pg4.url().includes('manager_ga')) {
+  console.log('  manager auth retry...');
+  await pg4.goto(BASE_URL + '/', { waitUntil: 'networkidle' });
+  await injectManagerAuth(pg4);
+  await pg4.waitForTimeout(500);
+  try {
+    await pg4.goto(BASE_URL + '/manager_ga', { waitUntil: 'domcontentloaded', timeout: 15000 });
+  } catch { }
+  await pg4.waitForTimeout(4000);
+}
 console.log('  manager url: ' + pg4.url());
-if (!pg4.url().includes('login') && !pg4.url().includes('manager/login')) {
+// 실제로 manager_ga에 있을 때만 캡처
+if (pg4.url().includes('manager_ga')) {
   // 대시보드: 전체 페이지 캡처 (카드가 잘리지 않도록 fullPage)
   await pg4.waitForTimeout(2200);
   await pg4.screenshot({ path: path.join(OUTPUT_DIR, '29_manager_home.png'), fullPage: true });
