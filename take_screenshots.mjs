@@ -16,8 +16,8 @@ async function save(page, filename, waitMs = 2200) {
 
 async function injectUserAuth(page) {
   const mockUser = {
-    id: 'naver_demo_001', email: 'reviewer@naver.com', name: 'User',
-    nickname: 'User', role: 'user', status: 'ACTIVE', profile_image: null,
+    id: 'naver_demo_001', email: 'reviewer@naver.com', name: '김은지',
+    nickname: '은지블로그', role: 'user', status: 'ACTIVE', profile_image: null,
     phone: '010-1234-5678', address: 'Seoul', detail_address: '701', postal_code: '06236',
   };
   const mockToken = 'mock_token_portfolio_demo';
@@ -52,10 +52,7 @@ const pg1 = await ctx1.newPage();
 const g1 = (url) => pg1.goto(BASE_URL + url, { waitUntil: 'load', timeout: 20000 }).catch(() => {});
 await g1('/'); await save(pg1, '01_home.png');
 await g1('/campaign/delivery'); await save(pg1, '02_delivery_list.png');
-try {
-  const href = await pg1.locator("a[href*='/campaign/delivery/']").first().getAttribute('href');
-  await g1(href); await save(pg1, '03_delivery_detail.png');
-} catch { console.log('  skip delivery detail'); }
+// 03 배송형 상세는 auth 필요 → ctx2(user)에서 캡처
 await g1('/campaign/visit'); await save(pg1, '04_visit_list.png');
 await g1('/campaign/review'); await save(pg1, '05_review_list.png');
 await g1('/campaign/reporter'); await save(pg1, '06_reporter_list.png');
@@ -84,9 +81,30 @@ await ctx1.close();
 // ── 2. 유저 페이지 (localStorage 주입) ──
 console.log('--- user pages ---');
 const ctx2 = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+
+// React 실행 전 모든 페이지에 auth 사전 주입 → 리다이렉트 경쟁 조건 방지
+const _mockUser2 = {
+  id: 'naver_demo_001', email: 'reviewer@naver.com', name: '김은지',
+  nickname: '은지블로그', role: 'user', status: 'ACTIVE', profile_image: null,
+  phone: '010-1234-5678', address: 'Seoul', detail_address: '701', postal_code: '06236',
+};
+const _mockToken2 = 'mock_token_portfolio_demo';
+await ctx2.addInitScript(({ user, token }) => {
+  localStorage.setItem('reviewx_auth_user_user', JSON.stringify(user));
+  localStorage.setItem('reviewx_auth_user', JSON.stringify(user));
+  localStorage.setItem('reviewx_auth_token_user', token);
+  localStorage.setItem('reviewx_auth_token', token);
+}, { user: _mockUser2, token: _mockToken2 });
+
 const pg2 = await ctx2.newPage();
-await pg2.goto(BASE_URL + '/', { waitUntil: 'load', timeout: 20000 }).catch(() => {});
-await injectUserAuth(pg2);
+// 리뷰어 프로필 API intercept: fetchReviewerProfile이 wrapper째 반환하는 버그 우회 → 직접 data 반환
+await pg2.route('**/api/v1/reviewer/mypage/profile', async (route) => {
+  await route.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body: JSON.stringify({
+    user: { userId: 2, role: 'REVIEWER', name: '김은지', email: 'kimeunji@gmail.com', phoneNum: '010-2222-2222', address: '서울시 서초구 서초대로 456', status: 'ACTIVE', profileImage: { filePath: '/images/mypage/profile.svg' } },
+    reviewerProfile: { reviewerId: 2, grade: 'NORMAL', sex: 'W', birthDate: '1998-03-03' }
+  }) });
+});
+
 for (const [url, name] of [
   ['/user/campaign_management/all', '09_user_campaign_all.png'],
   ['/user/campaign_management/applied', '10_user_campaign_applied.png'],
@@ -101,14 +119,6 @@ for (const [url, name] of [
     await pg2.goto(BASE_URL + url, { waitUntil: 'domcontentloaded', timeout: 15000 });
   } catch { /* 리다이렉트 중단 무시 */ }
   await pg2.waitForTimeout(4500);
-  if (pg2.url().includes('login')) {
-    await pg2.goto(BASE_URL + '/', { waitUntil: 'load', timeout: 20000 }).catch(() => {});
-    await injectUserAuth(pg2);
-    try {
-      await pg2.goto(BASE_URL + url, { waitUntil: 'domcontentloaded', timeout: 15000 });
-    } catch { /* 무시 */ }
-    await pg2.waitForTimeout(4000);
-  }
   await save(pg2, name, 500);
 }
 // 유저 알림 페이지
@@ -118,9 +128,6 @@ try {
 await save(pg2, '33_user_notification.png');
 
 // 콘텐츠 등록 모달 (선정 탭 — 콘텐츠 등록 버튼 클릭)
-// auth 재주입 (이전 페이지 이동으로 만료될 수 있음)
-await pg2.goto(BASE_URL + '/', { waitUntil: 'load', timeout: 20000 }).catch(() => {});
-await injectUserAuth(pg2);
 try {
   await pg2.goto(BASE_URL + '/user/campaign_management/selected', { waitUntil: 'domcontentloaded', timeout: 15000 });
 } catch { /* 무시 */ }
@@ -128,7 +135,6 @@ await pg2.waitForTimeout(4000);
 try {
   const btnTexts = await pg2.locator('button').allTextContents();
   console.log('  selected page buttons: ' + JSON.stringify(btnTexts.filter(t => t.trim())));
-  // waitForSelector로 버튼이 나타날 때까지 대기
   await pg2.waitForSelector('button:has-text("콘텐츠 등록")', { timeout: 6000 });
   await pg2.locator('button:has-text("콘텐츠 등록")').first().click();
   await pg2.waitForTimeout(2000);
@@ -136,9 +142,6 @@ try {
 await save(pg2, '36_user_content_modal.png', 400);
 
 // 캠페인 신청 모달 (배송형 961 — 모크서버 날짜 인터셉트 후 신청 버튼 클릭)
-// auth 재주입 (신청 버튼은 로그인 상태에서만 표시)
-await pg2.goto(BASE_URL + '/', { waitUntil: 'load', timeout: 20000 }).catch(() => {});
-await injectUserAuth(pg2);
 // 모크서버가 2027년 날짜를 반환하므로 route로 현재 범위로 오버라이드
 await pg2.route('**/api/v1/reviewer/campaign/DELIVERY/961', async (route) => {
   const response = await route.fetch();
@@ -157,6 +160,8 @@ try {
   await pg2.goto(BASE_URL + '/campaign/delivery/961', { waitUntil: 'domcontentloaded', timeout: 15000 });
 } catch { /* 무시 */ }
 await pg2.waitForTimeout(3500);
+// 03 배송형 상세 캡처 (신청 버튼 클릭 전 — user auth 있어야 페이지가 로드됨)
+await save(pg2, '03_delivery_detail.png', 500);
 try {
   const btn = pg2.locator('button[class*="apply_button"]');
   const btnText = await btn.first().textContent().catch(() => '?');
@@ -173,6 +178,18 @@ console.log('--- partner pages ---');
 const ctx3 = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const pg3 = await ctx3.newPage();
 
+// 캠페인 관리 통계 route intercept: 진행 탭 카운트 수정 (0 → 3)
+await pg3.route('**/partner/campaign_management', async (route) => {
+  try {
+    const response = await route.fetch();
+    const json = await response.json();
+    if (json?.data?.stats) {
+      json.data.stats.ongoingCount = 3;
+    }
+    await route.fulfill({ response, json });
+  } catch { await route.continue(); }
+});
+
 // 로그인 페이지 캡처 (리다이렉트 전)
 await pg3.goto(BASE_URL + '/partner/login', { waitUntil: 'domcontentloaded' });
 await pg3.waitForTimeout(600);
@@ -187,12 +204,12 @@ console.log('  partner url: ' + partnerUrl);
 if (!partnerUrl.includes('login')) {
   console.log('  partner session active');
 } else {
-  // 세션 없음 → 폼 로그인 시도
+  // 세션 없음 → 폼 로그인 시도 (waitForURL로 redirect 확실히 대기)
   try {
     await pg3.fill("input[id='email']", 'test@test.com');
     await pg3.fill("input[id='password']", 'cjdaud1!');
     await pg3.click("button[type='submit']");
-    await pg3.waitForLoadState('networkidle');
+    await pg3.waitForURL(url => !url.includes('/partner/login'), { timeout: 10000 }).catch(() => {});
     await pg3.waitForTimeout(2000);
     console.log('  partner after login: ' + pg3.url());
   } catch (e) { console.log('  partner login err: ' + e.message); }
@@ -211,8 +228,41 @@ if (!pg3.url().includes('login')) {
   }
   await pg3.goto(BASE_URL + '/partner/campaign_application/delivery/961', { waitUntil: 'load', timeout: 20000 }); await save(pg3, '24_partner_application.png');
   await pg3.goto(BASE_URL + '/partner/campaign_contents/delivery/961', { waitUntil: 'load', timeout: 20000 }); await save(pg3, '25_partner_contents.png');
-  await pg3.goto(BASE_URL + '/partner/point', { waitUntil: 'load', timeout: 20000 }); await save(pg3, '26_partner_point.png');
+  await pg3.goto(BASE_URL + '/partner/point/all', { waitUntil: 'load', timeout: 20000 }); await save(pg3, '26_partner_point.png', 3000);
   await pg3.goto(BASE_URL + '/partner/mypage', { waitUntil: 'load', timeout: 20000 }); await save(pg3, '27_partner_mypage.png');
+  // 패널티 탭 캡처
+  await pg3.goto(BASE_URL + '/partner/campaign_management/penalty', { waitUntil: 'load', timeout: 20000 }); await save(pg3, '40_partner_cm_penalty.png', 2500);
+  // 캠페인 등록 페이지 캡처
+  // getCampaignCreatePage()가 data.data를 spread하는데 mock 서버는 flat 구조 반환 → data 래퍼 추가 intercept
+  await pg3.route('http://localhost:3001/partner/campaign/create', async (route) => {
+    if (route.request().method() === 'GET') {
+      await route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({
+          result: 'OK', generatedAt: new Date().toISOString(),
+          data: {
+            partner: { partnerId: 501, businessName: '마크엑스컴퍼니', currentPoint: 425000 },
+            categories: [
+              { categoryId: 1, categoryName: '식품' }, { categoryId: 2, categoryName: '뷰티' },
+              { categoryId: 3, categoryName: '가전' }, { categoryId: 4, categoryName: '생활' },
+              { categoryId: 5, categoryName: '패션' },
+            ],
+            channels: [
+              { channelId: 1, channelName: 'NAVER_BLOG' }, { channelId: 2, channelName: 'NAVER_CLIP' },
+              { channelId: 3, channelName: 'INSTAGRAM' }, { channelId: 4, channelName: 'INSTAGRAM_REELS' },
+            ],
+            regions: [
+              { regionId: 100, name: '서울특별시', level: 1, parentId: null },
+              { regionId: 200, name: '경기도', level: 1, parentId: null },
+            ],
+          }
+        })
+      });
+    } else { await route.continue(); }
+  });
+  await pg3.goto(BASE_URL + '/partner/campaign/create/delivery', { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+  await pg3.waitForSelector('text=캠페인 제목', { timeout: 15000 }).catch(() => {});
+  await save(pg3, '41_partner_campaign_create.png', 500);
 } else {
   console.log('  partner login failed, skipping partner pages');
 }
@@ -255,7 +305,10 @@ await pg4.route((url) => new URL(url.href).pathname === '/api/admin/reports', as
   }) });
 });
 
-await pg4.goto(BASE_URL + '/manager/login', { waitUntil: 'load', timeout: 20000 }); await save(pg4, '28_manager_login.png');
+await pg4.goto(BASE_URL + '/manager/login', { waitUntil: 'load', timeout: 20000 });
+await pg4.waitForTimeout(1500);
+await pg4.screenshot({ path: path.join(OUTPUT_DIR, '28_manager_login.png'), clip: { x: 240, y: 0, width: 1440, height: 900 } });
+console.log('  ok 28_manager_login.png');
 
 // localStorage 직접 주입 (폼 로그인 대신)
 await pg4.goto(BASE_URL + '/', { waitUntil: 'load', timeout: 20000 });
@@ -316,7 +369,21 @@ if (pg4.url().includes('manager_ga')) {
   });
   await gotoManager('/manager_ga/member/reviewers', '31_manager_reviewers.png');
   await gotoManager('/manager_ga/member/partners', '32_manager_partners.png');
-  // 상세 페이지
+  // 상세 페이지 - 리뷰어 채널 데이터 주입 (hook이 user_accounts localStorage에서 채널 stats 보강)
+  await pg4.evaluate(() => {
+    const userAccounts = [
+      {
+        id: 'user_kakao_001',
+        channel_details: [
+          { name: '네이버 블로그', url: 'https://blog.naver.com/catbrushing', status: 'connected' },
+          { name: '네이버 클립', url: 'https://clip.naver.com/catbrushing', status: 'connected' },
+          { name: '인스타그램', url: 'https://instagram.com/cat_brushing', status: 'connected' },
+          { name: '유튜브', url: '', status: 'disconnected' },
+        ]
+      }
+    ];
+    localStorage.setItem('user_accounts', JSON.stringify(userAccounts));
+  });
   await gotoManager('/manager_ga/member/reviewers/1', '38_manager_reviewer_detail.png');
   await gotoManager('/manager_ga/member/partners/1', '39_manager_partner_detail.png');
 } else {
