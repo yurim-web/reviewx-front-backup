@@ -307,10 +307,10 @@ if (pg4.url().includes('manager_ga')) {
   await pg4.waitForTimeout(3500);
   await pg4.screenshot({ path: path.join(OUTPUT_DIR, '29_manager_home.png'), fullPage: true });
   console.log('  ok 29_manager_home.png');
-  // 캠페인 진행현황: 상태 필터 드롭다운 열린 상태로 캡처
+  // 캠페인 진행현황: 상태 필터 드롭다운 열린 상태로 캡처 (FilterButton은 div 컴포넌트)
   await gotoManager('/manager_ga/campaign/progress', '30_manager_campaigns.png', async () => {
     try {
-      await pg4.locator('button:has-text("상태")').first().click({ timeout: 3000 });
+      await pg4.locator('span').filter({ hasText: /^상태$/ }).first().click({ timeout: 3000 });
       await pg4.waitForTimeout(700);
     } catch (e) { console.log('  filter click failed: ' + e.message); }
   });
