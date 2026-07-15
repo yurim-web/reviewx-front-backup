@@ -100,14 +100,14 @@ for (const [url, name] of [
   try {
     await pg2.goto(BASE_URL + url, { waitUntil: 'domcontentloaded', timeout: 15000 });
   } catch { /* 리다이렉트 중단 무시 */ }
-  await pg2.waitForTimeout(2500);
+  await pg2.waitForTimeout(4500);
   if (pg2.url().includes('login')) {
-    await pg2.goto(BASE_URL + '/', { waitUntil: 'domcontentloaded' });
+    await pg2.goto(BASE_URL + '/', { waitUntil: 'load', timeout: 20000 }).catch(() => {});
     await injectUserAuth(pg2);
     try {
       await pg2.goto(BASE_URL + url, { waitUntil: 'domcontentloaded', timeout: 15000 });
     } catch { /* 무시 */ }
-    await pg2.waitForTimeout(2500);
+    await pg2.waitForTimeout(4000);
   }
   await save(pg2, name, 500);
 }
@@ -223,6 +223,38 @@ console.log('--- manager pages ---');
 // 1920px 뷰포트: 반응형 미구현 관리자 페이지 전체 표시
 const ctx4 = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
 const pg4 = await ctx4.newPage();
+
+// 대시보드 반려/신고 차트: 7월 데이터 route intercept (정적 fallback이 3월 날짜라 차트 비어있음)
+await pg4.route((url) => url.href.includes('/api/admin/campaigns/rejected') && !url.href.includes('/rejected/'), async (route) => {
+  await route.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body: JSON.stringify({
+    result: 'OK', data: {
+      rejectList: [
+        { rejectId: 1, campaignId: 901, campaignTitle: '스킨케어 체험단', rejectCode: 'R001', rejectReason: '콘텐츠 품질 미달', processedBy: '관리자1', reviewerName: '홍길동', processedAt: '2026-07-03T14:23:00' },
+        { rejectId: 2, campaignId: 902, campaignTitle: '식품 체험단', rejectCode: 'R002', rejectReason: '기한 초과', processedBy: '관리자1', reviewerName: '김철수', processedAt: '2026-07-05T09:45:00' },
+        { rejectId: 3, campaignId: 903, campaignTitle: '뷰티 제품 리뷰', rejectCode: 'R003', rejectReason: '등록 정보 불일치', processedBy: '관리자2', reviewerName: '이영희', processedAt: '2026-07-08T16:12:00' },
+        { rejectId: 4, campaignId: 904, campaignTitle: '패션 체험단', rejectCode: 'R001', rejectReason: '콘텐츠 품질 미달', processedBy: '관리자1', reviewerName: '박지민', processedAt: '2026-07-10T11:30:00' },
+        { rejectId: 5, campaignId: 905, campaignTitle: '전자제품 리뷰', rejectCode: 'R002', rejectReason: '기한 초과', processedBy: '관리자2', reviewerName: '최수진', processedAt: '2026-07-12T13:55:00' },
+        { rejectId: 6, campaignId: 906, campaignTitle: '여행 체험단', rejectCode: 'R004', rejectReason: '불성실 참여', processedBy: '관리자1', reviewerName: '정민준', processedAt: '2026-07-14T10:18:00' },
+        { rejectId: 7, campaignId: 907, campaignTitle: '가구 체험단', rejectCode: 'R001', rejectReason: '콘텐츠 품질 미달', processedBy: '관리자2', reviewerName: '강동원', processedAt: '2026-07-15T15:42:00' },
+      ],
+      rejectStats: [], pagination: { total: 7, page: 1, size: 10 }
+    }
+  }) });
+});
+await pg4.route((url) => new URL(url.href).pathname === '/api/admin/reports', async (route) => {
+  await route.fulfill({ status: 200, contentType: 'application/json; charset=utf-8', body: JSON.stringify({
+    result: 'OK', data: {
+      reports: [
+        { reportNumber: '000401', campaignTitle: '스킨케어 체험단', targetName: '홍길동', targetType: 'REVIEWER', targetUserId: 2001, inspector: '관리자1', inspectorType: 'ADMIN', reportCode: 'W012', reportCodeLabel: '허위 리뷰', reportCount: 1, processedAt: '2026-07-04T12:40:00' },
+        { reportNumber: '000402', campaignTitle: '뷰티 제품 리뷰', targetName: '이영희', targetType: 'REVIEWER', targetUserId: 2002, inspector: '관리자2', inspectorType: 'ADMIN', reportCode: 'W011', reportCodeLabel: '스팸 콘텐츠', reportCount: 1, processedAt: '2026-07-07T18:56:00' },
+        { reportNumber: '000403', campaignTitle: '식품 체험단', targetName: '김철수', targetType: 'REVIEWER', targetUserId: 2003, inspector: '관리자1', inspectorType: 'ADMIN', reportCode: 'W013', reportCodeLabel: '부적절한 내용', reportCount: 2, processedAt: '2026-07-10T14:30:00' },
+        { reportNumber: '000404', campaignTitle: '패션 체험단', targetName: '박지민', targetType: 'REVIEWER', targetUserId: 2004, inspector: '관리자2', inspectorType: 'ADMIN', reportCode: 'W012', reportCodeLabel: '허위 리뷰', reportCount: 1, processedAt: '2026-07-13T10:20:00' },
+        { reportNumber: '000405', campaignTitle: '전자제품 리뷰', targetName: '최수진', targetType: 'PARTNER', targetUserId: 501, inspector: '관리자1', inspectorType: 'ADMIN', reportCode: 'W013', reportCodeLabel: '부적절한 내용', reportCount: 1, processedAt: '2026-07-15T16:15:00' },
+      ]
+    }
+  }) });
+});
+
 await pg4.goto(BASE_URL + '/manager/login', { waitUntil: 'load', timeout: 20000 }); await save(pg4, '28_manager_login.png');
 
 // localStorage 직접 주입 (폼 로그인 대신)
@@ -252,8 +284,8 @@ const saveM = async (filename, waitMs = 2200) => {
   console.log('  ok ' + filename);
 };
 
-// 매니저 페이지 이동 + 인증 재주입 헬퍼
-const gotoManager = async (url, filename) => {
+// 매니저 페이지 이동 + 인증 재주입 헬퍼 (beforeSave: 저장 전 액션 콜백)
+const gotoManager = async (url, filename, beforeSave) => {
   try { await pg4.goto(BASE_URL + url, { waitUntil: 'domcontentloaded', timeout: 15000 }); } catch {}
   await pg4.waitForTimeout(2000);
   if (!pg4.url().includes(url)) {
@@ -265,18 +297,28 @@ const gotoManager = async (url, filename) => {
     await pg4.waitForTimeout(4000);
   }
   console.log('  ' + filename + ' url: ' + pg4.url());
+  if (beforeSave) { try { await beforeSave(); } catch(e) { console.log('  action failed: ' + e.message); } }
   await saveM(filename);
 };
 
 // 실제로 manager_ga에 있을 때만 캡처
 if (pg4.url().includes('manager_ga')) {
-  // 대시보드: 전체 페이지 캡처 (카드가 잘리지 않도록 fullPage)
-  await pg4.waitForTimeout(2200);
+  // 대시보드: 차트 렌더링 대기 후 fullPage 캡처
+  await pg4.waitForTimeout(3500);
   await pg4.screenshot({ path: path.join(OUTPUT_DIR, '29_manager_home.png'), fullPage: true });
-  console.log("  ok 29_manager_home.png");
-  await gotoManager('/manager_ga/campaign/progress', '30_manager_campaigns.png');
+  console.log('  ok 29_manager_home.png');
+  // 캠페인 진행현황: 상태 필터 드롭다운 열린 상태로 캡처
+  await gotoManager('/manager_ga/campaign/progress', '30_manager_campaigns.png', async () => {
+    try {
+      await pg4.locator('button:has-text("상태")').first().click({ timeout: 3000 });
+      await pg4.waitForTimeout(700);
+    } catch (e) { console.log('  filter click failed: ' + e.message); }
+  });
   await gotoManager('/manager_ga/member/reviewers', '31_manager_reviewers.png');
   await gotoManager('/manager_ga/member/partners', '32_manager_partners.png');
+  // 상세 페이지
+  await gotoManager('/manager_ga/member/reviewers/1', '38_manager_reviewer_detail.png');
+  await gotoManager('/manager_ga/member/partners/1', '39_manager_partner_detail.png');
 } else {
   console.log('  manager auth failed, skipping manager pages');
 }
