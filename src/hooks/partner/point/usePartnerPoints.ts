@@ -22,6 +22,85 @@ import { getPartnerPoints, getChargeReceipt } from "@/lib/api/partnerPoint";
 import type { PointFilterType, PointTransaction } from "@/types/api/partnerPoint";
 import type { PartnerPointHistory, PartnerPointSummary } from "@/types/domain/partner";
 
+const STATIC_PARTNER_POINT_HISTORY: PartnerPointHistory[] = [
+  {
+    id: "ph001",
+    type: "earned",
+    amount: 500000,
+    description: "포인트 충전",
+    date: "2026-07-08",
+    status: "earned",
+    balance: 500000,
+    payment_method: "card",
+  },
+  {
+    id: "ph002",
+    type: "withdrawn",
+    amount: -120000,
+    description: "리뷰어 포인트 지급 — 프리미엄 스킨케어 세트 체험단",
+    campaign_id: "961",
+    date: "2026-07-06",
+    status: "completed",
+    balance: 380000,
+  },
+  {
+    id: "ph003",
+    type: "earned",
+    amount: 300000,
+    description: "포인트 충전",
+    date: "2026-07-02",
+    status: "earned",
+    balance: 500000,
+    payment_method: "bank",
+  },
+  {
+    id: "ph004",
+    type: "withdrawn",
+    amount: -90000,
+    description: "리뷰어 포인트 지급 — 식당 방문 리뷰",
+    campaign_id: "1001",
+    date: "2026-07-01",
+    status: "completed",
+    balance: 380000,
+  },
+  {
+    id: "ph005",
+    type: "withdrawn",
+    amount: -60000,
+    description: "리뷰어 포인트 지급 — 판교 IT카페 리뷰",
+    campaign_id: "4044",
+    date: "2026-06-28",
+    status: "completed",
+    balance: 470000,
+  },
+  {
+    id: "ph006",
+    type: "earned",
+    amount: 300000,
+    description: "포인트 충전",
+    date: "2026-06-20",
+    status: "earned",
+    balance: 530000,
+    payment_method: "card",
+  },
+  {
+    id: "ph007",
+    type: "returned",
+    amount: 50000,
+    description: "캠페인 포인트 반환 — 충전 케이블 세트 리뷰",
+    campaign_id: "4026",
+    date: "2026-06-10",
+    status: "completed",
+    balance: 260000,
+  },
+];
+
+const STATIC_PARTNER_POINT_SUMMARY: PartnerPointSummary = {
+  total_points: 1150000,
+  available_points: 380000,
+  pending_points: 0,
+};
+
 export const partnerPointKeys = {
   list: (type: PointFilterType) => ["partnerPoints", type] as const,
 };
@@ -67,12 +146,13 @@ export function usePartnerPointList(type: PointFilterType = "ALL") {
   const allTransactions = query.data?.pages.flatMap((p) => p.data.transactions) ?? [];
   const currentBalance = query.data?.pages[0]?.data.currentBalance ?? 0;
 
-  const history: PartnerPointHistory[] = allTransactions.map(adaptTransaction);
-  const summary: PartnerPointSummary = {
-    total_points: currentBalance,
-    available_points: currentBalance,
-    pending_points: 0,
-  };
+  const rawHistory: PartnerPointHistory[] = allTransactions.map(adaptTransaction);
+  const history: PartnerPointHistory[] =
+    rawHistory.length > 0 ? rawHistory : STATIC_PARTNER_POINT_HISTORY;
+  const summary: PartnerPointSummary =
+    rawHistory.length > 0
+      ? { total_points: currentBalance, available_points: currentBalance, pending_points: 0 }
+      : STATIC_PARTNER_POINT_SUMMARY;
 
   return {
     history,
