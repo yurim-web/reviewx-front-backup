@@ -184,7 +184,8 @@ await ctx3.close();
 
 // ── 4. 매니저 페이지 (localStorage 주입) ──
 console.log('--- manager pages ---');
-const ctx4 = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+// 1600px 뷰포트: 3컬럼 레이아웃이 1440에서 오른쪽 잘림 방지
+const ctx4 = await browser.newContext({ viewport: { width: 1600, height: 1080 } });
 const pg4 = await ctx4.newPage();
 await pg4.goto(BASE_URL + '/manager/login', { waitUntil: 'networkidle' }); await save(pg4, '28_manager_login.png');
 
@@ -197,7 +198,10 @@ try {
 await pg4.waitForTimeout(3000);
 console.log('  manager url: ' + pg4.url());
 if (!pg4.url().includes('login') && !pg4.url().includes('manager/login')) {
-  await save(pg4, '29_manager_home.png');
+  // 대시보드: 전체 페이지 캡처 (카드가 잘리지 않도록 fullPage)
+  await pg4.waitForTimeout(2200);
+  await pg4.screenshot({ path: path.join(OUTPUT_DIR, '29_manager_home.png'), fullPage: true });
+  console.log("  ok 29_manager_home.png");
   try { await pg4.goto(BASE_URL + '/manager_ga/campaign/progress', { waitUntil: 'domcontentloaded', timeout: 15000 }); } catch {}
   await save(pg4, '30_manager_campaigns.png');
   try { await pg4.goto(BASE_URL + '/manager_ga/member/reviewers', { waitUntil: 'domcontentloaded', timeout: 15000 }); } catch {}
