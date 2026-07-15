@@ -111,7 +111,9 @@ export const fetchAdminReviewers = (): Promise<AdminReviewerApiItem[]> =>
 
 /** @deprecated 기존 mock 호환 — getReviewerDetail 사용 */
 export const fetchAdminReviewerDetail = (id: number): Promise<AdminReviewerApiItem> =>
-  apiClient.get<AdminReviewerApiItem>(`/admin/reviewer/${id}`).then((res) => res.data);
+  apiClient
+    .get<{ result: string; data: AdminReviewerApiItem }>(`/admin/reviewer/${id}`)
+    .then((res) => res.data.data);
 
 /**
  * GA-06: 리뷰어 목록 조회
@@ -178,7 +180,9 @@ export const fetchAdminPartners = (): Promise<AdminPartnerApiItem[]> =>
 
 /** @deprecated 기존 mock 호환 — getPartnerDetail 사용 */
 export const fetchAdminPartnerDetail = (id: number): Promise<AdminPartnerApiItem> =>
-  apiClient.get<AdminPartnerApiItem>(`/admin/partner/${id}`).then((res) => res.data);
+  apiClient
+    .get<{ result: string; data: AdminPartnerApiItem }>(`/admin/partner/${id}`)
+    .then((res) => res.data.data);
 
 /**
  * GA-08: 파트너 목록 조회
