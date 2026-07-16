@@ -178,6 +178,24 @@ console.log('--- partner pages ---');
 const ctx3 = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const pg3 = await ctx3.newPage();
 
+// SVG 이미지 fix: Next.js가 dangerouslyAllowSVG 없이 /_next/image로 SVG를 거부함
+// → SVG 요청은 /public 폴더에서 직접 파일 읽어 반환
+const PUBLIC_DIR = path.join(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1')), 'public');
+await pg3.route('**/_next/image**', async (route) => {
+  try {
+    const reqUrl = new URL(route.request().url());
+    const imgUrl = decodeURIComponent(reqUrl.searchParams.get('url') || '');
+    if (imgUrl.endsWith('.svg')) {
+      const filePath = path.join(PUBLIC_DIR, imgUrl.replace(/^\//, ''));
+      if (fs.existsSync(filePath)) {
+        await route.fulfill({ status: 200, contentType: 'image/svg+xml', body: fs.readFileSync(filePath) });
+        return;
+      }
+    }
+  } catch { /* ignore */ }
+  await route.continue();
+});
+
 // 캠페인 관리 통계 route intercept: 진행 탭 카운트 수정 (0 → 3)
 await pg3.route('**/partner/campaign_management', async (route) => {
   try {
