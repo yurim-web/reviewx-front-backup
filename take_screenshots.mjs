@@ -196,6 +196,55 @@ await pg3.route('**/_next/image**', async (route) => {
   await route.continue();
 });
 
+// 진행 탭 캠페인 데이터 주입: mock서버가 SELECTING 캠페인 0개 반환 → static fallback(brandLogo 없음)
+// → 플랫폼 로고(naverblog/reels/insta SVG)가 표시되도록 캠페인 데이터 직접 주입
+await pg3.route('**/partner/campaign_management/SELECTING**', async (route) => {
+  await route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({
+      result: 'success', generatedAt: new Date().toISOString(),
+      data: {
+        campaigns: [
+          {
+            campaignId: 4038, title: 'DIY 인테리어 미션',
+            campaignType: 'mission', platform: 'naver_blog',
+            thumbnailUrl: '/images/main/campaign_img/eximg_3.png',
+            category: '생활', points: 10000, status: 'PURCHASING',
+            recruitCount: 10, currentApplicants: 28, selectedCount: 10,
+            applicationStartDate: '2026-07-05', applicationEndDate: '2026-08-01',
+            campaignStartDate: '2026-08-03', campaignEndDate: '2026-09-01',
+            createdAt: '2026-07-05T00:00:00.000Z', updatedAt: '2026-07-05T00:00:00.000Z',
+            waitingCount: 3, submittedCount: 4, approvedCount: 3,
+          },
+          {
+            campaignId: 3001, title: '테크 기자단',
+            campaignType: 'reporter', platform: 'instagram_reels',
+            thumbnailUrl: '/images/main/campaign_img/eximg_6.png',
+            category: '디지털', points: 15000, status: 'PURCHASING',
+            recruitCount: 3, currentApplicants: 3, selectedCount: 3,
+            applicationStartDate: '2026-07-01', applicationEndDate: '2026-07-25',
+            campaignStartDate: '2026-07-27', campaignEndDate: '2026-08-31',
+            createdAt: '2026-07-01T00:00:00.000Z', updatedAt: '2026-07-01T00:00:00.000Z',
+            waitingCount: 1, submittedCount: 1, approvedCount: 1,
+          },
+          {
+            campaignId: 4060, title: '디톡스 주스 클렌즈 기자단',
+            campaignType: 'reporter', platform: 'naver_blog',
+            thumbnailUrl: '/images/main/campaign_img/eximg_1.png',
+            category: '식품', points: 8000, status: 'SELECTING',
+            recruitCount: 5, currentApplicants: 12, selectedCount: 0,
+            applicationStartDate: '2026-07-01', applicationEndDate: '2026-07-20',
+            campaignStartDate: '2026-07-22', campaignEndDate: '2026-08-15',
+            createdAt: '2026-07-01T00:00:00.000Z', updatedAt: '2026-07-01T00:00:00.000Z',
+            waitingCount: 0, submittedCount: 0, approvedCount: 0,
+          },
+        ],
+        hasNext: false, currentPage: 0,
+      },
+    }),
+  });
+});
+
 // 캠페인 관리 통계 route intercept: 진행 탭 카운트 수정 (0 → 3)
 await pg3.route('**/partner/campaign_management', async (route) => {
   try {
