@@ -161,9 +161,13 @@ json-server에 Express 미들웨어를 추가해 실제 백엔드 동작을 재�
 |:---:|:---:|:---:|:---:|:---:|
 | ![전체](portfolio_screenshots/09_user_campaign_all.png) | ![신청](portfolio_screenshots/10_user_campaign_applied.png) | ![선정](portfolio_screenshots/11_user_campaign_selected.png) | ![완료](portfolio_screenshots/12_user_campaign_completed.png) | ![취소](portfolio_screenshots/13_user_campaign_cancelled.png) |
 
-| 포인트 내역 | 마이페이지 | 정보 수정 |
+| 콘텐츠 등록 모달 | 알림 | 포인트 내역 |
 |:---:|:---:|:---:|
-| ![포인트](portfolio_screenshots/14_user_point.png) | ![마이페이지](portfolio_screenshots/15_user_mypage_profile.png) | ![정보수정](portfolio_screenshots/16_user_mypage_edit.png) |
+| ![콘텐츠등록](portfolio_screenshots/36_user_content_modal.png) | ![알림](portfolio_screenshots/33_user_notification.png) | ![포인트](portfolio_screenshots/14_user_point.png) |
+
+| 마이페이지 | 정보 수정 |
+|:---:|:---:|
+| ![마이페이지](portfolio_screenshots/15_user_mypage_profile.png) | ![정보수정](portfolio_screenshots/16_user_mypage_edit.png) |
 
 <br/>
 
