@@ -173,13 +173,21 @@ json-server에 Express 미들웨어를 추가해 실제 백엔드 동작을 재�
 
 ### 파트너 — 캠페인 운영
 
-| 홈 대시보드 | 캠페인 관리 | 진행 중 | 완료 |
+| 회원가입 | 홈 대시보드 | 새 캠페인 등록 | 캠페인 관리 |
 |:---:|:---:|:---:|:---:|
-| ![파트너홈](portfolio_screenshots/18_partner_home.png) | ![캠페인관리](portfolio_screenshots/19_partner_cm.png) | ![진행중](portfolio_screenshots/22_partner_cm_progress.png) | ![완료](portfolio_screenshots/23_partner_cm_completed.png) |
+| ![회원가입](portfolio_screenshots/37_partner_signup.png) | ![파트너홈](portfolio_screenshots/18_partner_home.png) | ![캠페인등록](portfolio_screenshots/41_partner_campaign_create.png) | ![캠페인관리](portfolio_screenshots/19_partner_cm.png) |
 
-| 지원자 관리 | 콘텐츠 관리 | 포인트 내역 | 마이페이지 |
+| 예정 | 신청 | 진행 중 | 완료 |
 |:---:|:---:|:---:|:---:|
-| ![지원자](portfolio_screenshots/24_partner_application.png) | ![콘텐츠](portfolio_screenshots/25_partner_contents.png) | ![포인트](portfolio_screenshots/26_partner_point.png) | ![마이페이지](portfolio_screenshots/27_partner_mypage.png) |
+| ![예정](portfolio_screenshots/20_partner_cm_scheduled.png) | ![신청](portfolio_screenshots/21_partner_cm_applied.png) | ![진행중](portfolio_screenshots/22_partner_cm_progress.png) | ![완료](portfolio_screenshots/23_partner_cm_completed.png) |
+
+| 지원자 관리 | 콘텐츠 관리 | 패널티 현황 |
+|:---:|:---:|:---:|
+| ![지원자](portfolio_screenshots/24_partner_application.png) | ![콘텐츠](portfolio_screenshots/25_partner_contents.png) | ![패널티](portfolio_screenshots/40_partner_cm_penalty.png) |
+
+| 포인트 내역 | 마이페이지 |
+|:---:|:---:|
+| ![포인트](portfolio_screenshots/26_partner_point.png) | ![마이페이지](portfolio_screenshots/27_partner_mypage.png) |
 
 <br/>
 
