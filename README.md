@@ -131,7 +131,15 @@ json-server에 Express 미들웨어를 추가해 실제 백엔드 동작을 재�
 
 ## 🖥 화면 소개
 
-### 홈 & 캠페인 목록
+### 로그인
+
+| 리뷰어 로그인 (Naver/Kakao OAuth) | 파트너 로그인 | 관리자 로그인 |
+|:---:|:---:|:---:|
+| ![리뷰어 로그인](portfolio_screenshots/08_user_login.png) | ![파트너 로그인](portfolio_screenshots/17_partner_login.png) | ![관리자 로그인](portfolio_screenshots/28_manager_login.png) |
+
+<br/>
+
+### 홈 & 캠페인 목록 (5가지 유형)
 
 | 홈 | 배송형 캠페인 목록 | 캠페인 상세 |
 |:---:|:---:|:---:|
