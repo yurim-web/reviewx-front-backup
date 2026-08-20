@@ -131,6 +131,8 @@ json-server에 Express 미들웨어를 추가해 실제 백엔드 동작을 재�
 
 ## 🖥 화면 소개
 
+> 스크린샷 41장 — 역할별(리뷰어·파트너·관리자) 주요 플로우를 전부 캡처했습니다.
+
 ### 로그인
 
 | 리뷰어 로그인 (Naver/Kakao OAuth) | 파트너 로그인 | 관리자 로그인 |
@@ -196,6 +198,10 @@ json-server에 Express 미들웨어를 추가해 실제 백엔드 동작을 재�
 | 대시보드 | 캠페인 진행 현황 | 리뷰어 회원 | 파트너 회원 |
 |:---:|:---:|:---:|:---:|
 | ![대시보드](portfolio_screenshots/29_manager_home.png) | ![캠페인](portfolio_screenshots/30_manager_campaigns.png) | ![리뷰어](portfolio_screenshots/31_manager_reviewers.png) | ![파트너](portfolio_screenshots/32_manager_partners.png) |
+
+| 리뷰어 상세 | 파트너 상세 |
+|:---:|:---:|
+| ![리뷰어상세](portfolio_screenshots/38_manager_reviewer_detail.png) | ![파트너상세](portfolio_screenshots/39_manager_partner_detail.png) |
 
 <br/>
 
