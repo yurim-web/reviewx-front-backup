@@ -14,6 +14,17 @@
 
 <br/>
 
+<div align="center">
+
+### 🔗 [라이브 데모 바로가기](https://reviewx-front-backup.vercel.app)
+
+첫 접속 시 mock API 서버(Render 무료 티어)가 슬립 상태였다면 최대 50초 정도 로딩이 걸릴 수 있습니다.
+테스트 계정은 [🚀 로컬 실행 → 테스트 계정](#-로컬-실행) 참고
+
+</div>
+
+<br/>
+
 ## 📌 프로젝트 소개
 
 ReviewX는 **광고주(파트너)가 체험단 캠페인을 등록**하고, **리뷰어(유저)가 신청·참여·콘텐츠를 등록**하는 플랫폼입니다.  
@@ -238,7 +249,12 @@ npm run dev
 
 ## ☁️ 배포 (포트폴리오용)
 
-프론트(Next.js)와 mock API 서버(json-server + Express)가 분리된 구조라 **두 곳에 나눠 배포**합니다.
+프론트(Next.js)와 mock API 서버(json-server + Express)가 분리된 구조라 **두 곳에 나눠 배포**했습니다. 상세 진행 기록은 [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) 참고.
+
+| 구분 | 플랫폼 | URL | 배포 방식 |
+|:---|:---|:---|:---|
+| 프론트엔드 | Vercel | https://reviewx-front-backup.vercel.app | GitHub `main` 브랜치 자동 배포 |
+| mock API 서버 | Render (Free) | https://reviewx-mock-api.onrender.com | `render.yaml` Blueprint 배포 |
 
 ### 1. mock API 서버 → Render
 
