@@ -178,6 +178,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // 이미 storage 저장까지 마친 화면(예: 관리자 로그인의 실제 API 호출)이
+  // AuthContext의 메모리 상태(user)만 즉시 동기화할 때 사용
+  const setAuthenticatedUser = useCallback((newUser: AuthUser) => {
+    setUser(newUser);
+  }, []);
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -185,6 +191,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     logout,
     updateUser,
+    setAuthenticatedUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

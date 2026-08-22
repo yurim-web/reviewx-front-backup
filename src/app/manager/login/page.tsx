@@ -22,6 +22,7 @@ import optionsStyles from "@/styles/login/login/options.module.css";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api/client";
 import { setStoredToken, setStoredUser } from "@/lib/auth/storage";
+import { useAuth } from "@/hooks/useAuth";
 import type { UserRole } from "@/types/auth";
 
 /**
@@ -31,6 +32,7 @@ import type { UserRole } from "@/types/auth";
  */
 export default function AdminLoginPage() {
   const router = useRouter();
+  const { setAuthenticatedUser } = useAuth();
 
   // ========================================
   // 상태 관리 (State Management)
@@ -136,13 +138,17 @@ export default function AdminLoginPage() {
 
       // API 응답 토큰 직접 저장 (실제 백엔드 토큰 사용)
       setStoredToken(data.token, role as UserRole);
-      setStoredUser({
+      const authUser = {
         id: String(data.user.id),
         email: data.user.email,
         name: data.user.name,
         role: role as UserRole,
-        status: "ACTIVE",
-      });
+        status: "ACTIVE" as const,
+      };
+      setStoredUser(authUser);
+      // AuthContext의 메모리 상태도 즉시 동기화 (안 하면 다음 페이지의
+      // 인증 가드가 아직 비로그인으로 판단해 로그인 페이지로 되돌아감)
+      setAuthenticatedUser(authUser);
       router.push(role === "manager_sa" ? "/manager_sa" : "/manager_ga");
     } catch (error) {
       // API 에러 응답 처리

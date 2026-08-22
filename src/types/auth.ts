@@ -51,4 +51,9 @@ export interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials, role: UserRole) => Promise<void>;
   logout: () => void;
   updateUser: (user: Partial<AuthUser>) => void;
+  /**
+   * 이미 자체적으로 로그인 API를 호출해 storage에 저장까지 마친 화면(예: 관리자 로그인)이
+   * AuthContext의 메모리 상태(user)만 즉시 동기화할 때 사용.
+   */
+  setAuthenticatedUser: (user: AuthUser) => void;
 }
