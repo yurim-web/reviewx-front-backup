@@ -236,6 +236,28 @@ npm run dev
 
 ---
 
+## ☁️ 배포 (포트폴리오용)
+
+프론트(Next.js)와 mock API 서버(json-server + Express)가 분리된 구조라 **두 곳에 나눠 배포**합니다.
+
+### 1. mock API 서버 → Render
+
+1. Render 대시보드에서 **New → Blueprint**로 이 저장소를 연결하면 루트의 `render.yaml`을 읽어 `reviewx-mock-api` 웹 서비스가 자동 생성됩니다. (수동 생성 시 Build Command: `npm install --legacy-peer-deps`, Start Command: `npm run mock`)
+2. 배포 완료 후 발급되는 URL(`https://reviewx-mock-api.onrender.com` 형태)을 기록해둡니다.
+3. **무료 티어는 15분 미사용 시 슬립 → 첫 요청 30~50초 지연**이 있습니다. [UptimeRobot](https://uptimerobot.com) 등 무료 모니터링 서비스로 10~14분 간격으로 헬스체크(`/api/v1/reviewer/dashboard`)를 핑 해두면 대부분 슬립을 방지할 수 있습니다.
+
+### 2. 프론트엔드 → Vercel
+
+1. Vercel에서 이 저장소를 Import (Framework 자동 감지: Next.js)
+2. **Environment Variables**에 `NEXT_PUBLIC_API_URL` = 1번에서 발급받은 Render mock API URL 등록 (Next.js의 `NEXT_PUBLIC_*` 값은 빌드 시점에 고정되므로, 값을 나중에 바꾸면 재배포 필요)
+3. Deploy
+
+> `npm install` 시 React 19와 `@toast-ui/react-editor`의 peer dependency 충돌이 있어 `--legacy-peer-deps`가 필요합니다. Vercel 프로젝트 설정 → Install Command에 `npm install --legacy-peer-deps` 지정.
+
+<br/>
+
+---
+
 <div align="center">
 
 **프론트엔드 전 영역 1인 개발 · 2024 – 2025**

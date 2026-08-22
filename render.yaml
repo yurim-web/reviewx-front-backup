@@ -1,0 +1,14 @@
+services:
+  # Mock API 서버 (json-server + Express 미들웨어)
+  # 프론트엔드(Vercel)에서 NEXT_PUBLIC_API_URL로 이 서비스의 URL을 가리키도록 설정
+  - type: web
+    name: reviewx-mock-api
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm install --legacy-peer-deps
+    startCommand: npm run mock
+    healthCheckPath: /api/v1/reviewer/dashboard
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
