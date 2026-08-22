@@ -124,10 +124,10 @@ module.exports = function createMiddleware(db) {
   // 전화번호로 관리자 계정 조회 (아이디/비밀번호 찾기용)
   if (req.method === "GET" && (req.path === "/admin/accounts" || req.path === "/api/admin/accounts")) {
     return res.status(200).json([
-      { id: "admin_ga_001", email: "manager_ga@test.com", phone: "01012345678", name: "김관리", userType: "admin_ga", role: "manager_ga", password: "cjdaud1!", isBanned: false, isBlocked: false, signupDate: "2025-01-15" },
-      { id: "admin_sa_001", email: "manager_sa@test.com", phone: "01098765432", name: "박최고", userType: "admin_sa", role: "manager_sa", password: "cjdaud1!", isBanned: false, isBlocked: false, signupDate: "2025-01-10" },
-      { id: "admin_ga_002", email: "blocked_ga@test.com", phone: "01011112222", name: "차단관리자", userType: "admin_ga", role: "manager_ga", password: "cjdaud1!", isBanned: false, isBlocked: true, signupDate: "2025-02-01" },
-      { id: "admin_ga_003", email: "banned_ga@test.com", phone: "01033334444", name: "정지관리자", userType: "admin_ga", role: "manager_ga", password: "cjdaud1!", isBanned: true, isBlocked: false, signupDate: "2025-03-01" },
+      { id: "admin_ga_001", email: "manager_ga@test.com", phone: "01012345678", name: "김관리", userType: "admin_ga", role: "manager_ga", password: "1234", isBanned: false, isBlocked: false, signupDate: "2025-01-15" },
+      { id: "admin_sa_001", email: "manager_sa@test.com", phone: "01098765432", name: "박최고", userType: "admin_sa", role: "manager_sa", password: "1234", isBanned: false, isBlocked: false, signupDate: "2025-01-10" },
+      { id: "admin_ga_002", email: "blocked_ga@test.com", phone: "01011112222", name: "차단관리자", userType: "admin_ga", role: "manager_ga", password: "1234", isBanned: false, isBlocked: true, signupDate: "2025-02-01" },
+      { id: "admin_ga_003", email: "banned_ga@test.com", phone: "01033334444", name: "정지관리자", userType: "admin_ga", role: "manager_ga", password: "1234", isBanned: true, isBlocked: false, signupDate: "2025-03-01" },
     ]);
   }
 
@@ -1198,7 +1198,7 @@ module.exports = function createMiddleware(db) {
 
     const adminAccounts = {
       "manager_ga@test.com": {
-        password: "cjdaud1!",
+        password: "1234",
         id: "admin_ga_001",
         name: "김관리",
         role: "manager_ga",
@@ -1206,7 +1206,7 @@ module.exports = function createMiddleware(db) {
         status: "ACTIVE",
       },
       "manager_sa@test.com": {
-        password: "cjdaud1!",
+        password: "1234",
         id: "admin_sa_001",
         name: "박최고",
         role: "manager_sa",
@@ -1214,7 +1214,7 @@ module.exports = function createMiddleware(db) {
         status: "ACTIVE",
       },
       "blocked_ga@test.com": {
-        password: "cjdaud1!",
+        password: "1234",
         id: "admin_ga_002",
         name: "차단관리자",
         role: "manager_ga",
@@ -1222,7 +1222,7 @@ module.exports = function createMiddleware(db) {
         status: "BLOCKED",
       },
       "banned_ga@test.com": {
-        password: "cjdaud1!",
+        password: "1234",
         id: "admin_ga_003",
         name: "정지관리자",
         role: "manager_ga",
@@ -1295,7 +1295,7 @@ module.exports = function createMiddleware(db) {
     // 특수 테스트 계정 (BLOCKED/BANNED 시나리오용)
     const specialAccounts = {
       "blocked@test.com": {
-        password: "cjdaud1!",
+        password: "1234",
         status: "BLOCKED",
         userId: 1003,
         name: "차단유저",
@@ -1307,7 +1307,7 @@ module.exports = function createMiddleware(db) {
         grade: "NORMAL",
       },
       "banned@test.com": {
-        password: "cjdaud1!",
+        password: "1234",
         status: "BANNED",
         userId: 1004,
         name: "정지유저",
@@ -1322,16 +1322,16 @@ module.exports = function createMiddleware(db) {
 
     // GA 파트너 목록 계정 (전부 로그인 가능)
     var gaPartnerAccounts = {
-      "contact@cmcm.co.kr": { password: "cjdaud1!", status: "ACTIVE", userId: 501, name: "김민회", phoneNum: "02-1234-5678", partnerId: 1, businessName: "주식회사 청명종합광고기획", ceoName: "김민회", businessNumber: "122-86-45790", grade: "NORMAL" },
-      "test@test.com": { password: "cjdaud1!", status: "ACTIVE", userId: 502, name: "이사장", phoneNum: "010-1234-5678", partnerId: 2, businessName: "마크엑스컴퍼니", ceoName: "이사장", businessNumber: "123-45-67890", grade: "EXCELLENT" },
+      "contact@cmcm.co.kr": { password: "1234", status: "ACTIVE", userId: 501, name: "김민회", phoneNum: "02-1234-5678", partnerId: 1, businessName: "주식회사 청명종합광고기획", ceoName: "김민회", businessNumber: "122-86-45790", grade: "NORMAL" },
+      "test@test.com": { password: "1234", status: "ACTIVE", userId: 502, name: "이사장", phoneNum: "010-1234-5678", partnerId: 2, businessName: "마크엑스컴퍼니", ceoName: "이사장", businessNumber: "123-45-67890", grade: "EXCELLENT" },
       "aaaa@test.com": { password: "akzmdprtm1!", status: "ACTIVE", userId: 503, name: "김테스트", phoneNum: "010-5555-5555", partnerId: 3, businessName: "테스트컴퍼니", ceoName: "김테스트", businessNumber: "234-56-78901", grade: "NORMAL" },
-      "cafe@bene.com": { password: "cjdaud1!", status: "ACTIVE", userId: 504, name: "박카페", phoneNum: "02-9876-5432", partnerId: 4, businessName: "카페베네", ceoName: "박카페", businessNumber: "345-67-89012", grade: "CAUTION" },
-      "beauty@lab.com": { password: "cjdaud1!", status: "ACTIVE", userId: 505, name: "정뷰티", phoneNum: "010-3333-4444", partnerId: 5, businessName: "뷰티랩", ceoName: "정뷰티", businessNumber: "456-78-90123", grade: "NORMAL" },
-      "tech@korea.com": { password: "cjdaud1!", status: "PAUSED", userId: 506, name: "최테크", phoneNum: "02-5555-6666", partnerId: 6, businessName: "테크코리아", ceoName: "최테크", businessNumber: "567-89-01234", grade: "WARNING" },
-      "social@plus.com": { password: "cjdaud1!", status: "BLOCKED", userId: 507, name: "한소셜", phoneNum: "02-7777-8888", partnerId: 7, businessName: "소셜플러스", ceoName: "한소셜", businessNumber: "678-90-12345", grade: "RESTRICTED" },
-      "food@yummy.com": { password: "cjdaud1!", status: "WITHDRAW", userId: 508, name: "오맛집", phoneNum: "010-8888-9999", partnerId: 8, businessName: "맛있는식당", ceoName: "오맛집", businessNumber: "789-01-23456", grade: "NORMAL" },
-      "coffee@beans.com": { password: "cjdaud1!", status: "ACTIVE", userId: 509, name: "강커피", phoneNum: "010-2222-3333", partnerId: 9, businessName: "커피빈즈", ceoName: "강커피", businessNumber: "890-12-34567", grade: "EXCELLENT" },
-      "premium@marketing.com": { password: "cjdaud1!", status: "ACTIVE", userId: 510, name: "류마케팅", phoneNum: "02-1111-2222", partnerId: 10, businessName: "프리미엄마케팅", ceoName: "류마케팅", businessNumber: "901-23-45678", grade: "NORMAL" },
+      "cafe@bene.com": { password: "1234", status: "ACTIVE", userId: 504, name: "박카페", phoneNum: "02-9876-5432", partnerId: 4, businessName: "카페베네", ceoName: "박카페", businessNumber: "345-67-89012", grade: "CAUTION" },
+      "beauty@lab.com": { password: "1234", status: "ACTIVE", userId: 505, name: "정뷰티", phoneNum: "010-3333-4444", partnerId: 5, businessName: "뷰티랩", ceoName: "정뷰티", businessNumber: "456-78-90123", grade: "NORMAL" },
+      "tech@korea.com": { password: "1234", status: "PAUSED", userId: 506, name: "최테크", phoneNum: "02-5555-6666", partnerId: 6, businessName: "테크코리아", ceoName: "최테크", businessNumber: "567-89-01234", grade: "WARNING" },
+      "social@plus.com": { password: "1234", status: "BLOCKED", userId: 507, name: "한소셜", phoneNum: "02-7777-8888", partnerId: 7, businessName: "소셜플러스", ceoName: "한소셜", businessNumber: "678-90-12345", grade: "RESTRICTED" },
+      "food@yummy.com": { password: "1234", status: "WITHDRAW", userId: 508, name: "오맛집", phoneNum: "010-8888-9999", partnerId: 8, businessName: "맛있는식당", ceoName: "오맛집", businessNumber: "789-01-23456", grade: "NORMAL" },
+      "coffee@beans.com": { password: "1234", status: "ACTIVE", userId: 509, name: "강커피", phoneNum: "010-2222-3333", partnerId: 9, businessName: "커피빈즈", ceoName: "강커피", businessNumber: "890-12-34567", grade: "EXCELLENT" },
+      "premium@marketing.com": { password: "1234", status: "ACTIVE", userId: 510, name: "류마케팅", phoneNum: "02-1111-2222", partnerId: 10, businessName: "프리미엄마케팅", ceoName: "류마케팅", businessNumber: "901-23-45678", grade: "NORMAL" },
     };
 
     // 1) 특수 계정 체크
@@ -1348,7 +1348,7 @@ module.exports = function createMiddleware(db) {
       const profile = profiles.find((p) => p.email === email);
       if (profile) {
         account = {
-          password: profile.password || "cjdaud1!",
+          password: profile.password || "1234",
           status: "ACTIVE",
           userId: profile.id === "partner_test_001" ? 1001 : profile.id === "partner_test_002" ? 1002 : profile.id === "partner_test_003" ? 1005 : 1001,
           name: profile.name,
@@ -3937,7 +3937,7 @@ module.exports = function createMiddleware(db) {
 
     // db.json에서 현재 비밀번호 조회
     const profile = db ? db.get("partner_mypage").find({ email: currentSession.email }).value() : null;
-    const storedPassword = profile?.password || "cjdaud1!";
+    const storedPassword = profile?.password || "1234";
 
     if (currentPassword !== storedPassword) {
       return res.status(400).json({

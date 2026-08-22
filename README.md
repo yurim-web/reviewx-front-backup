@@ -25,9 +25,9 @@
 | 역할 | 접속 링크 | 이메일 | 비밀번호 |
 |:---|:---|:---|:---|
 | 리뷰어(유저) | [바로가기](https://reviewx-front-backup.vercel.app) → 우측 상단 로그인 → **네이버로 시작하기** | - | - (버튼 클릭만으로 로그인) |
-| 파트너 | [바로가기](https://reviewx-front-backup.vercel.app/partner) → **파트너 회원 로그인** | `test@test.com` | `cjdaud1!` |
-| 관리자 (일반관리자 GA) | [바로가기](https://reviewx-front-backup.vercel.app/manager_ga) (미로그인 시 로그인 페이지로 자동 이동) | `manager_ga@test.com` | `cjdaud1!` |
-| 관리자 (최고관리자 SA) | [바로가기](https://reviewx-front-backup.vercel.app/manager_sa) (미로그인 시 로그인 페이지로 자동 이동) | `manager_sa@test.com` | `cjdaud1!` |
+| 파트너 | [바로가기](https://reviewx-front-backup.vercel.app/partner) → **파트너 회원 로그인** | `test@test.com` | `1234` |
+| 관리자 (일반관리자 GA) | [바로가기](https://reviewx-front-backup.vercel.app/manager_ga) (미로그인 시 로그인 페이지로 자동 이동) | `manager_ga@test.com` | `1234` |
+| 관리자 (최고관리자 SA) | [바로가기](https://reviewx-front-backup.vercel.app/manager_sa) (미로그인 시 로그인 페이지로 자동 이동) | `manager_sa@test.com` | `1234` |
 
 <br/>
 
@@ -242,9 +242,9 @@ npm run dev
 | 역할 | 이메일 | 비밀번호 | 로그인 경로 |
 |:---|:---|:---|:---|
 | 리뷰어(유저) | - | - | `/user/login` → **네이버로 시작하기** 버튼 클릭 (아이디/비번 불필요, mock 소셜 로그인) |
-| 파트너 | `test@test.com` | `cjdaud1!` | `/partner/login` |
-| 관리자 (일반관리자 GA) | `manager_ga@test.com` | `cjdaud1!` | `/manager/login` |
-| 관리자 (최고관리자 SA) | `manager_sa@test.com` | `cjdaud1!` | `/manager/login` |
+| 파트너 | `test@test.com` | `1234` | `/partner/login` |
+| 관리자 (일반관리자 GA) | `manager_ga@test.com` | `1234` | `/manager/login` |
+| 관리자 (최고관리자 SA) | `manager_sa@test.com` | `1234` | `/manager/login` |
 
 > 백엔드 미연동 상태로, 위 계정은 모두 프론트엔드 mock 데이터(`src/data/login/unifiedAccountData.ts`)로 인증됩니다.
 > 리뷰어는 실제 Naver OAuth 대신 버튼 클릭만으로 로그인되도록 mock 처리되어 있습니다.

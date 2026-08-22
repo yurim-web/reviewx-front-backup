@@ -60,7 +60,7 @@ export interface UnifiedAccount {
   /** 계정 타입 */
   userType: AccountType;
   /** 사용자 역할 (인증 시스템용) */
-  role: 'user' | 'partner' | 'manager_ga' | 'manager_sa';
+  role: "user" | "partner" | "manager_ga" | "manager_sa";
   /** 이름 */
   name: string;
   /** 이메일 (관리자/파트너 로그인용) */
@@ -81,7 +81,7 @@ export interface UnifiedAccount {
   redirectUrl: string;
 
   // 리뷰어 전용 필드
-  grade?: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
+  grade?: "bronze" | "silver" | "gold" | "platinum" | "diamond";
   channels?: Array<{
     platform: string;
     url: string;
@@ -91,10 +91,10 @@ export interface UnifiedAccount {
   // 파트너 전용 필드
   business_name?: string;
   business_number?: string;
-  approval_status?: 'pending' | 'approved' | 'rejected';
+  approval_status?: "pending" | "approved" | "rejected";
 
   // 관리자 전용 필드
-  admin_level?: 'GA' | 'SA';
+  admin_level?: "GA" | "SA";
   permissions?: string[];
 }
 
@@ -118,7 +118,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "manager_sa",
     name: "최고관리자",
     email: "manager_sa@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-7777-7777",
     signupDate: "2024. 01. 01",
     isBlocked: false,
@@ -132,7 +132,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "manager_sa",
     name: "차단관리자(SA)",
     email: "blocked_sa@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-7776-7776",
     signupDate: "2024. 01. 15",
     isBlocked: true,
@@ -146,7 +146,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "manager_sa",
     name: "정지관리자(SA)",
     email: "banned_sa@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-7775-7775",
     signupDate: "2024. 01. 10",
     isBlocked: false,
@@ -163,7 +163,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "manager_ga",
     name: "일반관리자",
     email: "manager_ga@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-6666-6666",
     signupDate: "2024. 02. 01",
     isBlocked: false,
@@ -177,7 +177,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "manager_ga",
     name: "차단관리자(GA)",
     email: "blocked_ga@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-6665-6665",
     signupDate: "2024. 02. 15",
     isBlocked: true,
@@ -191,7 +191,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "manager_ga",
     name: "정지관리자(GA)",
     email: "banned_ga@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-6664-6664",
     signupDate: "2024. 02. 10",
     isBlocked: false,
@@ -207,7 +207,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     userType: "partner",
     role: "partner",
     email: "test@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     name: "테스트파트너",
     phone: "010-5555-5555",
     business_name: "테스트 주식회사",
@@ -224,7 +224,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "partner",
     name: "테스트파트너2",
     email: "test@cmcm.co.kr",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-5554-5554",
     signupDate: "2024. 03. 15",
     isBlocked: false,
@@ -238,7 +238,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "partner",
     name: "차단파트너1",
     email: "blocked@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-5553-5553",
     signupDate: "2024. 03. 10",
     isBlocked: true,
@@ -251,7 +251,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "partner",
     name: "차단파트너2",
     email: "blocked_partner@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-5552-5552",
     signupDate: "2024. 03. 20",
     isBlocked: true,
@@ -265,7 +265,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "partner",
     name: "정지파트너1",
     email: "banned@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-5551-5551",
     signupDate: "2024. 03. 05",
     isBlocked: false,
@@ -278,7 +278,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "partner",
     name: "정지파트너2",
     email: "deleted@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-5550-5550",
     signupDate: "2024. 03. 12",
     isBlocked: false,
@@ -291,7 +291,7 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     role: "partner",
     name: "정지파트너3",
     email: "fail@test.com",
-    password: "cjdaud1!",
+    password: "1234",
     phone: "010-5549-5549",
     signupDate: "2024. 03. 18",
     isBlocked: false,
@@ -464,9 +464,7 @@ export function findAccountByPhoneWithTypes(
 
   const matched_accounts = UNIFIED_ACCOUNTS_DATA.filter((account) => {
     const is_phone_match = normalize_phone(account.phone) === normalized_phone;
-    const is_type_allowed = allowed_types
-      ? allowed_types.includes(account.userType)
-      : true;
+    const is_type_allowed = allowed_types ? allowed_types.includes(account.userType) : true;
     return is_phone_match && is_type_allowed;
   });
 
