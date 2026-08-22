@@ -68,10 +68,29 @@ export default function PartnerLoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    await performLogin(email, password, autoLogin);
+  };
+
+  /**
+   * 포트폴리오 데모 로그인 버튼 핸들러
+   *
+   * 목적: 채용담당자 등 방문자가 아이디/비밀번호를 직접 입력하지 않아도
+   * 클릭 한 번으로 파트너 대시보드를 바로 체험할 수 있도록 제공
+   */
+  const handleDemoLogin = async () => {
+    setEmail("test@test.com");
+    setPassword("1234");
+    await performLogin("test@test.com", "1234", false);
+  };
+
+  /**
+   * 로그인 실행 (폼 제출 / 데모 버튼 공통 로직)
+   */
+  const performLogin = async (loginEmail: string, loginPassword: string, rememberMe: boolean) => {
     setErrorMessage("");
 
     try {
-      await login({ email, password, rememberMe: autoLogin }, "partner");
+      await login({ email: loginEmail, password: loginPassword, rememberMe }, "partner");
     } catch (error) {
       // axios 에러 → 백엔드 HTTP 상태 코드 기반 에러 처리
       const axiosError = error as { response?: { status?: number } };
@@ -109,6 +128,32 @@ export default function PartnerLoginPage() {
             좋은 캠페인이 만들어갑니다.
           </h2>
         </section>
+
+        {/* 포트폴리오 데모 로그인 (⚠️ 실제 서비스 배포 시 삭제) */}
+        <div
+          style={{
+            marginBottom: "16px",
+            padding: "12px",
+            border: "1px dashed #999",
+            borderRadius: "8px",
+          }}
+        >
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={isLoading}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              background: "#f5f5f5",
+              cursor: "pointer",
+            }}
+          >
+            파트너 계정으로 체험하기
+          </button>
+        </div>
 
         {/* 로그인 폼 섹션 */}
         <form className={formStyles.login_form} onSubmit={handleSubmit}>

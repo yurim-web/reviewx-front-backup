@@ -86,7 +86,25 @@ export default function AdminLoginPage() {
    */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    await performLogin(username, password);
+  };
 
+  /**
+   * 포트폴리오 데모 로그인 버튼 핸들러
+   *
+   * 목적: 채용담당자 등 방문자가 아이디/비밀번호를 직접 입력하지 않아도
+   * 클릭 한 번으로 관리자 대시보드를 바로 체험할 수 있도록 제공
+   */
+  const handleDemoLogin = async (demoEmail: string, demoPassword: string) => {
+    setUsername(demoEmail);
+    setPassword(demoPassword);
+    await performLogin(demoEmail, demoPassword);
+  };
+
+  /**
+   * 로그인 실행 (폼 제출 / 데모 버튼 공통 로직)
+   */
+  const performLogin = async (loginEmail: string, loginPassword: string) => {
     // 에러 메시지 초기화
     setErrorMessage("");
     setIsSubmitting(true);
@@ -94,8 +112,8 @@ export default function AdminLoginPage() {
     try {
       // POST /api/admin/login API 호출
       const { data } = await apiClient.post("/api/admin/login", {
-        email: username,
-        password,
+        email: loginEmail,
+        password: loginPassword,
       });
 
       if (data.result !== "OK") {
@@ -166,6 +184,49 @@ export default function AdminLoginPage() {
             여러분이 만들어갑니다.
           </h2>
         </section>
+
+        {/* 포트폴리오 데모 로그인 (⚠️ 실제 서비스 배포 시 삭제) */}
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            marginBottom: "16px",
+            padding: "12px",
+            border: "1px dashed #999",
+            borderRadius: "8px",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => handleDemoLogin("manager_ga@test.com", "1234")}
+            disabled={isSubmitting}
+            style={{
+              flex: 1,
+              padding: "10px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              background: "#f5f5f5",
+              cursor: "pointer",
+            }}
+          >
+            GA 계정으로 체험하기
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDemoLogin("manager_sa@test.com", "1234")}
+            disabled={isSubmitting}
+            style={{
+              flex: 1,
+              padding: "10px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              background: "#f5f5f5",
+              cursor: "pointer",
+            }}
+          >
+            SA 계정으로 체험하기
+          </button>
+        </div>
 
         {/* 로그인 폼 섹션 */}
         <form className={formStyles.login_form} onSubmit={handleSubmit}>
