@@ -222,12 +222,15 @@ npm run dev
 
 ### 테스트 계정
 
-| 역할 | 이메일 | 비밀번호 |
-|:---|:---|:---|
-| 파트너 | `test@test.com` | `cjdaud1!` |
-| 관리자 GA | `manager_ga@test.com` | `cjdaud1!` |
+| 역할 | 이메일 | 비밀번호 | 로그인 경로 |
+|:---|:---|:---|:---|
+| 리뷰어(유저) | - | - | `/user/login` → **네이버로 시작하기** 버튼 클릭 (아이디/비번 불필요, mock 소셜 로그인) |
+| 파트너 | `test@test.com` | `cjdaud1!` | `/partner/login` |
+| 관리자 (일반관리자 GA) | `manager_ga@test.com` | `cjdaud1!` | `/manager/login` |
+| 관리자 (최고관리자 SA) | `manager_sa@test.com` | `cjdaud1!` | `/manager/login` |
 
-> 리뷰어(유저) 로그인은 Naver OAuth를 사용합니다.
+> 백엔드 미연동 상태로, 위 계정은 모두 프론트엔드 mock 데이터(`src/data/login/unifiedAccountData.ts`)로 인증됩니다.
+> 리뷰어는 실제 Naver OAuth 대신 버튼 클릭만으로 로그인되도록 mock 처리되어 있습니다.
 
 <br/>
 
