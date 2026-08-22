@@ -195,42 +195,57 @@ export default function AdminLoginPage() {
         <div
           style={{
             display: "flex",
+            alignItems: "center",
             gap: "8px",
-            marginBottom: "16px",
-            padding: "12px",
-            border: "1px dashed #999",
-            borderRadius: "8px",
+            marginBottom: "20px",
           }}
         >
+          <span
+            style={{
+              color: "#848484",
+              fontSize: "13px",
+              fontWeight: 500,
+              letterSpacing: "-0.26px",
+              flexShrink: 0,
+            }}
+          >
+            빠른 체험
+          </span>
           <button
             type="button"
             onClick={() => handleDemoLogin("manager_ga@test.com", "1234")}
             disabled={isSubmitting}
             style={{
-              flex: 1,
-              padding: "10px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              background: "#f5f5f5",
+              padding: "6px 14px",
+              borderRadius: "999px",
+              border: "1px solid #FF5694",
+              background: "#ffffff",
+              color: "#FF5694",
+              fontSize: "13px",
+              fontWeight: 600,
+              letterSpacing: "-0.26px",
               cursor: "pointer",
             }}
           >
-            GA 계정으로 체험하기
+            GA로 보기
           </button>
           <button
             type="button"
             onClick={() => handleDemoLogin("manager_sa@test.com", "1234")}
             disabled={isSubmitting}
             style={{
-              flex: 1,
-              padding: "10px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              background: "#f5f5f5",
+              padding: "6px 14px",
+              borderRadius: "999px",
+              border: "1px solid #FF5694",
+              background: "#ffffff",
+              color: "#FF5694",
+              fontSize: "13px",
+              fontWeight: 600,
+              letterSpacing: "-0.26px",
               cursor: "pointer",
             }}
           >
-            SA 계정으로 체험하기
+            SA로 보기
           </button>
         </div>
 

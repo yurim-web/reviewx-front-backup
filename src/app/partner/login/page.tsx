@@ -42,8 +42,9 @@ export default function PartnerLoginPage() {
   // ========================================
   // 상태 관리
   // ========================================
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  // ⚠️ 포트폴리오 데모용: 테스트 계정을 기본값으로 미리 채워둠 (실제 서비스 배포 시 빈 문자열로 되돌릴 것)
+  const [email, setEmail] = useState<string>("test@test.com");
+  const [password, setPassword] = useState<string>("1234");
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
 
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -72,19 +73,7 @@ export default function PartnerLoginPage() {
   };
 
   /**
-   * 포트폴리오 데모 로그인 버튼 핸들러
-   *
-   * 목적: 채용담당자 등 방문자가 아이디/비밀번호를 직접 입력하지 않아도
-   * 클릭 한 번으로 파트너 대시보드를 바로 체험할 수 있도록 제공
-   */
-  const handleDemoLogin = async () => {
-    setEmail("test@test.com");
-    setPassword("1234");
-    await performLogin("test@test.com", "1234", false);
-  };
-
-  /**
-   * 로그인 실행 (폼 제출 / 데모 버튼 공통 로직)
+   * 로그인 실행
    */
   const performLogin = async (loginEmail: string, loginPassword: string, rememberMe: boolean) => {
     setErrorMessage("");
@@ -128,32 +117,6 @@ export default function PartnerLoginPage() {
             좋은 캠페인이 만들어갑니다.
           </h2>
         </section>
-
-        {/* 포트폴리오 데모 로그인 (⚠️ 실제 서비스 배포 시 삭제) */}
-        <div
-          style={{
-            marginBottom: "16px",
-            padding: "12px",
-            border: "1px dashed #999",
-            borderRadius: "8px",
-          }}
-        >
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            disabled={isLoading}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              background: "#f5f5f5",
-              cursor: "pointer",
-            }}
-          >
-            파트너 계정으로 체험하기
-          </button>
-        </div>
 
         {/* 로그인 폼 섹션 */}
         <form className={formStyles.login_form} onSubmit={handleSubmit}>
