@@ -19,9 +19,15 @@
 ### 🔗 [라이브 데모 바로가기](https://reviewx-front-backup.vercel.app)
 
 첫 접속 시 mock API 서버(Render 무료 티어)가 슬립 상태였다면 최대 50초 정도 로딩이 걸릴 수 있습니다.
-테스트 계정은 [🚀 로컬 실행 → 테스트 계정](#-로컬-실행) 참고
 
 </div>
+
+| 역할 | 접속 링크 | 이메일 | 비밀번호 |
+|:---|:---|:---|:---|
+| 리뷰어(유저) | [바로가기](https://reviewx-front-backup.vercel.app) → 우측 상단 로그인 → **네이버로 시작하기** | - | - (버튼 클릭만으로 로그인) |
+| 파트너 | [바로가기](https://reviewx-front-backup.vercel.app/partner) → **파트너 회원 로그인** | `test@test.com` | `cjdaud1!` |
+| 관리자 (일반관리자 GA) | [바로가기](https://reviewx-front-backup.vercel.app/manager_ga) (미로그인 시 로그인 페이지로 자동 이동) | `manager_ga@test.com` | `cjdaud1!` |
+| 관리자 (최고관리자 SA) | [바로가기](https://reviewx-front-backup.vercel.app/manager_sa) (미로그인 시 로그인 페이지로 자동 이동) | `manager_sa@test.com` | `cjdaud1!` |
 
 <br/>
 

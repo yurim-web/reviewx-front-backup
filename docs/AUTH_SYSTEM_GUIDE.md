@@ -344,25 +344,7 @@ export default withAdminAuth(AdminDashboard);
 
 ## 🔑 테스트 계정 정보
 
-Mock 데이터에서 사용 가능한 테스트 계정:
-
-### 파트너 계정
-- **이메일**: partner1@example.com
-- **비밀번호**: password123
-- **역할**: partner
-
-### 리뷰어 계정 (소셜 로그인)
-- 네이버/카카오 로그인 버튼 클릭 시 자동 로그인
-
-### 관리자 계정 (GA)
-- **이메일**: ga_admin1@reviewx.com
-- **비밀번호**: admin123
-- **역할**: manager_ga
-
-### 최고 관리자 (SA)
-- **이메일**: sa_admin@reviewx.com
-- **비밀번호**: superadmin123
-- **역할**: manager_sa
+실제 테스트 계정 목록은 [`README.md` — 테스트 계정](../README.md#테스트-계정) 참고 (`src/data/login/unifiedAccountData.ts` 기준, 이 문서에 중복 기재하지 않음).
 
 ---
 
