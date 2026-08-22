@@ -260,7 +260,7 @@ npm run dev
 
 1. Render 대시보드에서 **New → Blueprint**로 이 저장소를 연결하면 루트의 `render.yaml`을 읽어 `reviewx-mock-api` 웹 서비스가 자동 생성됩니다. (수동 생성 시 Build Command: `npm install --legacy-peer-deps`, Start Command: `npm run mock`)
 2. 배포 완료 후 발급되는 URL(`https://reviewx-mock-api.onrender.com` 형태)을 기록해둡니다.
-3. **무료 티어는 15분 미사용 시 슬립 → 첫 요청 30~50초 지연**이 있습니다. [UptimeRobot](https://uptimerobot.com) 등 무료 모니터링 서비스로 10~14분 간격으로 헬스체크(`/api/v1/reviewer/dashboard`)를 핑 해두면 대부분 슬립을 방지할 수 있습니다.
+3. **무료 티어는 15분 미사용 시 슬립 → 첫 요청 30~50초 지연**이 있습니다. → [UptimeRobot](https://uptimerobot.com) 무료 플랜으로 5분 간격 헬스체크(`/api/v1/reviewer/dashboard`)를 걸어 슬립을 방지해뒀습니다 (설정 완료, 비용 없음).
 
 ### 2. 프론트엔드 → Vercel
 

@@ -69,9 +69,21 @@ Render 등 프로덕션 환경은 기본적으로 `devDependencies`를 설치하
 | `/partner/login` → `test@test.com` 로그인 | ✅ 로그인 성공, mock API(`/partner/session`, `/partner/dashboard`, `/partner/notifications`) 200 응답 |
 | `/manager/login` → `manager_sa@test.com` 로그인 | ✅ `/manager_sa`로 정상 이동, API 200, 에러 0건 |
 
+### 5. UptimeRobot — 콜드스타트 방지 설정
+
+Render 무료 플랜은 15분간 요청이 없으면 mock API 서버가 슬립 상태가 되고, 다음 요청에서 깨어나는 데 30~50초가 걸림 → [UptimeRobot](https://uptimerobot.com) 무료 플랜으로 주기적 핑을 걸어 슬립 자체를 방지하도록 설정.
+
+| 항목 | 값 |
+|:---|:---|
+| 모니터 이름 | `reviewx-mock-api` |
+| 모니터 유형 | HTTP/웹사이트 모니터링 |
+| 대상 URL | `https://reviewx-mock-api.onrender.com/api/v1/reviewer/dashboard` |
+| 체크 간격 | 5분 (무료 플랜 최소 간격, 15분 슬립 기준보다 충분히 짧음) |
+| 알림 | 다운 시 가입 이메일로 알림 |
+| 비용 | 없음 (UptimeRobot 무료 플랜 — 모니터 최대 50개, 카드 등록 불필요) |
+
 ## 알려진 제약사항
 
-- **Render 무료 플랜 콜드스타트**: 15분간 요청이 없으면 mock API 서버가 슬립 상태가 되고, 다음 요청 시 깨어나는 데 30~50초가 걸릴 수 있습니다. UptimeRobot 등으로 주기적 핑을 걸어 완화하는 걸 권장합니다 (README 배포 가이드 참고).
 - **데이터 영속성 없음**: json-server가 `mock/db.json` 파일에 직접 쓰기 때문에, Render 재배포(redeploy) 시 데이터가 초기 상태로 리셋됩니다. 포트폴리오 데모 목적상 문제 없음.
 - **모든 테스트 계정은 프론트엔드 mock 데이터**(`src/data/login/unifiedAccountData.ts`) 기반이며 실제 백엔드 인증이 아닙니다.
 
@@ -79,3 +91,4 @@ Render 등 프로덕션 환경은 기본적으로 `devDependencies`를 설치하
 
 - `b9494de7` — chore(deploy): 포트폴리오 배포 설정 추가 (Render blueprint, mock 서버 런타임 의존성 정리)
 - `f888af03` — docs(readme): 테스트 계정 표에 리뷰어·최고관리자(SA) 계정 추가
+- `81f6db37` — docs(deploy): 포트폴리오 배포 기록 문서 추가 및 README에 라이브 데모 링크 반영
