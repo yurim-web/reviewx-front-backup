@@ -16,9 +16,11 @@
  */
 
 /* 회원 통계 섹션 그리드 */
+/* 카드 1개가 편하게 들어갈 최소 폭(320px) 기준으로 화면 폭에 맞춰 열 개수가 자동으로 줄어듦
+   (좁은 노트북 화면에서 3열 고정으로 인해 카드 내부 콘텐츠가 잘리는 문제 방지) */
 .member_stats_grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
 }
 
@@ -42,10 +44,14 @@
 }
 
 /* 회원 통계 콘텐츠 (도넛 차트 + 통계 정보) */
+/* flex-wrap + min-width: 0 → 카드 폭이 좁아지면 정보 영역이 아래로 내려가며
+   페이지 바깥으로 넘치는 대신 자연스럽게 줄바꿈됨 */
 .member_stats_content {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: 20px;
+  min-width: 0;
 }
 
 /* 도넛 차트 컨테이너 */
@@ -172,6 +178,7 @@
 /* 회원 통계 정보 영역 */
 .member_stats_info {
   flex: 1;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -180,6 +187,7 @@
 /* 회원 통계 정보 영역 (첫 번째 카드용 - 그리드만) */
 .member_stats_info_first {
   flex: 1;
+  min-width: 220px;
   display: flex;
   align-items: flex-start;
 }

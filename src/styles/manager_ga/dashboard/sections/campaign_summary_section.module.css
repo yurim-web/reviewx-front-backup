@@ -32,10 +32,10 @@
   letter-spacing: -0.36px;
 }
 
-/* 캠페인 관리 요약 섹션 통계 카드 그리드 */
+/* 캠페인 관리 요약 섹션 통계 카드 그리드 (화면이 좁아지면 자동으로 열 개수 감소) */
 .campaign_summary_section_stats_grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 16px;
 }
 
@@ -50,12 +50,14 @@
 }
 
 /* 캠페인 관리 요약 섹션 통계 카드 제목 */
+/* word-break: keep-all → 카드 폭이 좁아져도 단어 중간(음절 사이)이 아닌 띄어쓰기 기준으로만 줄바꿈됨 */
 .campaign_summary_section_stat_card_title {
   color: #848484;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  word-break: keep-all;
 }
 
 /* 캠페인 관리 요약 섹션 통계 카드 값 */

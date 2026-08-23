@@ -48,17 +48,19 @@
   font-weight: 600;
   line-height: 24px;
 }
-/* 정산 요약과 결제 요약을 나란히 배치 */
+/* 정산 요약과 결제 요약을 나란히 배치
+   화면이 좁아지면(작은 노트북 등) 세로로 쌓이도록 auto-fit 적용 */
 .summary_row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 24px;
   margin-bottom: 24px;
 }
 
-/* 회원 통계 행 (3개 카드를 나란히 배치) */
+/* 회원 통계 행 (3개 카드를 나란히 배치)
+   카드 1개가 편하게 들어갈 최소 폭(320px) 기준으로 화면 폭에 맞춰 열 개수 자동 조정 */
 .member_stats_row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
 }

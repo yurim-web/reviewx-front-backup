@@ -31,10 +31,14 @@
 }
 
 /* 채널별 회원 통계 섹션 콘텐츠 (파이 차트 + 통계 정보) */
+/* flex-wrap + min-width: 0 → 카드 폭이 좁아지면 정보 영역이 아래로 내려가며
+   페이지 바깥으로 넘치는 대신 자연스럽게 줄바꿈됨 */
 .channel_member_section_content {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: 20px;
+  min-width: 0;
 }
 
 /* 채널별 회원 통계 섹션 파이 차트 컨테이너 (정사각형 유지로 찌그러짐 방지) */
@@ -62,6 +66,7 @@
 /* 채널별 회원 통계 섹션 통계 정보 영역 */
 .channel_member_section_stats_info {
   flex: 1;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
   gap: 12px;

@@ -39,14 +39,14 @@
   gap: 16px;
 }
 
-/* 결제 요약 섹션 통계 카드 그리드 - 4개 컬럼 */
+/* 결제 요약 섹션 통계 카드 그리드 - 4개 컬럼 (화면이 좁아지면 자동으로 열 개수 감소) */
 .summary_section_stats_grid_payment {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
-/* 정산 요약 섹션 통계 카드 그리드 - 3개 컬럼 */
+/* 정산 요약 섹션 통계 카드 그리드 - 3개 컬럼 (화면이 좁아지면 자동으로 열 개수 감소) */
 .summary_section_stats_grid_settlement {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 12px;
 }
 
