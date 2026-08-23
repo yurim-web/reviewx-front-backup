@@ -41,11 +41,13 @@
   min-width: 0;
 }
 
-/* 회원 활성화 통계 섹션 도넛 차트 컨테이너 (200x200, 박스 안에 맞춤) */
+/* 회원 활성화 통계 섹션 도넛 차트 컨테이너 (도넛 자체는 200x200, 박스 높이는 210px)
+   height를 '회원 유형별 통계' 카드의 막대+범례 높이(210px)와 맞춰서
+   카드마다 아래 통계 박스가 시작되는 높이가 어긋나지 않도록 함 */
 .member_activation_section_donut_chart_container {
   flex-shrink: 0;
   width: 200px;
-  height: 200px;
+  height: 210px;
   display: flex;
   align-items: center;
   justify-content: center;

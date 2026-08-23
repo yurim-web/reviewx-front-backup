@@ -41,14 +41,15 @@
   min-width: 0;
 }
 
-/* 채널별 회원 통계 섹션 파이 차트 컨테이너 (정사각형 유지로 찌그러짐 방지) */
+/* 채널별 회원 통계 섹션 파이 차트 컨테이너 (파이 자체는 200x200 정사각형 유지, 박스 높이는 210px)
+   height를 '회원 유형별 통계' 카드의 막대+범례 높이(210px)와 맞춰서
+   카드마다 아래 통계 박스가 시작되는 높이가 어긋나지 않도록 함 */
 .channel_member_section_pie_chart_container {
   flex-shrink: 0;
   width: 200px;
-  height: 200px;
+  height: 210px;
   min-width: 200px;
-  min-height: 200px;
-  aspect-ratio: 1;
+  min-height: 210px;
   display: flex;
   align-items: center;
   justify-content: center;

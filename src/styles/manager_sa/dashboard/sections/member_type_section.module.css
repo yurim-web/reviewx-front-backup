@@ -40,10 +40,13 @@
 }
 
 /* 회원 유형 통계 섹션 막대 차트 컨테이너 */
+/* height: 210px → 막대(168px) + 범례 영역까지 포함한 실제 높이에 맞춤.
+   다른 카드(전체 회원 통계의 도넛, 채널별 회원 통계의 파이)도 같은 높이로 맞춰서
+   차트 아래 통계 박스들이 카드마다 다른 높이에서 시작하지 않도록 함 */
 .member_type_section_bar_chart_container {
   flex-shrink: 0;
   width: 200px;
-  height: 168px;
+  height: 210px;
   display: flex;
   flex-direction: column;
   align-items: center;
