@@ -39,14 +39,15 @@
   gap: 16px;
 }
 
-/* 결제 요약 섹션 통계 카드 그리드 - 4개 컬럼 (화면이 좁아지면 자동으로 열 개수 감소) */
+/* 결제 요약 섹션 통계 카드 그리드 - 카드 4개를 2x2로 고정
+   (정산 요약과 동일하게 2열로 맞춰서, 아래 차트 제목의 세로 위치가 정산/결제 서로 어긋나지 않게 함) */
 .summary_section_stats_grid_payment {
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
 }
 
-/* 정산 요약 섹션 통계 카드 그리드 - 3개 컬럼 (화면이 좁아지면 자동으로 열 개수 감소) */
+/* 정산 요약 섹션 통계 카드 그리드 - 카드 3개를 2열로 (2+1줄) */
 .summary_section_stats_grid_settlement {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
