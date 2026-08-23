@@ -31,10 +31,14 @@
 }
 
 /* 회원 활성화 통계 섹션 콘텐츠 (도넛 차트 + 통계 정보) */
+/* flex-wrap + min-width: 0 → 카드 폭이 좁아지면 정보 영역이 아래로 내려가며
+   페이지 바깥으로 넘치거나 글자가 세로로 쪼개지는 대신 자연스럽게 줄바꿈됨 */
 .member_activation_section_content {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: 24px;
+  min-width: 0;
 }
 
 /* 회원 활성화 통계 섹션 도넛 차트 컨테이너 (200x200, 박스 안에 맞춤) */
@@ -48,8 +52,11 @@
 }
 
 /* 회원 활성화 통계 섹션 통계 정보 영역 */
+/* min-width: 240px → 내부 2열 카드(활성/비활성 회원 수)가 읽기 힘들 정도로
+   좁아지기 전에 아래 줄로 내려가도록 최소 폭 보장 */
 .member_activation_section_stats_info {
   flex: 1;
+  min-width: 240px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -92,12 +99,14 @@
 }
 
 /* 회원 활성화 통계 섹션 정보 라벨 */
+/* word-break: keep-all → 카드가 좁아져도 음절 중간이 아닌 띄어쓰기 기준으로만 줄바꿈 */
 .member_activation_section_info_label {
   color: #848484;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  word-break: keep-all;
 }
 
 /* 회원 활성화 통계 섹션 정보 값 */
@@ -142,4 +151,3 @@
 .member_activation_section_info_change_neutral {
   color: #ababab;
 }
-
